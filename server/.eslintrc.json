@@ -1,0 +1,17 @@
+{
+  "extends": "airbnb-base",
+
+  "parserOptions": {
+    "ecmaVersion": "2017",
+    "sourceType": "module"
+  },
+
+  "rules": {
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "import/prefer-default-export": "off",
+    "comma-dangle": ["error", "always-multiline"],
+    "no-use-before-define": ["error", { "functions": false }],
+    "func-names": "off",
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }]
+  }
+}

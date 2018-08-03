@@ -1,0 +1,22 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd server && npm run start:prod",
+    "install": "(cd client && npm i) && (cd server && npm i)",
+    "build": "(cd client && npm run build) && (cd server && npm run build)",
+    "server": "cd server && npm start",
+    "client": "cd client && npm start",
+    "heroku-postbuild": "npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": "8.11.3",
+    "npm": "6.1.0"
+  }
+}
