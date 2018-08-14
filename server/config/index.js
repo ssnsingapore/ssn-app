@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import AWS from 'aws-sdk';
 
 import { checkRequiredExist } from './util';
 import { User } from '../models/User';
@@ -23,6 +24,9 @@ checkRequiredExist(
   'PORT',
   'DATABASE_URI',
   'AUTH_SECRET',
+  'AWS_BUCKET_NAME',
+  'AWS_ACCESS_KEY_ID',
+  'AWS_SECRET_ACCESS_KEY',
 );
 
 export const isProduction = process.env.NODE_ENV === 'production';
@@ -32,8 +36,19 @@ export const config = {
   PORT: process.env.PORT,
   DATABASE_URI: process.env.DATABASE_URI,
   AUTH_SECRET: process.env.AUTH_SECRET,
+  AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
 };
 
+// =============================================================================
+// S3 CONFIGURATION
+// =============================================================================
+AWS.config = new AWS.Config({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: 'ap-southeast-1',
+});
+
+export const s3 = new AWS.S3();
 
 // =============================================================================
 // PASSPORT CONFIGURATION
@@ -76,4 +91,5 @@ passport.use(new JwtStrategy(
       return done(err);
     }
   })
-))
+));
+
