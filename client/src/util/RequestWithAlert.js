@@ -60,6 +60,23 @@ export class RequestWithAlert {
     );
   }
 
+  uploadFile = async (url, formData, token) => {
+    const headers = this.constructHeaders(token);
+    // Required to ensure that correctly sets a boundary
+    // for the multipart request.
+    // See https://stackoverflow.com/questions/39280438/fetch-missing-boundary-in-multipart-form-data-post
+    delete headers['Content-Type'];
+
+    return this.execute(
+      url,
+      {
+        method: 'post',
+        headers,
+        body: formData,
+      },
+    );
+  }
+
   execute = async (url, options) => {
     try {
       const response = await fetch(url, options);

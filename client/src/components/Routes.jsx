@@ -9,6 +9,7 @@ import { About } from './About';
 import { Login } from './Login';
 import { SignUp } from './SignUp';
 import { NotFound } from './NotFound';
+import { ImageUpload } from './ImageUpload';
 
 class _Routes extends Component {
   render() {
@@ -25,6 +26,7 @@ class _Routes extends Component {
               <Route exact path="/todos" component={Todos} />
               <Route path="/todos/login" component={Login} />
               <Route path="/todos/signup" component={SignUp} />
+              <Route path="/image_upload" component={ImageUpload} />
               <Route component={NotFound} />
             </Switch>
           </div>

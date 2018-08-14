@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 const TAB_PATHS = [
   'about',
   'todos',
+  'image_upload',
 ];
 
 class _NavBar extends Component {
@@ -39,12 +40,17 @@ class _NavBar extends Component {
           <Tab
             label="About"
             component={Link}
-            to="/about"
+            to={`/${TAB_PATHS[0]}}`}
           />
           <Tab
             label="Todos"
             component={Link}
-            to="/todos"
+            to={`/${TAB_PATHS[1]}`}
+          />
+          <Tab
+            label="Image Upload"
+            component={Link}
+            to={`/${TAB_PATHS[2]}`}
           />
         </Tabs>
       </AppBar>
