@@ -23,11 +23,15 @@ export class Authenticator {
   }
 
   isAuthenticated = () => {
-    return !!localStorage.getItem(TOKEN_KEY);
+      return !!this.getToken();
   }
 
   getCurrentUser = () => {
     return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+  }
+
+  getToken = () => {
+    return localStorage.getItem(TOKEN_KEY);
   }
 
   login = async (

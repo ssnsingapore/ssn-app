@@ -10,43 +10,52 @@ export class RequestWithAlert {
     return this;
   }
 
-  get = async (url) => {
+  constructHeaders = (token) => {
+     const headers = { 'Content-Type': 'application/json' };
+     if (token) {
+       headers['Authorization'] = `Bearer ${token}`;
+     }
+
+     return headers;
+  }
+
+  get = async (url, token) => {
     return this.execute(
       url,
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.constructHeaders(token),
       },
     );
   }
 
-  put = async (url, body) => {
+  put = async (url, body, token) => {
     return this.execute(
       url,
       {
         method: 'put',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.constructHeaders(token),
         body: JSON.stringify(body),
       },
     );
   }
 
-  post = async (url, body) => {
+  post = async (url, body, token) => {
     return this.execute(
       url,
       {
         method: 'post',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.constructHeaders(token),
         body: JSON.stringify(body),
       },
     );
   }
 
-  delete = async (url) => {
+  delete = async (url, token) => {
     return this.execute(
       url,
       {
         method: 'delete',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.constructHeaders(token),
       },
     );
   }

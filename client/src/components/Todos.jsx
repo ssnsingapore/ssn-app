@@ -45,13 +45,19 @@ class _Todos extends Component {
   }
 
   async componentDidMount() {
-    const { requestWithAlert } = this.props.context.utils;
+    const { requestWithAlert, authenticator } = this.props.context.utils;
     const response = await requestWithAlert
-      .get('/api/v1/todos');
+      .get('/api/v1/todos', authenticator.getToken());
 
     if (response.isSuccessful) {
       const todos = (await response.json()).todos;
       this.setState({ todos: this.transformTodos(todos) });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getTodosFailure', AlertType.ERROR, formatErrors(errors));
     }
 
     this.setState({ isLoading: false });
