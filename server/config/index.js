@@ -6,6 +6,7 @@
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 
 import { checkRequiredExist } from './util';
 import { User } from '../models/User';
@@ -56,3 +57,23 @@ passport.use(new LocalStrategy(
     }
   }),
 ));
+
+passport.use(new JwtStrategy(
+  {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: config.AUTH_SECRET,
+  },
+  (async (jwtPayload, done) => {
+    try {
+      const { userid } = jwtPayload;
+      const user = await User.findOne({ _id: userid });
+      if (!user) {
+        return done(null, false, {});
+      }
+
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
+  })
+))
