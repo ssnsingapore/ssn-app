@@ -100,7 +100,7 @@ class _Todos extends Component {
 
     this.props.resetAllFields();
 
-    const { requestWithAlert } = this.props.context.utils;
+    const { requestWithAlert, authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const data = { todo };
@@ -118,7 +118,7 @@ class _Todos extends Component {
     };
     const response = await requestWithAlert
       .onNetworkError(handleError)
-      .post('/api/v1/todos', data);
+      .post('/api/v1/todos', data, authenticator.getToken());
 
     if (response.isSuccessful) {
       // sync todo state with server
@@ -177,7 +177,7 @@ class _Todos extends Component {
       },
     });
 
-    const { requestWithAlert } = this.props.context.utils;
+    const { requestWithAlert, authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const data = { todo: updatedTodo };
@@ -192,7 +192,7 @@ class _Todos extends Component {
     };
     const response = await requestWithAlert
       .onNetworkError(handleError)
-      .put(`/api/v1/todos/${id}`, data);
+      .put(`/api/v1/todos/${id}`, data, authenticator.getToken());
 
     if (response.hasError) {
       handleError();
@@ -209,7 +209,7 @@ class _Todos extends Component {
       todos: updatedTodos,
     });
 
-    const { requestWithAlert } = this.props.context.utils;
+    const { requestWithAlert, authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const handleError = () => {
@@ -220,7 +220,7 @@ class _Todos extends Component {
     };
     const response = await requestWithAlert
       .onNetworkError(handleError)
-      .delete(`/api/v1/todos/${id}`);
+      .delete(`/api/v1/todos/${id}`, authenticator.getToken());
 
     if (response.hasError) {
       handleError();
