@@ -16,6 +16,14 @@ class NotFoundErrorView {
   }
 }
 
+class UnauthorizedErrorView {
+  constructor() {
+    this.status = 401;
+    this.title = 'Unauthorized';
+    this.detail = 'Looks like you tried to make an unauthorized request';
+  }
+}
+
 export class UnprocessableEntityErrorView {
   constructor(title, detail) {
     this.status = 422;
@@ -40,6 +48,12 @@ export function handleError(err, res) {
     return res
       .status(422)
       .json({ errors: formatValidationErrors(err) });
+  }
+
+  if (err.status === 401) {
+    return res
+      .status(401)
+      .json({ errors: [new UnauthorizedErrorView()] });
   }
 
   if (err.status === 404) {

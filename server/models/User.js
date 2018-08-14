@@ -48,15 +48,6 @@ UserSchema.methods.generateJWT = function () {
   );
 };
 
-UserSchema.methods.verifyJWT = function (token) {
-  try {
-    jwt.verify(token, config.AUTH_SECRET);
-    return true;
-  } catch (err) {
-    return false;
-  }
-};
-
 // Do not declare methods using ES6 arrow functions (=>).
 // Arrow functions explicitly prevent binding this,
 // so your method will not have access to the document and the above examples will not work.
