@@ -70,7 +70,7 @@ class _Todos extends Component {
     }, {});
   }
 
-  transformTodo = (responseTodo) =>  {
+  transformTodo = (responseTodo) => {
     return {
       ...responseTodo,
       addedAt: moment(responseTodo.addedAt),
@@ -86,8 +86,8 @@ class _Todos extends Component {
     const tempId = Object.keys(this.state.todos).length + 1;
     const todo = {
       description: newTodoDescription,
-          isDone: false,
-          addedAt: moment(),
+      isDone: false,
+      addedAt: moment(),
     };
 
     // optimistically set state before saving to server
@@ -307,7 +307,7 @@ const styles = {
 };
 
 export const Todos = withStyles(styles)(
-  withContext(AppContext,
+  withContext(AppContext)(
     withForm(
       FieldName,
       constraints,

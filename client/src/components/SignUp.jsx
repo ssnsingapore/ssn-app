@@ -216,7 +216,7 @@ const styles = {
 
 export const SignUp = withStyles(styles)(
   withTheme()(
-    withContext(AppContext,
+    withContext(AppContext)(
       withForm(
         FieldName,
         constraints,

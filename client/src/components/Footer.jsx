@@ -46,4 +46,4 @@ const styles = {
 };
 
 export const Footer = withStyles(styles)(
-  withContext(AppContext, _Footer));
+  withContext(AppContext)(_Footer));

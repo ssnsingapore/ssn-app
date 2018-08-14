@@ -174,7 +174,7 @@ const styles = {
 export const Login =
   withStyles(styles)(
     withTheme()(
-      withContext(AppContext,
+      withContext(AppContext)(
         withForm(
           FieldName,
           constraints,
