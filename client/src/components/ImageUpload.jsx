@@ -45,7 +45,45 @@ class _ImageUpload extends Component {
     const file = this.fileInput.current.files[0];
     const imageSrc = window.URL.createObjectURL(file);
 
+    // Add some logic to notify user if uploaded image is too low resolution
+
     this.setState({ imageSrc });
+  }
+
+  handleCancel = () => {
+    this.fileInput.current.value = '';
+    this.setState({ imageSrc: defaultImage });
+  }
+
+  resizeImage = () => {
+    const image = new Image();
+    image.src = this.state.imageSrc;
+
+    // Resize to cover the display width and height
+    const width = image.width;
+    const height = image.height;
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width < height && width > DISPLAY_WIDTH) {
+      finalWidth = DISPLAY_WIDTH;
+      finalHeight = height / width * DISPLAY_WIDTH;
+    }
+
+    if (height < width && height > DISPLAY_HEIGHT) {
+      finalHeight = DISPLAY_HEIGHT;
+      finalWidth = width / height * DISPLAY_HEIGHT;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, finalWidth, finalHeight);
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.6);
+    });
   }
 
   handleUpload = async (event) => {
@@ -61,8 +99,9 @@ class _ImageUpload extends Component {
     const { showAlert } = this.props.context.updaters;
 
     const formData = new FormData();
+    const resizedImage = await this.resizeImage();
     formData.append('name', file.name);
-    formData.append('image', file);
+    formData.append('image', resizedImage);
 
     const response = await requestWithAlert
       .uploadFile('/api/v1/images', formData);
@@ -177,8 +216,8 @@ class _ImageUpload extends Component {
 
 const styles = {
   uploadContainer: {
-    width: '600px',
-    height: '400px',
+    width: `${DISPLAY_WIDTH}px`,
+    height: `${DISPLAY_HEIGHT}px`,
     margin: '0 auto',
     display: 'flex',
     alignItems: 'center',

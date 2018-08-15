@@ -10,7 +10,7 @@ const upload = multer();
 
 imagesRouter.post('/images', upload.single('image'), asyncWrap(uploadImage));
 async function uploadImage(req, res) {
-  const { file } = req;
+  const { file, body } = req;
 
   // We use upload instead of putObject so that we can access the public URL
   // See https://stackoverflow.com/questions/30763448/node-js-aws-s3-file-upload-how-to-get-public-url-response
@@ -18,7 +18,7 @@ async function uploadImage(req, res) {
   // and we will have to use a callback
   const response = await s3.upload({
     Body: file.buffer,
-    Key: `${new Date().getTime()}-${file.originalname}`,
+    Key: `${new Date().getTime()}-${body.name}`,
     ACL: 'public-read',
     Bucket: config.AWS_BUCKET_NAME,
   }).promise();
