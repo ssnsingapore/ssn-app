@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, GridList, GridListTile } from '@material-ui/core';
 
 import { AppContext } from './AppContext';
 import { withContext } from 'util/context';
@@ -9,6 +9,9 @@ import { AlertType } from './Alert';
 
 import defaultImage from 'assets/image-placeholder.svg';
 
+const DISPLAY_WIDTH = 600;
+const DISPLAY_HEIGHT = 400;
+
 class _ImageUpload extends Component {
   constructor(props) {
     super(props);
@@ -16,7 +19,26 @@ class _ImageUpload extends Component {
     this.fileInput = React.createRef();
     this.state = {
       imageSrc: defaultImage,
+      images: [],
     };
+  }
+
+  async componentDidMount() {
+    const { requestWithAlert } = this.props.context.utils;
+
+    const response = await requestWithAlert
+      .get('/api/v1/images');
+
+    if (response.isSuccessful) {
+      const images = (await response.json()).images;
+      this.setState({ images });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getImagesFailure', AlertType.ERROR, formatErrors(errors));
+    }
   }
 
   handleChange = () => {
@@ -48,7 +70,15 @@ class _ImageUpload extends Component {
     if (response.isSuccessful) {
       // Doing this also resets the readonly FileList object (this.fileInput.current.files)
       this.fileInput.current.value = '';
-      this.setState({ imageSrc: defaultImage });
+
+      const newImage = (await response.json()).image;
+      this.setState({
+        imageSrc: defaultImage,
+        images: [
+          ...this.state.images,
+          newImage,
+        ],
+       });
       showAlert('imageUploadSuccess', AlertType.SUCCESS, 'Your image was uploaded successfully!');
     }
 
@@ -58,7 +88,45 @@ class _ImageUpload extends Component {
     }
   }
 
-  render() {
+  renderUploadButtons = (file) => {
+    const { classes } = this.props;
+
+    if (file) {
+      return (
+        <div className={classes.confirmCancelButtons}>
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            style={{ marginBottom: '20px' }}
+          >
+            Confirm Upload
+        </Button>
+          <Button
+            color="default"
+            variant="contained"
+            onClick={this.handleCancel}
+          >
+            Cancel
+        </Button>
+        </div>
+      );
+    }
+
+    return (
+      <label htmlFor="image_upload">
+        <Button
+          color="primary"
+          variant="contained"
+          component="span"
+        >
+          Upload File
+              </Button>
+      </label>
+    );
+  }
+
+  renderFileUpload = () => {
     const { classes } = this.props;
     const file = this.fileInput.current ? this.fileInput.current.files[0] : null;
 
@@ -73,26 +141,35 @@ class _ImageUpload extends Component {
             id="image_upload"
             className={classes.uploadInput}
           />
-          {file ?
-            <Button
-              type="submit"
-              color="default"
-              variant="contained"
-            >
-              Confirm Upload
-            </Button>
-            :
-            <label htmlFor="image_upload">
-              <Button
-                color="primary"
-                variant="contained"
-                component="span"
-              >
-                Upload File
-              </Button>
-            </label>
-          }
+          {this.renderUploadButtons(file)}
         </form>
+      </div>
+    );
+  }
+
+  renderImages = () => {
+    const { classes } = this.props;
+
+    return (
+      <GridList
+        cellHeight={160}
+        className={classes.imageGrid}
+        cols={3}
+      >
+        {this.state.images.map(image => (
+          <GridListTile key={image.imageUrl} cols={1} >
+            <img src={image.imageUrl} alt={image.title} />
+          </GridListTile>
+        ))}
+      </GridList>
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        {this.renderFileUpload()}
+        {this.renderImages()}
       </div>
     );
   }
@@ -110,6 +187,18 @@ const styles = {
   },
   uploadInput: {
     display: 'none',
+  },
+  imageGridContainer: {
+    display: 'flex',
+  },
+  imageGrid: {
+    width: '600px',
+    maxHeight: '600px',
+    margin: '0 auto !important',
+  },
+  confirmCancelButtons: {
+    display: 'flex',
+    flexDirection: 'column',
   },
 };
 

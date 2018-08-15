@@ -17,6 +17,7 @@ const ImageSchema = new mongoose.Schema(
 ImageSchema.methods.toJSON = function () {
   return {
     imageUrl: this.imageUrl,
+    title: this.title,
   };
 };
 

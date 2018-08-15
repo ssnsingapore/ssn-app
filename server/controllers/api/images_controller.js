@@ -33,3 +33,12 @@ async function uploadImage(req, res) {
     .status(200)
     .json({ image: image.toJSON() });
 }
+
+imagesRouter.get('/images', asyncWrap(getImages));
+async function getImages(_req, res) {
+  const images = await Image.find({});
+
+  return res
+    .status(200)
+    .json({ images: images.map(image => image.toJSON()) });
+}
