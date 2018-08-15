@@ -62,15 +62,16 @@ class _SignUp extends Component {
       return;
     }
 
-    const { requestWithAlert } = this.props.context.utils;
+    const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const { email, name, password } = this.props.valuesForAllFields();
-    const data = {
-      user: { email, name, password },
+    const user = {
+      name,
+      email,
+      password,
     };
-    const response = await requestWithAlert
-      .post('/api/v1/users', data);
+    const response = await authenticator.signUp(user);
 
     if (response.isSuccessful) {
       this.setState({ shouldRedirect: true });

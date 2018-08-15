@@ -23,7 +23,7 @@ export class Authenticator {
   }
 
   isAuthenticated = () => {
-      return !!this.getToken();
+      return !!localStorage.getItem(CURRENT_USER_KEY);
   }
 
   getCurrentUser = () => {
@@ -34,6 +34,24 @@ export class Authenticator {
     return localStorage.getItem(TOKEN_KEY);
   }
 
+  signUp = async (
+    user,
+    networkErrorHandler,
+  ) => {
+    const data = { user };
+    const response = await this.requestWithAlert
+      .onNetworkError(networkErrorHandler)
+      .post('/api/v1/users', data, { authenticated: true });
+
+    if (response.isSuccessful) {
+      const { user } = await response.json();
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+      this.setAuthState(true);
+    }
+
+    return response;
+  }
+
   login = async (
     email,
     password,
@@ -42,7 +60,7 @@ export class Authenticator {
     const data = { user: { email, password } };
     const response = await this.requestWithAlert
       .onNetworkError(networkErrorHandler)
-      .post('/api/v1/login', data);
+      .post('/api/v1/login', data, { authenticated: true });
 
     if (response.isSuccessful) {
       const { token, user } = await response.json();
