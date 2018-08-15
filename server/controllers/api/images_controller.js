@@ -23,7 +23,10 @@ async function uploadImage(req, res) {
     Bucket: config.AWS_BUCKET_NAME,
   }).promise();
 
-  const image = new Image({ imageUrl: response.Location });
+  const image = new Image({
+    imageUrl: response.Location,
+    title: file.originalname,
+  });
   await image.save();
 
   return res

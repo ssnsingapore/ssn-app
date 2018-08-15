@@ -6,6 +6,10 @@ const ImageSchema = new mongoose.Schema(
       type: String,
       required: [true, 'cannot be blank'],
     },
+    title: {
+      type: String,
+      required: [true, 'cannot be blank'],
+    },
   },
   { timestamps: true },
 );
