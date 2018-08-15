@@ -3,6 +3,7 @@ import passport from 'passport';
 
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
+import { config } from 'config';
 import { checkIfFound, UnprocessableEntityErrorView } from 'util/errors';
 
 export const usersRouter = express.Router();
@@ -36,6 +37,16 @@ async function registerNewUser(req, res) {
     return checkForDuplicateEmail(err, res);
   }
 
+  res.cookie(
+    config.TOKEN_COOKIE_NAME,
+    user.generateJWT(),
+    {
+      httpOnly: true,
+      // Enable in production to enforce transmission only over HTTPS
+      // or setup HTTPs on localhost
+      // secure: true,
+    },
+  );
   return res
     .status(201)
     .json({ user: user.toJSON() });
@@ -67,10 +78,20 @@ usersRouter.post(
 async function login(req, res) {
   const { user } = req;
 
+
+  res.cookie(
+    config.TOKEN_COOKIE_NAME,
+    user.generateJWT(),
+    {
+      httpOnly: true,
+      // Enable in production to enforce transmission only over HTTPS
+      // or setup HTTPs on localhost
+      // secure: true,
+    },
+  );
   return res
     .status(200)
     .json({
-      token: user.generateJWT(),
       user: user.toJSON(),
     });
 }

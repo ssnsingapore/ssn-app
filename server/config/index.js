@@ -6,7 +6,7 @@
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import { Strategy as JwtStrategy } from 'passport-jwt';
 import AWS from 'aws-sdk';
 
 import { checkRequiredExist } from './util';
@@ -37,6 +37,7 @@ export const config = {
   DATABASE_URI: process.env.DATABASE_URI,
   AUTH_SECRET: process.env.AUTH_SECRET,
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+  TOKEN_COOKIE_NAME: 'ssn_token',
 };
 
 // =============================================================================
@@ -73,9 +74,17 @@ passport.use(new LocalStrategy(
   }),
 ));
 
+const extractJwtFromCookie = (req) => {
+  if (req && req.cookies) {
+    return req.cookies[config.TOKEN_COOKIE_NAME];
+  }
+
+  return null;
+};
+
 passport.use(new JwtStrategy(
   {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: extractJwtFromCookie,
     secretOrKey: config.AUTH_SECRET,
   },
   (async (jwtPayload, done) => {
