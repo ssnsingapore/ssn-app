@@ -12,11 +12,12 @@ export class RequestWithAlert {
 
   constructHeaders = (token) => {
      const headers = { 'Content-Type': 'application/json' };
-     if (token) {
-       headers['Authorization'] = `Bearer ${token}`;
-     }
-
      return headers;
+  }
+
+  setCredentials = (authenticated) => {
+    // Set to 'include' to allow CORS
+    return authenticated? 'same-origin' : 'omit';
   }
 
   get = async (url, options = {}) => {
@@ -26,18 +27,21 @@ export class RequestWithAlert {
       url,
       {
         headers: this.constructHeaders(),
-        ...(authenticated && { credentials: 'include' }),
+        credentials: this.setCredentials(authenticated),
       },
     );
   }
 
-  put = async (url, body, token) => {
+  put = async (url, body, options = {}) => {
+    const { authenticated } = options;
+
     return this.execute(
       url,
       {
         method: 'put',
-        headers: this.constructHeaders(token),
+        headers: this.constructHeaders(),
         body: JSON.stringify(body),
+        credentials: this.setCredentials(authenticated),
       },
     );
   }
@@ -51,33 +55,33 @@ export class RequestWithAlert {
         method: 'post',
         headers: this.constructHeaders(),
         body: JSON.stringify(body),
-        ...(authenticated && { credentials: 'include' }),
+        credentials: this.setCredentials(authenticated),
       },
     );
   }
 
-  delete = async (url, token) => {
+  delete = async (url, options = {}) => {
+    const { authenticated } = options;
+
     return this.execute(
       url,
       {
         method: 'delete',
-        headers: this.constructHeaders(token),
+        headers: this.constructHeaders(),
+        credentials: this.setCredentials(authenticated),
       },
     );
   }
 
   uploadFile = async (url, formData, token) => {
-    const headers = this.constructHeaders(token);
-    // Required to ensure that correctly sets a boundary
+    // Do not includea any headers to
+    // ensure that browser correctly sets a boundary
     // for the multipart request.
     // See https://stackoverflow.com/questions/39280438/fetch-missing-boundary-in-multipart-form-data-post
-    delete headers['Content-Type'];
-
     return this.execute(
       url,
       {
         method: 'post',
-        headers,
         body: formData,
       },
     );

@@ -45,9 +45,9 @@ class _Todos extends Component {
   }
 
   async componentDidMount() {
-    const { requestWithAlert, authenticator } = this.props.context.utils;
+    const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert
-      .get('/api/v1/todos', authenticator.getToken());
+      .get('/api/v1/todos', { authenticated: true });
 
     if (response.isSuccessful) {
       const todos = (await response.json()).todos;
@@ -100,7 +100,7 @@ class _Todos extends Component {
 
     this.props.resetAllFields();
 
-    const { requestWithAlert, authenticator } = this.props.context.utils;
+    const { requestWithAlert } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const data = { todo };
@@ -118,7 +118,7 @@ class _Todos extends Component {
     };
     const response = await requestWithAlert
       .onNetworkError(handleError)
-      .post('/api/v1/todos', data, authenticator.getToken());
+      .post('/api/v1/todos', data, { authenticated: true });
 
     if (response.isSuccessful) {
       // sync todo state with server
@@ -177,7 +177,7 @@ class _Todos extends Component {
       },
     });
 
-    const { requestWithAlert, authenticator } = this.props.context.utils;
+    const { requestWithAlert } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const data = { todo: updatedTodo };
@@ -192,7 +192,7 @@ class _Todos extends Component {
     };
     const response = await requestWithAlert
       .onNetworkError(handleError)
-      .put(`/api/v1/todos/${id}`, data, authenticator.getToken());
+      .put(`/api/v1/todos/${id}`, data, { authenticated: true });
 
     if (response.hasError) {
       handleError();
@@ -209,7 +209,7 @@ class _Todos extends Component {
       todos: updatedTodos,
     });
 
-    const { requestWithAlert, authenticator } = this.props.context.utils;
+    const { requestWithAlert } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const handleError = () => {
@@ -220,7 +220,7 @@ class _Todos extends Component {
     };
     const response = await requestWithAlert
       .onNetworkError(handleError)
-      .delete(`/api/v1/todos/${id}`, authenticator.getToken());
+      .delete(`/api/v1/todos/${id}`, { authenticated: true });
 
     if (response.hasError) {
       handleError();
