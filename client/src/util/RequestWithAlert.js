@@ -19,11 +19,14 @@ export class RequestWithAlert {
      return headers;
   }
 
-  get = async (url, token) => {
+  get = async (url, options = {}) => {
+    const { authenticated } = options;
+
     return this.execute(
       url,
       {
-        headers: this.constructHeaders(token),
+        headers: this.constructHeaders(),
+        ...(authenticated && { credentials: 'include' }),
       },
     );
   }
@@ -39,13 +42,16 @@ export class RequestWithAlert {
     );
   }
 
-  post = async (url, body, token) => {
+  post = async (url, body, options = {}) => {
+    const { authenticated } = options;
+
     return this.execute(
       url,
       {
         method: 'post',
-        headers: this.constructHeaders(token),
+        headers: this.constructHeaders(),
         body: JSON.stringify(body),
+        ...(authenticated && { credentials: 'include' }),
       },
     );
   }
