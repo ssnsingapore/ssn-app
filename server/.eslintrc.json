@@ -13,5 +13,20 @@
     "no-use-before-define": ["error", { "functions": false }],
     "func-names": "off",
     "no-underscore-dangle": ["error", { "allowAfterThis": true }]
-  }
+  },
+
+  "env": {
+    "jest": true
+  },
+
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": [
+          "node_modules",
+          "server"
+        ]
+      }
+    }
+  }  
 }
