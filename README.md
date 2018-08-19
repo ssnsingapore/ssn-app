@@ -9,6 +9,23 @@
 
 
 ## Notes
+
+## Steps to start application
+ - Install dependencies with command:
+ ```
+ npm i
+ ```
+ - Create .env files within `client` and `server` folders
+ - Set up environment variables following `.env.sample` files found in respective folders
+ - To run application in development mode, start server with command:
+ ```
+ npm run server
+ ```
+ - Start client separately with command:
+ ```
+npm start --prefix ./client
+ ```
+
 ### React
 In Create React App, we can enable absolute imports by setting the `NODE_PATH` environment variable. This is read by the webpack config as the root path to resolve modules from. To add environment variables in development, add them to a `.env` file (see [here](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#adding-development-environment-variables-in-env))
 
