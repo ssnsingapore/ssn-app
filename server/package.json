@@ -6,7 +6,8 @@
     "start:prod": "node build/server.js",
     "start": "npx nodemon server.js --exec babel-node",
     "build": "babel . --ignore node_modules,build --out-dir build",
-    "test": "jest"
+    "test": "jest",
+    "lint": "./node_modules/eslint/bin/eslint.js . --ignore-path .gitignore"
   },
   "dependencies": {
     "@babel/cli": "^7.0.0-0",
