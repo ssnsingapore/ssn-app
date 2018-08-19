@@ -5,11 +5,12 @@
   "scripts": {
     "start:prod": "node build/server.js",
     "start": "npx nodemon server.js --exec babel-node",
-    "build": "babel . --ignore node_modules,build --out-dir build"
+    "build": "babel . --ignore node_modules,build --out-dir build",
+    "test": "jest"
   },
   "dependencies": {
     "@babel/cli": "^7.0.0-0",
-    "@babel/core": "^7.0.0-0",
+    "@babel/core": "^7.0.0-beta.49",
     "@babel/node": "^7.0.0-0",
     "@babel/preset-env": "^7.0.0-0",
     "@babel/preset-stage-2": "^7.0.0-0",
@@ -34,11 +35,16 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.4.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-import-resolver-babel-plugin-root-import": "^1.1.1",
     "eslint-plugin-import": "^2.12.0",
-    "kexec": "^3.0.0"
+    "jest": "^23.5.0",
+    "kexec": "^3.0.0",
+    "regenerator-runtime": "^0.12.1",
+    "supertest": "^3.1.0"
   },
   "engines": {
     "node": "8.11.3",
