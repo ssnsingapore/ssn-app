@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- 8.11.3
+cache:
+  directories:
+  - node_modules
+script:
+- npm run lint
+- npm test
+deploy:
+  provider: heroku
+  api_key:
+    secure: VRUNv+b9CEv6Yt6/A8vRfP2LjZCkhraP33n7mwdefFp1gVLIRQ0/QeL095lQ38PKtCvX06AMjybdOWLwW+Ujryc/BJK59JJ6QmLm0ArR2VsIIPkfrBqrIFjIBfcYELooCG/rhc+/1TI5zbmtpwSlnv/xX28ehnztaDn3W0PTeShHALyfdL4pnegYzN0idrRaiQAN38yiK4hbF/EKA+4qwkpfyv/ie0cO7XRz8QoLozjqoAC3UrYWhFAMVRguMx+iI3ftYDxgjiydflK1hIHwGXzedKWocirFFl3Jzcc3HudpU0/6w5h9YUIoFJNP/iMdt3zaoOCn/zdhraulbHZzDVoJvmj07AKRR+sVAC86QZmfbPCrQ4xDGEC/eaWnE+TD2BPOGOc8Q9IyJCu3eB1oiyWE25BuaD8ElvvQBb17W2e1jwriWBVITNfZHQqD8K4+Z06tEzaYVFuIX4X63wZHi2+abN95fQ0iR6JkrN/B2JytuS2bJIg3AO3DYVW1RHjwyxflRk9+BNQWkQlO/xgCz+VNzd+2v08UP7E6G/XgsmwPkq18Y7ELk8zJDNgRdya351NHD+KeEySQgyKiwICZKI+Ui9PUQfJP57id2l+oIJWWgZVDRE3SHA2Vp8xA4/I6S2JotwZQ1SpE2gR87t7Zpi2pqbb2jFwHs7xucckYHtw=
+  app: ssn-app-staging
