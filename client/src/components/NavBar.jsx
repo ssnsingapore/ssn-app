@@ -40,7 +40,7 @@ class _NavBar extends Component {
           <Tab
             label="About"
             component={Link}
-            to={`/${TAB_PATHS[0]}}`}
+            to={`/${TAB_PATHS[0]}`}
           />
           <Tab
             label="Todos"
