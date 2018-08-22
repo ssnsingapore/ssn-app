@@ -9,13 +9,13 @@ describe('App', () => {
     const component = mount(<App></App>);
     const alerts = {
       someError : {
-        type: "ERROR",
-        message: "error message",
-        isVisible: true
-      }
+        type: 'ERROR',
+        message: 'error message',
+        isVisible: true,
+      },
     };
 
-    component.setState({ alerts })
+    component.setState({ alerts });
 
     expect(component.find('SnackbarContent')).toHaveLength(1);
   });
@@ -24,13 +24,13 @@ describe('App', () => {
     const component = mount(<App></App>);
     const alerts = {
       someError : {
-        type: "ERROR",
-        message: "error message",
-        isVisible: false
-      }
+        type: 'ERROR',
+        message: 'error message',
+        isVisible: false,
+      },
     };
 
-    component.setState({ alerts })
+    component.setState({ alerts });
 
     expect(component.find('SnackbarContent')).toHaveLength(0);
   });
