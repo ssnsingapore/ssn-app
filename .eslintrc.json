@@ -1,0 +1,13 @@
+{
+  "rules": {
+      "indent": ["error", 2],
+      "prefer-const": ["error", {
+          "destructuring": "any",
+          "ignoreReadBeforeAssign": false
+      }]
+  },
+  "parserOptions": {
+      "ecmaVersion": 2017,
+      "sourceType": "module"
+  }
+}

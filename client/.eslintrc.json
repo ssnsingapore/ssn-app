@@ -13,5 +13,6 @@
     "mount": false,
     "document": false,
     "URL": false
-  } 
+  },
+  "root": false 
 }
