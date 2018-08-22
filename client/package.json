@@ -22,7 +22,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "test-no-watch": "CI=true react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "./node_modules/eslint/bin/eslint.js . --ignore-path .gitignore"
   },
   "engines": {
     "node": "8.11.3",

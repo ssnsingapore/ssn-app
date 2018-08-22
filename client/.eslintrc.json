@@ -3,6 +3,15 @@
   "rules": {
     "semi": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
-    "quotes": ["error", "single"]
-  }
+    "quotes": ["error", "single"],
+    "strict": 0,
+    "no-console": "off",
+    "react/prop-types": 0
+  },
+  "globals": {
+    "shallow": false,
+    "mount": false,
+    "document": false,
+    "URL": false
+  } 
 }
