@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cd server && npm run start:prod",
-    "install": "(cd client && npm i) && (cd server && npm i)",
+    "install": "npm i --prefix ./client && npm i --prefix ./server",
     "build": "(cd client && npm run build) && (cd server && npm run build)",
     "server": "cd server && npm start",
     "client": "cd client && npm start",
