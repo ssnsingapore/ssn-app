@@ -1,10 +1,9 @@
 import { RequestWithAlert } from './RequestWithAlert';
 
-const TOKEN_KEY = 'token';
 const CURRENT_USER_KEY = 'currentUser';
 
 export class Authenticator {
-  constructor(requestWithAlert, setAuthState, setCurrentUser) {
+  constructor(requestWithAlert, setAuthState) {
     if (!(requestWithAlert instanceof RequestWithAlert)) {
       throw Error('Authenticator must be instantiated with a RequestWithAlert instance');
     }
@@ -13,13 +12,8 @@ export class Authenticator {
       throw Error('Authenticator must be instantianted with a setAuthState function');
     }
 
-    if (!setCurrentUser) {
-      throw Error('Authenticator must be instantianted with a setCurrentUser function');
-    }
-
     this.requestWithAlert = requestWithAlert;
     this.setAuthState = setAuthState;
-    this.setCurrentUser = setCurrentUser;
   }
 
   isAuthenticated = () => {
@@ -28,10 +22,6 @@ export class Authenticator {
 
   getCurrentUser = () => {
     return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
-  }
-
-  getToken = () => {
-    return localStorage.getItem(TOKEN_KEY);
   }
 
   signUp = async (
@@ -63,18 +53,15 @@ export class Authenticator {
       .post('/api/v1/login', data, { authenticated: true });
 
     if (response.isSuccessful) {
-      const { token, user } = await response.json();
-      localStorage.setItem(TOKEN_KEY, token);
+      const { user } = await response.json();
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
       this.setAuthState(true);
-      this.setCurrentUser(user);
     }
 
     return response;
   }
 
   logout = () => {
-    localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);
     this.setAuthState(false);
   }

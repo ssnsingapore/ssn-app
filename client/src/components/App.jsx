@@ -16,11 +16,9 @@ class App extends Component {
     const authenticator = new Authenticator(
       requestWithAlert,
       this.setAuthState,
-      this.setCurrentUser,
     );
 
     this.state = {
-      currentUser: authenticator.getCurrentUser(),
       isAuthenticated: authenticator.isAuthenticated(),
       alerts: {},
       updaters: {
@@ -36,10 +34,6 @@ class App extends Component {
 
   setAuthState = (authState) => {
     this.setState({ isAuthenticated: authState });
-  }
-
-  setCurrentUser = (user) => {
-    this.setState({ currentUser: user });
   }
 
   showAlert = (key, type, message) => {

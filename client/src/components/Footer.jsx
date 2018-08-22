@@ -9,10 +9,10 @@ import { withContext } from 'util/context';
 class _Footer extends Component {
   render() {
     const { classes } = this.props;
-    const { isAuthenticated, currentUser } = this.props.context;
     const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
 
-    if (!isAuthenticated || !currentUser) {
+    if (!authenticator.isAuthenticated()|| !currentUser) {
       return null;
     }
 

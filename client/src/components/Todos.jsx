@@ -274,9 +274,9 @@ class _Todos extends Component {
 
   render() {
     const { classes } = this.props;
-    const { isAuthenticated } = this.props.context;
+    const { authenticator } = this.props.context.utils;
 
-    if (!isAuthenticated) {
+    if (!authenticator.isAuthenticated()) {
       return <Redirect to="/todos/login" />;
     }
 
