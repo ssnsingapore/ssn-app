@@ -4,7 +4,7 @@ node_js:
 env:
   global:
   - NODE_PATH="src/"
-  - NODE_ENV=production
+  - NODE_ENV=staging
   - PORT=3001
   - DATABASE_URI=mongo_uri
   - AUTH_SECRET=aws_secret_key
