@@ -19,8 +19,8 @@ export const formatErrors = (
 ) => {
   const errString =
     errors
-    .map(error => error[level])
-    .join(';');
+      .map(error => error[level])
+      .join(';');
 
   if (errString) {
     return `${base}: ${errString}`;

@@ -11,8 +11,8 @@ export class RequestWithAlert {
   }
 
   constructHeaders = (token) => {
-     const headers = { 'Content-Type': 'application/json' };
-     return headers;
+    const headers = { 'Content-Type': 'application/json' };
+    return headers;
   }
 
   setCredentials = (authenticated) => {

@@ -23,7 +23,7 @@ export class Authenticator {
   }
 
   isAuthenticated = () => {
-      return !!localStorage.getItem(CURRENT_USER_KEY);
+    return !!localStorage.getItem(CURRENT_USER_KEY);
   }
 
   getCurrentUser = () => {
