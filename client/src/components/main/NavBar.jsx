@@ -20,8 +20,10 @@ class _NavBar extends Component {
 
     const rootPath = props.location.pathname.split('/')[1];
 
+    const selectedTab = TAB_PATHS.indexOf(rootPath);
+
     this.state = {
-      value: TAB_PATHS.indexOf(rootPath),
+      value: selectedTab === -1 ? false : selectedTab,
     };
   }
 
