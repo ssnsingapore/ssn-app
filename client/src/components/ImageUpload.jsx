@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Button, GridList, GridListTile } from '@material-ui/core';
 
-import { AppContext } from './AppContext';
+import { AppContext } from './main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
-import { AlertType } from './Alert';
+import { AlertType } from './shared/Alert';
 
 import defaultImage from 'assets/image-placeholder.svg';
 

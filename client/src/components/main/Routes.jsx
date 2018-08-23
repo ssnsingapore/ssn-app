@@ -4,12 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { NavBar } from './NavBar';
 import { Footer } from './Footer';
-import { Todos } from './Todos';
-import { About } from './About';
-import { Login } from './Login';
-import { SignUp } from './SignUp';
 import { NotFound } from './NotFound';
-import { ImageUpload } from './ImageUpload';
+import { Todos } from 'components/Todos';
+import { About } from 'components/About';
+import { Login } from 'components/Login';
+import { SignUp } from 'components/SignUp';
+import { ImageUpload } from 'components/ImageUpload';
 
 class _Routes extends Component {
   render() {

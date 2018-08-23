@@ -18,9 +18,9 @@ import {
 import { Redirect } from 'react-router-dom';
 import * as moment from 'moment';
 
-import { Spinner } from './Spinner';
-import { AlertType } from './Alert';
-import { AppContext } from './AppContext';
+import { Spinner } from './shared/Spinner';
+import { AlertType } from './shared/Alert';
+import { AppContext } from './main/AppContext';
 import { withContext } from 'util/context';
 import { fieldValue, fieldHasError, fieldErrorText, withForm } from 'util/form';
 import { extractErrors, formatErrors } from 'util/errors';

@@ -3,8 +3,8 @@ import { Redirect, Link } from 'react-router-dom';
 import { Grid, TextField, Button } from '@material-ui/core';
 import { withTheme, withStyles } from '@material-ui/core/styles';
 
-import { AppContext } from './AppContext';
-import { AlertType } from './Alert';
+import { AppContext } from './main/AppContext';
+import { AlertType } from './shared/Alert';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import {

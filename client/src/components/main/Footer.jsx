@@ -5,7 +5,7 @@ import { ExitToApp as LogoutIcon } from '@material-ui/icons';
 
 import { AppContext } from './AppContext';
 import { withContext } from 'util/context';
-import { AlertType } from './Alert';
+import { AlertType } from 'components/shared/Alert';
 
 const LOGOUT_SUCCESS_MESSAGE = 'You\'ve successfully logged out!';
 const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error loggingk you out. Please try again!';

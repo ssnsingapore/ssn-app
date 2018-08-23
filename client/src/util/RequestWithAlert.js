@@ -1,4 +1,4 @@
-import { AlertType, NETWORK_ERROR_MESSAGE } from 'components/Alert';
+import { AlertType, NETWORK_ERROR_MESSAGE } from 'components/shared/Alert';
 
 export class RequestWithAlert {
   constructor(showAlert) {

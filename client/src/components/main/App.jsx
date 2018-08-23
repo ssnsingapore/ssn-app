@@ -6,7 +6,7 @@ import { Authenticator } from 'util/Authenticator';
 
 import { AppContext } from './AppContext';
 import { Routes } from './Routes';
-import { Alert } from './Alert';
+import { Alert } from 'components/shared/Alert';
 
 class App extends Component {
   constructor(props) {
