@@ -15,7 +15,6 @@ import {
   AddCircle as AddCircleIcon,
   Delete as DeleteIcon,
 } from '@material-ui/icons';
-import { Redirect } from 'react-router-dom';
 import * as moment from 'moment';
 
 import { Spinner } from './shared/Spinner';
@@ -274,11 +273,6 @@ class _Todos extends Component {
 
   render() {
     const { classes } = this.props;
-    const { authenticator } = this.props.context.utils;
-
-    if (!authenticator.isAuthenticated()) {
-      return <Redirect to="/todos/login" />;
-    }
 
     return (
       <div>

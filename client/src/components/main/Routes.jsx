@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { NavBar } from './NavBar';
 import { Footer } from './Footer';
 import { NotFound } from './NotFound';
+import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Todos } from 'components/Todos';
 import { About } from 'components/About';
 import { Login } from 'components/Login';
@@ -23,9 +24,9 @@ class _Routes extends Component {
             <Switch>
               <Route exact path="/" component={About} />
               <Route path="/about" component={About} />
-              <Route exact path="/todos" component={Todos} />
-              <Route path="/todos/login" component={Login} />
-              <Route path="/todos/signup" component={SignUp} />
+              <RouteAuthenticated exact path="/todos" component={Todos} />
+              <Route path="/login" component={Login} />
+              <Route path="/signup" component={SignUp} />
               <Route path="/image_upload" component={ImageUpload} />
               <Route component={NotFound} />
             </Switch>
