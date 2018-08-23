@@ -45,11 +45,9 @@ export class Authenticator {
   login = async (
     email,
     password,
-    networkErrorHandler,
   ) => {
     const data = { user: { email, password } };
     const response = await this.requestWithAlert
-      .onNetworkError(networkErrorHandler)
       .post('/api/v1/login', data, { authenticated: true });
 
     if (response.isSuccessful) {
@@ -61,8 +59,15 @@ export class Authenticator {
     return response;
   }
 
-  logout = () => {
-    localStorage.removeItem(CURRENT_USER_KEY);
-    this.setAuthState(false);
+  logout = async () => {
+    const response = await this.requestWithAlert
+      .delete('/api/v1/logout', { authenticated: true });
+
+    if (response.isSuccessful) {
+      localStorage.removeItem(CURRENT_USER_KEY);
+      this.setAuthState(false);
+    }
+
+    return response;
   }
 }

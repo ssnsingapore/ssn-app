@@ -4,6 +4,7 @@
 // the environment variables are set
 // and imports are resolved depth-first
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy } from 'passport-jwt';
@@ -38,6 +39,8 @@ export const config = {
   AUTH_SECRET: process.env.AUTH_SECRET,
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
   TOKEN_COOKIE_NAME: 'ssn_token',
+  TOKEN_COOKIE_MAXAGE: 15 * 24 * 60 * 60 * 1000,
+  JWT_EXPIRES_IN: '30 days',
 };
 
 // =============================================================================
@@ -82,10 +85,22 @@ const extractJwtFromCookie = (req) => {
   return null;
 };
 
+// Workaround to get signing secret which requires
+// user's hashed password and last logout time
+// Not the most ideal as we have to hit the DB twice
+// with passport-jwts current API
+const secretOrKeyProvider = async (_req, rawJwtToken, done) => {
+  const payload = jwt.decode(rawJwtToken);
+  const { userid } = payload;
+  const user = await User.findOne({ _id: userid });
+
+  return done(null, `${config.AUTH_SECRET}-${user.hashedPassword}-${user.lastLogoutTime}`);
+};
+
 passport.use(new JwtStrategy(
   {
     jwtFromRequest: extractJwtFromCookie,
-    secretOrKey: config.AUTH_SECRET,
+    secretOrKeyProvider,
   },
   (async (jwtPayload, done) => {
     try {

@@ -15,10 +15,11 @@ const UserSchema = new mongoose.Schema(
       match: [/\S+@\S+\.\S+/, 'is invalid'],
       index: true,
     },
-    name: String,
+    name: { type: String, required: [true, 'cannot be blank'] },
     hashedPassword: String,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    lastLogoutTime: Date,
   },
   { timestamps: true },
 );
@@ -41,9 +42,9 @@ UserSchema.methods.generateJWT = function () {
       name: this.name,
       email: this.email,
     },
-    config.AUTH_SECRET,
+    `${config.AUTH_SECRET}-${this.hashedPassword}-${this.lastLogoutTime}`,
     {
-      expiresIn: '30 days',
+      expiresIn: config.JWT_EXPIRES_IN,
     },
   );
 };

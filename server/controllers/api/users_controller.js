@@ -45,6 +45,7 @@ async function registerNewUser(req, res) {
       // Enable in production to enforce transmission only over HTTPS
       // or setup HTTPs on localhost
       // secure: true,
+      maxAge: config.TOKEN_COOKIE_MAXAGE,
     },
   );
   return res
@@ -76,6 +77,7 @@ usersRouter.post(
   asyncWrap(login)
 );
 async function login(req, res) {
+  // req.user will be available after successful auth
   const { user } = req;
 
 
@@ -87,6 +89,7 @@ async function login(req, res) {
       // Enable in production to enforce transmission only over HTTPS
       // or setup HTTPs on localhost
       // secure: true,
+      maxAge: config.TOKEN_COOKIE_MAXAGE,
     },
   );
   return res
@@ -94,4 +97,25 @@ async function login(req, res) {
     .json({
       user: user.toJSON(),
     });
+}
+
+usersRouter.delete(
+  '/logout',
+  passport.authenticate('jwt', { session: false, failWithError: true }),
+  asyncWrap(logout)
+);
+async function logout(req, res) {
+  // req.user will be available after successful auth
+  const { user } = req;
+
+  await user.update({ lastLogoutTime: new Date() });
+  res.clearCookie(
+    config.TOKEN_COOKIE_NAME,
+    {
+      httpOnly: true,
+    }
+  );
+  return res
+    .status(204)
+    .end();
 }
