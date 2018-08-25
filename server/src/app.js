@@ -41,7 +41,10 @@ app.use(router);
 // and send back the React app's index.html file
 app.get('/*', (req, res, _next) => {
   const indexFilePath = findConfig('index.html', { dir: 'client/build' });
-  res.sendFile(indexFilePath);
+  if (indexFilePath) {
+    res.sendFile(indexFilePath);
+  }
+  _next();
 });
 
 // catch 404 and forward to error handler
