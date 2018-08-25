@@ -1,11 +1,28 @@
 import request from 'supertest';
+import mongoose from 'mongoose';
 
 import app from 'app';
 
-describe('Root Route', () => {
-  test('get request returns status code 200', async () => {
-    const response = await request(app).get('/');
+beforeAll(async () => {
+  await mongoose.connect(global.__MONGO_URI__);
+});
+  
+afterAll(async () => {
+  mongoose.disconnect();
+});
 
-    expect(response.status).toEqual(200);
+describe('User sign up route', () => {
+  test('post request returns status code 201', async () => {
+    const user = {
+      name: "username",
+      email: "email@email.com",
+      password: "xxx"
+    }
+    const response = await request(app).post('/api/v1/users').send({ user });
+
+    delete user.password;
+
+    expect(response.status).toEqual(201);
+    expect(response.body).toEqual({ user });
   });
 });

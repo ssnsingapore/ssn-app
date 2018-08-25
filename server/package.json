@@ -45,6 +45,7 @@
     "eslint-plugin-import": "^2.14.0",
     "jest": "^23.5.0",
     "kexec": "^3.0.0",
+    "mongodb-memory-server": "^2.0.1",
     "regenerator-runtime": "^0.12.1",
     "supertest": "^3.1.0"
   },
@@ -54,5 +55,13 @@
   },
   "resolutions": {
     "eslint-scope": "3.7.1"
+  },
+  "jest": {
+    "testEnvironment": "./test/mongo-environment.js",
+    "globalSetup": "./test/setup.js",
+    "globalTeardown": "./test/teardown.js",
+    "globals": {
+      "window": {}
+    }
   }
 }
