@@ -39,9 +39,9 @@ app.use(router);
 // Catch all routes that don't match any previous ones
 // and send back the React app's index.html file
 app.get('/*', (req, res, _next) => {
-  const indexFilePath = isProduction ?
-    path.join(__dirname, '../../client', 'build', 'index.html') :
-    path.join(__dirname, '../client', 'build', 'index.html');
+  const indexFilePath = isProduction
+    ? path.join(__dirname, '../../client', 'build', 'index.html')
+    : path.join(__dirname, '../client', 'build', 'index.html');
   res.sendFile(indexFilePath);
 });
 
