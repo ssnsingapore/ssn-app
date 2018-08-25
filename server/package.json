@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start:prod": "node build/server.js",
-    "start": "npx nodemon server.js --exec babel-node",
+    "start:prod": "node build/src/server.js",
+    "start": "npx nodemon src/server.js --exec babel-node",
     "build": "babel . --ignore node_modules,build --out-dir build",
     "test": "jest",
     "lint": "./node_modules/eslint/bin/eslint.js . --ignore-path .gitignore"
