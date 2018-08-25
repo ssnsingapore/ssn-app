@@ -4,9 +4,9 @@ import mongoose from 'mongoose';
 import app from 'app';
 
 beforeAll(async () => {
-  await mongoose.connect(global.__MONGO_URI__);
+  await mongoose.connect(global.mongoUri);
 });
-  
+
 afterAll(async () => {
   mongoose.disconnect();
 });
@@ -14,10 +14,10 @@ afterAll(async () => {
 describe('User sign up route', () => {
   test('post request returns status code 201', async () => {
     const user = {
-      name: "username",
-      email: "email@email.com",
-      password: "xxx"
-    }
+      name: 'username',
+      email: 'email@email.com',
+      password: 'xxx',
+    };
     const response = await request(app).post('/api/v1/users').send({ user });
 
     delete user.password;

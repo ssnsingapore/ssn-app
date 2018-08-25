@@ -6,7 +6,7 @@ const globalConfigPath = path.join(__dirname, 'globalConfig.json');
 
 const mongoServer = new MongodbMemoryServer.MongoMemoryServer();
 
-module.exports = async function() {
+module.exports = async function () {
   const mongoConfig = {
     mongoDBName: 'jest',
     mongoUri: await mongoServer.getConnectionString(),
@@ -16,5 +16,5 @@ module.exports = async function() {
   fs.writeFileSync(globalConfigPath, JSON.stringify(mongoConfig));
 
   // Set reference to mongod in order to close the server during teardown.
-  global.__MONGOD__ = mongoServer;
+  global.mongoServer = mongoServer;
 };

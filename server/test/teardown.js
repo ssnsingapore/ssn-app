@@ -1,4 +1,4 @@
-module.exports = async function() {
+module.exports = async function () {
   console.log('Teardown mongod');
-  await global.__MONGOD__.stop();
+  await global.mongoServer.stop();
 };
