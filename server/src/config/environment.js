@@ -34,7 +34,7 @@ const checkRequiredExist = (...variables) => {
       throw new Error(`Environment variable ${name} is missing`);
     }
   });
-}
+};
 
 // Note: NODE_ENV variable is recognized by Express
 checkRequiredExist(
@@ -47,4 +47,6 @@ checkRequiredExist(
   'AWS_SECRET_ACCESS_KEY',
 );
 
-export {isTest, isProduction, isDevelopment, config};
+export {
+  isTest, isProduction, isDevelopment, config,
+};
