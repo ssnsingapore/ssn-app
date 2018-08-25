@@ -62,6 +62,8 @@ export function handleError(err, res) {
       .json({ errors: [new NotFoundErrorView()] });
   }
 
+  console.log('ERROR', err);
+
   return res
     .status(500)
     .json({ errors: [new InternalServerErrorView()] });
