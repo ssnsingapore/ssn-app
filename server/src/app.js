@@ -6,6 +6,7 @@ import logger from 'morgan';
 import errorhandler from 'errorhandler';
 import mongoose from 'mongoose';
 import passport from 'passport';
+import findConfig from 'find-config';
 
 import { isProduction, isTest, config } from './config';
 import { router } from './controllers';
@@ -28,7 +29,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 if (isProduction) {
-  app.use(express.static(path.join(__dirname, '../../client/build')));
+  app.use(express.static(path.join(__dirname, '../../../client/build')));
 } else {
   app.use(errorhandler());
 }
@@ -39,9 +40,7 @@ app.use(router);
 // Catch all routes that don't match any previous ones
 // and send back the React app's index.html file
 app.get('/*', (req, res, _next) => {
-  const indexFilePath = isProduction
-    ? path.join(__dirname, '../../client', 'build', 'index.html')
-    : path.join(__dirname, '../client', 'build', 'index.html');
+  const indexFilePath = findConfig('index.html', { dir: 'client/build' });
   res.sendFile(indexFilePath);
 });
 
