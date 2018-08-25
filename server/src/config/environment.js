@@ -11,14 +11,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const checkRequiredExist = (...variables) => {
-  variables.forEach((name) => {
-    if (!process.env[name]) {
-      throw new Error(`Environment variable ${name} is missing`);
-    }
-  });
-};
-
 // Note: NODE_ENV variable is recognized by Express
 checkRequiredExist(
   'NODE_ENV',
@@ -42,3 +34,15 @@ export const config = {
   TOKEN_COOKIE_MAXAGE: 15 * 24 * 60 * 60 * 1000,
   JWT_EXPIRES_IN: '30 days',
 };
+
+function checkRequiredExist(...variables) {
+  if (isTest) {
+    return;
+  }
+
+  variables.forEach((name) => {
+    if (!process.env[name]) {
+      throw new Error(`Environment variable ${name} is missing`);
+    }
+  });
+}
