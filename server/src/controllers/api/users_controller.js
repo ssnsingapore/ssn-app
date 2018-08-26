@@ -45,9 +45,8 @@ async function registerNewUser(req, res) {
     user.generateJWT(csrfToken),
     {
       httpOnly: true,
-      // Enable in production to enforce transmission only over HTTPS
-      // or setup HTTPs on localhost
-      // secure: true,
+      secure: true,
+      sameSite: true,
       maxAge: config.TOKEN_COOKIE_MAXAGE,
     },
   );
@@ -91,9 +90,8 @@ async function login(req, res) {
     user.generateJWT(csrfToken),
     {
       httpOnly: true,
-      // Enable in production to enforce transmission only over HTTPS
-      // or setup HTTPs on localhost
-      // secure: true,
+      secure: true,
+      sameSite: true,
       maxAge: config.TOKEN_COOKIE_MAXAGE,
     },
   );
@@ -119,6 +117,8 @@ async function logout(req, res) {
     config.TOKEN_COOKIE_NAME,
     {
       httpOnly: true,
+      secure: true,
+      sameSite: true,
     }
   );
   return res
