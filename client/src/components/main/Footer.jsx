@@ -8,7 +8,7 @@ import { withContext } from 'util/context';
 import { AlertType } from 'components/shared/Alert';
 
 const LOGOUT_SUCCESS_MESSAGE = 'You\'ve successfully logged out!';
-const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error loggingk you out. Please try again!';
+const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error logging you out. Please try again!';
 
 class _Footer extends Component {
   handleLogout = async () => {
