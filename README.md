@@ -105,8 +105,8 @@ To protect against a web vulnerability called Cross-Site Request Forgery (CSRF, 
 
 Basically, when the client initiates a login request, the server returns:
 1. a JWT in a httpOnly cookie, with the CSRF token as part of the JWT payload,
-2. the CSRF token in the response body.
-The client takes the CSRF token from the response and saves it in `localStorage`. Then, it sends the token back to the server in every request as part of a custom `CSRF-Token` HTTP header. The server verifies this token against the token inside the JWT payload for every authenticated route.
+2. the CSRF token in the response headers
+The client takes the CSRF token from the response headers and saves it in `localStorage`. Then, it sends the token back to the server in every request as part of a custom `CSRF-Token` HTTP header. The server verifies this token against the token inside the JWT payload for every authenticated route.
 
 Some facts to be aware of to understand why this protection mechanism is used:
 1. Browsers implement a [Same-origin policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) (SOP) that prevents cross-origin requests from reading the responses of the server, but does not prevent cross-origin requests from writing to the server (eg. POST requests). Thus, SOP alone does not prevent CSRF attacks, even if our server does not use CORS (all cross-origin requests are restricted by SOP), or uses Cross-Origin Resource Sharing (CORS) correctly configured to accept cross-origin requests only from trusted domains. To reiterate, SOP does not prevent a malicious cross-origin request from altering state on our server. For more, see [here](https://security.stackexchange.com/questions/145013/when-does-the-same-origin-policy-prevent-a-request-from-being-sent)
