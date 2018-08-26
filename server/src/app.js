@@ -48,7 +48,7 @@ app.get('/*', (_req, res, next) => {
   if (indexFilePath) {
     return res.sendFile(indexFilePath);
   }
-  next();
+  return next();
 });
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
