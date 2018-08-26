@@ -1,6 +1,8 @@
 # Generated
 build/
 tags
+localhost-key.pem
+localhost.pem
 
 # Logs
 logs
