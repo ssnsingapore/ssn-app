@@ -1,13 +1,12 @@
 import express from 'express';
-import passport from 'passport';
 
 import { Todo } from 'models/Todo';
 import { asyncWrap } from 'util/async_wrapper';
+import { authenticationMiddleware } from 'util/authentication';
 
 export const todosRouter = express.Router();
 
-// See here https://github.com/jaredhanson/passport/issues/458 for failWithError option that allows propagation to error-handling middleware
-todosRouter.use('/todos', passport.authenticate('jwt', { session: false, failWithError: true }));
+todosRouter.use('/todos', authenticationMiddleware);
 
 todosRouter.get('/todos', asyncWrap(getTodos));
 async function getTodos(_req, res) {

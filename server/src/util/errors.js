@@ -12,7 +12,7 @@ class NotFoundErrorView {
   constructor() {
     this.status = 404;
     this.title = 'Not Found';
-    this.detail = 'The resource you were looking for could not be found';
+    this.detail = 'The resource you were looking for could not be found.';
   }
 }
 
@@ -20,7 +20,15 @@ class UnauthorizedErrorView {
   constructor() {
     this.status = 401;
     this.title = 'Unauthorized';
-    this.detail = 'Looks like you tried to make an unauthorized request';
+    this.detail = 'Looks like you tried to make an unauthorized request.';
+  }
+}
+
+class ForbiddenErrorView {
+  constructor() {
+    this.status = 403;
+    this.title = 'Forbidden';
+    this.detail = 'Looks like you tried to make a forbidden request.';
   }
 }
 
@@ -54,6 +62,12 @@ export function handleError(err, res) {
     return res
       .status(401)
       .json({ errors: [new UnauthorizedErrorView()] });
+  }
+
+  if (err.status === 403) {
+    return res
+      .status(403)
+      .json({ errors: [new ForbiddenErrorView()] });
   }
 
   if (err.status === 404) {

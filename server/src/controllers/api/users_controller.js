@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from 'passport';
+import uid from 'uid-safe';
 
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
@@ -37,9 +38,11 @@ async function registerNewUser(req, res) {
     return checkForDuplicateEmail(err, res);
   }
 
+  const csrfToken = await uid(18);
+
   res.cookie(
     config.TOKEN_COOKIE_NAME,
-    user.generateJWT(),
+    user.generateJWT(csrfToken),
     {
       httpOnly: true,
       // Enable in production to enforce transmission only over HTTPS
@@ -48,6 +51,7 @@ async function registerNewUser(req, res) {
       maxAge: config.TOKEN_COOKIE_MAXAGE,
     },
   );
+  res.set('csrf-token', csrfToken);
   return res
     .status(201)
     .json({ user: user.toJSON() });
@@ -80,10 +84,11 @@ async function login(req, res) {
   // req.user will be available after successful auth
   const { user } = req;
 
+  const csrfToken = await uid(18);
 
   res.cookie(
     config.TOKEN_COOKIE_NAME,
-    user.generateJWT(),
+    user.generateJWT(csrfToken),
     {
       httpOnly: true,
       // Enable in production to enforce transmission only over HTTPS
@@ -92,6 +97,7 @@ async function login(req, res) {
       maxAge: config.TOKEN_COOKIE_MAXAGE,
     },
   );
+  res.set('csrf-token', csrfToken);
   return res
     .status(200)
     .json({

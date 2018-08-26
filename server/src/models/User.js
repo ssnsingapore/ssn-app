@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-
 import uniqueValidator from 'mongoose-unique-validator';
 import jwt from 'jsonwebtoken';
+
 import { config } from 'config/environment';
 
 const UserSchema = new mongoose.Schema(
@@ -35,12 +35,13 @@ UserSchema.methods.isValidPassword = async function (password) {
   return bcrypt.compare(password, this.hashedPassword);
 };
 
-UserSchema.methods.generateJWT = function () {
+UserSchema.methods.generateJWT = function (csrfToken) {
   return jwt.sign(
     {
       userid: this._id,
       name: this.name,
       email: this.email,
+      csrfToken,
     },
     `${config.AUTH_SECRET}-${this.hashedPassword}-${this.lastLogoutTime}`,
     {

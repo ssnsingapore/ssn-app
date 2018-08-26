@@ -34,7 +34,8 @@
     "nodemon": "^1.17.5",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "uid-safe": "^2.1.5"
   },
   "devDependencies": {
     "babel-core": "^7.0.0-bridge.0",
