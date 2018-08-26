@@ -11,6 +11,8 @@ env:
   - AWS_BUCKET_NAME=ssn-app
   - AWS_ACCESS_KEY_ID=key
   - AWS_SECRET_ACCESS_KEY=key
+install:
+- npm run ci-install    
 script:
 - npm run lint
 - npm test

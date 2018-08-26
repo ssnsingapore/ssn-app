@@ -6,6 +6,7 @@
   "scripts": {
     "start": "cd server && npm run start:prod",
     "install": "npm i --prefix ./client && npm i --prefix ./server",
+    "ci-install": "npm ci --prefix ./client && npm ci --prefix ./server",
     "build": "(cd client && npm run build) && (cd server && npm run build)",
     "server": "cd server && npm start",
     "client": "cd client && npm start",
