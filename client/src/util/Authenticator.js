@@ -1,6 +1,5 @@
 import { RequestWithAlert } from './RequestWithAlert';
-
-const CURRENT_USER_KEY = 'currentUser';
+import { CURRENT_USER_KEY, CSRF_TOKEN_KEY } from './storage_keys';
 
 export class Authenticator {
   constructor(requestWithAlert, setAuthState) {
@@ -24,6 +23,22 @@ export class Authenticator {
     return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
   }
 
+  setSuccessfulAuthState = async (response) => {
+    const { user } = await response.json();
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+
+    const csrfToken = response.headers.get('csrf-token');
+    localStorage.setItem(CSRF_TOKEN_KEY, csrfToken);
+
+    this.setAuthState(true);
+  }
+
+  clearAuthState = () => {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem(CSRF_TOKEN_KEY);
+    this.setAuthState(false);
+  }
+
   signUp = async (
     user,
     networkErrorHandler,
@@ -34,9 +49,7 @@ export class Authenticator {
       .post('/api/v1/users', data, { authenticated: true });
 
     if (response.isSuccessful) {
-      const { user } = await response.json();
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-      this.setAuthState(true);
+      await this.setSuccessfulAuthState(response);
     }
 
     return response;
@@ -51,9 +64,7 @@ export class Authenticator {
       .post('/api/v1/login', data, { authenticated: true });
 
     if (response.isSuccessful) {
-      const { user } = await response.json();
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-      this.setAuthState(true);
+      await this.setSuccessfulAuthState(response);
     }
 
     return response;
@@ -64,8 +75,7 @@ export class Authenticator {
       .delete('/api/v1/logout', { authenticated: true });
 
     if (response.isSuccessful) {
-      localStorage.removeItem(CURRENT_USER_KEY);
-      this.setAuthState(false);
+      this.clearAuthState();
     }
 
     return response;

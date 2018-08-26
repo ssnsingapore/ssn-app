@@ -1,4 +1,5 @@
 import { AlertType, NETWORK_ERROR_MESSAGE } from 'components/shared/Alert';
+import { CSRF_TOKEN_KEY } from './storage_keys';
 
 export class RequestWithAlert {
   constructor(showAlert) {
@@ -10,9 +11,15 @@ export class RequestWithAlert {
     return this;
   }
 
-  constructHeaders = (token) => {
-    const headers = { 'Content-Type': 'application/json' };
-    return headers;
+  getCsrfToken = () => {
+    return localStorage.getItem(CSRF_TOKEN_KEY);
+  }
+
+  constructHeaders = () => {
+    return {
+      'Content-Type': 'application/json',
+      'CSRF-Token': this.getCsrfToken(),
+    };
   }
 
   setCredentials = (authenticated) => {
@@ -73,15 +80,19 @@ export class RequestWithAlert {
     );
   }
 
-  uploadFile = async (url, formData, token) => {
-    // Do not includea any headers to
+  uploadFile = async (url, formData) => {
+    // Do not include any content-type headers to
     // ensure that browser correctly sets a boundary
     // for the multipart request.
     // See https://stackoverflow.com/questions/39280438/fetch-missing-boundary-in-multipart-form-data-post
+    const headers = this.constructHeaders();
+    delete headers['Content-Type'];
+
     return this.execute(
       url,
       {
         method: 'post',
+        headers,
         body: formData,
       },
     );
