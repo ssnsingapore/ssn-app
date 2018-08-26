@@ -5,6 +5,7 @@ env:
   global:
   - NODE_PATH="src/"
   - NODE_ENV=test
+before_install: if [[ `npm -v` != 6.1.0 ]]; then npm i -g npm@6.1.0; fi  
 install:
 - npm run ci-install    
 script:
