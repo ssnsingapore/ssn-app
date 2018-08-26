@@ -8,10 +8,10 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import findConfig from 'find-config';
 
-import { isProduction, isTest, config } from './config';
-import { configurePassport } from './config/passport';
-import { router } from './controllers';
-import { handleError } from './util/errors';
+import { isProduction, isTest, config } from 'config/environment';
+import { configurePassport } from 'config/passport';
+import { router } from 'controllers';
+import { handleError } from 'util/errors';
 
 if (!isTest) {
   mongoose.connect(config.DATABASE_URI);
@@ -42,14 +42,13 @@ app.use(router);
 
 // Catch all routes that don't match any previous ones
 // and send back the React app's index.html file
-app.get('/*', (req, res, _next) => {
+app.get('/*', (_req, res, next) => {
   const indexFilePath = findConfig('index.html', { dir: 'client/build' });
   if (indexFilePath) {
     res.sendFile(indexFilePath);
   }
-  _next();
+  next();
 });
-
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError.NotFound());

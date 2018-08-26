@@ -1,7 +1,8 @@
 import express from 'express';
 import multer from 'multer';
 
-import { s3, config } from 'config';
+import { config } from 'config/environment';
+import { s3 } from 'config/aws';
 import { Image } from 'models/Image';
 import { asyncWrap } from 'util/async_wrapper';
 

@@ -6,6 +6,14 @@ import { Strategy as JwtStrategy } from 'passport-jwt';
 import { User } from 'models/User';
 import { config } from './environment';
 
+export const extractJwtFromCookie = (req) => {
+  if (req && req.cookies) {
+    return req.cookies[config.TOKEN_COOKIE_NAME];
+  }
+
+  return null;
+};
+
 export const configurePassport = () => {
   // =============================================================================
   // PASSPORT CONFIGURATION
@@ -29,14 +37,6 @@ export const configurePassport = () => {
       }
     }),
   ));
-
-  const extractJwtFromCookie = (req) => {
-    if (req && req.cookies) {
-      return req.cookies[config.TOKEN_COOKIE_NAME];
-    }
-
-    return null;
-  };
 
   // Workaround to get signing secret which requires
   // user's hashed password and last logout time

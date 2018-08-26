@@ -5,8 +5,8 @@
 import http from 'http';
 import debug from 'debug';
 
+import { config } from 'config/environment';
 import app from './app';
-import { config } from './config';
 
 const debugServer = debug('server:server');
 

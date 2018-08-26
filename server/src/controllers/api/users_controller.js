@@ -3,7 +3,7 @@ import passport from 'passport';
 
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
-import { config } from 'config';
+import { config } from 'config/environment';
 import { checkIfFound, UnprocessableEntityErrorView } from 'util/errors';
 
 export const usersRouter = express.Router();
