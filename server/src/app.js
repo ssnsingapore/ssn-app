@@ -31,9 +31,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-if (isProduction) {
-  app.use(express.static(path.join(__dirname, '../../../client/build')));
-} else {
+// Serve static files
+const indexFilePath = findConfig('index.html', { dir: 'client/build' });
+app.use(express.static(path.dirname(indexFilePath)));
+
+if (!isProduction) {
   app.use(errorhandler());
 }
 
@@ -43,9 +45,8 @@ app.use(router);
 // Catch all routes that don't match any previous ones
 // and send back the React app's index.html file
 app.get('/*', (_req, res, next) => {
-  const indexFilePath = findConfig('index.html', { dir: 'client/build' });
   if (indexFilePath) {
-    res.sendFile(indexFilePath);
+    return res.sendFile(indexFilePath);
   }
   next();
 });
