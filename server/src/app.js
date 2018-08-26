@@ -9,12 +9,15 @@ import passport from 'passport';
 import findConfig from 'find-config';
 
 import { isProduction, isTest, config } from './config';
+import { configurePassport } from './config/passport';
 import { router } from './controllers';
 import { handleError } from './util/errors';
 
 if (!isTest) {
   mongoose.connect(config.DATABASE_URI);
 }
+
+configurePassport();
 
 const app = express();
 
