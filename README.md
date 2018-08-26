@@ -6,23 +6,106 @@
   - PassportJS for authentication + authorization
 
 ## Local Setup
- - Install dependencies with command:
+Install dependencies
  ```
  npm i
  ```
- - Create .env files within `client` and `server` folders
- - Set up environment variables following `.env.sample` files found in respective folders
- - To run application in development mode, start server with command:
+
+Create .env files within `client` and `server` folders. Copy over `.env.sample`:
+```
+# inside client
+cd client
+cp .env.sample .env
+
+# inside server
+cd ../server
+cp .env.sample .env
+```
+Open up the `.env` files in your editor and fill in any missing values.
+
+For the `DATABASE_URI` you have to either [set up mongodb locally](https://docs.mongodb.com/manual/installation/#mongodb-community-edition), or you can provision a database using the [mlabs free tier](https://mlab.com/). If you set up MongoDB locally, your `DATABASE_URI` will look something like `mongodb://localhost:27017/<your-database-name></your-database-name>`.
+
+For the `AUTH_SECRET`, you can use a secure random string generated [here](https://www.grc.com/passwords.htm)
+
+For the `AWS_BUCKET_NAME`, you have to create an AWS account and create a new S3 bucket, and use its name.
+
+For the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, you have to create an AWS Identity and Access Management (IAM) user with programmatic access. When creating this user add it to a group with an AmazonS3FullAccess policy.
+
+Start the server
  ```
  npm run server
  ```
- - Start client separately with command:
+
+ In a separate terminal start the client
  ```
-npm start --prefix ./client
+ npm run client
  ```
 
+ Note that since the `HTTPS` environment variable is set to `true` for the client, when you open the React app at `https://localhost:3000`, your browser will show you a warning that the connection is not private or is insecure. This is because the webpack dev server serving up the React app is using a default self-signed certificate that is not trusted by your computer. Just ignore the browser's warning and proceed to load the URL anyway.
+
+ The reason that we are enabling HTTPS on the dev server is that we are sending secure cookies to the server, and secure cookies can only be sent over HTTPS.
+
+
+## Workflow and Check-in Dance
+When you start work on a new feature, check that the build is green, check your current git status, pull the latest code from master and branch out. Let's stick to the convention of naming our feature branches `feature/<feature-you-are-developing>`, eg. `feature/project-image-upload`:
+
+```bash
+# Check your current git status. Make sure you're on master
+git status
+# If your git status ia good and clean, first check the build
+# If the build is green, you are good to go
+# Pull the latest changes with the rebase option to reduce noisy merge commits
+git pull -r
+# Checkout to a new branch
+git checkout -b feature/<feature-you-are-developing>
+```
+
+You can push up your branch to the remote while working on it.
+```bash
+git push -u origin <your-branch-name>
+```
+ A build will run on CI whenever you push new code to the remote branch. This runs the linter and the tests.
+
+ A good habit to develop is to run the linter and fix linting errors as well as run the tests and fix failing tests locally before pushing to the remote:
+ ```bash
+ npm run lint
+ # this will complain if there are errors
+ # if there are errors, fix them!
+
+ npm t
+ # or, if you like to type, `npm run test`
+ # if your tests are failing, fix them!
+ ```
+
+ After you've pushed the first time and set the upstream branch with the `-u` flag, you can just do
+
+ ```bash
+ git push
+ ```
+
+ and you will push your local commits to the appropriate remote branch.
+
+ When your feature is complete and you are ready to merge it back to master, open a Pull Request (PR) on Github. Opening a PR will notify other collaborators that your code is awaiting review and approval for merging into master.
+
+ Once other collaborators have reviewed your code and approved your changes, you can merge your remote branch to master and delete the branch. If your changes were not approved or if the build for your branch is red, make and push up the appropriate fixes and ask for review again.
+
+
+## Deployment
+
+This app will be deployed on Heroku, a Platform as a Service (PaaS).
 
 ## Architecture
+
+- Insert diagram here with moving parts
+
+### Entity Relationship Diagram (ERD)
+
+- Insert diagram here
+
+### Client
+- description of folder structure
+### Server
+- description of folder structure
 
 
 ## Notes
