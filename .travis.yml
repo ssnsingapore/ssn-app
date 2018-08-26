@@ -5,12 +5,6 @@ env:
   global:
   - NODE_PATH="src/"
   - NODE_ENV=test
-  - PORT=3001
-  - DATABASE_URI=mongo_uri
-  - AUTH_SECRET=aws_secret_key
-  - AWS_BUCKET_NAME=ssn-app
-  - AWS_ACCESS_KEY_ID=key
-  - AWS_SECRET_ACCESS_KEY=key
 install:
 - npm run ci-install    
 script:
