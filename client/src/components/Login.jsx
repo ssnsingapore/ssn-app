@@ -149,7 +149,7 @@ class _Login extends Component {
               color="primary"
               variant="outlined"
               component={Link}
-              to="/todos/signup"
+              to="/signup"
             >
               Sign up
             </Button>
