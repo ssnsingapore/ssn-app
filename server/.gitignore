@@ -1,6 +1,9 @@
 # Generated
 build/
 tags
+test/globalConfig.json
+
+# Local certs
 localhost-key.pem
 localhost.pem
 
