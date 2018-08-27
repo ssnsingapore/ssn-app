@@ -19,8 +19,33 @@ const csrfProtection = (req, _res, next) => {
   return next();
 };
 
-export const authenticationMiddleware = [
-  csrfProtection,
-  // See here https://github.com/jaredhanson/passport/issues/458 for failWithError option that allows propagation to error-handling middleware
-  passport.authenticate('jwt', { session: false, failWithError: true }),
-];
+const roleAuthorization = role => (req, _res, next) => {
+  const rawJwtToken = extractJwtFromCookie(req);
+  const payload = jwt.decode(rawJwtToken);
+
+  if (!payload) {
+    return next(createError.Unauthorized());
+  }
+
+  if (payload.role !== role) {
+    return next(createError.Forbidden());
+  }
+
+  return next();
+};
+
+export const authenticate = ({ authorize } = {}) => {
+  if (authorize) {
+    return [
+      csrfProtection,
+      roleAuthorization(authorize),
+      passport.authenticate('jwt', { session: false, failWithError: true }),
+    ];
+  }
+
+  return [
+    csrfProtection,
+    // See here https://github.com/jaredhanson/passport/issues/458 for failWithError option that allows propagation to error-handling middleware
+    passport.authenticate('jwt', { session: false, failWithError: true }),
+  ];
+};

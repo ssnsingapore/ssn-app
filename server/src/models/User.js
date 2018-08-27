@@ -41,6 +41,7 @@ UserSchema.methods.generateJWT = function (csrfToken) {
       userid: this._id,
       name: this.name,
       email: this.email,
+      role: 'user',
       csrfToken,
     },
     `${config.AUTH_SECRET}-${this.hashedPassword}-${this.lastLogoutTime}`,
