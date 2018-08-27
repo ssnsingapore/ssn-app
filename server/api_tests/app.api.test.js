@@ -20,9 +20,13 @@ describe('User sign up route', () => {
     };
     const response = await request(app).post('/api/v1/users').send({ user });
 
-    delete user.password;
-
     expect(response.status).toEqual(201);
-    expect(response.body).toEqual({ user });
+    expect(response.body).toEqual({
+      user: {
+        name: 'username',
+        email: 'email@email.com',
+        role: 'user',
+      },
+    });
   });
 });
