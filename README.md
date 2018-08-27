@@ -6,6 +6,16 @@
   - PassportJS for authentication + authorization
 
 ## Local Setup
+First, ensure that you have NodeJS v8.11.3 and npm v6.1.0 installed (do this through [asdf](https://github.com/asdf-vm/asdf) on Linux and macOS, or [Chocolatey](https://chocolatey.org/) on Windows). NodeJS v8.11.3 comes with npm v5.6.0 by default so you will have to upgrade npm by doing:
+
+```bash
+npm i -g npm@6.1.0
+```
+
+Some of the dependencies used in this project also require Python to be installed. Again, do this through asdf on Linux and macOS or Chocolatey on Windows. Note that if you are using Windows with a Linux subsystem you can also use asdf.
+
+---
+
 Install dependencies
  ```
  npm i
@@ -30,6 +40,8 @@ For the `AUTH_SECRET`, you can use a secure random string generated [here](https
 For the `AWS_BUCKET_NAME`, you have to create an AWS account and create a new S3 bucket, and use its name.
 
 For the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, you have to create an AWS Identity and Access Management (IAM) user with programmatic access. When creating this user add it to a group with an AmazonS3FullAccess policy.
+
+---
 
 Start the server
  ```
