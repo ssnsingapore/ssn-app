@@ -1,19 +1,37 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
 
-export const RouteAuthenticated = ({
+import { Route, Redirect } from 'react-router-dom';
+import { withContext } from 'util/context';
+import { AppContext } from 'components/main/AppContext';
+import { Role } from './roles';
+
+const _RouteAuthenticated = ({
   path,
   exact,
   component,
   render,
   redirectTo,
-  isAuthenticated,
+  // array of roles to authorize
+  authorize = [],
+  context,
 }) => {
-  if (isAuthenticated) {
-    return component ? <Route path={path} exact={exact} component={component} /> :
-      <Route path={path} exact={exact} render={render} />;
+  const { isAuthenticated } = context;
+  const { authenticator } = context.utils;
+
+  if (!isAuthenticated) {
+    return <Redirect to={redirectTo || '/login'} />;
   }
 
-  return <Redirect to={redirectTo || '/login'} />;
+  if (authorize.includes(Role.all)) {
+    authorize = [...authorize, Object.keys(Role)];
+  }
+
+  if (!authorize.includes(authenticator.getCurrentUser().role)) {
+    return <Redirect to={redirectTo || '/unauthorized'} />;
+  }
+
+  return component ? <Route path={path} exact={exact} component={component} /> :
+    <Route path={path} exact={exact} render={render} />;
 };
 
+export const RouteAuthenticated = withContext(AppContext)(_RouteAuthenticated);
