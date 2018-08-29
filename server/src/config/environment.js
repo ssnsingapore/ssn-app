@@ -17,6 +17,8 @@ const isTest = process.env.NODE_ENV === 'test';
 const config = {
   PORT: process.env.PORT,
   DATABASE_URI: process.env.DATABASE_URI,
+  MONGO_USERNAME: process.env.MONGO_USERNAME,
+  MONGO_PASSWORD: process.env.MONGO_PASSWORD,
   AUTH_SECRET: process.env.AUTH_SECRET,
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
   TOKEN_COOKIE_NAME: 'ssn_token',
@@ -41,6 +43,8 @@ checkRequiredExist(
   'NODE_ENV',
   'PORT',
   'DATABASE_URI',
+  'MONGO_USERNAME',
+  'MONGO_PASSWORD',
   'AUTH_SECRET',
   'AWS_BUCKET_NAME',
   'AWS_ACCESS_KEY_ID',

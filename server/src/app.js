@@ -14,7 +14,12 @@ import { router } from 'controllers';
 import { handleError } from 'util/errors';
 
 if (!isTest) {
-  mongoose.connect(config.DATABASE_URI);
+  mongoose.connect(config.DATABASE_URI, {
+    auth: {
+      user: config.MONGO_USERNAME,
+      password: config.MONGO_PASSWORD
+    }
+  });
 }
 
 configurePassport();

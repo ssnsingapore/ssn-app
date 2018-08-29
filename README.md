@@ -33,7 +33,11 @@ cp .env.sample .env
 ```
 Open up the `.env` files in your editor and fill in any missing values.
 
-For the `DATABASE_URI` you have to either [set up mongodb locally](https://docs.mongodb.com/manual/installation/#mongodb-community-edition), or you can provision a database using the [mlabs free tier](https://mlab.com/). If you set up MongoDB locally, your `DATABASE_URI` will look something like `mongodb://localhost:27017/<your-database-name></your-database-name>`.
+For the `DATABASE_URI` you have to either [set up mongodb locally](https://docs.mongodb.com/manual/installation/#mongodb-community-edition), or you can provision a database using the [mlabs free tier](https://mlab.com/). If you set up MongoDB locally, your `DATABASE_URI` will look something like `mongodb://@<host-name>:port</your-database-name>`.
+
+For the `MONGO_USERNAME`, use the username of the user you have given access to your DB. 
+
+For the `MONGO_PASSWORD`, use the password of the user you have given access to your DB. 
 
 For the `AUTH_SECRET`, you can use a secure random string generated [here](https://www.grc.com/passwords.htm)
 
