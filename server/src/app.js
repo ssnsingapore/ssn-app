@@ -17,8 +17,8 @@ if (!isTest) {
   mongoose.connect(config.DATABASE_URI, {
     auth: {
       user: config.MONGO_USERNAME,
-      password: config.MONGO_PASSWORD
-    }
+      password: config.MONGO_PASSWORD,
+    },
   });
 }
 
@@ -39,7 +39,7 @@ app.use(passport.initialize());
 // Serve static files
 const indexFilePath = findConfig('index.html', { dir: 'client/build' });
 if (indexFilePath) {
-  app.use(express.static(path.dirname(indexFilePath)));  
+  app.use(express.static(path.dirname(indexFilePath)));
 }
 
 if (!isProduction) {
