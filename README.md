@@ -126,6 +126,11 @@ This app will be deployed on Heroku, a Platform as a Service (PaaS).
 
 ## Notes
 ### Continuous Integration (CI) with Travis
+We use https://travis-ci.com/ to build and test our code continuously. 
+
+As part of the build script, we run `npm run lint` and `npm test`.
+
+TravisCI also manages auto-deployments to our staging environment https://ssn-app-staging.herokuapp.com/ after successful builds.
 
 ### ESLint
 We use [ESLint](https://eslint.org/) to lint our code and highlight any syntax or stylistic errors. This helps us to easily stick to a set of conventions in our code across the team and minimize errors caused by small and annoying things like typos etc. that are sometimes hard to spot by eye. ESLint is also capable of autofixing simple errors (eg. extra whitespaces, newlines, missing semicolons etc.) Our ESLint rules can be configured in a `.eslintrc.json` file (we have one for the client code and one for the server code).
