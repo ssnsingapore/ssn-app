@@ -38,7 +38,9 @@ app.use(passport.initialize());
 
 // Serve static files
 const indexFilePath = findConfig('index.html', { dir: 'client/build' });
-app.use(express.static(path.dirname(indexFilePath)));
+if (indexFilePath) {
+  app.use(express.static(path.dirname(indexFilePath)));  
+}
 
 if (!isProduction) {
   app.use(errorhandler());
