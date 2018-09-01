@@ -5,9 +5,9 @@ env:
   global:
   - NODE_PATH="src/"
   - NODE_ENV=test
-before_install: if [[ `npm -v` != 6.1.0 ]]; then npm i -g npm@6.1.0; fi  
+before_install: if [[ `npm -v` != 6.1.0 ]]; then npm i -g npm@6.1.0; fi
 install:
-- npm run ci-install    
+- npm run ci-install
 script:
 - npm run lint
 - npm test
@@ -16,3 +16,5 @@ deploy:
   api_key:
     secure: LYpC5UxVmg9L4OhOmRCUvAhQ8G6KN1bTvBpBdq6CruCT0Bfu31otA91ZEfr7D8moX9W45xLVuM5Qs0j8f75bfg6otbXMQfk/sn8kQ7sSabrCV/pKwOCCWcNlZsDZ5PhJbC86uCea4WTkKUZMzIjXfVCuglJ2bsYZO0RmiGnQsEEpq/Pg0QMBwst24QkgWgeJqI0XZikxaRVveJT9trGQcObcoP4MIbBs97hLov1A+mn1lvwddb/AFezGFZGWr0Xw6nDCK4SNGKMPSeZez3URFsdd8n5w8gsTOYwSsq2fSZyvc8g+Hq0LU9waaya9y3On6j3gfveyv6UfE2oR6vDO+JGS7GkXcs5XQp3nUkiuSZ1x+PM0KToRhergAxWKE19wsizTXpMC2jXFmx23QQp1hb4hcGdX3mxWkm/N5+mIu8m45yyhdK65pMpUq58CUv9mePpYxCWD7uF3lwbQcfsxVry6sgJbmk3RYl7+tW4nMnn7oIXyX0U6hvoiDOOEtGMof6O2ugNemK2dbZTpfxLmdtY0uzPYah9Q2n9p6YkJ48oygyE1DdrdFxv45FPxkkMRQ325AVTwjWS5NqCyppBRl1sRu6W0qgr0mY8KAXUgUOBB3BhrD2yJytreTQXQVjCR3MKUs6GF1KTg9+Hf9ciKlvnpe2XT6wojOQph19qRskY=
   app: ssn-app-staging
+notifications:
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
