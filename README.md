@@ -108,20 +108,21 @@ git push -u origin <your-branch-name>
 
 ## Deployment
 
-This app will be deployed on Heroku, a Platform as a Service (PaaS).
+This app will be deployed on Heroku, a Platform as a Service (PaaS). The deployed Express app will serve the React App directly to the browser as static files (we are not deploying the React App on a separate server).
 
 ## Architecture
 
-- Insert diagram here with moving parts
+This is a simple 3-tier application with a front-end React app, back-end Express server exposing an API for the front-end app, and MongoDB as the database. We save uploaded images on Amazon S3.
+
+![architecture](docs/Architecture.png)
 
 ### Entity Relationship Diagram (ERD)
 
-- Insert diagram here
+![ssn ERD](docs/SSN-ERD.png)
 
-### Client
-- description of folder structure
-### Server
-- description of folder structure
+### Project State Machine
+
+![project state machine](docs/Project-State-Machine.png)
 
 
 ## Notes
