@@ -35,9 +35,9 @@ Open up the `.env` files in your editor and fill in any missing values.
 
 For the `DATABASE_URI` you have to either [set up mongodb locally](https://docs.mongodb.com/manual/installation/#mongodb-community-edition), or you can provision a database using the [mlabs free tier](https://mlab.com/). If you set up MongoDB locally, your `DATABASE_URI` will look something like `mongodb://@<host-name>:port</your-database-name>`.
 
-For the `MONGO_USERNAME`, use the username of the user you have given access to your DB. 
+For the `MONGO_USERNAME`, use the username of the user you have given access to your DB. This is NOT required if you are using your local database as MongoDB does not have access control by default.
 
-For the `MONGO_PASSWORD`, use the password of the user you have given access to your DB. 
+For the `MONGO_PASSWORD`, use the password of the user you have given access to your DB. This is NOT required if you are using your local database as MongoDB does not have access control by default.
 
 For the `AUTH_SECRET`, you can use a secure random string generated [here](https://www.grc.com/passwords.htm)
 
@@ -126,7 +126,7 @@ This app will be deployed on Heroku, a Platform as a Service (PaaS).
 
 ## Notes
 ### Continuous Integration (CI) with Travis
-We use https://travis-ci.com/ to build and test our code continuously. 
+We use https://travis-ci.com/ to build and test our code continuously.
 
 As part of the build script, we run `npm run lint` and `npm test`.
 

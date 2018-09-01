@@ -43,8 +43,6 @@ checkRequiredExist(
   'NODE_ENV',
   'PORT',
   'DATABASE_URI',
-  'MONGO_USERNAME',
-  'MONGO_PASSWORD',
   'AUTH_SECRET',
   'AWS_BUCKET_NAME',
   'AWS_ACCESS_KEY_ID',
