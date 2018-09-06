@@ -24,10 +24,11 @@ const _RouteAuthenticated = ({
 
   if (authorize.includes(Role.all)) {
     authorize = [...authorize, Object.keys(Role)];
+    authorize = [Role.all, Role.user, Role.admin];
   }
 
   if (!authorize.includes(authenticator.getCurrentUser().role)) {
-    return <Redirect to={redirectTo || '/unauthorized'} />;
+    return <Redirect to='/unauthorized' />;
   }
 
   return component ? <Route path={path} exact={exact} component={component} /> :
