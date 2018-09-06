@@ -62,3 +62,6 @@ typings/
 
 # Mac stuff
 .DS_Store
+
+#ASDF config
+.tool-versions
