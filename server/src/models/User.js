@@ -4,7 +4,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import jwt from 'jsonwebtoken';
 
 import { config } from 'config/environment';
-import { UserRoleSchema } from './UserRole';
+import { Role } from './Role';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -22,8 +22,9 @@ const UserSchema = new mongoose.Schema(
     passwordResetExpires: Date,
     lastLogoutTime: Date,
     role: {
-      type: UserRoleSchema,
-      default: UserRoleSchema,
+      type: String,
+      enum: [Role.user],
+      default: [Role.user],
       required: [true, 'cannot be blank'],
     },
   },
@@ -47,7 +48,7 @@ UserSchema.methods.generateJWT = function (csrfToken) {
       userid: this._id,
       name: this.name,
       email: this.email,
-      role: this.role.type,
+      role: this.role,
       csrfToken,
     },
     `${config.AUTH_SECRET}-${this.hashedPassword}-${this.lastLogoutTime}`,
@@ -64,7 +65,7 @@ UserSchema.methods.toJSON = function () {
   return {
     name: this.name,
     email: this.email,
-    role: this.role.type,
+    role: this.role,
   };
 };
 
