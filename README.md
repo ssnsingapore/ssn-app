@@ -71,7 +71,7 @@ git status
 # If your git status ia good and clean, first check the build
 # If the build is green, you are good to go
 # Pull the latest changes with the rebase option to reduce noisy merge commits
-git pull -r
+git pull
 # Checkout to a new branch
 git checkout -b feature/<feature-you-are-developing>
 ```
@@ -103,7 +103,28 @@ git push -u origin <your-branch-name>
 
  When your feature is complete and you are ready to merge it back to master, open a Pull Request (PR) on Github. Opening a PR will notify other collaborators that your code is awaiting review and approval for merging into master.
 
- Once other collaborators have reviewed your code and approved your changes, you can merge your remote branch to master and delete the branch. If your changes were not approved or if the build for your branch is red, make and push up the appropriate fixes and ask for review again.
+ You'll want to pull the latest master, rebase your branch onto master and push up your branch again before opening a PR:
+
+ ```bash
+ # checkout to master
+ git checkout master
+ # pull the latest master
+ git pull
+
+ # checkout to your feature branch
+ git checkout <your-branch-name>
+ # rebase onto master
+ git rebase master
+ # your branch commits will now be replayed
+ # on top of any new commits that have been
+ # added to master since your branch diverged
+ # from master
+
+ # push your branch
+ git push
+ ```
+
+ Once other collaborators have reviewed your code and approved your changes, you can merge your remote branch to master and delete the branch, which will close the PR. If your changes were not approved or if the build for your branch is red, make and push up the appropriate fixes and ask for review again.
 
 
 ## Deployment
