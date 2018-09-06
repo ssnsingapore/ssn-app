@@ -38,22 +38,7 @@ async function registerNewUser(req, res) {
     return checkForDuplicateEmail(err, res);
   }
 
-  const csrfToken = await uid(18);
-
-  res.cookie(
-    config.TOKEN_COOKIE_NAME,
-    user.generateJWT(csrfToken),
-    {
-      httpOnly: true,
-      secure: true,
-      sameSite: true,
-      maxAge: config.TOKEN_COOKIE_MAXAGE,
-    },
-  );
-  res.set('csrf-token', csrfToken);
-  return res
-    .status(201)
-    .json({ user: user.toJSON() });
+  return setJwtCookieAndCsrfToken(res, user, 201);
 }
 
 function checkForDuplicateEmail(err, res) {
@@ -82,25 +67,7 @@ usersRouter.post(
 async function login(req, res) {
   // req.user will be available after successful auth
   const { user } = req;
-
-  const csrfToken = await uid(18);
-
-  res.cookie(
-    config.TOKEN_COOKIE_NAME,
-    user.generateJWT(csrfToken),
-    {
-      httpOnly: true,
-      secure: true,
-      sameSite: true,
-      maxAge: config.TOKEN_COOKIE_MAXAGE,
-    },
-  );
-  res.set('csrf-token', csrfToken);
-  return res
-    .status(200)
-    .json({
-      user: user.toJSON(),
-    });
+  return setJwtCookieAndCsrfToken(res, user, 200);
 }
 
 usersRouter.delete(
@@ -124,4 +91,25 @@ async function logout(req, res) {
   return res
     .status(204)
     .end();
+}
+
+async function setJwtCookieAndCsrfToken(res, user, status) {
+  const csrfToken = await uid(18);
+
+  res.cookie(
+    config.TOKEN_COOKIE_NAME,
+    user.generateJWT(csrfToken),
+    {
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+      maxAge: config.TOKEN_COOKIE_MAXAGE,
+    },
+  );
+  res.set('csrf-token', csrfToken);
+  return res
+    .status(status)
+    .json({
+      user: user.toJSON(),
+    });
 }
