@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { ProjectListing } from 'components/ProjectListing';
 
-import defaultImage from 'assets/image-placeholder.svg';
+import landingImage from 'assets/bg.jpg';
 
 class _HomePage extends Component {
   render() {
@@ -13,17 +13,17 @@ class _HomePage extends Component {
     return (
       <div>
         <div className={classes.landingImage}>
-          <Typography variant="display3">
+          <Typography variant="headline" gutterBottom className={classes.landingHeader}>
           SSN Project Portal
           </Typography>
-          <Typography variant="headline">
+          <Typography variant="subheading">
             SSN Project Portal aims to match volunteers and organisers in the Singapore Sustainability Space
           </Typography>
         </div>
 
         <Grid container className={classes.root}>
           <Grid item md={9} xs={12}>
-            <Typography variant="headline">
+            <Typography variant="body2">
             Find a Sustainability Project to volunteer for:
             </Typography>
             <ProjectListing />
@@ -42,12 +42,20 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
 
     width: '100vw',
-    height: '400px',
+    height: '460px',
 
-    backgroundImage: `url(${defaultImage})`,
+    backgroundImage: `url(${landingImage})`,
     backgroundSize: 'cover',
+    backgroundPosition: 'center',
+
+    textAlign: 'center',
+  },
+  landingHeader: {
+    textTransform: 'uppercase',
+    letterSpacking: '0.25em',
   },
   root: {
     margin: '20px auto',
