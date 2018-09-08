@@ -2,6 +2,8 @@ import React, { Component }  from 'react';
 import { Typography, Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
+import { ProjectListing } from 'components/ProjectListing';
+
 import defaultImage from 'assets/image-placeholder.svg';
 
 class _HomePage extends Component {
@@ -20,8 +22,8 @@ class _HomePage extends Component {
         </div>
 
         <Grid container className={classes.root}>
-          <Grid item md={9} xs={12} className={classes.gridItem}>
-            <Typography variant="display3">
+          <Grid item md={9} xs={12}>
+            <Typography variant="headline">
             Find a Sustainability Project to volunteer for:
             </Typography>
             <ProjectListing />
