@@ -1,5 +1,5 @@
 import React, { Component }  from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography, Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import defaultImage from 'assets/image-placeholder.svg';
@@ -18,6 +18,18 @@ class _HomePage extends Component {
             SSN Project Portal aims to match volunteers and organisers in the Singapore Sustainability Space
           </Typography>
         </div>
+
+        <Grid container className={classes.root}>
+          <Grid item md={9} xs={12} className={classes.gridItem}>
+            <Typography variant="display3">
+            Find a Sustainability Project to volunteer for:
+            </Typography>
+            <ProjectListing />
+          </Grid>
+          <Grid item md={3} xs={12} className={classes.gridItem}>
+            Item 2
+          </Grid>
+        </Grid>
       </div>
     );
   }
@@ -34,6 +46,13 @@ const styles = {
 
     backgroundImage: `url(${defaultImage})`,
     backgroundSize: 'cover',
+  },
+  root: {
+    margin: '20px auto',
+    width: '80vw',
+  },
+  gridItem: {
+    border: '1px solid black',
   },
 };
 
