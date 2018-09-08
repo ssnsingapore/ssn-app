@@ -6,6 +6,7 @@ import { NavBar } from './NavBar';
 import { Footer } from './Footer';
 import { NotFound } from './NotFound';
 import { Unauthorized } from './Unauthorized';
+import { HomePage } from './HomePage';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Todos } from 'components/Todos';
 import { About } from 'components/About';
@@ -24,7 +25,7 @@ class _Routes extends Component {
           <Route path="/" component={NavBar} />
           <div className={classes.content}>
             <Switch>
-              <Route exact path="/" component={About} />
+              <Route exact path="/" component={HomePage} />
               <Route path="/about" component={About} />
               <RouteAuthenticated exact path="/todos" component={Todos} authorize={[Role.user]} />
               <Route path="/login" component={Login} />
