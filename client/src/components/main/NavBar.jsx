@@ -5,8 +5,12 @@ import {
   AppBar,
   Tabs,
   Tab,
+  Toolbar,
+  Typography,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+
+import ssnLogo from 'assets/ssn-logo.png';
 
 const TAB_PATHS = [
   'about',
@@ -30,31 +34,39 @@ class _NavBar extends Component {
   handleTabChange = (_event, value) => this.setState({ value })
 
   render() {
-    const { classes } = this.props;
+    const { classes, title } = this.props;
 
     return (
-      <AppBar position="static" className={classes.appBar}>
-        <Tabs
-          value={this.state.value}
-          onChange={this.handleTabChange}
-          centered
-        >
-          <Tab
-            label="About"
-            component={Link}
-            to={`/${TAB_PATHS[0]}`}
-          />
-          <Tab
-            label="Todos"
-            component={Link}
-            to={`/${TAB_PATHS[1]}`}
-          />
-          <Tab
-            label="Image Upload"
-            component={Link}
-            to={`/${TAB_PATHS[2]}`}
-          />
-        </Tabs>
+      <AppBar position="static">
+        <Toolbar variang="dense" className={classes.toolBar}>
+          <a href="/">
+            <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
+          </a>
+          <Typography>
+            {title}
+          </Typography>
+          <Tabs
+            value={this.state.value}
+            onChange={this.handleTabChange}
+            centered
+          >
+            <Tab
+              label="About"
+              component={Link}
+              to={`/${TAB_PATHS[0]}`}
+            />
+            <Tab
+              label="Todos"
+              component={Link}
+              to={`/${TAB_PATHS[1]}`}
+            />
+            <Tab
+              label="Image Upload"
+              component={Link}
+              to={`/${TAB_PATHS[2]}`}
+            />
+          </Tabs>
+        </Toolbar>
       </AppBar>
     );
   }
@@ -68,8 +80,13 @@ _NavBar.propTypes = {
 };
 
 const styles = {
-  appBar: {
-    marginBottom: '20px',
+  toolBar: {
+    width: '80vw',
+    margin: '0 auto',
+    padding: '0',
+  },
+  logo: {
+    height: '25px',
   },
 };
 
