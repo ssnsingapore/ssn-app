@@ -1,28 +1,143 @@
-import { getFieldNameObject, fieldValue} from '../form';
+import React from 'react';
+
+import { getFieldNameObject, fieldValue, withForm} from '../form';
+import { SignUp } from '../../components/SignUp';
 
 describe('getFieldNameObject', () => {
   it('returns fields used in the form that can be used like an enum', () => {
-    const fieldNameEnum = getFieldNameObject(['name', 'address']);
+    const fieldNameEnum = getFieldNameObject(['name', 'email']);
 
-    expect(fieldNameEnum).toEqual({name: 'name', address: 'address'});
+    expect(fieldNameEnum).toEqual({name: 'name', email: 'email'});
   });
 });
 
 describe('fieldValue', () => {
   it('returns value of field given its field name', () => {
     const name = {
-      value: 'Amanda',
+      value: 'Person',
     };
-    const address = {
-      value: '1 China Square',
+    const email = {
+      value: 'person@gmail.com',
     }; 
 
     const fields = {
       name,
-      address,
+      email,
     };
 
-    expect(fieldValue(fields, 'name')).toEqual('Amanda');
-    expect(fieldValue(fields, 'address')).toEqual('1 China Square');
+    expect(fieldValue(fields, 'name')).toEqual('Person');
+    expect(fieldValue(fields, 'email')).toEqual('person@gmail.com');
   });
+});
+
+describe('withForm', () => {
+  describe('valuesForAllFields', () => {
+    let fieldNames, component;
+    
+    beforeEach(() => {
+      fieldNames = {
+        name: 'name',
+        email: 'email',
+      };
+      const FormComponent = withForm(fieldNames)(SignUp);
+      component = shallow(<FormComponent></FormComponent>);
+    });
+
+    it('returns field values for all fields present on the form', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: 'Person',
+          error: [],
+        },
+        [fieldNames.email]: {
+          value: 'person@gmail.com',
+          error: [],
+        },
+      });
+
+      const fieldValues = component.instance().valuesForAllFields();
+
+      expect(fieldValues.name).toEqual('Person');
+      expect(fieldValues.email).toEqual('person@gmail.com');
+    });
+   
+    it('passes valuesForAllFields handler to SignUp component', () => {
+      expect(component).toHaveProp('valuesForAllFields');
+    });
+  });
+
+  describe('validateAllFields', () => {
+    let fieldNames, component;
+    
+    beforeEach(() => {
+      fieldNames = {
+        name: 'name',
+        email: 'email',
+      };
+
+      const constraints = {
+        [fieldNames.name]: {
+          presence: { 
+            allowEmpty: false,
+          },
+        },
+        [fieldNames.email]: {
+          presence: { 
+            allowEmpty: false,
+          },
+        },
+      };
+      const FormComponent = withForm(fieldNames, constraints)(SignUp);
+      component = shallow(<FormComponent></FormComponent>);
+    });
+
+    it('returns false if there are validation errors', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: '',
+          error: [],
+        },
+        [fieldNames.email]: {
+          value: '',
+          error: [],
+        },
+      });
+
+      expect(component.instance().validateAllFields()).toEqual(false);
+    });
+
+    it('updates state with error messages when there are validation errors', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: '',
+          error: [],
+        },
+        [fieldNames.email]: {
+          value: '',
+          error: [],
+        },
+      });
+
+      component.instance().validateAllFields();
+
+      expect(component.state().name.errors).toHaveLength(1);
+      expect(component.state().email.errors).toHaveLength(1);
+    });
+
+    it('returns true when there are not validation errors', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: 'Person',
+          error: [],
+        },
+        [fieldNames.email]: {
+          value: 'email@gmail.com',
+          error: [],
+        },
+      });
+
+      expect(component.instance().validateAllFields()).toEqual(true);
+    });
+  });
+
 });
