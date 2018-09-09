@@ -140,4 +140,83 @@ describe('withForm', () => {
     });
   });
 
+  describe('handleChange', () => {
+    let component;
+
+    beforeEach(() => {
+      const fieldNames = {
+        name: 'name',
+        email: 'email',
+      };
+      const FormComponent = withForm(fieldNames)(SignUp);
+      component = shallow(<FormComponent></FormComponent>);
+    });
+
+    it('updates field value in state', () => {
+      const event = {
+        target: {
+          name: 'name',
+          value: 'new name',  
+        },
+      };
+
+      component.instance().handleChange(event);
+
+      expect(component.state().name.value).toEqual('new name');
+    });
+  });
+
+  describe('resetField', () => {
+    let fieldNames, component;
+
+    beforeEach(() => {
+      fieldNames = {
+        name: 'name',
+        email: 'email',
+      };
+      const FormComponent = withForm(fieldNames)(SignUp);
+      component = shallow(<FormComponent></FormComponent>);
+    });
+
+    it('resets field to an empty value', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: 'Bob',
+        },
+      });
+
+      component.instance().resetField(fieldNames.name);
+
+      expect(component.state().name.value).toEqual('');
+    });
+  });
+
+  describe('resetAllFields', () => {
+    let fieldNames, component;
+
+    beforeEach(() => {
+      fieldNames = {
+        name: 'name',
+        email: 'email',
+      };
+      const FormComponent = withForm(fieldNames)(SignUp);
+      component = shallow(<FormComponent></FormComponent>);
+    });
+
+    it('resets all fields to empty values', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: 'Bob',
+        },
+        [fieldNames.email]: {
+          value: 'Bob@gmail.com',
+        },
+      });
+
+      component.instance().resetAllFields();
+
+      expect(component.state().name.value).toEqual('');
+      expect(component.state().email.value).toEqual('');
+    });
+  });
 });
