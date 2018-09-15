@@ -32,24 +32,20 @@ class _ProjectListing extends Component {
     this.state = {
       projects: [
         {
+          id: 'project1',
           title: 'Save the Earth',
           projectOwner: 'Earth Society',
           image: 'https://globalwarmingdigital.files.wordpress.com/2013/12/global-warming-funny-cartoon.jpg',
           issuesAddressed: [
             { key: 0, label: 'Recycling' },
             { key: 1, label: 'Sustainability' },
-            { key: 2, label: 'Recycling' },
-            { key: 3, label: 'Sustainability' },
-            { key: 4, label: 'Recycling' },
-            { key: 5, label: 'Sustainability' },
-            { key: 6, label: 'Recycling' },
-            { key: 7, label: 'Sustainability' },
           ],
           volunteerTypes: [
             { key: 0, label: 'Facilitators' },
           ],
         },
         {
+          id: 'project2',
           title: 'Cat Adoption Drive',
           projectOwner: 'Cat Welfare Society',
           image: 'http://imgs.duta.in/2018-06-08/65e53133639a4be15e079b3ba8ab9618.jpg',
@@ -71,7 +67,7 @@ class _ProjectListing extends Component {
 
     return this.state.projects.map((project) => {
       return (
-        <Grid item xs={12}>
+        <Grid item xs={12} key={project.title}>
           <Card className={classes.card}>
             <CardMedia
               className={classes.cover}
@@ -88,6 +84,7 @@ class _ProjectListing extends Component {
                 {project.issuesAddressed.map(data => {
                   return (
                     <Chip
+                      key={data.label}
                       label={data.label}
                       className={classes.chip}
                     />
@@ -98,7 +95,7 @@ class _ProjectListing extends Component {
                 {project.volunteerTypes.map(data => {
                   return (
                     <Chip
-                      key={data.key}
+                      key={data.label}
                       label={data.label}
                       className={classes.chip}
                     />
