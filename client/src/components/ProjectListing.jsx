@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { Grid, Typography, Card, CardContent, CardMedia, Chip } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+import { AppContext } from './main/AppContext';
+import { withContext } from 'util/context';
+import { extractErrors, formatErrors } from 'util/errors';
+import { AlertType } from 'components/shared/Alert';
+import { Spinner } from 'components/shared/Spinner';
 
 const styles = theme => ({
   card: {
@@ -59,7 +64,68 @@ class _ProjectListing extends Component {
           ],
         },
       ],
+      isLoading: true,
     };
+  }
+
+  async componentDidMount() {
+    const { requestWithAlert } = this.props.context.utils;
+    const response = await requestWithAlert
+      .get('/api/v1/projects');
+
+    if (response.isSuccessful) {
+      const projects = (await response.json()).projects;
+      console.log('Projects', projects);
+      this.setState({ projects });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
+  }
+
+  renderIssuesAddressed = (project) => {
+    const { classes } = this.props;
+
+    return (
+      <React.Fragment>
+        <Typography variant="body1" >Issues addressed:
+        </Typography>
+        {project.issuesAddressed.map(data => {
+          return (
+            <Chip
+              key={data.label}
+              label={data.label}
+              className={classes.chip}
+            />
+          );
+        })}
+      </React.Fragment>
+    );
+  }
+
+  renderVolunteerTypes = (project) => {
+    const { classes } = this.props;
+    return (
+
+      <React.Fragment>
+        <Typography variant="body1">We need:
+        </Typography>
+        {project.volunteerTypes.map(data => {
+          return (
+            <Chip
+              key={data.label}
+              label={data.label}
+              className={classes.chip}
+            />
+          );
+        })}
+      </React.Fragment>
+    );
   }
 
   renderProjects = () => {
@@ -76,31 +142,11 @@ class _ProjectListing extends Component {
             <div className={classes.details}>
               <CardContent className={classes.content}>
                 <Typography variant="headline" gutterBottom>{project.title}</Typography>
-                <Typography variant="subheading" color="textSecondary" gutterBottom>
+                {/* <Typography variant="subheading" color="textSecondary" gutterBottom>
                   {project.projectOwner}
                 </Typography>
-                <Typography variant="body1" >Issues addressed:
-                </Typography>
-                {project.issuesAddressed.map(data => {
-                  return (
-                    <Chip
-                      key={data.label}
-                      label={data.label}
-                      className={classes.chip}
-                    />
-                  );
-                })}
-                <Typography variant="body1">We need:
-                </Typography>
-                {project.volunteerTypes.map(data => {
-                  return (
-                    <Chip
-                      key={data.label}
-                      label={data.label}
-                      className={classes.chip}
-                    />
-                  );
-                })}
+                {this.renderIssuesAddressed(project)}
+                {this.renderVolunteerTypes(project)} */}
               </CardContent>
             </div>
           </Card>
@@ -110,8 +156,11 @@ class _ProjectListing extends Component {
   }
 
   render() {
-    const { theme } = this.props;
+    if (this.state.isLoading) {
+      return <Spinner />;
+    }
 
+    const { theme } = this.props;
     return (
       <Grid container spacing={theme.spacing.unit}>
         {this.renderProjects()}
@@ -121,6 +170,7 @@ class _ProjectListing extends Component {
 }
 
 export const ProjectListing =
-  withTheme()(
-    withStyles(styles)(_ProjectListing)
-  );
+  withContext(AppContext)(
+    withTheme()(
+      withStyles(styles)(_ProjectListing)
+    ));
