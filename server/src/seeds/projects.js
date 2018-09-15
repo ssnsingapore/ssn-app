@@ -10,13 +10,41 @@ const options = config.MONGO_USERNAME
     },
   } : {};
 mongoose.connect(config.DATABASE_URI, options);
-
+const volunteerRequirementAttributes = [
+  {
+    type: 'Booth Assistant',
+    commitmentLevel: 'Once a Week',
+    number: 5,
+  },
+];
 const projectAttributes = [
   {
     title: 'Save the Earth',
+    coverImageUrl: 'www.google.com',
+    description: 'Save the earth description',
+    volunteerSignupUrl: '',
+    volunteerRequirements: volunteerRequirementAttributes,
+    projectOwner: '5b9cd06c1c22696a2f87c93b',
+    issuesAddressed: ['BIODIVERSITY'],
   },
   {
     title: 'Cat Adoption Drive',
+    coverImageUrl: 'www.google.com',
+    description: 'Save the earth description',
+    volunteerSignupUrl: '',
+    volunteerRequirements: volunteerRequirementAttributes,
+    projectOwner: '5b9cd06c1c22696a2f87c93b',
+    issuesAddressed: ['AIR_QUALITY'],
+  },
+  {
+    title: 'Greenland Project',
+    coverImageUrl: 'www.google.com',
+    description: 'Greenland Project description',
+    volunteerSignupUrl: '',
+    volunteerRequirements: volunteerRequirementAttributes,
+    projectOwner: '5b9cd06c1c22696a2f87c93b',
+    issuesAddressed: ['BIODIVERSITY', 'AIR_QUALITY'],
+
   },
 ];
 

@@ -45,7 +45,7 @@ class _ProjectListing extends Component {
             { key: 0, label: 'Recycling' },
             { key: 1, label: 'Sustainability' },
           ],
-          volunteerTypes: [
+          volunteerRequirements: [
             { key: 0, label: 'Facilitators' },
           ],
         },
@@ -58,7 +58,7 @@ class _ProjectListing extends Component {
             { key: 0, label: 'Fostering' },
             { key: 1, label: 'Sustainability' },
           ],
-          volunteerTypes: [
+          volunteerRequirements: [
             { key: 0, label: 'Facilitators' },
             { key: 1, label: 'Booth assistants' },
           ],
@@ -95,11 +95,11 @@ class _ProjectListing extends Component {
       <React.Fragment>
         <Typography variant="body1" >Issues addressed:
         </Typography>
-        {project.issuesAddressed.map(data => {
+        {project.issuesAddressed.map(issueAddressed => {
           return (
             <Chip
-              key={data.label}
-              label={data.label}
+              key={issueAddressed}
+              label={issueAddressed}
               className={classes.chip}
             />
           );
@@ -108,18 +108,18 @@ class _ProjectListing extends Component {
     );
   }
 
-  renderVolunteerTypes = (project) => {
+  renderVolunteerRequirements = (project) => {
     const { classes } = this.props;
     return (
 
       <React.Fragment>
         <Typography variant="body1">We need:
         </Typography>
-        {project.volunteerTypes.map(data => {
+        {project.volunteerRequirements.map(data => {
           return (
             <Chip
-              key={data.label}
-              label={data.label}
+              key={data.type}
+              label={data.type}
               className={classes.chip}
             />
           );
@@ -142,11 +142,11 @@ class _ProjectListing extends Component {
             <div className={classes.details}>
               <CardContent className={classes.content}>
                 <Typography variant="headline" gutterBottom>{project.title}</Typography>
-                {/* <Typography variant="subheading" color="textSecondary" gutterBottom>
-                  {project.projectOwner}
+                <Typography variant="subheading" color="textSecondary" gutterBottom>
+                  {project.projectOwner.name}
                 </Typography>
                 {this.renderIssuesAddressed(project)}
-                {this.renderVolunteerTypes(project)} */}
+                {this.renderVolunteerRequirements(project)}
               </CardContent>
             </div>
           </Card>
