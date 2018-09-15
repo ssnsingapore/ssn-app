@@ -4,7 +4,7 @@ import App from '../App';
 
 jest.mock('util/Authenticator');
 
-describe('App', () => {
+xdescribe('App', () => {
   it('displays alert when isVisible is true', () => {
     const component = mount(<App></App>);
     const alerts = {
