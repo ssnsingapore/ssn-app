@@ -24,4 +24,3 @@ projectAttributes.forEach((projectAttribute) => {
   const project = new Project(projectAttribute);
   project.save();
 });
-
