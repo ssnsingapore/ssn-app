@@ -8,11 +8,13 @@ import {
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
   Close as CloseIcon,
+  Info as InfoIcon,
 } from '@material-ui/icons';
 
 export const AlertType = {
   SUCCESS: 'SUCCESS',
   ERROR: 'ERROR',
+  INFO: 'INFO',
 };
 
 export const NETWORK_ERROR_MESSAGE = 'Looks like we\'re having some trouble connecting to our server. Please try again!';
@@ -83,12 +85,16 @@ _Alert.propTypes = {
 
 const icons = {
   [AlertType.SUCCESS]: CheckCircleIcon,
+  [AlertType.INFO]: InfoIcon,
   [AlertType.ERROR]: ErrorIcon,
 };
 
 const styles = theme => ({
   [AlertType.SUCCESS]: {
     backgroundColor: green[300],
+  },
+  [AlertType.INFO]: {
+    backgroundColor: theme.palette.primary.light,
   },
   [AlertType.ERROR]: {
     backgroundColor: theme.palette.error.light,
