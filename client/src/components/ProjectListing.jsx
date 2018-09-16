@@ -7,63 +7,12 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 
-const styles = theme => ({
-  card: {
-    display: 'flex',
-    marginBottom: theme.spacing.unit,
-  },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  content: {
-    flex: '1 0 auto',
-  },
-  cover: {
-    width: 300,
-    height: 'auto',
-  },
-  chip: {
-    margin: theme.spacing.unit / 2,
-  },
-  alignBottom: {
-  },
-});
-
 class _ProjectListing extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      projects: [
-        {
-          id: 'project1',
-          title: 'Save the Earth',
-          projectOwner: 'Earth Society',
-          image: 'https://globalwarmingdigital.files.wordpress.com/2013/12/global-warming-funny-cartoon.jpg',
-          issuesAddressed: [
-            { key: 0, label: 'Recycling' },
-            { key: 1, label: 'Sustainability' },
-          ],
-          volunteerRequirements: [
-            { key: 0, label: 'Facilitators' },
-          ],
-        },
-        {
-          id: 'project2',
-          title: 'Cat Adoption Drive',
-          projectOwner: 'Cat Welfare Society',
-          image: 'http://imgs.duta.in/2018-06-08/65e53133639a4be15e079b3ba8ab9618.jpg',
-          issuesAddressed: [
-            { key: 0, label: 'Fostering' },
-            { key: 1, label: 'Sustainability' },
-          ],
-          volunteerRequirements: [
-            { key: 0, label: 'Facilitators' },
-            { key: 1, label: 'Booth assistants' },
-          ],
-        },
-      ],
+      projects: [],
       isLoading: true,
     };
   }
@@ -75,7 +24,6 @@ class _ProjectListing extends Component {
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
-      console.log('Projects', projects);
       this.setState({ projects });
     }
 
@@ -93,7 +41,8 @@ class _ProjectListing extends Component {
 
     return (
       <React.Fragment>
-        <Typography variant="body1" >Issues addressed:
+        <Typography variant="body1" >
+          Issues addressed:
         </Typography>
         {project.issuesAddressed.map(issueAddressed => {
           return (
@@ -101,6 +50,7 @@ class _ProjectListing extends Component {
               key={issueAddressed}
               label={issueAddressed}
               className={classes.chip}
+              color="primary"
             />
           );
         })}
@@ -110,10 +60,11 @@ class _ProjectListing extends Component {
 
   renderVolunteerRequirements = (project) => {
     const { classes } = this.props;
-    return (
 
+    return (
       <React.Fragment>
-        <Typography variant="body1">We need:
+        <Typography variant="body1">
+          We need:
         </Typography>
         {project.volunteerRequirements.map(data => {
           return (
@@ -135,20 +86,28 @@ class _ProjectListing extends Component {
       return (
         <Grid item xs={12} key={project.title}>
           <Card className={classes.card}>
-            <CardMedia
-              className={classes.cover}
-              image={project.image}
-            />
-            <div className={classes.details}>
-              <CardContent className={classes.content}>
-                <Typography variant="headline" gutterBottom>{project.title}</Typography>
-                <Typography variant="subheading" color="textSecondary" gutterBottom>
-                  {project.projectOwner.name}
-                </Typography>
-                {this.renderIssuesAddressed(project)}
-                {this.renderVolunteerRequirements(project)}
-              </CardContent>
-            </div>
+            <Grid container item xs={12} key={project.title}>
+              <Grid item xs={12} md={4}>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={project.coverImageUrl}
+                />
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <div className={classes.details}>
+                  <CardContent className={classes.content}>
+                    <Typography variant="headline" gutterBottom>{project.title}</Typography>
+                    <Typography variant="subheading" color="textSecondary" gutterBottom>
+                      {project.projectOwner.name}
+                    </Typography>
+                    <div className={classes.tagsContainer}>
+                      {this.renderVolunteerRequirements(project)}
+                      {this.renderIssuesAddressed(project)}
+                    </div>
+                  </CardContent>
+                </div>
+              </Grid>
+            </Grid>
           </Card>
         </Grid>
       );
@@ -168,6 +127,36 @@ class _ProjectListing extends Component {
     );
   }
 }
+
+const styles = theme => ({
+  card: {
+    display: 'flex',
+    marginBottom: theme.spacing.unit,
+  },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  content: {
+    flex: '1 0 auto',
+  },
+  cardMedia: {
+    width: '100%',
+    height: '100%',
+    minHeight: '200px',
+    backgroundSize: 'cover',
+  },
+  tagsContainer: {
+    marginTop: '30px',
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
+    fontSize: '12px',
+    height: '25px',
+  },
+  alignBottom: {
+  },
+});
 
 export const ProjectListing =
   withContext(AppContext)(
