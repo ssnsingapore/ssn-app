@@ -34,7 +34,7 @@ const roleAuthorization = role => (req, _res, next) => {
   return next();
 };
 
-export const authenticate = ({ authorize } = {}) => {
+export const authMiddleware = ({ authorize } = {}) => {
   if (authorize) {
     return [
       csrfProtection,

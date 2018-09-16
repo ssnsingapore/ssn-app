@@ -2,11 +2,11 @@ import express from 'express';
 
 import { Todo } from 'models/Todo';
 import { asyncWrap } from 'util/async_wrapper';
-import { authenticate } from 'util/authentication';
+import { authMiddleware } from 'util/auth';
 
 export const todosRouter = express.Router();
 
-todosRouter.use('/todos', authenticate({ authorize: 'user' }));
+todosRouter.use('/todos', authMiddleware({ authorize: 'user' }));
 
 todosRouter.get('/todos', asyncWrap(getTodos));
 async function getTodos(_req, res) {
