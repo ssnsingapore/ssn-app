@@ -54,6 +54,10 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    [theme.breakpoints.down('sm')]: {
+      paddingTop: '60px',
+      justifyContent: 'flex-start',
+    },
 
     width: '100vw',
     height: '600px',
@@ -61,6 +65,8 @@ const styles = theme => ({
     backgroundImage: `url(${landingImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+
+    padding: '30px',
 
     textAlign: 'center',
   },
