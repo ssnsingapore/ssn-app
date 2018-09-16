@@ -7,7 +7,8 @@
     "start": "npx nodemon src/server.js --exec babel-node",
     "build": "babel . --ignore node_modules,build,'**/__tests__','**/*.test.js' --out-dir build",
     "test": "jest",
-    "lint": "./node_modules/eslint/bin/eslint.js . --ignore-path .gitignore"
+    "lint": "./node_modules/eslint/bin/eslint.js . --ignore-path .gitignore",
+    "db:seed": "find src/db/seeds -type f -not -name utils.js -exec babel-node {} ';'"
   },
   "dependencies": {
     "@babel/cli": "^7.0.0-rc.1",
