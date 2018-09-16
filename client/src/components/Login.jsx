@@ -8,6 +8,7 @@ import Cookie from 'js-cookie';
 import { AppContext } from './main/AppContext';
 import { AlertType } from './shared/Alert';
 import { withContext } from 'util/context';
+import { extractErrors, formatErrors } from 'util/errors';
 import {
   getFieldNameObject,
   fieldValue,
@@ -72,7 +73,12 @@ class _Login extends Component {
     }
 
     if (response.hasError) {
-      showAlert('loginFailure', AlertType.ERROR, LOGIN_FAILURE_MESSAGE);
+      if (response.status === 401) {
+        showAlert('loginFailure', AlertType.ERROR, LOGIN_FAILURE_MESSAGE);
+      } else {
+        const errors = await extractErrors(response);
+        showAlert('loginFailure', AlertType.ERROR, formatErrors(errors));
+      }
     }
   }
 

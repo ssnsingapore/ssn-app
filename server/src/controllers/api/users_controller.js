@@ -4,9 +4,9 @@ import passport from 'passport';
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
 import { config } from 'config/environment';
-import { checkIfFound } from 'util/errors';
-import { SignUpService } from '../../services/SignUpService';
-import { LoginService } from '../../services/LoginService';
+import { BadRequestErrorView, checkIfFound } from 'util/errors';
+import { SignUpService } from 'services/SignUpService';
+import { LoginService } from 'services/LoginService';
 
 export const usersRouter = express.Router();
 
@@ -45,17 +45,22 @@ async function registerNewUser(req, res) {
     .json({ user });
 }
 
-// Add logic to prevent logins if account is not yet confirmed
-// and redirect with alert message
 usersRouter.post(
   '/login',
-  passport.authenticate('local', { session: false }),
+  passport.authenticate('local', { session: false, failWithError: true }),
   asyncWrap(login)
 );
 async function login(req, res) {
   // req.user will be available after successful auth
   const { user } = req;
-  return loginUser(res, user);
+  if (user.isConfirmed()) {
+    return loginUser(res, user);
+  }
+
+  const message = 'Please activate your account before logging in.';
+  return res
+    .status(400)
+    .json({ errors: [new BadRequestErrorView(message)] });
 }
 
 async function loginUser(res, user) {

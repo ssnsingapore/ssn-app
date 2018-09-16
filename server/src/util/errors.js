@@ -8,6 +8,13 @@ class InternalServerErrorView {
   }
 }
 
+export class BadRequestErrorView {
+  constructor(detail) {
+    this.status = 400;
+    this.title = 'Bad Request';
+    this.detail = detail || 'Looks like we had some trouble processing your request.';
+  }
+}
 class NotFoundErrorView {
   constructor() {
     this.status = 404;
