@@ -12,6 +12,7 @@
     "client": "cd client && npm start",
     "test": "npm run test-no-watch --prefix ./client && npm test --prefix ./server",
     "lint": "npm run lint --prefix ./client && npm run lint --prefix ./server",
+    "db:clean": "cd server && npm run db:clean",
     "db:seed": "cd server && npm run db:seed",
     "heroku-postbuild": "npm run build"
   },
