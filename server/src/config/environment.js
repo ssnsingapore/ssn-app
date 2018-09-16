@@ -16,6 +16,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
 const config = {
   PORT: process.env.PORT,
+  API_BASE_URL: process.env.API_BASE_URL,
   DATABASE_URI: process.env.DATABASE_URI,
   MONGO_USERNAME: process.env.MONGO_USERNAME,
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
@@ -42,6 +43,7 @@ const checkRequiredExist = (...variables) => {
 checkRequiredExist(
   'NODE_ENV',
   'PORT',
+  'API_BASE_URL',
   'DATABASE_URI',
   'AUTH_SECRET',
   'AWS_BUCKET_NAME',

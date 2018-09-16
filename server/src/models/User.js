@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import uniqueValidator from 'mongoose-unique-validator';
 import jwt from 'jsonwebtoken';
+import uid from 'uid-safe';
 
 import { config } from 'config/environment';
 import { Role } from './Role';
@@ -27,6 +28,10 @@ const UserSchema = new mongoose.Schema(
       default: [Role.user],
       required: [true, 'cannot be blank'],
     },
+
+    // Account confirmation
+    confirmedAt: Date,
+    confirmationToken: String,
   },
   { timestamps: true },
 );
@@ -42,7 +47,7 @@ UserSchema.methods.isValidPassword = async function (password) {
   return bcrypt.compare(password, this.hashedPassword);
 };
 
-UserSchema.methods.generateJWT = function (csrfToken) {
+UserSchema.methods.generateJwt = function (csrfToken) {
   return jwt.sign(
     {
       userid: this._id,
@@ -68,5 +73,24 @@ UserSchema.methods.toJSON = function () {
     role: this.role,
   };
 };
+
+UserSchema.methods.isConfirmed = function () {
+  return !!this.confirmedAt;
+};
+
+UserSchema.methods.generateConfirmationToken = async function () {
+  const confirmationToken = await uid(18);
+
+  this.set({ confirmationToken });
+  await this.save();
+
+  return confirmationToken;
+};
+
+UserSchema.methods.confirm = async function () {
+  this.set({ confirmedAt: new Date() });
+  await this.save();
+};
+
 
 export const User = mongoose.model('User', UserSchema);

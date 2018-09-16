@@ -1,11 +1,12 @@
 import express from 'express';
 import passport from 'passport';
-import uid from 'uid-safe';
 
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
 import { config } from 'config/environment';
-import { checkIfFound, UnprocessableEntityErrorView } from 'util/errors';
+import { checkIfFound } from 'util/errors';
+import { SignUpService } from '../../services/SignUpService';
+import { LoginService } from '../../services/LoginService';
 
 export const usersRouter = express.Router();
 
@@ -30,35 +31,22 @@ async function registerNewUser(req, res) {
     name,
     email,
   });
-  await user.setPassword(password);
 
-  try {
-    await user.save();
-  } catch (err) {
-    return checkForDuplicateEmail(err, res);
-  }
+  const errorsObject = await new SignUpService(user, password).execute();
 
-  return setJwtCookieAndCsrfToken(res, user, 201);
-}
-
-function checkForDuplicateEmail(err, res) {
-  if (err.name === 'ValidationError'
-    && err.errors.email.message === 'should be unique') {
+  if (errorsObject) {
     return res
       .status(422)
-      .json({
-        errors: [
-          new UnprocessableEntityErrorView(
-            'Email is taken',
-            'The email address you have entered is already associated with another account',
-          ),
-        ],
-      });
+      .json(errorsObject);
   }
 
-  throw err;
+  return res
+    .status(201)
+    .json({ user });
 }
 
+// Add logic to prevent logins if account is not yet confirmed
+// and redirect with alert message
 usersRouter.post(
   '/login',
   passport.authenticate('local', { session: false }),
@@ -67,7 +55,24 @@ usersRouter.post(
 async function login(req, res) {
   // req.user will be available after successful auth
   const { user } = req;
-  return setJwtCookieAndCsrfToken(res, user, 200);
+  return loginUser(res, user);
+}
+
+async function loginUser(res, user) {
+  await setJwtCookieAndCsrfToken(res, user);
+  return res
+    .status(200)
+    .json({
+      user,
+    });
+}
+
+async function setJwtCookieAndCsrfToken(res, user) {
+  const { cookieArguments, csrfToken } = await new LoginService(user)
+    .generateCookieAndCsrfToken();
+
+  res.set('csrf-token', csrfToken);
+  res.cookie(...cookieArguments);
 }
 
 usersRouter.delete(
