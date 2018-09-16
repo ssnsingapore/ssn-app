@@ -14,6 +14,7 @@ import { Login } from 'components/Login';
 import { SignUp } from 'components/SignUp';
 import { ImageUpload } from 'components/ImageUpload';
 import { Role } from 'components/shared/roles';
+import { AwaitingAccountConfirmation } from 'components/AwaitingAccountConfirmation';
 
 class _Routes extends Component {
   render() {
@@ -29,7 +30,8 @@ class _Routes extends Component {
               <Route path="/about" component={About} />
               <RouteAuthenticated exact path="/todos" component={Todos} authorize={[Role.user]} />
               <Route path="/login" component={Login} />
-              <Route path="/signup" component={SignUp} />
+              <Route exact path="/signup" component={SignUp} />
+              <Route path="/signup/confirmation" component={AwaitingAccountConfirmation} />
               <Route path="/image_upload" component={ImageUpload} />
               <Route path="/unauthorized" component={Unauthorized} />
               <Route component={NotFound} />

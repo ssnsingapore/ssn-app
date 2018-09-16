@@ -50,8 +50,8 @@ class _SignUp extends Component {
     super(props);
 
     this.state = {
-      isLoading: false,
-      shouldRedirect: false,
+      isSubmitting: false,
+      createdUser: null,
     };
   }
 
@@ -71,10 +71,21 @@ class _SignUp extends Component {
       email,
       password,
     };
+
+    this.setState({ isSubmitting: true });
     const response = await authenticator.signUp(user);
+    this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      this.setState({ shouldRedirect: true });
+      const createdUser = (await response.json()).user;
+      this.setState({
+        createdUser: {
+          // temporary to stub fields for projectOwner but not on user
+          ...createdUser,
+          accountType: 'organization',
+          organizationName: 'Earth Society',
+        },
+      });
       showAlert('signupSuccess', AlertType.SUCCESS, SIGNUP_SUCCESS_MESSAGE);
     }
 
@@ -87,8 +98,11 @@ class _SignUp extends Component {
   render() {
     const { theme, classes, fields, handleChange } = this.props;
 
-    if (this.state.shouldRedirect) {
-      return <Redirect to={'/todos'} />;
+    if (this.state.createdUser) {
+      return <Redirect to={{
+        pathname: '/signup/confirmation',
+        state: { projectOwner: this.state.createdUser },
+      }} />;
     }
 
     return (
@@ -183,7 +197,10 @@ class _SignUp extends Component {
               type="submit"
               variant="contained"
               fullWidth
-            >Sign up</Button>
+              disabled={this.state.isSubmitting}
+            >
+              Sign up
+            </Button>
           </Grid>
 
           <Grid item>

@@ -48,10 +48,6 @@ export class Authenticator {
       .onNetworkError(networkErrorHandler)
       .post('/api/v1/users', data, { authenticated: true });
 
-    if (response.isSuccessful) {
-      await this.setSuccessfulAuthState(response);
-    }
-
     return response;
   }
 
