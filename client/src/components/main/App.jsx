@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { CssBaseline } from '@material-ui/core';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import { RequestWithAlert } from 'util/RequestWithAlert';
 import { Authenticator } from 'util/Authenticator';
@@ -7,6 +8,13 @@ import { Authenticator } from 'util/Authenticator';
 import { AppContext } from './AppContext';
 import { Routes } from './Routes';
 import { Alert } from 'components/shared/Alert';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: '#3E9992' },
+    secondary: { main: '#FF9391' },
+  },
+});
 
 class App extends Component {
   constructor(props) {
@@ -72,13 +80,13 @@ class App extends Component {
 
   render() {
     return (
-      <React.Fragment>
+      <MuiThemeProvider theme={theme}>
         <CssBaseline />
         {this.renderAlerts()}
         <AppContext.Provider value={this.state}>
           <Routes />
         </AppContext.Provider>
-      </React.Fragment>
+      </MuiThemeProvider>
     );
   }
 }
