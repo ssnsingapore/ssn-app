@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { Grid, TextField, Button } from '@material-ui/core';
 import { withTheme, withStyles } from '@material-ui/core/styles';
+import queryString from 'query-string';
+import Cookie from 'js-cookie';
 
 import { AppContext } from './main/AppContext';
 import { AlertType } from './shared/Alert';
@@ -16,6 +18,8 @@ import {
 
 const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
 const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
+
+const CONFIRMATION_COOKIE_NAME = 'ssn_confirmation';
 
 const FieldName = getFieldNameObject(['email', 'password']);
 const constraints = {
@@ -39,6 +43,10 @@ class _Login extends Component {
       isLoading: false,
       shouldRedirect: false,
     };
+  }
+
+  componentDidMount() {
+    this.showAccountConfirmationMessage();
   }
 
   handleSubmit = async (event) => {
@@ -75,6 +83,17 @@ class _Login extends Component {
     }
 
     return '/todos';
+  }
+
+  showAccountConfirmationMessage = () => {
+    const { showAlert } = this.props.context.updaters;
+
+    if (Cookie.get(CONFIRMATION_COOKIE_NAME)) {
+      const { message, type }= queryString.parse(this.props.location.hash);
+      showAlert('confirmationMessage', type, message);
+
+      Cookie.remove(CONFIRMATION_COOKIE_NAME);
+    }
   }
 
   render() {

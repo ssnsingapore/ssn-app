@@ -17,6 +17,7 @@ const isTest = process.env.NODE_ENV === 'test';
 const config = {
   PORT: process.env.PORT,
   API_BASE_URL: process.env.API_BASE_URL,
+  WEBSITE_BASE_URL: process.env.WEBSITE_BASE_URL,
   DATABASE_URI: process.env.DATABASE_URI,
   MONGO_USERNAME: process.env.MONGO_USERNAME,
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
@@ -24,6 +25,7 @@ const config = {
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
   TOKEN_COOKIE_NAME: 'ssn_token',
   TOKEN_COOKIE_MAXAGE: 15 * 24 * 60 * 60 * 1000,
+  CONFIRMATION_COOKIE_NAME: 'ssn_confirmation',
   JWT_EXPIRES_IN: '30 days',
 };
 
@@ -44,6 +46,7 @@ checkRequiredExist(
   'NODE_ENV',
   'PORT',
   'API_BASE_URL',
+  'WEBSITE_BASE_URL',
   'DATABASE_URI',
   'AUTH_SECRET',
   'AWS_BUCKET_NAME',

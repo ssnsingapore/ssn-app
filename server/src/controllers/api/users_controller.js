@@ -98,23 +98,30 @@ async function logout(req, res) {
     .end();
 }
 
-async function setJwtCookieAndCsrfToken(res, user, status) {
-  const csrfToken = await uid(18);
+usersRouter.get('/users/:id/confirmation/:confirmationToken', asyncWrap(confirmUser));
+async function confirmUser(req, res) {
+  const { id, confirmationToken } = req.params;
+  const user = await User.findById(id);
 
   res.cookie(
-    config.TOKEN_COOKIE_NAME,
-    user.generateJWT(csrfToken),
+    config.CONFIRMATION_COOKIE_NAME,
     {
-      httpOnly: true,
       secure: true,
       sameSite: true,
-      maxAge: config.TOKEN_COOKIE_MAXAGE,
-    },
+    }
   );
-  res.set('csrf-token', csrfToken);
-  return res
-    .status(status)
-    .json({
-      user: user.toJSON(),
-    });
+
+  if (user.isConfirmed()) {
+    const message = 'Your account has already been confirmed. Please login.';
+    return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=INFO&message=${encodeURIComponent(message)}`);
+  }
+
+  if (user.confirmationToken !== confirmationToken) {
+    const message = 'There was an error confirming your account. Please try again!';
+    return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=ERROR&message=${encodeURIComponent(message)}`);
+  }
+
+  await user.confirm();
+  const message = 'Your account has been successfully confirmed! You will now be able to login.';
+  return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=SUCCESS&message=${encodeURIComponent(message)}`);
 }
