@@ -1,15 +1,6 @@
-import mongoose from 'mongoose';
 import { Project } from 'models/Project';
-import { config } from 'config/environment';
+import { seedData } from './utils';
 
-const options = config.MONGO_USERNAME
-  ? {
-    auth: {
-      user: config.MONGO_USERNAME,
-      password: config.MONGO_PASSWORD,
-    },
-  } : {};
-mongoose.connect(config.DATABASE_URI, options);
 const volunteerRequirementAttributes = [
   {
     type: 'Booth Assistant',
@@ -17,6 +8,7 @@ const volunteerRequirementAttributes = [
     number: 5,
   },
 ];
+
 const projectAttributes = [
   {
     title: 'Save the Earth',
@@ -24,7 +16,7 @@ const projectAttributes = [
     description: 'Save the earth description',
     volunteerSignupUrl: '',
     volunteerRequirements: volunteerRequirementAttributes,
-    projectOwner: '5b9cd06c1c22696a2f87c93b',
+    projectOwner: '5b9dc395eaf06391d3df9a90',
     issuesAddressed: ['BIODIVERSITY'],
   },
   {
@@ -33,7 +25,7 @@ const projectAttributes = [
     description: 'Save the earth description',
     volunteerSignupUrl: '',
     volunteerRequirements: volunteerRequirementAttributes,
-    projectOwner: '5b9cd06c1c22696a2f87c93b',
+    projectOwner: '5b9dc395eaf06391d3df9a90',
     issuesAddressed: ['AIR_QUALITY'],
   },
   {
@@ -42,13 +34,10 @@ const projectAttributes = [
     description: 'Greenland Project description',
     volunteerSignupUrl: '',
     volunteerRequirements: volunteerRequirementAttributes,
-    projectOwner: '5b9cd06c1c22696a2f87c93b',
+    projectOwner: '5b9dc395eaf06391d3df9a90',
     issuesAddressed: ['BIODIVERSITY', 'AIR_QUALITY'],
 
   },
 ];
 
-projectAttributes.forEach((projectAttribute) => {
-  const project = new Project(projectAttribute);
-  project.save();
-});
+seedData(projectAttributes, Project, 'project');

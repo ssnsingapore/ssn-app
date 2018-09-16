@@ -1,15 +1,5 @@
-import mongoose from 'mongoose';
 import { ProjectOwner } from 'models/ProjectOwner';
-import { config } from 'config/environment';
-
-const options = config.MONGO_USERNAME
-  ? {
-    auth: {
-      user: config.MONGO_USERNAME,
-      password: config.MONGO_PASSWORD,
-    },
-  } : {};
-mongoose.connect(config.DATABASE_URI, options);
+import { seedData } from './utils';
 
 const projectOwnerAttributes = [
   {
@@ -24,7 +14,4 @@ const projectOwnerAttributes = [
   },
 ];
 
-projectOwnerAttributes.forEach((projectOwnerAttribute) => {
-  const projectOwner = new ProjectOwner(projectOwnerAttribute);
-  projectOwner.save();
-});
+seedData(projectOwnerAttributes, ProjectOwner, 'project owner');
