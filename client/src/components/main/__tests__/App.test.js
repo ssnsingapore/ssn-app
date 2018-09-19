@@ -1,38 +1,63 @@
 import React from 'react';
 
 import App from '../App';
+import { AlertType } from 'components/shared/Alert';
 
 jest.mock('util/Authenticator');
 
-xdescribe('App', () => {
-  it('displays alert when isVisible is true', () => {
-    const component = mount(<App></App>);
-    const alerts = {
-      someError : {
-        type: 'ERROR',
-        message: 'error message',
-        isVisible: true,
-      },
-    };
+describe('App', () => {
+  describe('showAlert', () => {
+    it('sets alert to be visible with correct type and message', () => {
+      const alertKey = 'loginFailure';
+      const alertType = AlertType.ERROR;
+      const alertMessage = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
+      
+      const component = shallow(<App></App>);
 
-    component.setState({ alerts });
+      component.instance().showAlert(alertKey, alertType, alertMessage);
+  
+      const expectedAlertsState = {
+        [alertKey]: {
+          isVisible: true,
+          type: alertType,
+          message: alertMessage,
+        },
+      };
 
-    expect(component.find('SnackbarContent')).toHaveLength(1);
+      expect(component.state().alerts).toEqual(expectedAlertsState); 
+    });
   });
 
-  it('does not displays alert when isVisible is false', () => {
-    const component = mount(<App></App>);
-    const alerts = {
-      someError : {
-        type: 'ERROR',
-        message: 'error message',
-        isVisible: false,
-      },
-    };
+  describe('hideAlert', () => {
+    it('sets alert to not be visible', () => {
+      const alertKey = 'loginFailure';
+      const alertType = AlertType.ERROR;
+      const alertMessage = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
+      
+      const component = shallow(<App></App>);
 
-    component.setState({ alerts });
+      component.setState({
+        alerts: {
+          [alertKey]: {
+            type: alertType,
+            message: alertMessage,
+            isVisible: true,
+          },
+        },
+      });
 
-    expect(component.find('SnackbarContent')).toHaveLength(0);
+      component.instance().hideAlert(alertKey);
+  
+      const expectedAlertsState = {
+        [alertKey]: {
+          type: alertType,
+          message: alertMessage,
+          isVisible: false,
+        },
+      };
+      
+      expect(component.state().alerts).toEqual(expectedAlertsState); 
+    });
   });
 });
 
