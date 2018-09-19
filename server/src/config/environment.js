@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import math from 'mathjs';
 
 // =============================================================================
 // ENVIRONMENT VARIABLES
@@ -14,22 +15,59 @@ dotenv.config();
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
+
+// Note: NODE_ENV variable is recognized by Express
+checkRequiredExist(
+  'NODE_ENV',
+  'PORT',
+  'API_BASE_URL',
+  'WEBSITE_BASE_URL',
+
+  'DATABASE_URI',
+  'AUTH_SECRET',
+  'TOKEN_COOKIE_NAME',
+  'TOKEN_COOKIE_MAXAGE',
+  'JWT_EXPIRES_IN',
+
+  'CONFIRMATION_COOKIE_NAME',
+  'PASSWORD_RESET_DURATION',
+
+  'AWS_BUCKET_NAME',
+  'AWS_ACCESS_KEY_ID',
+  'AWS_SECRET_ACCESS_KEY',
+  'AWS_REGION',
+
+  'OAUTH_USER_EMAIL',
+  'OAUTH_CLIENT_ID',
+  'OAUTH_CLIENT_SECRET',
+  'OAUTH_REFRESH_TOKEN',
+);
+
 const config = {
   PORT: process.env.PORT,
   API_BASE_URL: process.env.API_BASE_URL,
   WEBSITE_BASE_URL: process.env.WEBSITE_BASE_URL,
+
   DATABASE_URI: process.env.DATABASE_URI,
   MONGO_USERNAME: process.env.MONGO_USERNAME,
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
+
   AUTH_SECRET: process.env.AUTH_SECRET,
+  TOKEN_COOKIE_NAME: process.env.TOKEN_COOKIE_NAME,
+  TOKEN_COOKIE_MAXAGE: math.eval(process.env.TOKEN_COOKIE_MAXAGE),
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
+
+  CONFIRMATION_COOKIE_NAME: process.env.CONFIRMATION_COOKIE_NAME,
+  PASSWORD_RESET_DURATION: math.eval(process.env.PASSWORD_RESET_DURATION),
+
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
-  TOKEN_COOKIE_NAME: 'ssn_token',
-  TOKEN_COOKIE_MAXAGE: 15 * 24 * 60 * 60 * 1000,
-  CONFIRMATION_COOKIE_NAME: 'ssn_confirmation',
-  JWT_EXPIRES_IN: '30 days',
 };
 
-const checkRequiredExist = (...variables) => {
+export {
+  isTest, isProduction, isDevelopment, config,
+};
+
+function checkRequiredExist(...variables) {
   if (isTest) {
     return;
   }
@@ -39,26 +77,4 @@ const checkRequiredExist = (...variables) => {
       throw new Error(`Environment variable ${name} is missing`);
     }
   });
-};
-
-// Note: NODE_ENV variable is recognized by Express
-checkRequiredExist(
-  'NODE_ENV',
-  'PORT',
-  'API_BASE_URL',
-  'WEBSITE_BASE_URL',
-  'DATABASE_URI',
-  'AUTH_SECRET',
-  'AWS_BUCKET_NAME',
-  'AWS_ACCESS_KEY_ID',
-  'AWS_SECRET_ACCESS_KEY',
-  'AWS_REGION',
-  'OAUTH_USER_EMAIL',
-  'OAUTH_CLIENT_ID',
-  'OAUTH_CLIENT_SECRET',
-  'OAUTH_REFRESH_TOKEN',
-);
-
-export {
-  isTest, isProduction, isDevelopment, config,
-};
+}
