@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 const AdminSchema = new mongoose.Schema(
   {
@@ -16,9 +16,13 @@ const AdminSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// AdminSchema.methods.setPassword = async function (password) {
-//   const saltRounds = 10;
-//   this.hashedPassword = await bcrypt.hash(password, saltRounds);
-// };
+AdminSchema.methods.setPassword = async function (password) {
+  const saltRounds = 10;
+  this.hashedPassword = await bcrypt.hash(password, saltRounds);
+};
+
+AdminSchema.methods.isValidPassword = async function (password) {
+  return bcrypt.compare(password, this.hashedPassword);
+};
 
 export const Admin = mongoose.model('Admin', AdminSchema);
