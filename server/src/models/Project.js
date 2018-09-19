@@ -27,7 +27,14 @@ export const ProjectState = {
 };
 
 const VolunteerRequirementSchema = new mongoose.Schema({
-  type: String,
+  type: {
+    type: String,
+    enum: ['INTERACTION_(HOSTING/MODERATING,_ETC)', 'CONTENT_CREATION_(DESIGN,_WRITING,_ETC)',
+      'EVENT_PLANNING_(LOGISTICS,_PROGRAMME,_ETC)', 'MEDIA_&_SOCIAL_MEDIA_(PHOTOGRAPHY,_PUBLICITY,_ETC',
+      'EXPERT_VOLUNTEERS_(TECHNOLOGISTS,_MENTORS,_ETC',
+      'AD-HOC_MANPOWER_SUPPORT_(USHERING,_ADMINISTRATIVE_WORK,_WORKING BOOTHS,_ETC)',
+      'OTHERS_(SKILLED)', 'OTHERS_(AD-HOC)'],
+  },
   commitmentLevel: String,
   number: Number,
 });
