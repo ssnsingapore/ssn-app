@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 
+export const AccountType = {
+  ORGANIZATION: 'ORGANIZATION',
+  INDIVIDUAL: 'INDIVIDUAL',
+};
 
 const ProjectOwnerSchema = new mongoose.Schema({
   name: {
@@ -12,7 +16,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
   },
   accountType: {
     type: String,
-    enum: ['ORGANIZATION', 'INDIVIDUAL'],
+    enum: Object.keys(AccountType),
   },
 
 });
