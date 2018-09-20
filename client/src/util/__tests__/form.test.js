@@ -1,4 +1,5 @@
 import React from 'react';
+import validate from 'validate.js';
 
 import { getFieldNameObject, fieldValue, withForm} from '../form';
 import { SignUp } from '../../components/SignUp';
@@ -217,6 +218,62 @@ describe('withForm', () => {
 
       expect(component.state().name.value).toEqual('');
       expect(component.state().email.value).toEqual('');
+    });
+  });
+
+  describe('optionalUrl validator', () => {
+    describe('allowEmpty is true', () => {
+      const constraints = {
+        webUrl: {
+          isUrl: { allowEmpty: true },
+        },
+      };
+
+      it('returns undefined when input is empty', () => {
+        const input = {webUrl : ''};
+  
+        expect(validate(input, constraints)).toBe(undefined);
+      });
+
+      it('returns undefined when input is a url', () => {
+        const validURLs = ['http://www.ssn-app.com', 
+          'https://www.ssn-app.com', 
+          'https://www.ssn-app.com',
+        ];
+        
+        const validURLInputs = validURLs.map((url) => ({webUrl : url}));
+  
+        validURLInputs.forEach((input) => {
+          expect(validate(input, constraints)).toBe(undefined);
+        });
+      });
+    });
+    
+    describe('allowEmpty is false', () => {
+      const constraints = {
+        webUrl: {
+          isUrl: { allowEmpty: false },
+        },
+      };
+
+      it('returns error message when input is empty', () => {
+        const input = {webUrl : ''};
+  
+        expect(validate(input, constraints).webUrl).toEqual(['Web url cannot be empty']);
+      });
+
+      it('returns undefined when input is a url', () => {
+        const validURLs = ['http://www.ssn-app.com', 
+          'https://www.ssn-app.com', 
+          'https://www.ssn-app.com',
+        ];
+        
+        const validURLInputs = validURLs.map((url) => ({webUrl : url}));
+  
+        validURLInputs.forEach((input) => {
+          expect(validate(input, constraints)).toBe(undefined);
+        });
+      });
     });
   });
 });

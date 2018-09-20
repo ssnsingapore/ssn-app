@@ -87,6 +87,16 @@ validate.validators.sameValueAs = (value, options, key, attributes) => {
   }
 };
 
+validate.validators.isUrl = (value, options) => {
+  if (!options.allowEmpty && value === '') {
+    return 'cannot be empty';
+  }
+
+  if (value === '') return null;
+
+  return validate.single(value, { url: true } );
+};
+
 // Validations
 
 // Cross-validate a single field with other field values
