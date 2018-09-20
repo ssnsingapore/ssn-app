@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { Grid, TextField, Button } from '@material-ui/core';
 import { withTheme, withStyles } from '@material-ui/core/styles';
-import queryString from 'query-string';
+import qs from 'qs';
 import Cookie from 'js-cookie';
 
 import { AppContext } from './main/AppContext';
@@ -95,7 +95,8 @@ class _Login extends Component {
     const { showAlert } = this.props.context.updaters;
 
     if (Cookie.get(CONFIRMATION_COOKIE_NAME)) {
-      const { message, type }= queryString.parse(this.props.location.hash);
+      const paramsWithoutHash = this.props.location.hash.substring(1);
+      const { message, type } = qs.parse(paramsWithoutHash);
       showAlert('confirmationMessage', type, message);
 
       Cookie.remove(CONFIRMATION_COOKIE_NAME);
