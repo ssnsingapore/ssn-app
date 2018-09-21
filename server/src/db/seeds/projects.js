@@ -5,6 +5,7 @@ import {
 
 connectMongoose();
 
+<<<<<<< HEAD
 getProjectOwner().then(async (projectOwner) => {
   if (!projectOwner) {
     console.log('Please seed Project Owners first');
@@ -45,6 +46,37 @@ getProjectOwner().then(async (projectOwner) => {
       volunteerRequirements: volunteerRequirementAttributes,
       projectOwner: projectOwner.id,
       issuesAddressed: ['BIODIVERSITY', 'AIR_QUALITY'],
+=======
+const projectAttributes = [
+  {
+    title: 'Save the Earth',
+    coverImageUrl: 'www.google.com',
+    description: 'Save the earth description',
+    volunteerSignupUrl: '',
+    volunteerRequirements: volunteerRequirementAttributes,
+    projectOwner: '5ba555ba3da27c30b1f11b57',
+    issuesAddressed: ['BIODIVERSITY'],
+  },
+  {
+    title: 'Cat Adoption Drive',
+    coverImageUrl: 'www.google.com',
+    description: 'Save the earth description',
+    volunteerSignupUrl: '',
+    volunteerRequirements: volunteerRequirementAttributes,
+    projectOwner: '5ba555ba3da27c30b1f11b56',
+    issuesAddressed: ['AIR_QUALITY'],
+  },
+  {
+    title: 'Project Bee Plus Plus',
+    coverImageUrl: 'www.honey.com',
+    description: 'Project to make more honey',
+    volunteerSignupUrl: '',
+    volunteerRequirements: volunteerRequirementAttributes,
+    projectOwner: '5ba555ba3da27c30b1f11b58',
+    issuesAddressed: ['BIODIVERSITY', 'AIR_QUALITY'],
+  },
+];
+>>>>>>> Complete ProjectOwner schema and seeds
 
     },
   ];
