@@ -1,21 +1,7 @@
 import { Project } from 'models/Project';
-import { ProjectOwner } from 'models/ProjectOwner';
 import {
   seedData, getProjectOwner, connectMongoose, closeMongooseConnection,
 } from './utils';
-
-const projectOwnerAttributes = [
-  {
-    name: 'Cat Society',
-    email: 'test@test.com',
-    accountType: 'ORGANIZATION',
-  },
-  {
-    name: 'Earth Society',
-    email: 'test@test.com',
-    accountType: 'ORGANIZATION',
-  },
-];
 
 connectMongoose();
 
