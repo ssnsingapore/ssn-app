@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import { config } from 'config/environment';
+import { ProjectOwner } from 'models/ProjectOwner';
 
-const connectMongoose = () => {
+export const connectMongoose = () => {
   const options = config.MONGO_USERNAME
     ? {
       auth: {
@@ -12,9 +13,11 @@ const connectMongoose = () => {
   mongoose.connect(config.DATABASE_URI, options);
 };
 
-export const seedData = async (modelAttributes, Model, modelName) => {
-  connectMongoose();
+export const closeMongooseConnection = () => {
+  mongoose.connection.close();
+};
 
+export const seedData = async (modelAttributes, Model, modelName) => {
   try {
     const savePromises = modelAttributes.map((projectAttribute) => {
       console.log('Seeding one record...');
@@ -27,7 +30,16 @@ export const seedData = async (modelAttributes, Model, modelName) => {
     console.log(`Total of ${modelAttributes.length} ${modelName}s seeded`);
   } catch (err) {
     console.error(`Seeding ${modelName} failed with error:`, err);
-  } finally {
-    mongoose.connection.close();
   }
+};
+
+export const getProjectOwner = async () => {
+  let owner;
+  try {
+    console.log('Retrieving all ProjectOwners...');
+    owner = await ProjectOwner.findOne({});
+  } catch (err) {
+    console.error('Finding project owner failed with error:', err);
+  }
+  return owner;
 };

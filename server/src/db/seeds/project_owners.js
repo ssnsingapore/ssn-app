@@ -1,5 +1,5 @@
 import { ProjectOwner } from 'models/ProjectOwner';
-import { seedData } from './utils';
+import { seedData, connectMongoose, closeMongooseConnection } from './utils';
 
 const projectOwnerAttributes = [
   {
@@ -13,5 +13,9 @@ const projectOwnerAttributes = [
     accountType: 'ORGANIZATION',
   },
 ];
-
-seedData(projectOwnerAttributes, ProjectOwner, 'project owner');
+const projectOwners = async () => {
+  connectMongoose();
+  await seedData(projectOwnerAttributes, ProjectOwner, 'project owner');
+  closeMongooseConnection();
+};
+projectOwners();
