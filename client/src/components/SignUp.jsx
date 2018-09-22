@@ -1,30 +1,29 @@
+import { FormControlLabel, Paper, Radio, RadioGroup, TextField, Typography, Button } from '@material-ui/core';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 import React, { Component } from 'react';
-import { Redirect, Link } from 'react-router-dom';
-import { Grid, TextField, Button, Paper, Typography, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
-import { withTheme, withStyles } from '@material-ui/core/styles';
-
-import { AppContext } from './main/AppContext';
-import { AlertType } from './shared/Alert';
+import { Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
-import {
-  getFieldNameObject,
-  fieldValue,
-  fieldHasError,
-  fieldErrorText,
-  withForm,
-} from 'util/form';
+import { fieldErrorText, fieldHasError, getFieldNameObject, withForm } from 'util/form';
+import { AppContext } from './main/AppContext';
+import { AlertType } from './shared/Alert';
+
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
 const FieldName = getFieldNameObject([
   'email',
   'name',
   'accountType',
+  'organisationName',
+  'webUrl',
+  'socialMedia',
+  'description',
+  'personalBio',
   'password',
   'passwordConfirmation',
 ]);
 
-export const AccountType = {
+const AccountType = {
   ORGANIZATION: 'ORGANIZATION',
   INDIVIDUAL: 'INDIVIDUAL',
 };
@@ -39,7 +38,11 @@ const constraints = {
     email: true,
   },
   [FieldName.accountType]: {
-    inclusion: Object.values(AccountType), 
+    presence: { allowEmpty: false },
+    inclusion: Object.values(AccountType),
+  },
+  [FieldName.webUrl]: {
+    isUrl: { allowEmpty: true },
   },
   [FieldName.password]: {
     presence: { allowEmpty: false },
@@ -92,7 +95,7 @@ class _SignUp extends Component {
         createdUser: {
           // temporary to stub fields for projectOwner but not on user
           ...createdUser,
-          accountType: 'organization',
+          accountType: AccountType.ORGANIZATION,
           organizationName: 'Earth Society',
         },
       });
@@ -105,8 +108,40 @@ class _SignUp extends Component {
     }
   }
 
+  radioButton = () => {
+    const { classes } = this.props;
+    return <Radio classes={{ root: classes.radioButton, checked: classes.checked }} />;
+  }
+
+  renderDescriptionOrBio = () => {
+    const { classes, handleChange, fields } = this.props;
+
+    if (fields[FieldName.accountType].value === AccountType.ORGANIZATION) {
+      return (
+        <TextField name={FieldName.description}
+          className={classes.textInput}
+          id={FieldName.description}
+          label="Description" onChange={handleChange}
+          error={fieldHasError(fields, FieldName.description)}
+          helperText={fieldErrorText(fields, FieldName.description)}
+          fullWidth />
+      );
+    }
+
+    return (
+      <TextField name={FieldName.personalBio}
+        className={classes.textInput}
+        id={FieldName.personalBio}
+        label="Personal bio" onChange={handleChange}
+        error={fieldHasError(fields, FieldName.personalBio)}
+        helperText={fieldErrorText(fields, FieldName.personalBio)}
+        fullWidth />
+    );
+  }
+
   render() {
-    const { theme, classes, fields, handleChange } = this.props;
+    const { classes, fields, handleChange } = this.props;
+
 
     if (this.state.createdUser) {
       return <Redirect to={{
@@ -117,45 +152,116 @@ class _SignUp extends Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <Paper className={classes.root}>
+        <Paper elevation={2} className={classes.root} square={true}>
           <Typography variant="headline">Project Owner Details</Typography>
-          <TextField label="Name" 
+          <TextField 
+            name={FieldName.name} 
+            className={classes.textInput} 
+            id={FieldName.name} 
+            label="Name" 
             required={true} 
-            onChange={handleChange}
-            name={FieldName.name}
-            value={fieldValue(fields, FieldName.name)}
+            onChange={handleChange} 
             error={fieldHasError(fields, FieldName.name)} 
-            helperText={fieldErrorText(fields, FieldName.name)} fullWidth />
-          <TextField label="Email" required={true}
+            helperText={fieldErrorText(fields, FieldName.name)} 
+            fullWidth />
+          <TextField 
+            name={FieldName.email} 
+            className={classes.textInput} 
+            id={FieldName.email}
+            label="Email" 
+            required={true}
             onChange={handleChange}
-            name={FieldName.email}
-            value={fieldValue(fields, FieldName.email)}
             error={fieldHasError(fields, FieldName.email)}
-            helperText={fieldErrorText(fields, FieldName.email)} fullWidth />
-          <RadioGroup
-            aria-label={FieldName.accountType}
+            helperText={fieldErrorText(fields, FieldName.email)}
+            fullWidth />
+          <RadioGroup 
             name={FieldName.accountType}
-            value={fieldValue(fields, FieldName.accountType)}
-            onChange={handleChange}
-          >
-            <FormControlLabel value={AccountType.ORGANIZATION} control={<Radio />} label="I am creating an account on behalf of an organisation" />
-            <FormControlLabel value={AccountType.INDIVIDUAL} control={<Radio />} label="I am an individual" />
+            value={fields[FieldName.accountType].value}
+            onChange={handleChange}>
+            <FormControlLabel checked={true}
+              value={AccountType.ORGANIZATION}
+              control={this.radioButton()}
+              label="I am creating an account on behalf of an organisation" />
+            <FormControlLabel value={AccountType.INDIVIDUAL}
+              control={this.radioButton()}
+              label="I am an individual" />
           </RadioGroup>
+          { fields[FieldName.accountType].value === AccountType.ORGANIZATION &&
+            <TextField 
+              name={FieldName.organisationName}
+              className={classes.textInput}
+              id={FieldName.organisationName}
+              label="Organisation Name" 
+              onChange={handleChange}
+              error={fieldHasError(fields, FieldName.organisationName)}
+              helperText={fieldErrorText(fields, FieldName.organisationName)}
+              fullWidth />    
+          }
+          <TextField 
+            name={FieldName.webUrl}
+            className={classes.textInput}
+            id={FieldName.webUrl}
+            label="Web URL" 
+            onChange={handleChange}
+            error={fieldHasError(fields, FieldName.webUrl)}
+            helperText={fieldErrorText(fields, FieldName.webUrl)}
+            fullWidth />
+          <TextField 
+            name={FieldName.socialMedia}
+            className={classes.textInput}
+            id={FieldName.socialMedia}
+            label="Social Media" 
+            onChange={handleChange}
+            error={fieldHasError(fields, FieldName.socialMedia)}
+            helperText={fieldErrorText(fields, FieldName.socialMedia)} fullWidth />
+
+          { this.renderDescriptionOrBio() }
+
+          <TextField name={FieldName.password}
+            className={classes.textInput}
+            id={FieldName.password}
+            label="Password" required={true}
+            onChange={handleChange}
+            error={fieldHasError(fields, FieldName.password)}
+            helperText={fieldErrorText(fields, FieldName.password)}
+            type="password" fullWidth />
+          <TextField name={FieldName.passwordConfirmation}
+            className={classes.textInput}
+            id={FieldName.passwordConfirmation}
+            required={true}
+            label="Password Confirmation" onChange={handleChange}
+            error={fieldHasError(fields, FieldName.passwordConfirmation)}
+            helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
+            type="password" fullWidth />
+            
+          <Button type="submit" size="medium" className={classes.createButton} disabled={this.state.isSubmitting}>Create Account</Button>
         </Paper>
       </form>
     );
   }
 }
 
-const styles = {
+const styles = theme => ({
   root: {
     maxWidth: '500px',
-    margin: '0 auto',
+    margin: '3% auto',
+    padding: '2%',
   },
-  fullWidthRow: {
-    width: '100%',
+  textInput: {
+    marginBottom: '5%',
   },
-};
+  radioButton: {
+    '&$checked': {
+      color: '#3E9992',
+    },
+  },
+  checked: {},
+  createButton: {
+    display: 'block',
+    color: '#FFFFFF',
+    backgroundColor: theme.palette.secondary.main,
+  },
+});
 
 export const SignUp = withStyles(styles)(
   withTheme()(
