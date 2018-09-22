@@ -1,4 +1,13 @@
-import { Project } from 'models/Project';
+import {
+  Project,
+  IssueAddressed,
+  ProjectState,
+  ProjectType,
+  ProjectLocation,
+  ProjectFrequency,
+  VolunteerRequirementType,
+} from 'models/Project';
+
 import {
   seedData,
   getProjectOwner,
