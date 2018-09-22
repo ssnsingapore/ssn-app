@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import { Grid, TextField, Button } from '@material-ui/core';
+import { Grid, TextField, Button, Paper, Typography, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 import { withTheme, withStyles } from '@material-ui/core/styles';
 
 import { AppContext } from './main/AppContext';
@@ -19,9 +19,16 @@ const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
 const FieldName = getFieldNameObject([
   'email',
   'name',
+  'accountType',
   'password',
   'passwordConfirmation',
 ]);
+
+export const AccountType = {
+  ORGANIZATION: 'ORGANIZATION',
+  INDIVIDUAL: 'INDIVIDUAL',
+};
+
 const constraints = {
   [FieldName.name]: {
     presence: { allowEmpty: false },
@@ -30,6 +37,9 @@ const constraints = {
   [FieldName.email]: {
     presence: { allowEmpty: false },
     email: true,
+  },
+  [FieldName.accountType]: {
+    inclusion: Object.values(AccountType), 
   },
   [FieldName.password]: {
     presence: { allowEmpty: false },
@@ -107,116 +117,31 @@ class _SignUp extends Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <Grid
-          container
-          alignItems="center"
-          alignContent="stretch"
-          direction="column"
-          spacing={2 * theme.spacing.unit}
-          className={classes.root}
-        >
-          <Grid
-            container
-            justify="center"
-            spacing={2 * theme.spacing.unit}
-            item
+        <Paper className={classes.root}>
+          <Typography variant="headline">Project Owner Details</Typography>
+          <TextField label="Name" 
+            required={true} 
+            onChange={handleChange}
+            name={FieldName.name}
+            value={fieldValue(fields, FieldName.name)}
+            error={fieldHasError(fields, FieldName.name)} 
+            helperText={fieldErrorText(fields, FieldName.name)} fullWidth />
+          <TextField label="Email" required={true}
+            onChange={handleChange}
+            name={FieldName.email}
+            value={fieldValue(fields, FieldName.email)}
+            error={fieldHasError(fields, FieldName.email)}
+            helperText={fieldErrorText(fields, FieldName.email)} fullWidth />
+          <RadioGroup
+            aria-label={FieldName.accountType}
+            name={FieldName.accountType}
+            value={fieldValue(fields, FieldName.accountType)}
+            onChange={handleChange}
           >
-            <Grid item xs={6}>
-              <TextField
-                label="Email"
-                type="email"
-                name={FieldName.email}
-                id={FieldName.email}
-                placeholder="Your email"
-                value={fieldValue(fields, FieldName.email)}
-                onChange={handleChange}
-                error={fieldHasError(fields, FieldName.email)}
-                helperText={fieldErrorText(fields, FieldName.email)}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <TextField
-                label="Name"
-                type="text"
-                name={FieldName.name}
-                id={FieldName.name}
-                placeholder="Your name"
-                value={fieldValue(fields, FieldName.name)}
-                onChange={handleChange}
-                error={fieldHasError(fields, FieldName.name)}
-                helperText={fieldErrorText(fields, FieldName.name)}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-
-          <Grid
-            container
-            justify="center"
-            spacing={2 * theme.spacing.unit}
-            className={classes.root}
-          >
-            <Grid item xs={6}>
-              <TextField
-                label="Password"
-                type="password"
-                name={FieldName.password}
-                id={FieldName.password}
-                placeholder="Your password"
-                value={fieldValue(fields, FieldName.password)}
-                onChange={handleChange}
-                error={fieldHasError(fields, FieldName.password)}
-                helperText={fieldErrorText(fields, FieldName.password)}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <TextField
-                label="Password confirmation"
-                type="password"
-                name={FieldName.passwordConfirmation}
-                id={FieldName.passwordConfirmation}
-                placeholder="Confirm you password"
-                value={fieldValue(fields, FieldName.passwordConfirmation)}
-                onChange={handleChange}
-                error={fieldHasError(fields, FieldName.passwordConfirmation)}
-                helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            className={classes.fullWidthRow}
-          >
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={this.state.isSubmitting}
-            >
-              Sign up
-            </Button>
-          </Grid>
-
-          <Grid item>
-            or
-          </Grid>
-          <Grid item>
-            <Button
-              color="primary"
-              variant="outlined"
-              component={Link}
-              to="/todos/login"
-            >
-              Log in
-            </Button>
-          </Grid>
-        </Grid>
+            <FormControlLabel value={AccountType.ORGANIZATION} control={<Radio />} label="I am creating an account on behalf of an organisation" />
+            <FormControlLabel value={AccountType.INDIVIDUAL} control={<Radio />} label="I am an individual" />
+          </RadioGroup>
+        </Paper>
       </form>
     );
   }
