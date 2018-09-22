@@ -13,7 +13,8 @@ const AdminSchema = new mongoose.Schema(
     },
     hashedPassword: {
       type: String,
-      required: [true, 'cannot be blank']
+      required: [true, 'cannot be blank'],
+    },
   },
   { timestamps: true },
 );
