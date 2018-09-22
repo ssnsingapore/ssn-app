@@ -11,7 +11,9 @@ const AdminSchema = new mongoose.Schema(
       match: [/\S+@\S+.\S+/, 'is valid'],
       index: true,
     },
-    hashedPassword: String,
+    hashedPassword: {
+      type: String,
+      required: [true, 'cannot be blank']
   },
   { timestamps: true },
 );
