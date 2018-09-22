@@ -113,6 +113,21 @@ class _SignUp extends Component {
     return <Radio classes={{ root: classes.radioButton, checked: classes.checked }} />;
   }
 
+  renderOrganizationName = () => {
+    const { classes, handleChange, fields } = this.props;
+
+    return fields[FieldName.accountType].value === AccountType.ORGANIZATION &&
+      <TextField
+        name={FieldName.organisationName}
+        className={classes.textInput}
+        id={FieldName.organisationName}
+        label="Organisation Name"
+        onChange={handleChange}
+        error={fieldHasError(fields, FieldName.organisationName)}
+        helperText={fieldErrorText(fields, FieldName.organisationName)}
+        fullWidth />;
+  }
+
   renderDescriptionOrBio = () => {
     const { classes, handleChange, fields } = this.props;
 
@@ -142,7 +157,6 @@ class _SignUp extends Component {
   render() {
     const { classes, fields, handleChange } = this.props;
 
-
     if (this.state.createdUser) {
       return <Redirect to={{
         pathname: '/signup/confirmation',
@@ -154,27 +168,27 @@ class _SignUp extends Component {
       <form onSubmit={this.handleSubmit}>
         <Paper elevation={2} className={classes.root} square={true}>
           <Typography variant="headline">Project Owner Details</Typography>
-          <TextField 
-            name={FieldName.name} 
-            className={classes.textInput} 
-            id={FieldName.name} 
-            label="Name" 
-            required={true} 
-            onChange={handleChange} 
-            error={fieldHasError(fields, FieldName.name)} 
-            helperText={fieldErrorText(fields, FieldName.name)} 
+          <TextField
+            name={FieldName.name}
+            className={classes.textInput}
+            id={FieldName.name}
+            label="Name"
+            required={true}
+            onChange={handleChange}
+            error={fieldHasError(fields, FieldName.name)}
+            helperText={fieldErrorText(fields, FieldName.name)}
             fullWidth />
-          <TextField 
-            name={FieldName.email} 
-            className={classes.textInput} 
+          <TextField
+            name={FieldName.email}
+            className={classes.textInput}
             id={FieldName.email}
-            label="Email" 
+            label="Email"
             required={true}
             onChange={handleChange}
             error={fieldHasError(fields, FieldName.email)}
             helperText={fieldErrorText(fields, FieldName.email)}
             fullWidth />
-          <RadioGroup 
+          <RadioGroup
             name={FieldName.accountType}
             value={fields[FieldName.accountType].value}
             onChange={handleChange}>
@@ -186,37 +200,25 @@ class _SignUp extends Component {
               control={this.radioButton()}
               label="I am an individual" />
           </RadioGroup>
-          { fields[FieldName.accountType].value === AccountType.ORGANIZATION &&
-            <TextField 
-              name={FieldName.organisationName}
-              className={classes.textInput}
-              id={FieldName.organisationName}
-              label="Organisation Name" 
-              onChange={handleChange}
-              error={fieldHasError(fields, FieldName.organisationName)}
-              helperText={fieldErrorText(fields, FieldName.organisationName)}
-              fullWidth />    
-          }
-          <TextField 
+          {this.renderOrganizationName()}
+          <TextField
             name={FieldName.webUrl}
             className={classes.textInput}
             id={FieldName.webUrl}
-            label="Web URL" 
+            label="Web URL"
             onChange={handleChange}
             error={fieldHasError(fields, FieldName.webUrl)}
             helperText={fieldErrorText(fields, FieldName.webUrl)}
             fullWidth />
-          <TextField 
+          <TextField
             name={FieldName.socialMedia}
             className={classes.textInput}
             id={FieldName.socialMedia}
-            label="Social Media" 
+            label="Social Media"
             onChange={handleChange}
             error={fieldHasError(fields, FieldName.socialMedia)}
             helperText={fieldErrorText(fields, FieldName.socialMedia)} fullWidth />
-
           { this.renderDescriptionOrBio() }
-
           <TextField name={FieldName.password}
             className={classes.textInput}
             id={FieldName.password}
@@ -233,8 +235,17 @@ class _SignUp extends Component {
             error={fieldHasError(fields, FieldName.passwordConfirmation)}
             helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
             type="password" fullWidth />
-            
-          <Button type="submit" size="medium" className={classes.createButton} disabled={this.state.isSubmitting}>Create Account</Button>
+
+          <Button
+            type="submit"
+            size="medium"
+            className={classes.createButton}
+            disabled={this.state.isSubmitting}
+            variant="contained"
+            color="secondary"
+          >
+          Create Account
+          </Button>
         </Paper>
       </form>
     );
@@ -258,8 +269,7 @@ const styles = theme => ({
   checked: {},
   createButton: {
     display: 'block',
-    color: '#FFFFFF',
-    backgroundColor: theme.palette.secondary.main,
+    margin: '30px auto',
   },
 });
 
