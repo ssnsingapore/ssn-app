@@ -1,5 +1,16 @@
 import React, { Component } from 'react';
-import { Grid, Typography, Card, CardContent, CardMedia, Chip } from '@material-ui/core';
+import {
+  Grid,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  Chip,
+  Avatar,
+  List,
+  ListItem,
+  ListItemText,
+} from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from './main/AppContext';
 import { withContext } from 'util/context';
@@ -19,8 +30,7 @@ class _ProjectListing extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert
-      .get('/api/v1/projects');
+    const response = await requestWithAlert.get('/api/v1/projects');
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
@@ -36,14 +46,12 @@ class _ProjectListing extends Component {
     this.setState({ isLoading: false });
   }
 
-  renderIssuesAddressed = (project) => {
+  renderIssuesAddressed = project => {
     const { classes } = this.props;
 
     return (
       <React.Fragment>
-        <Typography variant="body1" >
-          Issues addressed:
-        </Typography>
+        <Typography variant="body1">Issues addressed:</Typography>
         {project.issuesAddressed.map(issueAddressed => {
           return (
             <Chip
@@ -56,33 +64,27 @@ class _ProjectListing extends Component {
         })}
       </React.Fragment>
     );
-  }
+  };
 
-  renderVolunteerRequirements = (project) => {
+  renderVolunteerRequirements = project => {
     const { classes } = this.props;
 
     return (
       <React.Fragment>
-        <Typography variant="body1">
-          We need:
-        </Typography>
+        <Typography variant="body1">We need:</Typography>
         {project.volunteerRequirements.map(data => {
           return (
-            <Chip
-              key={data.type}
-              label={data.type}
-              className={classes.chip}
-            />
+            <Chip key={data.type} label={data.type} className={classes.chip} />
           );
         })}
       </React.Fragment>
     );
-  }
+  };
 
   renderProjects = () => {
     const { classes } = this.props;
 
-    return this.state.projects.map((project) => {
+    return this.state.projects.map(project => {
       return (
         <Grid item xs={12} key={project.title}>
           <Card className={classes.card}>
@@ -96,9 +98,27 @@ class _ProjectListing extends Component {
               <Grid item xs={12} md={8}>
                 <div className={classes.details}>
                   <CardContent className={classes.content}>
-                    <Typography variant="headline" gutterBottom>{project.title}</Typography>
-                    <Typography variant="subheading" color="textSecondary" gutterBottom>
-                      {project.projectOwner.name}
+                    <Typography variant="headline" gutterBottom>
+                      {project.title}
+                    </Typography>
+                    <Typography
+                      variant="subheading"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      <List className={classes.removePadding}>
+                        <ListItem className={classes.removePadding}>
+                          <Avatar
+                            alt="Profile Photo"
+                            src={project.projectOwner.profilePhotoUrl}
+                            className={classes.smallAvatar}
+                          />
+                          <ListItemText
+                            className={classes.removePadding}
+                            primary={project.projectOwner.name}
+                          />
+                        </ListItem>
+                      </List>
                     </Typography>
                     <div className={classes.tagsContainer}>
                       {this.renderVolunteerRequirements(project)}
@@ -112,7 +132,7 @@ class _ProjectListing extends Component {
         </Grid>
       );
     });
-  }
+  };
 
   render() {
     if (this.state.isLoading) {
@@ -154,12 +174,17 @@ const styles = theme => ({
     fontSize: '12px',
     height: '25px',
   },
-  alignBottom: {
+  alignBottom: {},
+  smallAvatar: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+  },
+  removePadding: {
+    padding: 0,
   },
 });
 
-export const ProjectListing =
-  withContext(AppContext)(
-    withTheme()(
-      withStyles(styles)(_ProjectListing)
-    ));
+export const ProjectListing = withContext(AppContext)(
+  withTheme()(withStyles(styles)(_ProjectListing))
+);

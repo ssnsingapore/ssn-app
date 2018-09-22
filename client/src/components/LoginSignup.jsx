@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import { AppBar, Tabs, Tab, Typography, Button, TextField } from '@material-ui/core';
+import { Typography, Button, TextField } from '@material-ui/core';
 
 function TabContainer(props) {
   const { children, dir } = props;
@@ -18,8 +18,16 @@ const styles = theme => ({
     position: 'relative',
     minHeight: 200,
   },
-  button: {
-    marginTop: theme.spacing.unit * 5,
+  loginButton: {
+    marginTop: theme.spacing.unit * 6,
+    marginBottom: theme.spacing.unit * 1,
+  },
+  signupButton: {
+    marginTop: theme.spacing.unit * 1,
+    marginBottom: theme.spacing.unit * 4,
+  },
+  margin3: {
+    margin: theme.spacing.unit * 3,
   },
 });
 
@@ -40,69 +48,54 @@ class _LoginSignup extends React.Component {
     const { classes, theme } = this.props;
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            fullWidth
-          >
-            <Tab label="Login" />
-            <Tab label="Sign Up" />
-          </Tabs>
-        </AppBar>
         <TabContainer dir={theme.direction}>
           <form className={classes.container} noValidate autoComplete="off">
             <TextField
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder="Username"
+              InputLabelProps={{ shrink: true }}
+              placeholder="Email"
               fullWidth
               margin="normal"
             />
             <TextField
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
               placeholder="Password"
               fullWidth
               margin="normal"
             />
-            <Button variant="contained" color="secondary" size="large" fullWidth className={classes.button}>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="large"
+              fullWidth
+              className={classes.loginButton}
+            >
               Login
+            </Button>
+            <Typography component="caption" gutterBottom align="center">
+              Forgot password?
+            </Typography>
+            <Typography
+              component="caption"
+              gutterBottom
+              align="center"
+              className={classes.margin3}
+            >
+              or
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              fullWidth
+              className={classes.signupButton}
+            >
+              Sign Up
             </Button>
           </form>
         </TabContainer>
-        <TabContainer dir={theme.direction}><form className={classes.container} noValidate autoComplete="off">
-          <TextField
-            InputLabelProps={{
-              shrink: true,
-            }}
-            placeholder="Username"
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            InputLabelProps={{
-              shrink: true,
-            }}
-            placeholder="Password"
-            fullWidth
-            margin="normal"
-          />
-          <Button variant="contained" color="primary" size="large" fullWidth className={classes.button}>
-            Sign Up
-          </Button>
-        </form></TabContainer>
       </div>
     );
   }
 }
 
-export const LoginSignup =
-  withTheme()(
-    withStyles(styles)(_LoginSignup)
-  );
-
+export const LoginSignup = withTheme()(withStyles(styles)(_LoginSignup));
