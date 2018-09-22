@@ -6,15 +6,18 @@ import { NavBar } from './NavBar';
 import { Footer } from './Footer';
 import { NotFound } from './NotFound';
 import { Unauthorized } from './Unauthorized';
-import { HomePage } from './HomePage';
+import { HomePage } from 'components/public/HomePage';
+import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
-import { Todos } from 'components/Todos';
-import { About } from 'components/About';
-import { Login } from 'components/Login';
-import { SignUp } from 'components/SignUp';
-import { ImageUpload } from 'components/ImageUpload';
 import { Role } from 'components/shared/roles';
-import { AwaitingAccountConfirmation } from 'components/AwaitingAccountConfirmation';
+import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
+
+// Components only for reference
+import { About } from 'components/old/About';
+import { Todos } from 'components/old/Todos';
+import { Login } from 'components/old/OldLogin';
+import { SignUp } from 'components/old/OldSignUp';
+import { ImageUpload } from 'components/old/ImageUpload';
 
 class _Routes extends Component {
   render() {
@@ -27,13 +30,17 @@ class _Routes extends Component {
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
-              <Route path="/about" component={About} />
-              <RouteAuthenticated exact path="/todos" component={Todos} authorize={[Role.user]} />
-              <Route path="/login" component={Login} />
-              <Route exact path="/signup" component={SignUp} />
+              <Route path="/signup" component={ProjectOwnerSignUpForm} />
               <Route path="/signup/confirmation" component={AwaitingAccountConfirmation} />
-              <Route path="/image_upload" component={ImageUpload} />
               <Route path="/unauthorized" component={Unauthorized} />
+
+              {/* Routes to old components for reference */}
+              <Route path="/login/old" component={Login} />
+              <Route exact path="/signup/old" component={SignUp} />
+              <RouteAuthenticated exact path="/todos" component={Todos} authorize={[Role.user]} />
+              <Route path="/about" component={About} />
+              <Route path="/image_upload" component={ImageUpload} />
+
               <Route component={NotFound} />
             </Switch>
           </div>

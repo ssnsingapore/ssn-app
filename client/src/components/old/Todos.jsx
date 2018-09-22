@@ -17,9 +17,9 @@ import {
 } from '@material-ui/icons';
 import * as moment from 'moment';
 
-import { Spinner } from './shared/Spinner';
-import { AlertType } from './shared/Alert';
-import { AppContext } from './main/AppContext';
+import { Spinner } from '../shared/Spinner';
+import { AlertType } from '../shared/Alert';
+import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { fieldValue, fieldHasError, fieldErrorText, withForm } from 'util/form';
 import { extractErrors, formatErrors } from 'util/errors';

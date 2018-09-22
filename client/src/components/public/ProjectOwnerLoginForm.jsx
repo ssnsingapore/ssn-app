@@ -31,7 +31,7 @@ const styles = theme => ({
   },
 });
 
-class _LoginSignup extends React.Component {
+class _ProjectOwnerLoginForm extends React.Component {
   state = {
     value: 0,
   };
@@ -98,4 +98,4 @@ class _LoginSignup extends React.Component {
   }
 }
 
-export const LoginSignup = withTheme()(withStyles(styles)(_LoginSignup));
+export const ProjectOwnerLoginForm = withTheme()(withStyles(styles)(_ProjectOwnerLoginForm));

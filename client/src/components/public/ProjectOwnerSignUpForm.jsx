@@ -5,8 +5,8 @@ import { Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { fieldErrorText, fieldHasError, getFieldNameObject, withForm } from 'util/form';
-import { AppContext } from './main/AppContext';
-import { AlertType } from './shared/Alert';
+import { AppContext } from '../main/AppContext';
+import { AlertType } from '../shared/Alert';
 
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
@@ -58,7 +58,7 @@ const constraints = {
   },
 };
 
-class _SignUp extends Component {
+class _ProjectOwnerSignUpForm extends Component {
   constructor(props) {
     super(props);
 
@@ -273,13 +273,13 @@ const styles = theme => ({
   },
 });
 
-export const SignUp = withStyles(styles)(
+export const ProjectOwnerSignUpForm = withStyles(styles)(
   withTheme()(
     withContext(AppContext)(
       withForm(
         FieldName,
         constraints,
-      )(_SignUp)
+      )(_ProjectOwnerSignUpForm)
     ),
   ),
 );

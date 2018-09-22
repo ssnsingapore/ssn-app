@@ -5,8 +5,8 @@ import { withTheme, withStyles } from '@material-ui/core/styles';
 import qs from 'qs';
 import Cookie from 'js-cookie';
 
-import { AppContext } from './main/AppContext';
-import { AlertType } from './shared/Alert';
+import { AppContext } from '../main/AppContext';
+import { AlertType } from '../shared/Alert';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import {

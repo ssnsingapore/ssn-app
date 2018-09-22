@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Typography, Grid, Paper, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
-import { ProjectListing } from 'components/ProjectListing';
-import { LoginSignup } from 'components/LoginSignup';
+import { ProjectListing } from 'components/shared/ProjectListing';
+import { ProjectOwnerLoginForm } from './ProjectOwnerLoginForm';
 
 import landingImage from 'assets/bg.jpg';
 
@@ -65,7 +65,7 @@ class _HomePage extends Component {
                 already have an account.
               </Typography>
               <Paper>
-                <LoginSignup />
+                <ProjectOwnerLoginForm />
               </Paper>
             </Grid>
           </Grid>

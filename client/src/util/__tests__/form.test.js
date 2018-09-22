@@ -2,7 +2,8 @@ import React from 'react';
 import validate from 'validate.js';
 
 import { getFieldNameObject, fieldValue, withForm} from '../form';
-import { SignUp } from '../../components/SignUp';
+
+const DummyComponent = () => <div>Dummy Component</div>;
 
 describe('getFieldNameObject', () => {
   it('returns fields used in the form that can be used like an enum', () => {
@@ -19,7 +20,7 @@ describe('fieldValue', () => {
     };
     const email = {
       value: 'person@gmail.com',
-    }; 
+    };
 
     const fields = {
       name,
@@ -34,13 +35,13 @@ describe('fieldValue', () => {
 describe('withForm', () => {
   describe('valuesForAllFields', () => {
     let fieldNames, component;
-    
+
     beforeEach(() => {
       fieldNames = {
         name: 'name',
         email: 'email',
       };
-      const FormComponent = withForm(fieldNames)(SignUp);
+      const FormComponent = withForm(fieldNames)(DummyComponent);
       component = shallow(<FormComponent></FormComponent>);
     });
 
@@ -61,15 +62,15 @@ describe('withForm', () => {
       expect(fieldValues.name).toEqual('Person');
       expect(fieldValues.email).toEqual('person@gmail.com');
     });
-   
-    it('passes valuesForAllFields handler to SignUp component', () => {
+
+    it('passes valuesForAllFields handler to DummyComponent component', () => {
       expect(component).toHaveProp('valuesForAllFields');
     });
   });
 
   describe('validateAllFields', () => {
     let fieldNames, component;
-    
+
     beforeEach(() => {
       fieldNames = {
         name: 'name',
@@ -78,17 +79,17 @@ describe('withForm', () => {
 
       const constraints = {
         [fieldNames.name]: {
-          presence: { 
+          presence: {
             allowEmpty: false,
           },
         },
         [fieldNames.email]: {
-          presence: { 
+          presence: {
             allowEmpty: false,
           },
         },
       };
-      const FormComponent = withForm(fieldNames, constraints)(SignUp);
+      const FormComponent = withForm(fieldNames, constraints)(DummyComponent);
       component = shallow(<FormComponent></FormComponent>);
     });
 
@@ -149,7 +150,7 @@ describe('withForm', () => {
         name: 'name',
         email: 'email',
       };
-      const FormComponent = withForm(fieldNames)(SignUp);
+      const FormComponent = withForm(fieldNames)(DummyComponent);
       component = shallow(<FormComponent></FormComponent>);
     });
 
@@ -157,7 +158,7 @@ describe('withForm', () => {
       const event = {
         target: {
           name: 'name',
-          value: 'new name',  
+          value: 'new name',
         },
       };
 
@@ -175,7 +176,7 @@ describe('withForm', () => {
         name: 'name',
         email: 'email',
       };
-      const FormComponent = withForm(fieldNames)(SignUp);
+      const FormComponent = withForm(fieldNames)(DummyComponent);
       component = shallow(<FormComponent></FormComponent>);
     });
 
@@ -200,7 +201,7 @@ describe('withForm', () => {
         name: 'name',
         email: 'email',
       };
-      const FormComponent = withForm(fieldNames)(SignUp);
+      const FormComponent = withForm(fieldNames)(DummyComponent);
       component = shallow(<FormComponent></FormComponent>);
     });
 
@@ -231,24 +232,24 @@ describe('withForm', () => {
 
       it('returns undefined when input is empty', () => {
         const input = {webUrl : ''};
-  
+
         expect(validate(input, constraints)).toBe(undefined);
       });
 
       it('returns undefined when input is a url', () => {
-        const validURLs = ['http://www.ssn-app.com', 
-          'https://www.ssn-app.com', 
+        const validURLs = ['http://www.ssn-app.com',
+          'https://www.ssn-app.com',
           'https://www.ssn-app.com',
         ];
-        
+
         const validURLInputs = validURLs.map((url) => ({webUrl : url}));
-  
+
         validURLInputs.forEach((input) => {
           expect(validate(input, constraints)).toBe(undefined);
         });
       });
     });
-    
+
     describe('allowEmpty is false', () => {
       const constraints = {
         webUrl: {
@@ -258,18 +259,18 @@ describe('withForm', () => {
 
       it('returns error message when input is empty', () => {
         const input = {webUrl : ''};
-  
+
         expect(validate(input, constraints).webUrl).toEqual(['Web url cannot be empty']);
       });
 
       it('returns undefined when input is a url', () => {
-        const validURLs = ['http://www.ssn-app.com', 
-          'https://www.ssn-app.com', 
+        const validURLs = ['http://www.ssn-app.com',
+          'https://www.ssn-app.com',
           'https://www.ssn-app.com',
         ];
-        
+
         const validURLInputs = validURLs.map((url) => ({webUrl : url}));
-  
+
         validURLInputs.forEach((input) => {
           expect(validate(input, constraints)).toBe(undefined);
         });

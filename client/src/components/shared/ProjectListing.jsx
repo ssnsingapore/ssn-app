@@ -12,7 +12,7 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import { AppContext } from './main/AppContext';
+import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
