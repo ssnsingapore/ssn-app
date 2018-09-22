@@ -94,7 +94,7 @@ const ProjectSchema = new mongoose.Schema(
     volunteerRequirementsDescription: String,
     volunteerBenefitsDescription: String,
     projectType: {
-      type: [String],
+      type: String,
       required: [true, 'cannot be blank'],
       enum: Object.values(ProjectType),
     },
