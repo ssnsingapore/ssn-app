@@ -1,7 +1,7 @@
 import { Admin } from 'models/Admin';
 import { seedData } from './utils';
 
-const admin = new Admin();
+// const admin = new Admin();
 
 // const password1 = admin.setPassword('test1231').then(() => console.log(admin.hashedPassword));
 // const password2 = admin.setPassword('testing153').then(() => console.log(admin.hashedPassword));
