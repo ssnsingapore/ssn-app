@@ -36,8 +36,7 @@ const constraints = {
   [FieldName.email]: {
     presence: { allowEmpty: false },
     email: true,
-  },
-  [FieldName.accountType]: {
+  }, [FieldName.accountType]: {
     presence: { allowEmpty: false },
     inclusion: Object.values(AccountType),
   },
@@ -219,22 +218,28 @@ class _ProjectOwnerSignUpForm extends Component {
             error={fieldHasError(fields, FieldName.socialMedia)}
             helperText={fieldErrorText(fields, FieldName.socialMedia)} fullWidth />
           { this.renderDescriptionOrBio() }
-          <TextField name={FieldName.password}
+          <TextField
+            name={FieldName.password}
             className={classes.textInput}
             id={FieldName.password}
             label="Password" required={true}
             onChange={handleChange}
             error={fieldHasError(fields, FieldName.password)}
             helperText={fieldErrorText(fields, FieldName.password)}
-            type="password" fullWidth />
-          <TextField name={FieldName.passwordConfirmation}
+            type="password"
+            fullWidth
+          />
+          <TextField
+            name={FieldName.passwordConfirmation}
             className={classes.textInput}
             id={FieldName.passwordConfirmation}
             required={true}
             label="Password Confirmation" onChange={handleChange}
             error={fieldHasError(fields, FieldName.passwordConfirmation)}
             helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
-            type="password" fullWidth />
+            type="password"
+            fullWidth
+          />
 
           <Button
             type="submit"
