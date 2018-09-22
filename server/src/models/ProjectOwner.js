@@ -21,36 +21,53 @@ const ProjectOwnerSchema = new mongoose.Schema({
   },
   accountType: {
     type: String,
-    enum: Object.keys(AccountType),
+    enum: Object.values(AccountType),
   },
   websiteUrl: {
     type: String,
-    /* match: [
-       /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+    match: [
+      // eslint-disable-next-line no-useless-escape
+      /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
       'is invalid',
-    ], */
+    ],
   },
   socialMediaLink: {
     type: String,
-    /* match: [
+    match: [
+      // eslint-disable-next-line no-useless-escape
       /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
       'is invalid',
-    ], */
+    ],
   },
   profilePhotoUrl: {
     type: String,
   },
   organisationName: {
     type: String,
-    accountType: { enum: 'ORGANIZATION' },
+    required: [
+      function () {
+        return this.accountType === AccountType.ORGANIZATION;
+      },
+      'cannot be blank',
+    ],
   },
   description: {
     type: String,
-    accountType: { enum: 'ORGANIZATION' },
+    required: [
+      function () {
+        return this.accountType === AccountType.ORGANIZATION;
+      },
+      'cannot be blank',
+    ],
   },
   personalBio: {
     type: String,
-    accountType: { enum: 'INDIVIDUAL' },
+    required: [
+      function () {
+        return this.accountType === AccountType.INDIVIDUAL;
+      },
+      'cannot be blank',
+    ],
   },
 });
 
