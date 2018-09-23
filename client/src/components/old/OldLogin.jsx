@@ -5,10 +5,11 @@ import { withTheme, withStyles } from '@material-ui/core/styles';
 import qs from 'qs';
 import Cookie from 'js-cookie';
 
-import { AppContext } from '../main/AppContext';
-import { AlertType } from '../shared/Alert';
+import { AppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
+import { MESSAGE_COOKIE_NAME } from 'util/constants';
 import {
   getFieldNameObject,
   fieldValue,
@@ -19,8 +20,6 @@ import {
 
 const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
 const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
-
-const CONFIRMATION_COOKIE_NAME = 'ssn_confirmation';
 
 const FieldName = getFieldNameObject(['email', 'password']);
 const constraints = {
@@ -94,12 +93,12 @@ class _Login extends Component {
   showAccountConfirmationMessage = () => {
     const { showAlert } = this.props.context.updaters;
 
-    if (Cookie.get(CONFIRMATION_COOKIE_NAME)) {
+    if (Cookie.get(MESSAGE_COOKIE_NAME)) {
       const paramsWithoutHash = this.props.location.hash.substring(1);
       const { message, type } = qs.parse(paramsWithoutHash);
       showAlert('confirmationMessage', type, message);
 
-      Cookie.remove(CONFIRMATION_COOKIE_NAME);
+      Cookie.remove(MESSAGE_COOKIE_NAME);
     }
   }
 

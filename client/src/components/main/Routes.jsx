@@ -31,6 +31,7 @@ class _Routes extends Component {
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
+              <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
               <Route path="/signup/confirmation" component={AwaitingAccountConfirmation} />
               <Route path="/passwordReset" component={PasswordResetForm} />
