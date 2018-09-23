@@ -15,32 +15,35 @@ afterAll(async () => {
 });
 
 describe('Password reset service', () => {
-  const email = 'test@test.com';
-  const oldHashedPassword = 'oldhashedpassword';
-  let mockUser;
   let passwordResetService;
 
-  beforeEach(async (done) => {
-    mailer.sendMail = jest.fn(() => ({ messageId: 'some id' }));
-    mockUser = new User({
-      name: 'test',
-      email,
-      hashedPassword: oldHashedPassword,
-    });
-    await mockUser.save();
-    passwordResetService = new PasswordResetService(email);
-    done();
-  });
-
-  afterEach((done) => {
-    User.deleteMany({}).then(() => done());
+  beforeEach(() => {
+    passwordResetService = new PasswordResetService();
   });
 
   describe('triggering password reset', () => {
-    it('should find user with given email and return an errorsObject if it does not exist', async () => {
-      passwordResetService = new PasswordResetService('non.existent@email.com');
+    const email = 'test@test.com';
+    const oldHashedPassword = 'oldhashedpassword';
+    let mockUser;
 
-      const errorsObj = await passwordResetService.trigger();
+    beforeEach(async (done) => {
+      mailer.sendMail = jest.fn(() => ({ messageId: 'some id' }));
+      mockUser = new User({
+        name: 'test',
+        email,
+        hashedPassword: oldHashedPassword,
+      });
+      await mockUser.save();
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.deleteMany({});
+      done();
+    });
+
+    it('should find user with given email and return an errorsObject if it does not exist', async () => {
+      const errorsObj = await passwordResetService.trigger('non.existent@email.com');
 
       expect(errorsObj.errors[0]).toMatchObject(
         new BadRequestErrorView(
@@ -80,6 +83,91 @@ describe('Password reset service', () => {
           subject: 'SSN Project Portal Password Reset',
           html: passwordResetService.testExports.passwordResetEmailHtml(user),
         });
+      });
+    });
+  });
+
+  describe('getting password reset redirect url and success flag', () => {
+    let userId;
+    const passwordResetToken = 'passwordResetToken';
+
+    beforeEach(async (done) => {
+      const user = new User({
+        name: 'test',
+        email: 'test@test.com',
+        passwordResetToken,
+        passwordExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+      await user.save();
+      userId = user.id;
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.deleteMany({});
+      done();
+    });
+
+    describe('when the user with the given id cannot be found', () => {
+      it('should return url with a message with type error that something was wrong with the reset link', async () => {
+        const result = await passwordResetService.getRedirectUrlAndSuccessFlag('1'.repeat(24), passwordResetToken);
+
+        expect(result.redirectUrl).toEqual(
+          expect.stringContaining(encodeURIComponent('there was something wrong with your password reset link')),
+        );
+        expect(result.redirectUrl).toEqual(
+          expect.stringContaining('login')
+        );
+        expect(result.isSuccess).toBeFalsy();
+      });
+    });
+
+    describe('when the user with the given id can be found', () => {
+      describe('when the user\'s password reset token does not match the one in params', () => {
+        it('should return with a message with type error that something was wrong with the reset link', async () => {
+          const result = await passwordResetService.getRedirectUrlAndSuccessFlag(userId, 'nonsense token');
+
+          expect(result.redirectUrl).toEqual(
+            expect.stringContaining(encodeURIComponent('there was something wrong with your password reset link')),
+          );
+          expect(result.redirectUrl).toEqual(
+            expect.stringContaining('login')
+          );
+          expect(result.isSuccess).toBeFalsy();
+        });
+      });
+
+      describe('when the password reset link has expired', () => {
+        beforeEach(async (done) => {
+          await User.findByIdAndUpdate(userId, {
+            passwordResetExpiresAt: new Date(Date.now() - 60 * 60 * 1000),
+          });
+          done();
+        });
+
+        it('should return with a message with type error that the reset link has expired', async () => {
+          const result = await passwordResetService.getRedirectUrlAndSuccessFlag(userId, passwordResetToken);
+
+          expect(result.redirectUrl).toEqual(
+            expect.stringContaining(encodeURIComponent('your password reset link has already expired')),
+          );
+          expect(result.redirectUrl).toEqual(
+            expect.stringContaining('login')
+          );
+          expect(result.isSuccess).toBeFalsy();
+        });
+      });
+
+      it('should return with a message with type success when user is found and reset token matches', async () => {
+        const result = await passwordResetService.getRedirectUrlAndSuccessFlag(userId, passwordResetToken);
+
+        expect(result.redirectUrl).toEqual(
+          expect.stringContaining(encodeURIComponent('reset your password')),
+        );
+        expect(result.redirectUrl).toEqual(
+          expect.stringContaining('passwordReset')
+        );
+        expect(result.isSuccess).toBeTruthy();
       });
     });
   });

@@ -111,6 +111,7 @@ async function confirmUser(req, res) {
 
   res.cookie(
     config.MESSAGE_COOKIE_NAME,
+    config.MESSAGE_COOKIE_NAME,
     {
       secure: true,
       sameSite: true,
@@ -135,7 +136,7 @@ async function confirmUser(req, res) {
 usersRouter.post('/users/passwordReset', asyncWrap(triggerPasswordReset));
 async function triggerPasswordReset(req, res) {
   const { email } = req.body;
-  const errorsObject = await new PasswordResetService(email).trigger();
+  const errorsObject = await new PasswordResetService().trigger(email);
 
   if (errorsObject) {
     return res
@@ -151,52 +152,22 @@ async function triggerPasswordReset(req, res) {
 usersRouter.get('/users/:id/passwordReset/:passwordResetToken', asyncWrap(redirectToPasswordResetForm));
 async function redirectToPasswordResetForm(req, res) {
   const { id, passwordResetToken } = req.params;
-  const user = await User.findById(id);
-
-  res.cookie(
-    config.MESSAGE_COOKIE_NAME,
-    {
-      secure: true,
-      sameSite: true,
-    }
+  const passwordResetService = new PasswordResetService();
+  const { redirectUrl, isSuccess } = await passwordResetService.getRedirectUrlAndSuccessFlag(
+    id,
+    passwordResetToken
   );
+  const cookieArgsObject = await passwordResetService.getPasswordResetCookieArgs(isSuccess);
 
-  if (user.passwordResetExpiresAt < new Date()) {
-    const message = 'It seems like your password reset link has already expired. Please try to generate a new one.';
-    return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=ERROR&message=${encodeURIComponent(message)}`);
+  res.cookie(...cookieArgsObject.message);
+
+  if (!isSuccess) {
+    return res.redirect(redirectUrl);
   }
 
-  if (!user || user.passwordResetToken !== passwordResetToken) {
-    const message = 'It seems like there was something wrong with your password reset link. Please try again!';
-    return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=ERROR&message=${encodeURIComponent(message)}`);
-  }
+  res.cookie(...cookieArgsObject.passwordResetToken);
+  res.cookie(...cookieArgsObject.email);
+  res.cookie(...cookieArgsObject.csrf);
 
-  res.cookie(
-    config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
-    {
-      httpOnly: true,
-      secure: true,
-      sameSite: true,
-      maxAge: 10 * 60 * 1000,
-    }
-  );
-  res.cookie(
-    config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
-    {
-      httpOnly: true,
-      secure: true,
-      sameSite: true,
-      maxAge: 10 * 60 * 1000,
-    },
-  );
-  res.cookie(
-    config.PASSWORD_RESET_CSRF_COOKIE_NAME,
-    {
-      secure: true,
-      sameSite: true,
-      maxAge: 10 * 60 * 1000,
-    }
-  );
-  const message = 'Please reset your password. Your session will expire in 10 minutes';
-  return res.redirect(`${config.WEBSITE_BASE_URL}/passwordReset#type=INFO&message=${encodeURIComponent(message)}`);
+  return res.redirect(redirectUrl);
 }
