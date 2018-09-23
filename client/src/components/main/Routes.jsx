@@ -18,6 +18,7 @@ import { Todos } from 'components/old/Todos';
 import { Login } from 'components/old/OldLogin';
 import { SignUp } from 'components/old/OldSignUp';
 import { ImageUpload } from 'components/old/ImageUpload';
+import { PasswordResetForm } from '../public/PasswordResetForm';
 
 class _Routes extends Component {
   render() {
@@ -32,6 +33,7 @@ class _Routes extends Component {
               <Route exact path="/" component={HomePage} />
               <Route path="/signup" component={ProjectOwnerSignUpForm} />
               <Route path="/signup/confirmation" component={AwaitingAccountConfirmation} />
+              <Route path="/passwordReset" component={PasswordResetForm} />
               <Route path="/unauthorized" component={Unauthorized} />
 
               {/* Routes to old components for reference */}
