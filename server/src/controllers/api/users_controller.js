@@ -7,6 +7,7 @@ import { config } from 'config/environment';
 import { BadRequestErrorView, checkIfFound } from 'util/errors';
 import { SignUpService } from 'services/SignUpService';
 import { LoginService } from 'services/LoginService';
+import { PasswordResetService } from 'services/PasswordResetService';
 
 export const usersRouter = express.Router();
 
@@ -129,4 +130,20 @@ async function confirmUser(req, res) {
   await user.confirm();
   const message = 'Your account has been successfully confirmed! You will now be able to login.';
   return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=SUCCESS&message=${encodeURIComponent(message)}`);
+}
+
+usersRouter.post('/users/passwordReset', asyncWrap(triggerPasswordReset));
+async function triggerPasswordReset(req, res) {
+  const { email } = req.body;
+  const errorsObject = await new PasswordResetService(email).trigger();
+
+  if (errorsObject) {
+    return res
+      .status(400)
+      .json(errorsObject);
+  }
+
+  return res
+    .status(204)
+    .json();
 }
