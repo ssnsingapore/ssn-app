@@ -14,6 +14,20 @@ const theme = createMuiTheme({
     primary: { main: '#3E9992' },
     secondary: { main: '#FF9391' },
   },
+  container: {
+    margin: {
+      vertical: 60,
+    },
+    padding: {
+      vertical: 45,
+      horizontal: 45,
+    },
+  },
+  formInput: {
+    margin: {
+      vertical: 16,
+    },
+  },
 });
 
 class App extends Component {

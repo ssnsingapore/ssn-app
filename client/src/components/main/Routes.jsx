@@ -31,14 +31,14 @@ class _Routes extends Component {
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
-              <Route path="/signup" component={ProjectOwnerSignUpForm} />
+              <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
               <Route path="/signup/confirmation" component={AwaitingAccountConfirmation} />
               <Route path="/passwordReset" component={PasswordResetForm} />
               <Route path="/unauthorized" component={Unauthorized} />
 
               {/* Routes to old components for reference */}
               <Route path="/login/old" component={Login} />
-              <Route exact path="/signup/old" component={SignUp} />
+              <Route path="/signup/old" component={SignUp} />
               <RouteAuthenticated exact path="/todos" component={Todos} authorize={[Role.user]} />
               <Route path="/about" component={About} />
               <Route path="/image_upload" component={ImageUpload} />

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
-import { fieldErrorText, fieldHasError, getFieldNameObject, withForm } from 'util/form';
+import { fieldErrorText, fieldHasError, getFieldNameObject, withForm, fieldValue } from 'util/form';
 import { AppContext } from '../main/AppContext';
 import { AlertType } from '../shared/Alert';
 
@@ -107,11 +107,6 @@ class _ProjectOwnerSignUpForm extends Component {
     }
   }
 
-  radioButton = () => {
-    const { classes } = this.props;
-    return <Radio classes={{ root: classes.radioButton, checked: classes.checked }} />;
-  }
-
   renderOrganizationName = () => {
     const { classes, handleChange, fields } = this.props;
 
@@ -130,26 +125,36 @@ class _ProjectOwnerSignUpForm extends Component {
   renderDescriptionOrBio = () => {
     const { classes, handleChange, fields } = this.props;
 
-    if (fields[FieldName.accountType].value === AccountType.ORGANIZATION) {
+    if (fieldValue(fields, FieldName.accountType) === AccountType.ORGANIZATION) {
       return (
-        <TextField name={FieldName.description}
+        <TextField
+          name={FieldName.description}
           className={classes.textInput}
           id={FieldName.description}
-          label="Description" onChange={handleChange}
+          label="Description"
+          onChange={handleChange}
+          value={fieldValue(fields, FieldName.description)}
           error={fieldHasError(fields, FieldName.description)}
           helperText={fieldErrorText(fields, FieldName.description)}
-          fullWidth />
+          fullWidth
+          margin="normal"
+        />
       );
     }
 
     return (
-      <TextField name={FieldName.personalBio}
+      <TextField
+        name={FieldName.personalBio}
         className={classes.textInput}
         id={FieldName.personalBio}
-        label="Personal bio" onChange={handleChange}
+        label="Personal bio"
+        onChange={handleChange}
+        value={fieldValue(fields, FieldName.personalBio)}
         error={fieldHasError(fields, FieldName.personalBio)}
         helperText={fieldErrorText(fields, FieldName.personalBio)}
-        fullWidth />
+        fullWidth
+        margin="normal"
+      />
     );
   }
 
@@ -164,9 +169,9 @@ class _ProjectOwnerSignUpForm extends Component {
     }
 
     return (
-      <form onSubmit={this.handleSubmit}>
-        <Paper elevation={2} className={classes.root} square={true}>
-          <Typography variant="headline">Project Owner Details</Typography>
+      <Paper elevation={2} className={classes.root} square={true}>
+        <Typography variant="headline">Project Owner Details</Typography>
+        <form onSubmit={this.handleSubmit}>
           <TextField
             name={FieldName.name}
             className={classes.textInput}
@@ -174,9 +179,12 @@ class _ProjectOwnerSignUpForm extends Component {
             label="Name"
             required={true}
             onChange={handleChange}
+            value={fieldValue(fields, FieldName.name)}
             error={fieldHasError(fields, FieldName.name)}
             helperText={fieldErrorText(fields, FieldName.name)}
-            fullWidth />
+            fullWidth
+            margin="normal"
+          />
           <TextField
             name={FieldName.email}
             className={classes.textInput}
@@ -184,19 +192,24 @@ class _ProjectOwnerSignUpForm extends Component {
             label="Email"
             required={true}
             onChange={handleChange}
+            value={fieldValue(fields, FieldName.email)}
             error={fieldHasError(fields, FieldName.email)}
             helperText={fieldErrorText(fields, FieldName.email)}
-            fullWidth />
+            fullWidth
+            margin="normal"
+          />
           <RadioGroup
             name={FieldName.accountType}
-            value={fields[FieldName.accountType].value}
-            onChange={handleChange}>
+            value={fieldValue(fields, FieldName.accountType)}
+            onChange={handleChange}
+            className={classes.radioGroup}
+          >
             <FormControlLabel checked={true}
               value={AccountType.ORGANIZATION}
-              control={this.radioButton()}
+              control={<Radio color="primary" />}
               label="I am creating an account on behalf of an organisation" />
             <FormControlLabel value={AccountType.INDIVIDUAL}
-              control={this.radioButton()}
+              control={<Radio color="primary" />}
               label="I am an individual" />
           </RadioGroup>
           {this.renderOrganizationName()}
@@ -206,39 +219,51 @@ class _ProjectOwnerSignUpForm extends Component {
             id={FieldName.webUrl}
             label="Web URL"
             onChange={handleChange}
+            value={fieldValue(fields, FieldName.webUrl)}
             error={fieldHasError(fields, FieldName.webUrl)}
             helperText={fieldErrorText(fields, FieldName.webUrl)}
-            fullWidth />
+            fullWidth
+            margin="normal"
+          />
           <TextField
             name={FieldName.socialMedia}
             className={classes.textInput}
             id={FieldName.socialMedia}
             label="Social Media"
             onChange={handleChange}
+            value={fieldValue(fields, FieldName.webUrl)}
             error={fieldHasError(fields, FieldName.socialMedia)}
-            helperText={fieldErrorText(fields, FieldName.socialMedia)} fullWidth />
-          { this.renderDescriptionOrBio() }
+            helperText={fieldErrorText(fields, FieldName.socialMedia)}
+            fullWidth
+            margin="normal"
+          />
+          {this.renderDescriptionOrBio()}
           <TextField
             name={FieldName.password}
             className={classes.textInput}
             id={FieldName.password}
             label="Password" required={true}
             onChange={handleChange}
+            value={fieldValue(fields, FieldName.password)}
             error={fieldHasError(fields, FieldName.password)}
             helperText={fieldErrorText(fields, FieldName.password)}
             type="password"
             fullWidth
+            margin="normal"
           />
           <TextField
             name={FieldName.passwordConfirmation}
             className={classes.textInput}
             id={FieldName.passwordConfirmation}
             required={true}
-            label="Password Confirmation" onChange={handleChange}
+            label="Password Confirmation"
+            onChange={handleChange}
+            value={fieldValue(fields, FieldName.passwordConfirmation)}
             error={fieldHasError(fields, FieldName.passwordConfirmation)}
             helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
             type="password"
             fullWidth
+            margin="normal"
           />
 
           <Button
@@ -249,32 +274,28 @@ class _ProjectOwnerSignUpForm extends Component {
             variant="contained"
             color="secondary"
           >
-          Create Account
+            Create Account
           </Button>
-        </Paper>
-      </form>
+        </form>
+      </Paper>
     );
   }
 }
 
 const styles = theme => ({
   root: {
-    maxWidth: '500px',
-    margin: '3% auto',
-    padding: '2%',
+    maxWidth: '450px',
+    margin: `${theme.container.margin.vertical}px auto`,
+    padding: `${theme.container.padding.vertical}px ${theme.container.padding.horizontal}px`,
   },
-  textInput: {
-    marginBottom: '5%',
+  radioGroup: {
+    marginTop: `${2 * theme.formInput.margin.vertical}px`,
   },
-  radioButton: {
-    '&$checked': {
-      color: '#3E9992',
-    },
-  },
-  checked: {},
   createButton: {
     display: 'block',
     margin: '30px auto',
+    marginBottom: 0,
+    color: '#FFFFFF',
   },
 });
 

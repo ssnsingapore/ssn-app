@@ -33,11 +33,11 @@ const _AwaitingAccountConfirmation = (props) => {
   );
 };
 
-const styles = {
+const styles = theme => ({
   container: {
     width: '400px',
-    padding: '45px 35px',
-    margin: '60px auto',
+    padding: `${theme.container.padding.vertical}px ${theme.container.padding.horizontal}px`,
+    margin: `${theme.container.margin.vertical}px auto`,
 
     display: 'flex',
     flexDirection: 'column',
@@ -46,7 +46,7 @@ const styles = {
   message: {
     marginBottom: '30px',
   },
-};
+});
 
 export const AwaitingAccountConfirmation = withStyles(styles)(
   _AwaitingAccountConfirmation,
