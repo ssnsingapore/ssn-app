@@ -29,7 +29,6 @@ checkRequiredExist(
   'TOKEN_COOKIE_MAXAGE',
   'JWT_EXPIRES_IN',
 
-  'CONFIRMATION_COOKIE_NAME',
   'PASSWORD_RESET_DURATION',
 
   'AWS_BUCKET_NAME',
@@ -57,8 +56,11 @@ const config = {
   TOKEN_COOKIE_MAXAGE: math.eval(process.env.TOKEN_COOKIE_MAXAGE || 0),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
 
-  CONFIRMATION_COOKIE_NAME: process.env.CONFIRMATION_COOKIE_NAME,
+  MESSAGE_COOKIE_NAME: 'ssn_message',
   PASSWORD_RESET_DURATION: math.eval(process.env.PASSWORD_RESET_DURATION || 0),
+  PASSWORD_RESET_TOKEN_COOKIE_NAME: 'ssn_password_reset_token',
+  PASSWORD_RESET_EMAIL_COOKIE_NAME: 'ssn_password_reset_email',
+  PASSWORD_RESET_CSRF_COOKIE_NAME: 'ssn_password_reset_csrf_token',
 
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
 };

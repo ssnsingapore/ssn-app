@@ -58,7 +58,7 @@ export class PasswordResetService {
     <p><em>SSN</em></p>
   `)
 
-  _passwordResetUrl = user => encodeURI(`${config.API_BASE_URL}/api/v1/users/${user.id}/passwordResetToken/${user.passwordResetToken}`)
+  _passwordResetUrl = user => encodeURI(`${config.API_BASE_URL}/api/v1/users/${user.id}/passwordReset/${user.passwordResetToken}`)
 
   testExports = {
     passwordResetEmailHtml: this._passwordResetEmailHtml,

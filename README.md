@@ -251,3 +251,6 @@ We are using nodemailer connected to a Gmail SMTP server through OAuth2 to send 
 [This stackoverflow answer](https://stackoverflow.com/questions/24098461/nodemailer-gmail-what-exactly-is-a-refresh-token-and-how-do-i-get-one) gives a good step-by-step overview of how to obtain the above information, although the answer is somewhat old and some of the steps are slightly outdated, overall the steps are more or less the same.
 
 The sender email address will always be the same as the email of the user under which the project with the API credentials was created.
+
+### Testing redirects from the backend
+Ensure that your browser is not caching redirects by clearing browsing data, otherwise the redirect may not work. (eg. for testing account confirmation and password reset flows)
