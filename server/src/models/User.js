@@ -19,8 +19,6 @@ const UserSchema = new mongoose.Schema(
     },
     name: { type: String, required: [true, 'cannot be blank'] },
     hashedPassword: String,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
     lastLogoutTime: Date,
     role: {
       type: String,
@@ -32,6 +30,10 @@ const UserSchema = new mongoose.Schema(
     // Account confirmation
     confirmedAt: Date,
     confirmationToken: String,
+
+    // Password reset
+    passwordResetToken: String,
+    passwordResetExpiresAt: Date,
   },
   { timestamps: true },
 );
@@ -92,5 +94,21 @@ UserSchema.methods.confirm = async function () {
   await this.save();
 };
 
+UserSchema.methods.generatePasswordResetToken = async function () {
+  const passwordResetToken = await uid(18);
+  const passwordResetExpiresAt = new Date(Date.now() + config.PASSWORD_RESET_DURATION);
+
+  this.set({ passwordResetToken, passwordResetExpiresAt });
+  await this.save();
+
+  return passwordResetToken;
+};
+
+UserSchema.methods.resetToRandomPassword = async function () {
+  const randomPassword = await uid(18);
+
+  this.set({ hashedPassword: randomPassword });
+  await this.save();
+};
 
 export const User = mongoose.model('User', UserSchema);
