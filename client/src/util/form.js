@@ -94,7 +94,9 @@ validate.validators.isUrl = (value, options) => {
 
   if (value === '') return null;
 
-  return validate.single(value, { url: true } );
+  return validate.single(value, { format: { 
+    pattern: /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/, 
+  }});
 };
 
 // Validations

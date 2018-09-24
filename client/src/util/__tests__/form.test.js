@@ -240,12 +240,27 @@ describe('withForm', () => {
         const validURLs = ['http://www.ssn-app.com',
           'https://www.ssn-app.com',
           'https://www.ssn-app.com',
+          'www.ssn-app.com',
         ];
 
         const validURLInputs = validURLs.map((url) => ({webUrl : url}));
 
         validURLInputs.forEach((input) => {
           expect(validate(input, constraints)).toBe(undefined);
+        });
+      });
+
+      it('returns error message when input is an invalid url', () => {
+        const invalidURLs = [
+          'www.ssn-app',
+          'random string',
+          'abc.ssn-app',
+        ];
+
+        const invalidURLInputs = invalidURLs.map((url) => ({webUrl : url}));
+
+        invalidURLInputs.forEach((input) => {
+          expect(validate(input, constraints).webUrl).toEqual(['Web url is invalid']);
         });
       });
     });
@@ -267,12 +282,27 @@ describe('withForm', () => {
         const validURLs = ['http://www.ssn-app.com',
           'https://www.ssn-app.com',
           'https://www.ssn-app.com',
+          'www.ssn-app.com',
         ];
 
         const validURLInputs = validURLs.map((url) => ({webUrl : url}));
 
         validURLInputs.forEach((input) => {
           expect(validate(input, constraints)).toBe(undefined);
+        });
+      });
+
+      it('returns error message when input is an invalid url', () => {
+        const invalidURLs = [
+          'www.ssn-app',
+          'random string',
+          'abc.ssn-app',
+        ];
+
+        const invalidURLInputs = invalidURLs.map((url) => ({webUrl : url}));
+
+        invalidURLInputs.forEach((input) => {
+          expect(validate(input, constraints).webUrl).toEqual(['Web url is invalid']);
         });
       });
     });
