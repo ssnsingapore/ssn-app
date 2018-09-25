@@ -2,12 +2,18 @@ import mongoose from 'mongoose';
 import { mailer } from 'config/mailer';
 import { User } from 'models/User';
 import { BadRequestErrorView } from 'util/errors';
+import { config, isProduction } from 'config/environment';
 import { PasswordResetService } from '../PasswordResetService';
 
 jest.mock('config/mailer');
+jest.mock('config/environment');
 
 beforeAll(async () => {
   await mongoose.connect(global.mongoUri);
+  config.MESSAGE_COOKIE_NAME = 'ssn_message';
+  config.PASSWORD_RESET_TOKEN_COOKIE_NAME = 'ssn_password_reset_token';
+  config.PASSWORD_RESET_EMAIL_COOKIE_NAME = 'ssn_password_reset_email';
+  config.PASSWORD_RESET_CSRF_COOKIE_NAME = 'ssn_password_reset_csrf_token';
 });
 
 afterAll(async () => {
@@ -87,7 +93,7 @@ describe('Password reset service', () => {
     });
   });
 
-  describe('getting password reset redirect url and success flag', () => {
+  fdescribe('getting password reset redirect url and cookie args', () => {
     let userId;
     const passwordResetToken = 'passwordResetToken';
 
@@ -110,7 +116,7 @@ describe('Password reset service', () => {
 
     describe('when the user with the given id cannot be found', () => {
       it('should return url with a message with type error that something was wrong with the reset link', async () => {
-        const result = await passwordResetService.getRedirectUrlAndSuccessFlag('1'.repeat(24), passwordResetToken);
+        const result = await passwordResetService.getRedirectUrlAndCookieArgs('1'.repeat(24), passwordResetToken);
 
         expect(result.redirectUrl).toEqual(
           expect.stringContaining(encodeURIComponent('there was something wrong with your password reset link')),
@@ -118,14 +124,29 @@ describe('Password reset service', () => {
         expect(result.redirectUrl).toEqual(
           expect.stringContaining('login')
         );
-        expect(result.isSuccess).toBeFalsy();
+      });
+
+      it('should return message cookie args', async () => {
+        const result = await passwordResetService.getRedirectUrlAndCookieArgs('1'.repeat(24), passwordResetToken);
+
+        expect(result.cookieArgs).toMatchObject({
+          message: [
+            config.MESSAGE_COOKIE_NAME,
+            config.MESSAGE_COOKIE_NAME,
+            {
+              secure: isProduction,
+              sameSite: true,
+              maxAge: 10 * 60 * 1000,
+            },
+          ],
+        });
       });
     });
 
     describe('when the user with the given id can be found', () => {
       describe('when the user\'s password reset token does not match the one in params', () => {
         it('should return with a message with type error that something was wrong with the reset link', async () => {
-          const result = await passwordResetService.getRedirectUrlAndSuccessFlag(userId, 'nonsense token');
+          const result = await passwordResetService.getRedirectUrlAndCookieArgs(userId, 'nonsense token');
 
           expect(result.redirectUrl).toEqual(
             expect.stringContaining(encodeURIComponent('there was something wrong with your password reset link')),
@@ -133,7 +154,22 @@ describe('Password reset service', () => {
           expect(result.redirectUrl).toEqual(
             expect.stringContaining('login')
           );
-          expect(result.isSuccess).toBeFalsy();
+        });
+
+        it('should return message cookie args', async () => {
+          const result = await passwordResetService.getRedirectUrlAndCookieArgs('1'.repeat(24), passwordResetToken);
+
+          expect(result.cookieArgs).toMatchObject({
+            message: [
+              config.MESSAGE_COOKIE_NAME,
+              config.MESSAGE_COOKIE_NAME,
+              {
+                secure: isProduction,
+                sameSite: true,
+                maxAge: 10 * 60 * 1000,
+              },
+            ],
+          });
         });
       });
 
@@ -146,7 +182,7 @@ describe('Password reset service', () => {
         });
 
         it('should return with a message with type error that the reset link has expired', async () => {
-          const result = await passwordResetService.getRedirectUrlAndSuccessFlag(userId, passwordResetToken);
+          const result = await passwordResetService.getRedirectUrlAndCookieArgs(userId, passwordResetToken);
 
           expect(result.redirectUrl).toEqual(
             expect.stringContaining(encodeURIComponent('your password reset link has already expired')),
@@ -154,12 +190,27 @@ describe('Password reset service', () => {
           expect(result.redirectUrl).toEqual(
             expect.stringContaining('login')
           );
-          expect(result.isSuccess).toBeFalsy();
+        });
+
+        it('should return message cookie args', async () => {
+          const result = await passwordResetService.getRedirectUrlAndCookieArgs('1'.repeat(24), passwordResetToken);
+
+          expect(result.cookieArgs).toMatchObject({
+            message: [
+              config.MESSAGE_COOKIE_NAME,
+              config.MESSAGE_COOKIE_NAME,
+              {
+                secure: isProduction,
+                sameSite: true,
+                maxAge: 10 * 60 * 1000,
+              },
+            ],
+          });
         });
       });
 
       it('should return with a message with type success when user is found and reset token matches', async () => {
-        const result = await passwordResetService.getRedirectUrlAndSuccessFlag(userId, passwordResetToken);
+        const result = await passwordResetService.getRedirectUrlAndCookieArgs(userId, passwordResetToken);
 
         expect(result.redirectUrl).toEqual(
           expect.stringContaining(encodeURIComponent('reset your password')),
@@ -167,7 +218,45 @@ describe('Password reset service', () => {
         expect(result.redirectUrl).toEqual(
           expect.stringContaining('passwordReset')
         );
-        expect(result.isSuccess).toBeTruthy();
+      });
+
+      it('should return message, password reset token, email and csrf cookie args', async () => {
+        const result = await passwordResetService.getRedirectUrlAndCookieArgs(userId, passwordResetToken);
+        const user = await User.findById(userId);
+        const baseCookieOptions = {
+          secure: isProduction,
+          sameSite: true,
+          maxAge: 10 * 60 * 1000,
+        };
+
+        expect(result.cookieArgs).toMatchObject({
+          message: [
+            config.MESSAGE_COOKIE_NAME,
+            config.MESSAGE_COOKIE_NAME,
+            baseCookieOptions,
+          ],
+          passwordResetToken: [
+            config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
+            user.passwordResetToken,
+            {
+              ...baseCookieOptions,
+              httpOnly: true,
+            },
+          ],
+          email: [
+            config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
+            user.email,
+            {
+              ...baseCookieOptions,
+              httpOnly: true,
+            },
+          ],
+          csrf: [
+            config.PASSWORD_RESET_CSRF_COOKIE_NAME,
+            expect.any(String),
+            baseCookieOptions,
+          ],
+        });
       });
     });
   });

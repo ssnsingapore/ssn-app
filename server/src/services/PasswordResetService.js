@@ -16,11 +16,12 @@ export class PasswordResetService {
     return errorsObject;
   }
 
-  getRedirectUrlAndSuccessFlag = async (userId, passwordResetToken) => {
+  getRedirectUrlAndCookieArgs = async (userId, passwordResetToken) => {
     const user = await User.findById(userId);
 
     let message;
     let isSuccess = false;
+
     if (!user || user.passwordResetToken !== passwordResetToken) {
       message = 'It seems like there was something wrong with your password reset link. Please try again!';
     } else if (user.passwordResetExpiresAt < new Date()) {
@@ -32,13 +33,14 @@ export class PasswordResetService {
 
     const alertType = isSuccess ? 'SUCCESS' : 'ERROR';
     const redirectPath = isSuccess ? 'passwordReset' : 'login';
+    const cookieArgs = await this._getPasswordResetCookieArgs(isSuccess, user);
     return {
       redirectUrl: `${config.WEBSITE_BASE_URL}/${redirectPath}#type=${alertType}&message=${encodeURIComponent(message)}`,
-      isSuccess,
+      cookieArgs,
     };
   }
 
-  getPasswordResetCookieArgs = async (isSuccess) => {
+  _getPasswordResetCookieArgs = async (isSuccess, user) => {
     const sharedOptions = {
       secure: isProduction,
       sameSite: true,
@@ -57,7 +59,7 @@ export class PasswordResetService {
         message: messageCookieArgs,
         passwordResetToken: [
           config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
-          config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
+          user.passwordResetToken,
           {
             ...sharedOptions,
             httpOnly: true,
@@ -65,7 +67,7 @@ export class PasswordResetService {
         ],
         email: [
           config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
-          config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
+          user.email,
           {
             ...sharedOptions,
             httpOnly: true,
