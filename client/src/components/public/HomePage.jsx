@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Typography, Grid, Paper, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
@@ -48,6 +49,8 @@ class _HomePage extends Component {
                 size="large"
                 fullWidth
                 className={classes.button}
+                component={Link}
+                to="/projects"
               >
                 View All Projects
               </Button>
