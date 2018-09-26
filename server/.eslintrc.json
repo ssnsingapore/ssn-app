@@ -15,7 +15,8 @@
     "no-use-before-define": ["error", { "functions": false }],
     "func-names": "off",
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
-    "no-console": "off"
+    "no-console": "off",
+    "max-len": "off"
   },
 
   "env": {
