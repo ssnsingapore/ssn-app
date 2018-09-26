@@ -9,7 +9,7 @@
     "test": "jest --runInBand",
     "lint": "./node_modules/eslint/bin/eslint.js . --ignore-path .gitignore",
     "db:clean": "babel-node src/db/clean.js",
-    "db:seed": "find src/db/seeds -type f -not -name utils.js -exec babel-node {} ';'"
+    "db:seed": "./seed_data.sh"
   },
   "dependencies": {
     "@babel/cli": "^7.0.0-rc.1",
