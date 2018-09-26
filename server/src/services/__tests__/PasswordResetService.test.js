@@ -93,7 +93,7 @@ describe('Password reset service', () => {
     });
   });
 
-  fdescribe('getting password reset redirect url and cookie args', () => {
+  describe('getting password reset redirect url and cookie args', () => {
     let userId;
     const passwordResetToken = 'passwordResetToken';
 
@@ -258,6 +258,112 @@ describe('Password reset service', () => {
           ],
         });
       });
+    });
+  });
+
+  describe('attempting password reset', () => {
+    let userId;
+    const email = 'test@test.com';
+    const passwordResetToken = 'passwordResetToken';
+    const newPassword = 'new password';
+
+    beforeEach(async (done) => {
+      const user = new User({
+        name: 'test',
+        email,
+        passwordResetToken,
+        passwordExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+      await user.save();
+      userId = user.id;
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.deleteMany({});
+      done();
+    });
+
+
+    describe('when email or passwordResetToken is undefined', () => {
+      it('should return a bad request error when email is undefined', async () => {
+        const result = await passwordResetService.attemptPasswordReset(undefined, passwordResetToken, newPassword);
+        expect(result.errors[0]).toEqual(
+          new BadRequestErrorView('Your password reset session has expired. Please try the password reset link again.')
+        );
+      });
+
+      it('should return a bad request error when passwordResetToken is undefined', async () => {
+        const result = await passwordResetService.attemptPasswordReset(email, undefined, newPassword);
+        expect(result.errors[0]).toEqual(
+          new BadRequestErrorView('Your password reset session has expired. Please try the password reset link again.')
+        );
+      });
+    });
+
+    describe('when password reset token does not match', () => {
+      it('should return a bad request error', async () => {
+        const result = await passwordResetService.attemptPasswordReset(email, 'incorrectToken', newPassword);
+        expect(result.errors[0]).toEqual(
+          new BadRequestErrorView('It seems like there was something wrong resetting your password. Please try again.'),
+        );
+      });
+    });
+
+    describe('when password reset token has expired', () => {
+      it('should return a bad request error', async () => {
+        await User.findByIdAndUpdate(userId, { passwordResetExpiresAt: new Date(Date.now() - 60) });
+
+        const result = await passwordResetService.attemptPasswordReset(email, passwordResetToken, newPassword);
+        expect(result.errors[0]).toEqual(
+          new BadRequestErrorView('Your password reset link has expired. Please try to generate a new one.'),
+        );
+      });
+    });
+
+    describe('when password reset token is valid', () => {
+      it('should return null for errors', async () => {
+        const result = await passwordResetService.attemptPasswordReset(email, passwordResetToken, newPassword);
+        expect(result).toBeNull();
+      });
+
+      it('should set the user\'s password and clear the passwordReset fields', async () => {
+        await passwordResetService.attemptPasswordReset(email, passwordResetToken, newPassword);
+
+        const user = await User.findById(userId);
+        expect(user.passwordResetToken).toBeUndefined();
+        expect(user.passwordResetExpiresAt).toBeUndefined();
+      });
+    });
+  });
+
+  describe('getting clear cookie args', () => {
+    it('should return clear cookie args for email and passwordResetToken cookies', () => {
+      const cookieArgs = passwordResetService.getClearCookieArgs();
+
+      const baseCookieOptions = {
+        secure: isProduction,
+        sameSite: true,
+        maxAge: 10 * 60 * 1000,
+      };
+      expect(cookieArgs.passwordResetToken).toEqual(
+        [
+          config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
+          {
+            ...baseCookieOptions,
+            httpOnly: true,
+          },
+        ],
+      );
+      expect(cookieArgs.email).toEqual(
+        [
+          config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
+          {
+            ...baseCookieOptions,
+            httpOnly: true,
+          },
+        ],
+      );
     });
   });
 });

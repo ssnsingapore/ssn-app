@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from 'passport';
+import createError from 'http-errors';
 
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
@@ -153,21 +154,46 @@ usersRouter.get('/users/:id/passwordReset/:passwordResetToken', asyncWrap(redire
 async function redirectToPasswordResetForm(req, res) {
   const { id, passwordResetToken } = req.params;
   const passwordResetService = new PasswordResetService();
-  const { redirectUrl, isSuccess } = await passwordResetService.getRedirectUrlAndSuccessFlag(
+  const { redirectUrl, cookieArgs } = await passwordResetService.getRedirectUrlAndCookieArgs(
     id,
     passwordResetToken
   );
-  const cookieArgsObject = await passwordResetService.getPasswordResetCookieArgs(isSuccess);
 
-  res.cookie(...cookieArgsObject.message);
-
-  if (!isSuccess) {
-    return res.redirect(redirectUrl);
-  }
-
-  res.cookie(...cookieArgsObject.passwordResetToken);
-  res.cookie(...cookieArgsObject.email);
-  res.cookie(...cookieArgsObject.csrf);
+  Object.keys(cookieArgs).forEach((type) => {
+    res.cookie(...cookieArgs[type]);
+  });
 
   return res.redirect(redirectUrl);
+}
+
+usersRouter.put('/users/passwordReset', asyncWrap(resetPassword));
+async function resetPassword(req, res, next) {
+  const csrfToken = req.get('csrf-token');
+  if (!csrfToken) {
+    next(createError.Unauthorized());
+  }
+
+  const email = req.cookies[config.PASSWORD_RESET_EMAIL_COOKIE_NAME];
+  const passwordResetToken = req.cookies[config.PASSWORD_RESET_TOKEN_COOKIE_NAME];
+  const { password } = req.body;
+
+  const passwordResetService = new PasswordResetService();
+
+  const errorsObject = await passwordResetService.attemptPasswordReset(
+    email,
+    passwordResetToken,
+    password,
+  );
+
+  if (errorsObject) {
+    return res
+      .status(400)
+      .json(errorsObject);
+  }
+
+  const cookieArgsObject = await passwordResetService.getClearCookieArgs();
+  res.clearCookie(...cookieArgsObject.passwordResetToken);
+  res.clearCookie(...cookieArgsObject.email);
+
+  return res.status(204).json();
 }

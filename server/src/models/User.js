@@ -111,4 +111,10 @@ UserSchema.methods.resetToRandomPassword = async function () {
   await this.save();
 };
 
+UserSchema.methods.clearPasswordResetFields = async function () {
+  this.set({ passwordResetToken: undefined, passwordResetExpiresAt: undefined });
+  await this.save();
+};
+
+
 export const User = mongoose.model('User', UserSchema);
