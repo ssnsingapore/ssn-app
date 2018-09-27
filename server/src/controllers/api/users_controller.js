@@ -49,7 +49,7 @@ async function registerNewUser(req, res) {
 
 usersRouter.post(
   '/login',
-  passport.authenticate('local', { session: false, failWithError: true }),
+  passport.authenticate('userLocal', { session: false, failWithError: true }),
   asyncWrap(login)
 );
 async function login(req, res) {

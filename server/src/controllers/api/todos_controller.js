@@ -1,12 +1,13 @@
 import express from 'express';
 
 import { Todo } from 'models/Todo';
+import { Role } from 'models/Role';
 import { asyncWrap } from 'util/async_wrapper';
 import { authMiddleware } from 'util/auth';
 
 export const todosRouter = express.Router();
 
-todosRouter.use('/todos', authMiddleware({ authorize: 'user' }));
+todosRouter.use('/todos', authMiddleware({ authorize: Role.user }));
 
 todosRouter.get('/todos', asyncWrap(getTodos));
 async function getTodos(_req, res) {

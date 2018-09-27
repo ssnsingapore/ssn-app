@@ -4,6 +4,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 
 import { User } from 'models/User';
+import { Role } from 'models/Role';
+import { Admin } from 'models/Admin';
 import { config } from './environment';
 
 export const extractJwtFromCookie = (req) => {
@@ -19,7 +21,7 @@ export const configurePassport = () => {
   // PASSPORT CONFIGURATION
   // =============================================================================
 
-  passport.use(new LocalStrategy(
+  passport.use(`${Role.user}Local`, new LocalStrategy(
     {
       usernameField: 'user[email]',
       passwordField: 'user[password]',
@@ -27,6 +29,25 @@ export const configurePassport = () => {
     (async (email, password, done) => {
       try {
         const user = await User.findOne({ email });
+        if (!user || !(await user.isValidPassword(password))) {
+          return done(null, false);
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }),
+  ));
+
+  passport.use(`${Role.admin}Local`, new LocalStrategy(
+    {
+      usernameField: 'user[email]',
+      passwordField: 'user[password]',
+    },
+    (async (email, password, done) => {
+      try {
+        const user = await Admin.findOne({ email });
         if (!user || !(await user.isValidPassword(password))) {
           return done(null, false);
         }
@@ -50,7 +71,7 @@ export const configurePassport = () => {
     return done(null, `${config.AUTH_SECRET}-${user.hashedPassword}-${user.lastLogoutTime}`);
   };
 
-  passport.use(new JwtStrategy(
+  passport.use(`${Role.user}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
       secretOrKeyProvider,
