@@ -65,6 +65,8 @@ class _ProjectOwnerSignUpForm extends Component {
       isSubmitting: false,
       createdUser: null,
     };
+
+    props.setField(FieldName.accountType, AccountType.ORGANIZATION);
   }
 
   handleSubmit = async (event) => {
@@ -204,11 +206,12 @@ class _ProjectOwnerSignUpForm extends Component {
             onChange={handleChange}
             className={classes.radioGroup}
           >
-            <FormControlLabel checked={true}
+            <FormControlLabel
               value={AccountType.ORGANIZATION}
               control={<Radio color="primary" />}
               label="I am creating an account on behalf of an organisation" />
-            <FormControlLabel value={AccountType.INDIVIDUAL}
+            <FormControlLabel 
+              value={AccountType.INDIVIDUAL}
               control={<Radio color="primary" />}
               label="I am an individual" />
           </RadioGroup>
