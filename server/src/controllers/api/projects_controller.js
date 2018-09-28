@@ -33,33 +33,37 @@ export const projectsRouterNumber = express.Router();
 
 projectsRouterNumber.get('/projects', asyncWrap(getProjectsNumber));
 async function getProjectsNumber(req, res) {
-  const projectType = req.query.type.toString();
+  // Params
   const numberOfProjects = Number(req.query.number);
-  const earliestDate = new Date(1900, 0, 1);
+  const projectType = req.query.type;
+  const projectCategory = req.query.category;
+  const projectMonth = req.query.month;
+  const projectVolunteers = req.query.volunteers;
+
+  // Dates
   const todaysDate = new Date();
-  const yesterdaysDate = todaysDate.getDate() - 1;
-  const stopDate = new Date(2199, 0, 1);
+  const yesterdaysDate = new Date(todaysDate - 24 * 60 * 60 * 1000);
 
+  // Queries to mongodb
   let projects = {};
-
-  if (projectType === 'past') {
+  if (projectType === "'past'") {
     projects = await Project.find(
-      { endDate: { $gte: earliestDate, $lte: yesterdaysDate } },
-      // { title: 1, endDate: 1, description: 1 }
+      { endDate: { $lte: yesterdaysDate } },
     )
       .limit(numberOfProjects)
       .populate('projectOwner')
       .exec();
-  } else if (projectType === 'present') {
+  } else if (projectType === "'present'") {
+    console.log('present');
     projects = await Project.find(
-      { endDate$: { $gte: todaysDate, $lte: stopDate } },
-      // { title: 1, endDate: 1, issuesAddressed: 1 }
+      { endDate$: { $gte: todaysDate } }
     )
       .limit(numberOfProjects)
       .populate('projectOwner')
       .exec();
   } else {
-    projects = await Project.find({}, )
+    console.log('others');
+    projects = await Project.find({})
       .limit(numberOfProjects)
       .populate('projectOwner')
       .exec();

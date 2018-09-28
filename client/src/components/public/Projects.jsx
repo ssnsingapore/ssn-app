@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import { SearchBar } from 'components/shared/SearchBar';
-// import { ProjectListing } from 'components/shared/ProjectListing';
+import { ProjectListing } from 'components/shared/ProjectListing';
 
 function TabContainer(props) {
   return (
@@ -29,7 +29,6 @@ class _Projects extends Component {
   };
 
   renderSearchBar = () => {
-    const { classes, theme } = this.props;
     return (
       <React.Fragment>
         <SearchBar />
@@ -46,7 +45,7 @@ class _Projects extends Component {
       <div className={classes.tabs}>
         <Paper>
           <Tabs
-            value={this.state.value}
+            value={value}
             onChange={this.handleChange}
             indicatorColor="primary"
             textColor="primary"
@@ -56,15 +55,13 @@ class _Projects extends Component {
           </Tabs>
         </Paper>
 
-        {value === 0 && <TabContainer>Active projects listing</TabContainer>}
-        {value === 1 && <TabContainer>Past projects listing</TabContainer>}
+        {value === 0 && <TabContainer><ProjectListing type={'present'}/></TabContainer>}
+        {value === 1 && <TabContainer><ProjectListing type={'past'}/></TabContainer>}
       </div>
     );
   };
 
   render() {
-    const { classes, theme } = this.props;
-
     return (
       <div>
         {this.renderSearchBar()}

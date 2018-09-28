@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { Typography, Paper, Button } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
+// import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -70,10 +70,7 @@ class _SearchBar extends Component {
   
   constructor(props) {
     super(props);
-    
-    // const todaysDate = new Date();
-    // const thisMonth = Months[todaysDate.getMonth()+1];
-
+  
     this.state = {
       issues_addressed: 'all categories',
       project_location: 'all areas',
