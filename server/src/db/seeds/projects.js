@@ -47,7 +47,7 @@ getProjectOwner()
         location: ProjectLocation.CENTRAL,
         state: ProjectState.APPROVED,
         startDate: new Date(),
-        endDate: new Date(),
+        endDate: new Date(2016, 1, 1),
         frequency: ProjectFrequency.ONCE_A_WEEK,
       },
       {
@@ -65,7 +65,7 @@ getProjectOwner()
         location: ProjectLocation.WEST,
         state: ProjectState.PENDING_APPROVAL,
         startDate: new Date(),
-        endDate: new Date(),
+        endDate: new Date(2016, 1, 1),
         frequency: ProjectFrequency.ONCE_A_WEEK,
       },
       {
