@@ -231,7 +231,7 @@ class _ProjectOwnerSignUpForm extends Component {
             id={FieldName.socialMedia}
             label="Social Media"
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.webUrl)}
+            value={fieldValue(fields, FieldName.socialMedia)}
             error={fieldHasError(fields, FieldName.socialMedia)}
             helperText={fieldErrorText(fields, FieldName.socialMedia)}
             fullWidth
