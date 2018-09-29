@@ -2,7 +2,11 @@ import express from 'express';
 import { asyncWrap } from 'util/async_wrapper';
 import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
+import passport from 'passport';
+import { LoginService } from 'services/LoginService';
+import { BadRequestErrorView } from 'util/errors';
 import { SignUpService } from '../../services/SignUpService';
+
 
 export const projectOwnersRouter = express.Router();
 
@@ -19,6 +23,7 @@ async function registerNewProjectOwner(req, res) {
     ...req.body.projectOwner,
   });
   const { password } = req.body.projectOwner;
+  projectOwner.confirm();
 
   const errorsObject = await new SignUpService(projectOwner, password, Role.project_owner).execute();
 
@@ -31,4 +36,39 @@ async function registerNewProjectOwner(req, res) {
   return res
     .status(201)
     .json({ projectOwner });
+}
+
+projectOwnersRouter.post(
+  '/project_owners/login',
+  passport.authenticate(`${Role.project_owner}Local`,
+    { session: false, failWithError: true }),
+  asyncWrap(login)
+);
+
+async function login(req, res) {
+  const { user } = req;
+  if (user.isConfirmed()) {
+    return loginUser(res, user);
+  }
+  const message = 'Please activate your account before logging in.';
+  return res
+    .status(400)
+    .json({ errors: [new BadRequestErrorView(message)] });
+}
+
+async function loginUser(res, user) {
+  await setJwtCookieAndCsrfToken(res, user);
+  return res
+    .status(200)
+    .json({
+      user,
+    });
+}
+
+async function setJwtCookieAndCsrfToken(res, user) {
+  const { cookieArguments, csrfToken } = await new LoginService(user)
+    .generateCookieAndCsrfToken();
+
+  res.set('csrf-token', csrfToken);
+  res.cookie(...cookieArguments);
 }

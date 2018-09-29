@@ -6,6 +6,7 @@ import { Strategy as JwtStrategy } from 'passport-jwt';
 import { User } from 'models/User';
 import { Role } from 'models/Role';
 import { Admin } from 'models/Admin';
+import { ProjectOwner } from 'models/ProjectOwner';
 import { config } from './environment';
 
 export const extractJwtFromCookie = (req) => {
@@ -48,6 +49,25 @@ export const configurePassport = () => {
     (async (email, password, done) => {
       try {
         const user = await Admin.findOne({ email });
+        if (!user || !(await user.isValidPassword(password))) {
+          return done(null, false);
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }),
+  ));
+
+  passport.use(`${Role.project_owner}Local`, new LocalStrategy(
+    {
+      usernameField: 'user[email]',
+      passwordField: 'user[password]',
+    },
+    (async (email, password, done) => {
+      try {
+        const user = await ProjectOwner.findOne({ email });
         if (!user || !(await user.isValidPassword(password))) {
           return done(null, false);
         }

@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import uniqueValidator from 'mongoose-unique-validator';
 import uid from 'uid-safe';
+import jwt from 'jsonwebtoken';
+
+import { config } from 'config/environment';
+import { Role } from './Role';
 
 export const AccountType = {
   ORGANIZATION: 'ORGANIZATION',
@@ -81,6 +85,12 @@ const ProjectOwnerSchema = new mongoose.Schema({
   // Account confirmation
   confirmedAt: Date,
   confirmationToken: String,
+  role: {
+    type: String,
+    enum: [Role.project_owner],
+    default: [Role.project_owner],
+    required: [true, 'cannot be blank'],
+  },
 });
 
 ProjectOwnerSchema.plugin(uniqueValidator, { message: 'is already taken.' });
@@ -105,6 +115,9 @@ ProjectOwnerSchema.methods.setPassword = async function (password) {
   this.hashedPassword = await bcrypt.hash(password, saltRounds);
 };
 
+ProjectOwnerSchema.methods.isValidPassword = async function (password) {
+  return bcrypt.compare(password, this.hashedPassword);
+};
 
 ProjectOwnerSchema.methods.generateConfirmationToken = async function () {
   const confirmationToken = await uid(18);
@@ -118,6 +131,26 @@ ProjectOwnerSchema.methods.generateConfirmationToken = async function () {
 ProjectOwnerSchema.methods.confirm = async function () {
   this.set({ confirmedAt: new Date() });
   await this.save();
+};
+
+ProjectOwnerSchema.methods.isConfirmed = function () {
+  return !!this.confirmedAt;
+};
+
+ProjectOwnerSchema.methods.generateJwt = function (csrfToken) {
+  return jwt.sign(
+    {
+      userid: this._id,
+      name: this.name,
+      email: this.email,
+      role: this.role,
+      csrfToken,
+    },
+    `${config.AUTH_SECRET}-${this.hashedPassword}-${this.lastLogoutTime}`,
+    {
+      expiresIn: config.JWT_EXPIRES_IN,
+    },
+  );
 };
 
 export const ProjectOwner = mongoose.model('ProjectOwner', ProjectOwnerSchema);
