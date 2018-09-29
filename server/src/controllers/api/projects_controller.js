@@ -36,9 +36,6 @@ async function getProjectsNumber(req, res) {
   // Params
   const numberOfProjects = Number(req.query.number);
   const projectType = req.query.type;
-  const projectCategory = req.query.category;
-  const projectMonth = req.query.month;
-  const projectVolunteers = req.query.volunteers;
 
   // Dates
   const todaysDate = new Date();
