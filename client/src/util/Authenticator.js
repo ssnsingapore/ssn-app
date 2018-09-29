@@ -39,6 +39,18 @@ export class Authenticator {
     this.setAuthState(false);
   }
 
+  signUpProjectOwner = async (
+    projectOwner,
+    networkErrorHandler,
+  ) => {
+    const data = { projectOwner };
+    const response = await this.requestWithAlert
+      .onNetworkError(networkErrorHandler)
+      .post('/api/v1/project_owners', data);
+
+    return response;
+  }
+
   signUp = async (
     user,
     networkErrorHandler,

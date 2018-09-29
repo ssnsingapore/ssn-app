@@ -5,8 +5,10 @@ import { Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { fieldErrorText, fieldHasError, getFieldNameObject, withForm, fieldValue } from 'util/form';
-import { AppContext } from '../main/AppContext';
-import { AlertType } from '../shared/Alert';
+
+import { AccountType } from 'components/shared/enums/AccountType';
+import { AlertType } from 'components/shared/Alert';
+import { AppContext } from 'components/main/AppContext';
 
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
@@ -15,18 +17,13 @@ const FieldName = getFieldNameObject([
   'name',
   'accountType',
   'organisationName',
-  'webUrl',
-  'socialMedia',
+  'websiteUrl',
+  'socialMediaLink',
   'description',
   'personalBio',
   'password',
   'passwordConfirmation',
 ]);
-
-const AccountType = {
-  ORGANIZATION: 'ORGANIZATION',
-  INDIVIDUAL: 'INDIVIDUAL',
-};
 
 const constraints = {
   [FieldName.name]: {
@@ -40,7 +37,7 @@ const constraints = {
     presence: { allowEmpty: false },
     inclusion: Object.values(AccountType),
   },
-  [FieldName.webUrl]: {
+  [FieldName.websiteUrl]: {
     isUrl: { allowEmpty: true },
   },
   [FieldName.password]: {
@@ -79,26 +76,16 @@ class _ProjectOwnerSignUpForm extends Component {
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
-    const { email, name, password } = this.props.valuesForAllFields();
-    const user = {
-      name,
-      email,
-      password,
-    };
+    const projectOwner = { ...this.props.valuesForAllFields() };
 
     this.setState({ isSubmitting: true });
-    const response = await authenticator.signUp(user);
+    const response = await authenticator.signUpProjectOwner(projectOwner);
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      const createdUser = (await response.json()).user;
+      const createdUser = (await response.json()).projectOwner;
       this.setState({
-        createdUser: {
-          // temporary to stub fields for projectOwner but not on user
-          ...createdUser,
-          accountType: AccountType.ORGANIZATION,
-          organizationName: 'Earth Society',
-        },
+        createdUser,
       });
       showAlert('signupSuccess', AlertType.SUCCESS, SIGNUP_SUCCESS_MESSAGE);
     }
@@ -210,33 +197,33 @@ class _ProjectOwnerSignUpForm extends Component {
               value={AccountType.ORGANIZATION}
               control={<Radio color="primary" />}
               label="I am creating an account on behalf of an organisation" />
-            <FormControlLabel 
+            <FormControlLabel
               value={AccountType.INDIVIDUAL}
               control={<Radio color="primary" />}
               label="I am an individual" />
           </RadioGroup>
           {this.renderOrganizationName()}
           <TextField
-            name={FieldName.webUrl}
+            name={FieldName.websiteUrl}
             className={classes.textInput}
-            id={FieldName.webUrl}
+            id={FieldName.websiteUrl}
             label="Web URL"
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.webUrl)}
-            error={fieldHasError(fields, FieldName.webUrl)}
-            helperText={fieldErrorText(fields, FieldName.webUrl)}
+            value={fieldValue(fields, FieldName.websiteUrl)}
+            error={fieldHasError(fields, FieldName.websiteUrl)}
+            helperText={fieldErrorText(fields, FieldName.websiteUrl)}
             fullWidth
             margin="normal"
           />
           <TextField
-            name={FieldName.socialMedia}
+            name={FieldName.socialMediaLink}
             className={classes.textInput}
-            id={FieldName.socialMedia}
+            id={FieldName.socialMediaLink}
             label="Social Media"
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.socialMedia)}
-            error={fieldHasError(fields, FieldName.socialMedia)}
-            helperText={fieldErrorText(fields, FieldName.socialMedia)}
+            value={fieldValue(fields, FieldName.socialMediaLink)}
+            error={fieldHasError(fields, FieldName.socialMediaLink)}
+            helperText={fieldErrorText(fields, FieldName.socialMediaLink)}
             fullWidth
             margin="normal"
           />
