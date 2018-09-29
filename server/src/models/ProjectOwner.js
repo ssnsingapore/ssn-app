@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import uniqueValidator from 'mongoose-unique-validator';
+import uid from 'uid-safe';
 
 export const AccountType = {
   ORGANIZATION: 'ORGANIZATION',
@@ -71,8 +73,49 @@ const ProjectOwnerSchema = new mongoose.Schema({
       'cannot be blank',
     ],
   },
+
+  hashedPassword: String,
+
+  // Account confirmation
+  confirmedAt: Date,
+  confirmationToken: String,
 });
 
 ProjectOwnerSchema.plugin(uniqueValidator, { message: 'is already taken.' });
+
+ProjectOwnerSchema.methods.toJSON = function () {
+  return {
+    id: this._id,
+    name: this.name,
+    email: this.email,
+    accountType: this.accountType,
+    websiteUrl: this.websiteUrl,
+    socialMediaLink: this.socialMediaLink,
+    profilePhotoUrl: this.profilePhotoUrl,
+    organisationName: this.organisationName,
+    description: this.description,
+    personalBio: this.personalBio,
+  };
+};
+
+ProjectOwnerSchema.methods.setPassword = async function (password) {
+  const saltRounds = 10;
+  this.hashedPassword = await bcrypt.hash(password, saltRounds);
+};
+
+
+ProjectOwnerSchema.methods.generateConfirmationToken = async function () {
+  const confirmationToken = await uid(18);
+
+  this.set({ confirmationToken });
+  await this.save();
+
+  return confirmationToken;
+};
+
+ProjectOwnerSchema.methods.confirm = async function () {
+  this.set({ confirmedAt: new Date() });
+  await this.save();
+};
 
 export const ProjectOwner = mongoose.model('ProjectOwner', ProjectOwnerSchema);
