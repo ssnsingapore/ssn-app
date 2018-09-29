@@ -72,7 +72,6 @@ class _ProjectOwnerLoginForm extends React.Component {
   }
 
   handlePasswordResetDialogClose = () => {
-    console.log('CLOSING');
     this.setState({ passwordResetDialogOpen: false });
   }
 
