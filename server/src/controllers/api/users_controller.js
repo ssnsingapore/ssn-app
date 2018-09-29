@@ -4,7 +4,7 @@ import createError from 'http-errors';
 
 import { User } from 'models/User';
 import { asyncWrap } from 'util/async_wrapper';
-import { config } from 'config/environment';
+import { config, isProduction } from 'config/environment';
 import { BadRequestErrorView, checkIfFound } from 'util/errors';
 import { SignUpService } from 'services/SignUpService';
 import { LoginService } from 'services/LoginService';
@@ -114,7 +114,7 @@ async function confirmUser(req, res) {
     config.MESSAGE_COOKIE_NAME,
     config.MESSAGE_COOKIE_NAME,
     {
-      secure: true,
+      secure: isProduction,
       sameSite: true,
     }
   );
