@@ -57,21 +57,23 @@ const ProjectOwnerSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: [
-      function () {
-        return this.accountType === AccountType.ORGANIZATION;
-      },
-      'cannot be blank',
-    ],
+    // TODO: Not required on the front-end. Clarify with Ying Tong
+    // required: [
+    //   function () {
+    //     return this.accountType === AccountType.ORGANIZATION;
+    //   },
+    //   'cannot be blank',
+    // ],
   },
   personalBio: {
     type: String,
-    required: [
-      function () {
-        return this.accountType === AccountType.INDIVIDUAL;
-      },
-      'cannot be blank',
-    ],
+    // TODO: Not required on the front-end. Clarify with Ying Tong
+    // required: [
+    //   function () {
+    //     return this.accountType === AccountType.INDIVIDUAL;
+    //   },
+    //   'cannot be blank',
+    // ],
   },
 
   hashedPassword: String,
