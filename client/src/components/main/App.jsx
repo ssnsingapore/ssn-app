@@ -14,7 +14,6 @@ const theme = createMuiTheme({
     primary: { main: '#3E9992' },
     secondary: { main: '#FF9391' },
   },
-<<<<<<< HEAD
   container: {
     margin: {
       vertical: 60,
@@ -27,13 +26,13 @@ const theme = createMuiTheme({
   formInput: {
     margin: {
       vertical: 16,
-=======
-  overrides: {
-    MuiButton: {
-      raisedSecondary: {
-        color: 'white',
+    },
+    overrides: {
+      MuiButton: {
+        raisedSecondary: {
+          color: 'white',
+        },
       },
->>>>>>> [SSN-12][Sab] Create basic structure of Project Owner dashboard
     },
   },
 });
