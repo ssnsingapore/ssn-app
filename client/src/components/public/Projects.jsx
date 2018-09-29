@@ -55,8 +55,8 @@ class _Projects extends Component {
           </Tabs>
         </Paper>
 
-        {value === 0 && <TabContainer><ProjectListing type={'present'}/></TabContainer>}
-        {value === 1 && <TabContainer><ProjectListing type={'past'}/></TabContainer>}
+        {value === 0 && <TabContainer><ProjectListing projectState={'APPROVED_ACTIVE'}/></TabContainer>}
+        {value === 1 && <TabContainer><ProjectListing projectState={'APPROVED_INACTIVE'}/></TabContainer>}
       </div>
     );
   };
