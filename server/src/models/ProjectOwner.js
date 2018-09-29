@@ -5,6 +5,7 @@ import uid from 'uid-safe';
 import jwt from 'jsonwebtoken';
 
 import { config } from 'config/environment';
+import { constructMongooseValidationError } from 'util/errors';
 import { Role } from './Role';
 
 export const AccountType = {
@@ -31,21 +32,19 @@ const ProjectOwnerSchema = new mongoose.Schema({
   },
   websiteUrl: {
     type: String,
-    // TODO: Validation is somehow failing for some of the seeds
-    // match: [
-    //   // eslint-disable-next-line no-useless-escape
-    //   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi,
-    //   'is invalid',
-    // ],
+    match: [
+      // eslint-disable-next-line no-useless-escape
+      /[-a-zA-Z0-9@:%_\+.~#?&\/\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)?/i,
+      'is invalid',
+    ],
   },
   socialMediaLink: {
     type: String,
-    // TODO: Validation is somehow failing for some of the seeds
-    // match: [
-    //   // eslint-disable-next-line no-useless-escape
-    //   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi,
-    //   'is invalid',
-    // ],
+    match: [
+      // eslint-disable-next-line no-useless-escape
+      /[-a-zA-Z0-9@:%_\+.~#?&\/\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)?/i,
+      'is invalid',
+    ],
   },
   profilePhotoUrl: {
     type: String,
@@ -68,6 +67,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
     //   },
     //   'cannot be blank',
     // ],
+    // TODO: add length validation
   },
   personalBio: {
     type: String,
@@ -78,6 +78,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
     //   },
     //   'cannot be blank',
     // ],
+    // TODO: add length validation
   },
 
   hashedPassword: String,
@@ -111,6 +112,9 @@ ProjectOwnerSchema.methods.toJSON = function () {
 };
 
 ProjectOwnerSchema.methods.setPassword = async function (password) {
+  if (password.length < 6) {
+    throw constructMongooseValidationError('password', 'should be a minimum of 6 characters');
+  }
   const saltRounds = 10;
   this.hashedPassword = await bcrypt.hash(password, saltRounds);
 };

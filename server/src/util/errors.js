@@ -114,3 +114,15 @@ function formatValidationErrors(err) {
     return new UnprocessableEntityErrorView(key, errorMessage);
   });
 }
+
+export function constructMongooseValidationError(key, message) {
+  const error = new Error();
+  error.name = 'ValidationError';
+  error.errors = {
+    [key]: {
+      message,
+    },
+  };
+  error.message = formatValidationErrors(error);
+  return error;
+}
