@@ -7,6 +7,7 @@ import { Footer } from './Footer';
 import { NotFound } from './NotFound';
 import { Unauthorized } from './Unauthorized';
 import { HomePage } from 'components/public/HomePage';
+import { Projects } from 'components/public/Projects';
 import { ProjectOwnerDashboard } from 'components/public/ProjectOwnerDashboard';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
@@ -34,6 +35,7 @@ class _Routes extends Component {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
+              <Route exact path="/projects" component={Projects} />
               <Route
                 path="/signup/confirmation"
                 component={AwaitingAccountConfirmation}

@@ -30,7 +30,10 @@ class _ProjectListing extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert.get('/api/v1/projects');
+    const { projectNumber = 3, type } = this.props;
+    const endpoint = '/api/v1/projects';
+    const queryParams = '?number='+ projectNumber + '&type=' + type;
+    const response = await requestWithAlert.get(endpoint + queryParams);
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
