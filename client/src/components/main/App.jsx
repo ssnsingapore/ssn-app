@@ -27,6 +27,13 @@ const theme = createMuiTheme({
     margin: {
       vertical: 16,
     },
+    overrides: {
+      MuiButton: {
+        raisedSecondary: {
+          color: 'white',
+        },
+      },
+    },
   },
 });
 
@@ -37,7 +44,7 @@ class App extends Component {
     const requestWithAlert = new RequestWithAlert(this.showAlert);
     const authenticator = new Authenticator(
       requestWithAlert,
-      this.setAuthState,
+      this.setAuthState
     );
 
     this.state = {
@@ -54,9 +61,9 @@ class App extends Component {
     };
   }
 
-  setAuthState = (authState) => {
+  setAuthState = authState => {
     this.setState({ isAuthenticated: authState });
-  }
+  };
 
   showAlert = (key, type, message) => {
     this.setState({
@@ -65,9 +72,9 @@ class App extends Component {
         [key]: { type, message, isVisible: true },
       },
     });
-  }
+  };
 
-  hideAlert = (key) => {
+  hideAlert = key => {
     const alert = this.state.alerts[key];
 
     this.setState({
@@ -90,7 +97,7 @@ class App extends Component {
         onClose={() => this.hideAlert(key)}
       />
     ));
-  }
+  };
 
   render() {
     return (
