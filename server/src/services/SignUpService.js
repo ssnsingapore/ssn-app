@@ -3,9 +3,10 @@ import { config } from 'config/environment';
 import { UnprocessableEntityErrorView } from 'util/errors';
 
 export class SignUpService {
-  constructor(user, password) {
+  constructor(user, password, userType) {
     this.user = user;
     this.password = password;
+    this.userType = userType;
   }
 
   execute = async () => {
@@ -74,7 +75,7 @@ export class SignUpService {
     <p><em>SSN</em></p>
   `)
 
-  _confirmationUrl = () => encodeURI(`${config.API_BASE_URL}/api/v1/users/${this.user.id}/confirmation/${this.user.confirmationToken}`)
+  _confirmationUrl = () => encodeURI(`${config.API_BASE_URL}/api/v1/${this.userType}s/${this.user.id}/confirmation/${this.user.confirmationToken}`)
 
   testExports = {
     confirmationEmailHtml: this._confirmationEmailHtml,

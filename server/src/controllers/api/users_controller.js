@@ -9,6 +9,7 @@ import { BadRequestErrorView, checkIfFound } from 'util/errors';
 import { SignUpService } from 'services/SignUpService';
 import { LoginService } from 'services/LoginService';
 import { PasswordResetService } from 'services/PasswordResetService';
+import { Role } from '../../models/Role';
 
 export const usersRouter = express.Router();
 
@@ -34,7 +35,7 @@ async function registerNewUser(req, res) {
     email,
   });
 
-  const errorsObject = await new SignUpService(user, password).execute();
+  const errorsObject = await new SignUpService(user, password, Role.user).execute();
 
   if (errorsObject) {
     return res

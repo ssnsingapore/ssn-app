@@ -1,6 +1,7 @@
 import express from 'express';
 import { asyncWrap } from 'util/async_wrapper';
 import { ProjectOwner } from 'models/ProjectOwner';
+import { Role } from 'models/Role';
 import { SignUpService } from '../../services/SignUpService';
 
 export const projectOwnersRouter = express.Router();
@@ -19,7 +20,7 @@ async function registerNewProjectOwner(req, res) {
   });
   const { password } = req.body.projectOwner;
 
-  const errorsObject = await new SignUpService(projectOwner, password).execute();
+  const errorsObject = await new SignUpService(projectOwner, password, Role.project_owner).execute();
 
   if (errorsObject) {
     return res
