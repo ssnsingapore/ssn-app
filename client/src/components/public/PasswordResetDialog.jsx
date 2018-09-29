@@ -81,7 +81,6 @@ class _PasswordResetDialog extends Component {
           error={fieldHasError(fields, FieldName.email)}
           helperText={fieldErrorText(fields, FieldName.email)}
           disabled={this.state.isLoading}
-          style={{ marginBottom: '20px' }}
         />
         {this.state.isLoading && <Spinner />}
       </DialogContent>

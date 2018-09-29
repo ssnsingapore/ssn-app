@@ -8,6 +8,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    margin: '30px',
   },
 };
 

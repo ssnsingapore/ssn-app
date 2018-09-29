@@ -9,6 +9,7 @@ import { fieldErrorText, fieldHasError, getFieldNameObject, withForm, fieldValue
 import { AccountType } from 'components/shared/enums/AccountType';
 import { AlertType } from 'components/shared/Alert';
 import { AppContext } from 'components/main/AppContext';
+import { Spinner } from '../shared/Spinner';
 
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
@@ -267,6 +268,8 @@ class _ProjectOwnerSignUpForm extends Component {
             Create Account
           </Button>
         </form>
+
+        {this.state.isSubmitting && <Spinner />}
       </Paper>
     );
   }

@@ -131,7 +131,7 @@ class _PasswordResetForm extends Component {
             fullWidth
             margin="normal"
           />
-          {this.state.isLoading && <Spinner className={classes.spinner} />}
+          {this.state.isLoading && <Spinner />}
           <Button
             type="submit"
             size="medium"
@@ -159,9 +159,6 @@ const styles = theme => ({
     margin: '30px auto',
     marginBottom: 0,
     color: '#FFFFFF',
-  },
-  spinner: {
-    marginTop: '30px',
   },
 });
 
