@@ -6,6 +6,34 @@ import {
   TextField,
 } from '@material-ui/core';
 import { PasswordResetDialog } from './PasswordResetDialog';
+import { AlertType } from 'components/shared/Alert';
+import { withContext } from 'util/context';
+import { AppContext } from 'components/main/AppContext';
+import { extractErrors, formatErrors } from 'util/errors';
+import {
+  getFieldNameObject,
+  fieldValue,
+  fieldHasError,
+  fieldErrorText,
+  withForm,
+} from 'util/form';
+
+const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
+const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
+
+const FieldName = getFieldNameObject(['email', 'password']);
+const constraints = {
+  [FieldName.email]: {
+    presence: { allowEmpty: false },
+    email: true,
+  },
+  [FieldName.password]: {
+    presence: { allowEmpty: false },
+    length: {
+      minimum: 6,
+    },
+  },
+};
 
 const styles = theme => ({
   root: {
@@ -35,6 +63,8 @@ const styles = theme => ({
 class _ProjectOwnerLoginForm extends React.Component {
   state = {
     passwordResetDialogOpen: false,
+    isLoading: false,
+    shouldRedirect: false,
   }
 
   handlePasswordResetDialog = () => {
@@ -46,19 +76,57 @@ class _ProjectOwnerLoginForm extends React.Component {
     this.setState({ passwordResetDialogOpen: false });
   }
 
+  handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!this.props.validateAllFields()) {
+      return;
+    }
+
+    const { showAlert } = this.props.context.updaters;
+    const { authenticator } = this.props.context.utils;
+
+    this.setState( { isLoading: true } );
+
+    const { email, password } = this.props.valuesForAllFields();
+    const response = await authenticator.loginProjectOwner(email, password);
+
+    this.setState( { isLoading: false });
+
+    if (response.isSuccessful) {
+      this.setState( { shouldRedirect: true } );
+      showAlert('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
+    }
+
+    if (response.hasError) {
+      if (response.status === 401) {
+        showAlert('loginFailure', AlertType.ERROR, LOGIN_FAILURE_MESSAGE);
+      } else {
+        const errors = await extractErrors(response);
+        showAlert('loginFailure', AlertType.ERROR, formatErrors(errors));
+      }
+    }
+
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, fields, handleChange } = this.props;
     return (
       <div className={classes.root}>
         <PasswordResetDialog
           open={this.state.passwordResetDialogOpen}
           handleClose={this.handlePasswordResetDialogClose}
         />
-        <form className={classes.container} noValidate autoComplete="off">
+        <form className={classes.container} onSubmit={this.handleSubmit}>
           <TextField
             InputLabelProps={{ shrink: true }}
             placeholder="Email"
             margin="normal"
+            name={FieldName.email}
+            value={fieldValue(fields, FieldName.email)}
+            error={fieldHasError(fields, FieldName.email)}
+            helperText={fieldErrorText(fields, FieldName.email)}
+            onChange={handleChange}
             fullWidth
           />
           <TextField
@@ -66,8 +134,15 @@ class _ProjectOwnerLoginForm extends React.Component {
             placeholder="Password"
             margin="normal"
             fullWidth
+            name={FieldName.password}
+            value={fieldValue(fields, FieldName.password)}
+            error={fieldHasError(fields, FieldName.password)}
+            helperText={fieldErrorText(fields, FieldName.password)}
+            onChange={handleChange}
+            type="password"
           />
           <Button
+            type="submit"
             variant="contained"
             color="secondary"
             size="large"
@@ -109,6 +184,11 @@ class _ProjectOwnerLoginForm extends React.Component {
 export const ProjectOwnerLoginForm =
   withTheme()(
     withStyles(styles)(
-      _ProjectOwnerLoginForm
-    )
+      withContext(AppContext)(
+        withForm(
+          FieldName,
+          constraints,
+        )(_ProjectOwnerLoginForm),
+      ),
+    ),
   );

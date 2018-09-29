@@ -78,6 +78,21 @@ export class Authenticator {
     return response;
   }
 
+  loginProjectOwner = async (
+    email,
+    password,
+  ) => {
+    const data = { user: { email, password } };
+    const response = await this.requestWithAlert
+      .post('/api/v1/project_owners/login', data, { authenticated: true });
+
+    if (response.isSuccessful) {
+      await this.setSuccessfulAuthState(response);
+    }
+
+    return response;
+  }
+
   logout = async () => {
     const response = await this.requestWithAlert
       .delete('/api/v1/logout', { authenticated: true });
