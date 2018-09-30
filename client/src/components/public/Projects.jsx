@@ -43,20 +43,22 @@ class _Projects extends Component {
     // Tutorial from https://material-ui.com/demos/tabs/
     return (
       <div className={classes.tabs}>
-        <Paper>
-          <Tabs
-            value={value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tab label="Active projects" />
-            <Tab label="Past projects" />
-          </Tabs>
-        </Paper>
-
-        {value === 0 && <TabContainer><ProjectListing projectState={'APPROVED_ACTIVE'}/></TabContainer>}
-        {value === 1 && <TabContainer><ProjectListing projectState={'APPROVED_INACTIVE'}/></TabContainer>}
+        <Paper className={classes.body} square='false'>
+          <Paper square='false'>
+            <Typography variant='headline' className={classes.title}>List of projects</Typography>
+            <Tabs
+              value={value}
+              onChange={this.handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+            >
+              <Tab label="Active projects" />
+              <Tab label="Past projects" />
+            </Tabs>
+          </Paper>
+          <Paper className={classes.innerbox}>
+            {value === 0 && <TabContainer><ProjectListing projectState={'APPROVED_ACTIVE'}/></TabContainer>}
+            {value === 1 && <TabContainer><ProjectListing projectState={'APPROVED_INACTIVE'}/></TabContainer>}</Paper></Paper>
       </div>
     );
   };
@@ -77,6 +79,18 @@ const styles = theme => ({
   },
   tabs: {
     backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  title: {
+    padding: '30px',
+  },
+  body: {
+    width: '85%',
+  },
+  innerbox: {
+    marginTop: '1px',
   },
 });
 
