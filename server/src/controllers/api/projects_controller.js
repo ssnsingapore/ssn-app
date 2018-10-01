@@ -29,10 +29,10 @@ import { ProjectOwner } from 'models/ProjectOwner';
 //     .json({ projects });
 // }
 
-export const projectsRouterNumber = express.Router();
+export const projectRouter = express.Router();
 
-projectsRouterNumber.get('/projects', asyncWrap(getProjectsNumber));
-async function getProjectsNumber(req, res) {
+projectRouter.get('/projects', asyncWrap(getProjects));
+async function getProjects(req, res) {
   // Params
   const pageSize = Number(req.query.pageSize);
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
@@ -45,8 +45,6 @@ async function getProjectsNumber(req, res) {
 
   return res.status(200).json({ projects });
 }
-
-export const projectRouter = express.Router();
 
 projectRouter.get('/projects/:id', asyncWrap(getProject));
 async function getProject(req, res) {
