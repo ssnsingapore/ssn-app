@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Grid,
   Typography,
@@ -89,49 +90,52 @@ class _ProjectListing extends Component {
 
     return this.state.projects.map(project => {
       return (
+
         <Grid item xs={12} key={project.title}>
-          <Card className={classes.card}>
-            <Grid container item xs={12} key={project.title}>
-              <Grid item xs={12} md={4}>
-                <CardMedia
-                  className={classes.cardMedia}
-                  image={project.coverImageUrl}
-                />
+          <Link to={'/projects/' + project._id} className={classes.link}>
+            <Card className={classes.card}>
+              <Grid container item xs={12} key={project.title}>
+                <Grid item xs={12} md={4}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image={project.coverImageUrl}
+                  />
+                </Grid>
+                <Grid item xs={12} md={8}>
+                  <div className={classes.details}>
+                    <CardContent className={classes.content}>
+                      <Typography variant="headline" gutterBottom>
+                        {project.title}
+                      </Typography>
+                      <Typography
+                        variant="subheading"
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        <List className={classes.removePadding}>
+                          <ListItem className={classes.removePadding}>
+                            <Avatar
+                              alt="Profile Photo"
+                              src={project.projectOwner.profilePhotoUrl}
+                              className={classes.smallAvatar}
+                            />
+                            <ListItemText
+                              className={classes.removePadding}
+                              primary={project.projectOwner.name}
+                            />
+                          </ListItem>
+                        </List>
+                      </Typography>
+                      <div className={classes.tagsContainer}>
+                        {this.renderVolunteerRequirements(project)}
+                        {this.renderIssuesAddressed(project)}
+                      </div>
+                    </CardContent>
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={8}>
-                <div className={classes.details}>
-                  <CardContent className={classes.content}>
-                    <Typography variant="headline" gutterBottom>
-                      {project.title}
-                    </Typography>
-                    <Typography
-                      variant="subheading"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      <List className={classes.removePadding}>
-                        <ListItem className={classes.removePadding}>
-                          <Avatar
-                            alt="Profile Photo"
-                            src={project.projectOwner.profilePhotoUrl}
-                            className={classes.smallAvatar}
-                          />
-                          <ListItemText
-                            className={classes.removePadding}
-                            primary={project.projectOwner.name}
-                          />
-                        </ListItem>
-                      </List>
-                    </Typography>
-                    <div className={classes.tagsContainer}>
-                      {this.renderVolunteerRequirements(project)}
-                      {this.renderIssuesAddressed(project)}
-                    </div>
-                  </CardContent>
-                </div>
-              </Grid>
-            </Grid>
-          </Card>
+            </Card>
+          </Link>
         </Grid>
       );
     });
@@ -185,6 +189,9 @@ const styles = theme => ({
   },
   removePadding: {
     padding: 0,
+  },
+  link: {
+    textDecoration: 'none',
   },
 });
 
