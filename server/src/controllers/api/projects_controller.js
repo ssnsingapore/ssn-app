@@ -45,3 +45,18 @@ async function getProjectsNumber(req, res) {
 
   return res.status(200).json({ projects });
 }
+
+export const projectRouter = express.Router();
+
+projectRouter.get('/projects/:id', asyncWrap(getProject));
+async function getProject(req, res) {
+  // Params
+  const { id } = req.params;
+
+  // Queries to mongodb
+  const project = await Project.findById(id)
+    .populate('projectOwner')
+    .exec();
+
+  return res.status(200).json({ project });
+}
