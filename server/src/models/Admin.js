@@ -54,4 +54,11 @@ AdminSchema.methods.generateJwt = function (csrfToken) {
   );
 };
 
+AdminSchema.methods.toJSON = function () {
+  return {
+    email: this.email,
+    role: this.role,
+  };
+};
+
 export const Admin = mongoose.model('Admin', AdminSchema);
