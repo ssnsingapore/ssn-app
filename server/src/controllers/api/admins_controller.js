@@ -4,6 +4,7 @@ import passport from 'passport';
 import { asyncWrap } from 'util/async_wrapper';
 import { Admin } from 'models/Admin';
 import { LoginService } from 'services/LoginService';
+import { Role } from 'models/Role';
 
 export const adminsRouter = express.Router();
 
@@ -17,7 +18,7 @@ async function getAdmins(_req, res) {
 
 adminsRouter.post(
   '/admin/login',
-  passport.authenticate('local', { session: false, failWithError: true }),
+  passport.authenticate(`${Role.admin}Local`, { session: false, failWithError: true }),
   asyncWrap(login)
 );
 async function login(req, res) {
