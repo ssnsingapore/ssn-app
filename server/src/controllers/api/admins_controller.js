@@ -1,6 +1,9 @@
 import express from 'express';
+import passport from 'passport';
+
 import { asyncWrap } from 'util/async_wrapper';
 import { Admin } from 'models/Admin';
+import { LoginService } from 'services/LoginService';
 
 export const adminsRouter = express.Router();
 
@@ -10,4 +13,23 @@ async function getAdmins(_req, res) {
   return res
     .status(200)
     .json({ admins });
+}
+
+adminsRouter.post(
+  '/admin/login',
+  passport.authenticate('local', { session: false, failWithError: true }),
+  asyncWrap(login)
+);
+async function login(req, res) {
+  const { user } = req;
+  const { cookieArguments, csrfToken } = await new LoginService(user)
+    .generateCookieAndCsrfToken();
+
+  res.set('csrf-token', csrfToken);
+  res.cookie(...cookieArguments);
+  return res
+    .status(200)
+    .json({
+      user,
+    });
 }
