@@ -137,12 +137,22 @@ const ProjectSchema = new mongoose.Schema(
     },
     startDate: {
       type: Date,
+      validate: [function () {
+        this.startDate.setHours(0, 0, 0, 0);
+        this.endDate.setHours(0, 0, 0, 0);
+        return (this.startDate <= this.endDate);
+      }],
       required: [function () {
         return (this.projectType === ProjectType.EVENT);
       }, 'cannot be blank'],
     },
     endDate: {
       type: Date,
+      validate: [function () {
+        this.startDate.setHours(0, 0, 0, 0);
+        this.endDate.setHours(0, 0, 0, 0);
+        return (this.startDate <= this.endDate);
+      }],
       required: [function () {
         return (this.projectType === ProjectType.EVENT);
       }, 'cannot be blank'],
