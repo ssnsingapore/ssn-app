@@ -138,8 +138,6 @@ const ProjectSchema = new mongoose.Schema(
     startDate: {
       type: Date,
       validate: [function () {
-        this.startDate.setHours(0, 0, 0, 0);
-        this.endDate.setHours(0, 0, 0, 0);
         return (this.startDate <= this.endDate);
       }],
       required: [function () {
@@ -149,8 +147,6 @@ const ProjectSchema = new mongoose.Schema(
     endDate: {
       type: Date,
       validate: [function () {
-        this.startDate.setHours(0, 0, 0, 0);
-        this.endDate.setHours(0, 0, 0, 0);
         return (this.startDate <= this.endDate);
       }],
       required: [function () {
