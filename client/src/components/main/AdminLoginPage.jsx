@@ -97,7 +97,7 @@ class _AdminLoginPage extends Component {
         pathname: '/admin/dashboard',
       }} />;
     }
- 
+    
     return (
       <div>
         <div className={classes.landingImage}>
