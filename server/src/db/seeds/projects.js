@@ -46,8 +46,8 @@ getProjectOwner()
         time: '9 AM',
         location: ProjectLocation.CENTRAL,
         state: ProjectState.APPROVED,
-        startDate: new Date(),
-        endDate: new Date(2016, 1, 1),
+        startDate: new Date(2018, 12, 1),
+        endDate: new Date(2018, 12, 2),
         frequency: ProjectFrequency.ONCE_A_WEEK,
       },
       {
@@ -64,8 +64,8 @@ getProjectOwner()
         time: '10 AM',
         location: ProjectLocation.WEST,
         state: ProjectState.PENDING_APPROVAL,
-        startDate: new Date(),
-        endDate: new Date(2016, 1, 1),
+        startDate: new Date(2018, 10, 1),
+        endDate: new Date(2018, 10, 1),
         frequency: ProjectFrequency.ONCE_A_WEEK,
       },
       {
@@ -99,8 +99,6 @@ getProjectOwner()
         time: '9 AM',
         location: ProjectLocation.WEST,
         state: ProjectState.APPROVED_ACTIVE,
-        startDate: new Date(),
-        endDate: new Date(),
         frequency: ProjectFrequency.A_FEW_TIMES_A_YEAR,
       },
     ];

@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+import { config } from 'config/environment';
+import { Role } from './Role';
 
 const AdminSchema = new mongoose.Schema(
   {
@@ -15,6 +19,13 @@ const AdminSchema = new mongoose.Schema(
       type: String,
       required: [true, 'cannot be blank'],
     },
+    lastLogoutTime: Date,
+    role: {
+      type: String,
+      enum: [Role.admin],
+      default: [Role.admin],
+      required: [true, 'cannot be blank'],
+    },
   },
   { timestamps: true },
 );
@@ -26,6 +37,21 @@ AdminSchema.methods.setPassword = async function (password) {
 
 AdminSchema.methods.isValidPassword = async function (password) {
   return bcrypt.compare(password, this.hashedPassword);
+};
+
+AdminSchema.methods.generateJwt = function (csrfToken) {
+  return jwt.sign(
+    {
+      userid: this._id,
+      email: this.email,
+      role: this.role,
+      csrfToken,
+    },
+    `${config.AUTH_SECRET}-${this.hashedPassword}-${this.lastLogoutTime}`,
+    {
+      expiresIn: config.JWT_EXPIRES_IN,
+    },
+  );
 };
 
 export const Admin = mongoose.model('Admin', AdminSchema);

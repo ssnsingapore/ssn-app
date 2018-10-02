@@ -63,13 +63,28 @@ export class Authenticator {
     return response;
   }
 
-  login = async (
+  loginUser = async (
+    email,
+    password,
+  ) => {
+    return this.baseLogin('/api/v1/login', email, password);
+  }
+
+  loginAdmin = async (
+    email,
+    password,
+  ) => {
+    return this.baseLogin('/api/v1/admin/login', email, password);
+  }
+
+  baseLogin = async (
+    loginPath,
     email,
     password,
   ) => {
     const data = { user: { email, password } };
     const response = await this.requestWithAlert
-      .post('/api/v1/login', data, { authenticated: true });
+      .post(loginPath, data, { authenticated: true });
 
     if (response.isSuccessful) {
       await this.setSuccessfulAuthState(response);
