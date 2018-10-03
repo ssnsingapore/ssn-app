@@ -42,7 +42,7 @@ class _HomePage extends Component {
           </Typography>
           <Grid container spacing={4 * theme.spacing.unit}>
             <Grid item md={9} xs={12}>
-              <ProjectListing projectNumber={3} type={'present'}/>
+              <ProjectListing pageSize={3} projectState={'APPROVED_ACTIVE'}/>
               <Button
                 variant="contained"
                 color="primary"

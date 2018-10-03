@@ -166,6 +166,7 @@ const styles = theme => ({
     paddingTop: 30,
     paddingBottom: 30,
     width: '100%',
+    backgroundColor: '#F8F8F8',
 
   }, 
   // textField: {

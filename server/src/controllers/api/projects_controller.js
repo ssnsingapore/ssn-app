@@ -1,6 +1,6 @@
 import express from 'express';
 import { asyncWrap } from 'util/async_wrapper';
-import { Project } from 'models/Project';
+import { Project, ProjectState } from 'models/Project';
 
 // eslint-disable-next-line no-unused-vars
 import { ProjectOwner } from 'models/ProjectOwner';
@@ -29,42 +29,32 @@ import { ProjectOwner } from 'models/ProjectOwner';
 //     .json({ projects });
 // }
 
-export const projectsRouterNumber = express.Router();
+export const projectRouter = express.Router();
 
-projectsRouterNumber.get('/projects', asyncWrap(getProjectsNumber));
-async function getProjectsNumber(req, res) {
+projectRouter.get('/projects', asyncWrap(getProjects));
+async function getProjects(req, res) {
   // Params
-  const numberOfProjects = Number(req.query.number);
-  const projectType = req.query.type;
-
-  // Dates
-  const todaysDate = new Date();
-  const yesterdaysDate = new Date(todaysDate - 24 * 60 * 60 * 1000);
+  const pageSize = Number(req.query.pageSize);
+  const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
 
   // Queries to mongodb
-  let projects = {};
-  if (projectType === "'past'") {
-    projects = await Project.find(
-      { endDate: { $lte: yesterdaysDate } },
-    )
-      .limit(numberOfProjects)
-      .populate('projectOwner')
-      .exec();
-  } else if (projectType === "'present'") {
-    console.log('present');
-    projects = await Project.find(
-      { endDate$: { $gte: todaysDate } }
-    )
-      .limit(numberOfProjects)
-      .populate('projectOwner')
-      .exec();
-  } else {
-    console.log('others');
-    projects = await Project.find({})
-      .limit(numberOfProjects)
-      .populate('projectOwner')
-      .exec();
-  }
+  const projects = await Project.find({ state: { $eq: projectState } })
+    .limit(pageSize)
+    .populate('projectOwner')
+    .exec();
 
   return res.status(200).json({ projects });
+}
+
+projectRouter.get('/projects/:id', asyncWrap(getProject));
+async function getProject(req, res) {
+  // Params
+  const { id } = req.params;
+
+  // Queries to mongodb
+  const project = await Project.findById(id)
+    .populate('projectOwner')
+    .exec();
+
+  return res.status(200).json({ project });
 }
