@@ -15,6 +15,7 @@ import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
 import { AdminLoginPage } from 'components/public/AdminLoginPage';
+import { AdminDashboard } from 'components/public/AdminDashboard';
 
 // Components only for reference
 import { About } from 'components/old/About';
@@ -48,8 +49,8 @@ class _Routes extends Component {
               <Route path="/unauthorized" component={Unauthorized} />
               {/* TODO: Differentitate between admin and project owner dashboards */}
               <Route path="/dashboard" component={ProjectOwnerDashboard} />
-              <Route path="/admin" component={AdminLoginPage} />
-              <Route path="/admin/dashboard" />
+              <Route exact path="/admin" component={AdminLoginPage} />
+              <Route path="/admin/dashboard" component={AdminDashboard}/>
 
               {/* Routes to old components for reference */}
               <Route path="/login/old" component={Login} />
