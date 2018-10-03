@@ -34,7 +34,7 @@ export const projectRouter = express.Router();
 projectRouter.get('/projects', asyncWrap(getProjects));
 async function getProjects(req, res) {
   // Params
-  const pageSize = Number(req.query.pageSize);
+  const pageSize = Number(req.query.pageSize) || 10;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
 
   // Queries to mongodb

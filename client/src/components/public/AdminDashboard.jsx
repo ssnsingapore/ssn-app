@@ -51,10 +51,10 @@ class _AdminDashboard extends Component {
           </Tabs>
         </Paper>
         <div className={classes.tabContainer}>
-          {tabValue === 0 && <ProjectListing type={ProjectState.PENDING_APPROVAL}/>}
-          {tabValue === 1 && <ProjectListing type={ProjectState.APPROVED_ACTIVE}/>}
-          {tabValue === 2 && <ProjectListing type={ProjectState.APPROVED_INACTIVE}/>}
-          {tabValue === 3 && <ProjectListing type={ProjectState.REJECTED}/>}
+          {tabValue === 0 && <ProjectListing projectState={ProjectState.PENDING_APPROVAL}/>}
+          {tabValue === 1 && <ProjectListing projectState={ProjectState.APPROVED_ACTIVE}/>}
+          {tabValue === 2 && <ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/>}
+          {tabValue === 3 && <ProjectListing projectState={ProjectState.REJECTED}/>}
         </div>
         
       </Paper>

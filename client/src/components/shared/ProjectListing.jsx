@@ -39,7 +39,7 @@ class _ProjectListing extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const { pageSize, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
+    const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
     const endpoint = '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
     const response = await requestWithAlert.get(endpoint + queryParams);
