@@ -46,6 +46,19 @@ async function getProjects(req, res) {
   return res.status(200).json({ projects });
 }
 
+projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
+async function getProjectCounts(req, res) {
+  const counts = {};
+  const projectStates = Object.keys(ProjectState);
+
+  for (let i = 0; i < projectStates.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    counts[projectStates[i]] = await Project.count({ state: projectStates[i] });
+  }
+
+  return res.status(200).json({ counts });
+}
+
 projectRouter.get('/projects/:id', asyncWrap(getProject));
 async function getProject(req, res) {
   // Params

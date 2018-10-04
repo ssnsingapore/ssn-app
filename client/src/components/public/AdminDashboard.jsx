@@ -4,6 +4,9 @@ import { withStyles, withTheme } from '@material-ui/core/styles';
 import { withContext } from '../../util/context';
 import { AppContext } from '../main/AppContext';
 import { ProjectListing } from '../shared/ProjectListing';
+import { extractErrors, formatErrors } from '../../util/errors';
+import { AlertType } from '../shared/Alert';
+import { Spinner } from '../shared/Spinner';
 
 const ProjectState = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
@@ -14,8 +17,8 @@ const ProjectState = {
 
 const ProjectStateDisplayMapping = {
   [ProjectState.PENDING_APPROVAL]: 'Pending Approval',
-  [ProjectState.APPROVED_ACTIVE]: 'Approved (Active)',
-  [ProjectState.APPROVED_INACTIVE]: 'Approved (Inactive)',
+  [ProjectState.APPROVED_ACTIVE]: 'Active',
+  [ProjectState.APPROVED_INACTIVE]: 'Inactive',
   [ProjectState.REJECTED]: 'Rejected',
 };
   
@@ -24,10 +27,33 @@ class _AdminDashboard extends Component {
     super(props);
 
     this.state = {
-      isLoading: false,
-      shouldRedirect: false,
+      isLoading: true,
       tabValue: 0,
+      counts: {
+        'PENDING_APPROVAL': 1,
+        'APPROVED_ACTIVE': 5,
+        'APPROVED_INACTIVE': 2,
+        'REJECTED': 1,
+      },
     };
+  }
+
+  async componentDidMount () {
+    const { requestWithAlert } = this.props.context.utils;
+    const response = await requestWithAlert.get('/api/v1/project_counts');
+
+    if (response.isSuccessful) {
+      const counts = (await response.json()).counts;
+      this.setState({ counts });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
   }
 
   handleChange = (_event, value) => {
@@ -35,8 +61,13 @@ class _AdminDashboard extends Component {
   };
 
   render() {
+    if (this.state.isLoading) {
+      return <Spinner />;
+    } 
+
     const { classes } = this.props;
     const { tabValue } = this.state;
+    const { counts } = this.state;
     return (
       <Paper className={classes.root} square>
         <Paper className={classes.tabHeader} square>
@@ -44,10 +75,10 @@ class _AdminDashboard extends Component {
                 List of Projects
           </Typography>
           <Tabs value={tabValue} onChange={this.handleChange} indicatorColor="primary" textColor="primary">
-            <Tab label={ProjectStateDisplayMapping[ProjectState.PENDING_APPROVAL]}/>
-            <Tab label={ProjectStateDisplayMapping[ProjectState.APPROVED_ACTIVE]}/>
-            <Tab label={ProjectStateDisplayMapping[ProjectState.APPROVED_INACTIVE]}/>
-            <Tab label={ProjectStateDisplayMapping[ProjectState.REJECTED]}/>
+            <Tab label={ProjectStateDisplayMapping[ProjectState.PENDING_APPROVAL] + ' (' + counts[ProjectState.PENDING_APPROVAL] + ')'}/>
+            <Tab label={ProjectStateDisplayMapping[ProjectState.APPROVED_ACTIVE] + ' (' + counts[ProjectState.APPROVED_ACTIVE] + ')'}/>
+            <Tab label={ProjectStateDisplayMapping[ProjectState.APPROVED_INACTIVE] + ' (' + counts[ProjectState.APPROVED_INACTIVE] + ')'}/>
+            <Tab label={ProjectStateDisplayMapping[ProjectState.REJECTED] + ' (' + counts[ProjectState.REJECTED] + ')'}/>
           </Tabs>
         </Paper>
         <div className={classes.tabContainer}>
@@ -56,9 +87,8 @@ class _AdminDashboard extends Component {
           {tabValue === 2 && <ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/>}
           {tabValue === 3 && <ProjectListing projectState={ProjectState.REJECTED}/>}
         </div>
-        
       </Paper>
-    );
+    ); 
   }
 }
 
