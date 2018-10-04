@@ -45,7 +45,7 @@ getProjectOwner()
         projectType: ProjectType.EVENT,
         time: '9 AM',
         location: ProjectLocation.CENTRAL,
-        state: ProjectState.APPROVED,
+        state: ProjectState.APPROVED_INACTIVE,
         startDate: new Date(2018, 12, 1),
         endDate: new Date(2018, 12, 2),
         frequency: ProjectFrequency.ONCE_A_WEEK,
