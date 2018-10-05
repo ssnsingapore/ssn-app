@@ -10,6 +10,7 @@ import Select from '@material-ui/core/Select';
 
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
+import { getFieldNameObject, withForm, fieldValue } from 'util/form';
 
 export const IssueAddressed = {
   AIR_QUALITY: 'AIR_QUALITY',
@@ -64,48 +65,43 @@ const VolunteerRequirementType = {
   OTHERS_ADHOC: 'OTHERS_ADHOC',
 };
 
+const FieldName = getFieldNameObject([
+  'issueAddressed',
+  'projectLocations',
+  'months',
+  'volunteerRequirementType',
+]);
+
+const constraints = {
+  [FieldName.issueAddressed]: {
+    inclusion: Object.values(IssueAddressed),
+  },
+  [FieldName.projectLocations]: {
+    inclusion: Object.values(ProjectLocations),
+  },
+  [FieldName.months]: {
+    inclusion: Object.values(Months),
+  },
+  [FieldName.volunteerRequirementType]: {
+    inclusion: Object.values(VolunteerRequirementType),
+  },
+};
 
 class _SearchBar extends Component {
 
-  
-  constructor(props) {
-    super(props);
-  
-    this.state = {
-      issues_addressed: 'all categories',
-      project_location: 'all areas',
-      month: 'all months',
-      volunteer_recruitment_type: 'all roles',
-    };
-
-    this.baseState = this.state; 
-
-  }
-
-
-  resetForm = () => {
-    this.setState(this.baseState);
-  }
-
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
-  };
-
   /* Using form control */
-  createDropdownMenu(field, options, first_label){
-    const { classes } = this.props;
+  createDropdownMenu = (field, options, firstLabel) => {
+    const { classes, fields, handleChange } = this.props;
+    
     return (
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor={field}></InputLabel>
         <Select
-          displayEmpty
-          value={this.state[field]}
-          onChange={this.handleChange(field)}
-          inputProps={{name: {field}, id: {field}}}
+          value={fieldValue(fields, field) === '' ? firstLabel : fieldValue(fields, field)}
+          name={FieldName[field]}
+          onChange={handleChange}
         >
-          <MenuItem key={first_label} value={first_label}><Typography variant='body2' className={classes.menuText}>{first_label}</Typography></MenuItem>
+          <MenuItem key={firstLabel} value={firstLabel}><Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography></MenuItem>
           {Object.values(options).map(option => (
             <MenuItem key={option} value={option}>
               <Typography variant='body2' className={classes.menuText}>{option}</Typography>
@@ -142,16 +138,19 @@ class _SearchBar extends Component {
   // }
 
   render() {
-    const { classes } = this.props;
+    const { classes, resetAllFields } = this.props;
+    
     return (
-      
       <Paper className={classes.searchBox}>
         <Typography variant='title'>Filter projects</Typography>
         <Typography variant='headline'>
-        I am looking for projects about {this.createDropdownMenu('issues_addressed', IssueAddressed, this.baseState.issues_addressed)}
-        in the month of {this.createDropdownMenu('month', Months, this.baseState.month)} that requires volunteers for {this.createDropdownMenu('volunteer_recruitment_type', VolunteerRequirementType, this.baseState.volunteer_recruitment_type)} near the {this.createDropdownMenu('project_location', ProjectLocations, this.baseState.project_location)} area.
+        I am looking for projects about {this.createDropdownMenu('issueAddressed', IssueAddressed, 'all categories')}
+        in the month of {this.createDropdownMenu('months', Months, 'all months')} 
+        that requires volunteers for {this.createDropdownMenu('volunteerRequirementType', VolunteerRequirementType, 'all roles')} 
+        near the {this.createDropdownMenu('projectLocations', ProjectLocations, 'all areas')} 
+        area.
         </Typography>
-        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={this.resetForm}>
+        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
             Reset
         </Button>
       </Paper>
@@ -188,6 +187,13 @@ const styles = theme => ({
   },
 });
 
-export const SearchBar = withContext(AppContext)(
-  withTheme()(withStyles(styles)(_SearchBar))
+export const SearchBar = 
+withContext(AppContext)(
+  withTheme()(
+    withStyles(styles)(
+      withForm(FieldName, constraints)(
+        (_SearchBar)
+      )
+    )
+  )
 );
