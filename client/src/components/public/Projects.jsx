@@ -42,24 +42,24 @@ class _Projects extends Component {
 
     // Tutorial from https://material-ui.com/demos/tabs/
     return (
-      <div className={classes.tabs}>
-        <Paper className={classes.body} square='false'>
-          <Paper square='false'>
-            <Typography variant='headline' className={classes.title}>List of projects</Typography>
-            <Tabs
-              value={value}
-              onChange={this.handleChange}
-              indicatorColor="primary"
-              textColor="primary"
-            >
-              <Tab label="Active projects" />
-              <Tab label="Past projects" />
-            </Tabs>
-          </Paper>
-          <Paper className={classes.innerbox}>
-            {value === 0 && <TabContainer><ProjectListing projectState={'APPROVED_ACTIVE'}/></TabContainer>}
-            {value === 1 && <TabContainer><ProjectListing projectState={'APPROVED_INACTIVE'}/></TabContainer>}</Paper></Paper>
-      </div>
+      <Paper className={classes.body} square>
+        <Paper square>
+          <Typography variant='headline' className={classes.title}>List of projects</Typography>
+          <Tabs
+            value={value}
+            onChange={this.handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+          >
+            <Tab label="Active projects" />
+            <Tab label="Past projects" />
+          </Tabs>
+        </Paper>
+        <Paper className={classes.innerbox}>
+          {value === 0 && <TabContainer><ProjectListing projectState={'APPROVED_ACTIVE'}/></TabContainer>}
+          {value === 1 && <TabContainer><ProjectListing projectState={'APPROVED_INACTIVE'}/></TabContainer>}
+        </Paper>
+      </Paper>
     );
   };
 
@@ -77,17 +77,13 @@ const styles = theme => ({
   landingHeader: {
     textTransform: 'uppercase',
   },
-  tabs: {
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
   title: {
     padding: '30px',
   },
   body: {
     width: '85%',
+    margin: '0 auto',
+    marginTop: '20px',
   },
   innerbox: {
     marginTop: '1px',
