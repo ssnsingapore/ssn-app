@@ -47,12 +47,15 @@ class _Routes extends Component {
               />
               <Route path="/passwordReset" component={PasswordResetForm} />
               <Route path="/unauthorized" component={Unauthorized} />
-
               <Route path="/project_owner/dashboard" component={ProjectOwnerDashboard} />
 
               <Route exact path="/admin" component={AdminLoginPage} />
-              <Route path="/admin/dashboard" component={AdminDashboard}/>
-
+              <RouteAuthenticated 
+                exact
+                path="/admin/dashboard" 
+                component={AdminDashboard}
+                authorize={[Role.admin]}
+              />
               {/* Routes to old components for reference */}
               <Route path="/login/old" component={Login} />
               <Route path="/signup/old" component={SignUp} />
