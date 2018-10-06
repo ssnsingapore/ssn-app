@@ -1,26 +1,16 @@
 import React, { Component } from 'react';
 import { Typography, Paper, Tabs, Tab} from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import { withContext } from '../../util/context';
-import { AppContext } from '../main/AppContext';
-import { ProjectListing } from '../shared/ProjectListing';
-import { extractErrors, formatErrors } from '../../util/errors';
-import { AlertType } from '../shared/Alert';
-import { Spinner } from '../shared/Spinner';
 
-const ProjectState = {
-  PENDING_APPROVAL: 'PENDING_APPROVAL',
-  APPROVED_ACTIVE: 'APPROVED_ACTIVE',
-  APPROVED_INACTIVE: 'APPROVED_INACTIVE',
-  REJECTED: 'REJECTED',
-};
+import { AppContext } from 'components/main/AppContext';
+import { ProjectListing } from 'components/shared/ProjectListing';
+import { AlertType } from 'components/shared/Alert';
+import { Spinner } from 'components/shared/Spinner';
+import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
+import { ProjectState } from 'components/shared/enums/ProjectState';
 
-const ProjectStateDisplayMapping = {
-  [ProjectState.PENDING_APPROVAL]: 'Pending Approval',
-  [ProjectState.APPROVED_ACTIVE]: 'Active',
-  [ProjectState.APPROVED_INACTIVE]: 'Inactive',
-  [ProjectState.REJECTED]: 'Rejected',
-};
+import { extractErrors, formatErrors } from 'util/errors';
+import { withContext } from 'util/context';
 
 class _AdminDashboard extends Component {
   constructor(props) {
