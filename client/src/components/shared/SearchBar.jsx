@@ -118,10 +118,10 @@ class _SearchBar extends Component {
       <Paper className={classes.searchBox}>
         <Typography variant='title'>Filter projects</Typography>
         <Typography variant='headline'>
-        I am looking for projects about {this.createDropdownMenu('issueAddressed', IssueAddressed, 'all categories')}
-        in the month of {this.createDropdownMenu('months', Months, 'all months')}
-        that requires volunteers for {this.createDropdownMenu('volunteerRequirementType', VolunteerRequirementType, 'all roles')}
-        near the {this.createDropdownMenu('projectLocations', ProjectLocations, 'all areas')}
+        I am looking for projects about {this.createDropdownMenu(FieldName.issueAddressed, IssueAddressed, 'all categories')}
+        in the month of {this.createDropdownMenu(FieldName.months, Months, 'all months')} 
+        that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')} 
+        near the {this.createDropdownMenu(FieldName.projectLocations, ProjectLocations, 'all areas')} 
         area.
         </Typography>
         <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
@@ -165,4 +165,8 @@ withContext(AppContext)(
       )
     )
   )
+);
+
+export const _TestSearchBar =  withStyles(styles)(
+  (_SearchBar)
 );
