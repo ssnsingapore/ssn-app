@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {
   AppBar,
+  Tabs,
+  Tab,
   Toolbar,
   Typography,
 } from '@material-ui/core';
@@ -31,7 +34,7 @@ class _NavBar extends Component {
   handleTabChange = (_event, value) => this.setState({ value })
 
   render() {
-    const { classes } = this.props;
+    const { classes, title } = this.props;
 
     return (
       <AppBar position="static">
@@ -39,9 +42,30 @@ class _NavBar extends Component {
           <a href="/">
             <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
           </a>
-          <Typography variant="body2" color="inherit" className={classes.barTitle}>
-            SSN ADMIN DASHBOARD
+          <Typography>
+            {title}
           </Typography>
+          <Tabs
+            value={this.state.value}
+            onChange={this.handleTabChange}
+            centered
+          >
+            <Tab
+              label="About"
+              component={Link}
+              to={`/${TAB_PATHS[0]}`}
+            />
+            <Tab
+              label="Todos"
+              component={Link}
+              to={`/${TAB_PATHS[1]}`}
+            />
+            <Tab
+              label="Image Upload"
+              component={Link}
+              to={`/${TAB_PATHS[2]}`}
+            />
+          </Tabs>
         </Toolbar>
       </AppBar>
     );
@@ -63,9 +87,6 @@ const styles = {
   },
   logo: {
     height: '25px',
-  },
-  barTitle: {
-    paddingLeft: '15px',
   },
 };
 
