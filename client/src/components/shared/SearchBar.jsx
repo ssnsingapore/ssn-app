@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { Typography, Paper, Button } from '@material-ui/core';
-// import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -40,7 +39,7 @@ const ProjectLocations = {
 };
 
 const Months = {
-  1: 'JANUARY', 
+  1: 'JANUARY',
   2: 'FEBRUARY',
   3: 'MARCH',
   4: 'APRIL',
@@ -92,7 +91,7 @@ class _SearchBar extends Component {
   /* Using form control */
   createDropdownMenu = (field, options, firstLabel) => {
     const { classes, fields, handleChange } = this.props;
-    
+
     return (
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor={field}></InputLabel>
@@ -109,45 +108,20 @@ class _SearchBar extends Component {
           ))}
         </Select>
       </FormControl>
-    );    
+    );
   }
-
-  /* Using text field */
-  // createDropdownMenu(field, options, label) {
-  //   const { classes } = this.props;
-
-  //   return (
-  //     <TextField
-  //       select
-  //       className={classes.textField}
-  //       value={this.state[field]}
-  //       onChange={this.handleChange(field)}
-  //       SelectProps={{
-  //         native: true,
-  //       }}
-  //       margin="normal"
-  //       label={label}
-  //     >
-  //       {Object.values(options).map(option => (
-  //         <option key={option} value={option}>
-  //           {option}
-  //         </option>
-  //       ))}
-  //     </TextField>
-  //   );
-  // }
 
   render() {
     const { classes, resetAllFields } = this.props;
-    
+
     return (
       <Paper className={classes.searchBox}>
         <Typography variant='title'>Filter projects</Typography>
         <Typography variant='headline'>
         I am looking for projects about {this.createDropdownMenu('issueAddressed', IssueAddressed, 'all categories')}
-        in the month of {this.createDropdownMenu('months', Months, 'all months')} 
-        that requires volunteers for {this.createDropdownMenu('volunteerRequirementType', VolunteerRequirementType, 'all roles')} 
-        near the {this.createDropdownMenu('projectLocations', ProjectLocations, 'all areas')} 
+        in the month of {this.createDropdownMenu('months', Months, 'all months')}
+        that requires volunteers for {this.createDropdownMenu('volunteerRequirementType', VolunteerRequirementType, 'all roles')}
+        near the {this.createDropdownMenu('projectLocations', ProjectLocations, 'all areas')}
         area.
         </Typography>
         <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
@@ -167,12 +141,7 @@ const styles = theme => ({
     width: '100%',
     backgroundColor: '#F8F8F8',
 
-  }, 
-  // textField: {
-  //   marginLeft: theme.spacing.unit * 1.5,
-  //   marginRight: theme.spacing.unit * 1.5,
-    
-  // },
+  },
   formControl: {
     minWidth: 200,
     marginLeft: theme.spacing.unit * 1.5,
@@ -187,7 +156,7 @@ const styles = theme => ({
   },
 });
 
-export const SearchBar = 
+export const SearchBar =
 withContext(AppContext)(
   withTheme()(
     withStyles(styles)(
