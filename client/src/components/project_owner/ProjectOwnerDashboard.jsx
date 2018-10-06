@@ -127,32 +127,31 @@ class _ProjectOwnerDashboard extends Component {
   render() {
     const { classes, theme } = this.props;
     return (
-      <Grid container spacing={theme.spacing.unit}>
-        <Paper className={classes.root} elevation={1}>
-          <List className={classes.list}>
-            <ListItem className={classes.removePadding}>
-              <Typography variant="headline" className={classes.marginBottom3}>
+      <Grid container spacing={theme.spacing.unit} className={classes.root}>
+        <Grid item xs={12} >
+          <Paper className={classes.projectListingContainer} elevation={1} square>
+            <List className={classes.list}>
+              <ListItem className={classes.removePadding}>
+                <Typography variant="headline" className={classes.marginBottom3}>
                 My Projects
-              </Typography>
-              <Button
-                variant="fab"
-                color="secondary"
-                aria-label="Add"
-                className={classes.addButton}
-                href="/"
-              >
-                <AddIcon />
-              </Button>
-            </ListItem>
-          </List>
-          {this.renderTabs()}
-        </Paper>
-        <Paper className={classes.supplementary} elevation={0}>
-          <ProjectOwnerDetails
-            className={classes.removePadding}
-            elevation={0}
-          />
-        </Paper>
+                </Typography>
+                <Button
+                  variant="fab"
+                  color="secondary"
+                  aria-label="Add"
+                  className={classes.addButton}
+                  href="/"
+                >
+                  <AddIcon />
+                </Button>
+              </ListItem>
+            </List>
+            {this.renderTabs()}
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <ProjectOwnerDetails />
+        </Grid>
       </Grid>
     );
   }
@@ -160,13 +159,12 @@ class _ProjectOwnerDashboard extends Component {
 
 const styles = theme => ({
   root: {
+    width: '80vw',
+    margin: '0 auto',
+  },
+  projectListingContainer: {
     margin: '70px auto 10px',
     padding: '40px',
-    width: '80vw',
-  },
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
   },
   marginBottom3: {
     marginBottom: theme.spacing.unit * 3,
@@ -188,10 +186,6 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-  },
-  supplementary: {
-    margin: '10px auto 70px',
-    width: '80vw',
   },
 });
 

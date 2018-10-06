@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Button } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -119,9 +119,9 @@ class _SearchBar extends Component {
         <Typography variant='title'>Filter projects</Typography>
         <Typography variant='headline'>
         I am looking for projects about {this.createDropdownMenu(FieldName.issueAddressed, IssueAddressed, 'all categories')}
-        in the month of {this.createDropdownMenu(FieldName.months, Months, 'all months')} 
-        that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')} 
-        near the {this.createDropdownMenu(FieldName.projectLocations, ProjectLocations, 'all areas')} 
+        in the month of {this.createDropdownMenu(FieldName.months, Months, 'all months')}
+        that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')}
+        near the {this.createDropdownMenu(FieldName.projectLocations, ProjectLocations, 'all areas')}
         area.
         </Typography>
         <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>

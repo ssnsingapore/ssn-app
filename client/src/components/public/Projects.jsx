@@ -49,7 +49,7 @@ class _Projects extends Component {
 
     this.setState({ isLoading: false });
   }
-  
+
   handleChange = (event, value) => {
     this.setState({ value });
   };
@@ -119,5 +119,6 @@ const styles = theme => ({
 
 export const Projects = withContext(AppContext)(
   withTheme()(
-    withStyles(styles)
-    (_Projects)));
+    withStyles(styles)(_Projects),
+  ),
+);

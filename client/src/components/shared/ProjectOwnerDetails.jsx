@@ -25,7 +25,7 @@ class _ProjectOwnerDetails extends Component {
     const { projectOwner } = this.state;
 
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} square>
         <CardMedia
           className={classes.cover}
           image={projectOwner.profilePhotoUrl}
