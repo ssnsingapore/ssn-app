@@ -72,6 +72,8 @@ class App extends Component {
         [key]: { type, message, isVisible: true },
       },
     });
+
+    setTimeout(() => this.hideAlert(key), 5000);
   };
 
   hideAlert = key => {
