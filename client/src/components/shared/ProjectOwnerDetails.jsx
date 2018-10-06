@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Grid,
-} from '@material-ui/core';
+import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
@@ -50,7 +44,6 @@ class _ProjectOwnerDetails extends Component {
   async componentDidMount() {
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
-    console.log(currentUser);
 
     this.setState({ projectOwner: currentUser });
   }
@@ -105,12 +98,7 @@ class _ProjectOwnerDetails extends Component {
   };
 
   render() {
-    const { theme } = this.props;
-    return (
-      <Grid container spacing={theme.spacing.unit}>
-        {this.renderProjectOwnerDetails()}
-      </Grid>
-    );
+    return <div>{this.renderProjectOwnerDetails()}</div>;
   }
 }
 
