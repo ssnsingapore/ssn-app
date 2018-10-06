@@ -18,6 +18,8 @@ import { ProjectListing } from 'components/shared/ProjectListing';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
+import { AlertType } from 'components/shared/Alert';
+import { extractErrors, formatErrors } from 'util/errors';
 
 class _ProjectOwnerDashboard extends Component {
   constructor(props) {
@@ -26,17 +28,37 @@ class _ProjectOwnerDashboard extends Component {
     this.state = {
       isLoading: true,
       tabValue: 0,
-      counts: {
-        PENDING_APPROVAL: 0,
-        APPROVED_ACTIVE: 0,
-        APPROVED_INACTIVE: 0,
-        REJECTED: 0,
-      },
+      counts: {},
     };
+  }
+
+  async componentDidMount() {
+    const { requestWithAlert } = this.props.context.utils;
+    const response = await requestWithAlert.get('/api/v1/project_counts');
+
+    if (response.isSuccessful) {
+      const counts = (await response.json()).counts;
+      this.setState({ counts });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
   }
 
   handleChange = (_event, value) => {
     this.setState({ tabValue: value });
+  };
+
+  getTabLabel = projectState => {
+    const { counts } = this.state;
+    return `${ProjectStateDisplayMapping[projectState]} (${
+      counts[projectState]
+    })`;
   };
 
   renderButtons() {
@@ -64,21 +86,15 @@ class _ProjectOwnerDashboard extends Component {
     return (
       <React.Fragment>
         <Tabs
-          value={this.state.tabValue}
+          value={tabValue}
           indicatorColor="primary"
           textColor="primary"
           onChange={this.handleChange}
         >
-          <Tab
-            label={ProjectStateDisplayMapping[ProjectState.PENDING_APPROVAL]}
-          />
-          <Tab
-            label={ProjectStateDisplayMapping[ProjectState.APPROVED_ACTIVE]}
-          />
-          <Tab
-            label={ProjectStateDisplayMapping[ProjectState.APPROVED_INACTIVE]}
-          />
-          <Tab label={ProjectStateDisplayMapping[ProjectState.REJECTED]} />
+          <Tab label={this.getTabLabel(ProjectState.PENDING_APPROVAL)} />
+          <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)} />
+          <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)} />
+          <Tab label={this.getTabLabel(ProjectState.REJECTED)} />
         </Tabs>
 
         <Grid

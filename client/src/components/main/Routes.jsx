@@ -33,7 +33,7 @@ class _Routes extends Component {
     return (
       <BrowserRouter>
         <div className={classes.root}>
-          <Route path="/:any+" component={NavBar} /> 
+          <Route path="/:any+" component={NavBar} />
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
@@ -48,7 +48,12 @@ class _Routes extends Component {
               />
               <Route path="/passwordReset" component={PasswordResetForm} />
               <Route path="/unauthorized" component={Unauthorized} />
-              <Route path="/project_owner/dashboard" component={ProjectOwnerDashboard} />
+
+              <RouteAuthenticated
+                path="/project_owner/dashboard"
+                component={ProjectOwnerDashboard}
+                authorize={[Role.project_owner]}
+              />
 
               <Route exact path="/admin" component={AdminLoginPage} />
               <RouteAuthenticated
@@ -57,6 +62,7 @@ class _Routes extends Component {
                 component={AdminDashboard}
                 authorize={[Role.admin]}
               />
+
               {/* Routes to old components for reference */}
               <Route path="/login/old" component={Login} />
               <Route path="/signup/old" component={SignUp} />

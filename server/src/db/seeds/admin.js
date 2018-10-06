@@ -20,6 +20,6 @@ admin.setPassword('test123').then(async () => {
   ];
 
   connectMongoose();
-  await seedData(adminAttributes, Admin, 'admins');
+  await seedData(adminAttributes, Admin, 'admin');
   closeMongooseConnection();
 });
