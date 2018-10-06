@@ -99,7 +99,7 @@ class _ProjectListing extends Component {
     return this.state.projects.map(project => {
       return (
 
-        <Grid item xs={12} key={project.title}>
+        <Grid item xs={12} key={project._id}>
           <Link to={'/projects/' + project._id} className={classes.link}>
             <Card className={classes.card}>
               <Grid container item xs={12} key={project.title}>
