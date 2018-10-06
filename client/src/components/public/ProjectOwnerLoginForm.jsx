@@ -1,16 +1,20 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import {
   Typography,
   Button,
   TextField,
 } from '@material-ui/core';
+import Cookie from 'js-cookie';
+import qs from 'qs';
+
 import { PasswordResetDialog } from './PasswordResetDialog';
 import { AlertType } from 'components/shared/Alert';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
 import { extractErrors, formatErrors } from 'util/errors';
+import { MESSAGE_COOKIE_NAME } from 'util/constants';
 import {
   getFieldNameObject,
   fieldValue,
@@ -68,6 +72,10 @@ class _ProjectOwnerLoginForm extends React.Component {
     shouldRedirect: false,
   }
 
+  componentDidMount () {
+    this.showAccountConfirmationMessage();
+  }
+
   handlePasswordResetDialog = () => {
     this.setState({ passwordResetDialogOpen: true });
   }
@@ -107,6 +115,18 @@ class _ProjectOwnerLoginForm extends React.Component {
       }
     }
 
+  }
+
+  showAccountConfirmationMessage = () => {
+    const { showAlert } = this.props.context.updaters;
+
+    if (Cookie.get(MESSAGE_COOKIE_NAME)) {
+      const paramsWithoutHash = this.props.location.hash.substring(1);
+      const { message, type } = qs.parse(paramsWithoutHash);
+      showAlert('confirmationMessage', type, message);
+
+      Cookie.remove(MESSAGE_COOKIE_NAME);
+    }
   }
 
   render() {
@@ -178,6 +198,8 @@ class _ProjectOwnerLoginForm extends React.Component {
             size="large"
             fullWidth
             className={classes.signupButton}
+            component={Link}
+            to="/signup"
           >
             Sign Up
           </Button>

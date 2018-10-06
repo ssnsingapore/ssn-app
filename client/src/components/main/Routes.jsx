@@ -16,6 +16,7 @@ import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
 import { AdminLoginPage } from 'components/public/AdminLoginPage';
 import { AdminDashboard } from 'components/public/AdminDashboard';
+import { ProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
 
 // Components only for reference
 import { About } from 'components/old/About';
@@ -36,7 +37,7 @@ class _Routes extends Component {
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
-              <Route exact path="/login" component={Login} />
+              <Route exact path="/login" component={ProjectOwnerLoginForm} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
               <Route exact path="/projects" component={Projects} />
               <Route exact path="/projects/:id" component={Project} />
@@ -50,9 +51,9 @@ class _Routes extends Component {
               <Route path="/project_owner/dashboard" component={ProjectOwnerDashboard} />
 
               <Route exact path="/admin" component={AdminLoginPage} />
-              <RouteAuthenticated 
+              <RouteAuthenticated
                 exact
-                path="/admin/dashboard" 
+                path="/admin/dashboard"
                 component={AdminDashboard}
                 authorize={[Role.admin]}
               />
