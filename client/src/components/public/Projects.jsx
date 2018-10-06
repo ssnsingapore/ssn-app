@@ -4,8 +4,15 @@ import { withStyles, withTheme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
+import { AppContext } from 'components/main/AppContext';
 import { SearchBar } from 'components/shared/SearchBar';
+import { Spinner } from 'components/shared/Spinner';
 import { ProjectListing } from 'components/shared/ProjectListing';
+import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
+import { extractErrors, formatErrors } from 'util/errors';
+import { AlertType } from 'components/shared/Alert';
+import { ProjectState } from 'components/shared/enums/ProjectState';
+import { withContext } from 'util/context';
 
 function TabContainer(props) {
   return (
@@ -20,25 +27,45 @@ class _Projects extends Component {
     super(props);
 
     this.state = {
+      isLoading: true,
       value: 0,
     };
   }
 
+  async componentDidMount() {
+    const { requestWithAlert } = this.props.context.utils;
+    const response = await requestWithAlert.get('/api/v1/project_counts');
+
+    if (response.isSuccessful) {
+      const counts = (await response.json()).counts;
+      this.setState({ counts });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
+  }
+  
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
-  renderSearchBar = () => {
-    return (
-      <React.Fragment>
-        <SearchBar />
-      </React.Fragment>
-    );
-  };
+  getTabLabel = (projectState) => {
+    const { counts } = this.state;
+    return `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`;
+  }
 
   renderProjectListings = () => {
     const { value } = this.state;
     const { classes } = this.props;
+
+    if (this.state.isLoading) {
+      return <Spinner />;
+    }
 
     // Tutorial from https://material-ui.com/demos/tabs/
     return (
@@ -51,13 +78,13 @@ class _Projects extends Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tab label="Active projects" />
-            <Tab label="Past projects" />
+            <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)} />
+            <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)} />
           </Tabs>
         </Paper>
         <Paper className={classes.innerbox}>
-          {value === 0 && <TabContainer><ProjectListing projectState={'APPROVED_ACTIVE'}/></TabContainer>}
-          {value === 1 && <TabContainer><ProjectListing projectState={'APPROVED_INACTIVE'}/></TabContainer>}
+          {value === 0 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_ACTIVE}/></TabContainer>}
+          {value === 1 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/></TabContainer>}
         </Paper>
       </Paper>
     );
@@ -66,7 +93,7 @@ class _Projects extends Component {
   render() {
     return (
       <div>
-        {this.renderSearchBar()}
+        <SearchBar />
         {this.renderProjectListings()}
       </div>
     );
@@ -90,4 +117,7 @@ const styles = theme => ({
   },
 });
 
-export const Projects = withTheme()(withStyles(styles)(_Projects));
+export const Projects = withContext(AppContext)(
+  withTheme()(
+    withStyles(styles)
+    (_Projects)));
