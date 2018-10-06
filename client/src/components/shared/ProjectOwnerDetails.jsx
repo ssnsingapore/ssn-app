@@ -5,34 +5,6 @@ import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 
-const styles = theme => ({
-  card: {
-    display: 'flex',
-  },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  content: {
-    flex: '1 0 auto',
-  },
-  cover: {
-    minWidth: '200px',
-    minHeight: '200px',
-    objectFit: 'cover',
-  },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit,
-  },
-  playIcon: {
-    height: 38,
-    width: 38,
-  },
-});
-
 class _ProjectOwnerDetails extends Component {
   constructor(props) {
     super(props);
@@ -97,6 +69,34 @@ class _ProjectOwnerDetails extends Component {
     );
   };
 }
+
+const styles = theme => ({
+  card: {
+    display: 'flex',
+  },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  content: {
+    flex: '1 0 auto',
+  },
+  cover: {
+    minWidth: '200px',
+    minHeight: '200px',
+    objectFit: 'cover',
+  },
+  controls: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
+  },
+  playIcon: {
+    height: 38,
+    width: 38,
+  },
+});
 
 export const ProjectOwnerDetails = withContext(AppContext)(
   withTheme()(withStyles(styles)(_ProjectOwnerDetails))
