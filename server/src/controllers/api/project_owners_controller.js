@@ -7,7 +7,6 @@ import { LoginService } from 'services/LoginService';
 import { BadRequestErrorView } from 'util/errors';
 import { SignUpService } from '../../services/SignUpService';
 
-
 export const projectOwnersRouter = express.Router();
 
 projectOwnersRouter.get('/project_owners', asyncWrap(getProjectOwners));
@@ -15,6 +14,13 @@ async function getProjectOwners(_req, res) {
   const projectOwners = await ProjectOwner.find({});
 
   return res.status(200).json({ projectOwners });
+}
+
+projectOwnersRouter.get('/project_owners/:id', asyncWrap(getProjectOwner));
+async function getProjectOwner(req, res) {
+  const { id } = req.params;
+  const projectOwner = await ProjectOwner.findById(id);
+  return res.status(200).json({ projectOwner });
 }
 
 projectOwnersRouter.post('/project_owners', asyncWrap(registerNewProjectOwner));

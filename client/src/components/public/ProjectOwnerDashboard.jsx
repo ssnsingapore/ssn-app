@@ -15,35 +15,99 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 
 import { ProjectListing } from 'components/shared/ProjectListing';
+import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
-
-class DashboardTabs extends React.Component {
-  state = {
-    value: 0,
-  };
-
-  handleChange = (event, value) => {
-    this.setState({ value });
-  };
-
-  render() {
-    return (
-      <Tabs
-        value={this.state.value}
-        indicatorColor="primary"
-        textColor="primary"
-        onChange={this.handleChange}
-      >
-        <Tab label="Pending Approval" />
-        <Tab label="Active" />
-        <Tab label="Inactive" />
-        <Tab label="Rejected" />
-      </Tabs>
-    );
-  }
-}
+import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 
 class _ProjectOwnerDashboard extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoading: true,
+      tabValue: 0,
+      counts: {
+        PENDING_APPROVAL: 0,
+        APPROVED_ACTIVE: 0,
+        APPROVED_INACTIVE: 0,
+        REJECTED: 0,
+      },
+    };
+  }
+
+  handleChange = (_event, value) => {
+    this.setState({ tabValue: value });
+  };
+
+  renderButtons() {
+    const { classes } = this.props;
+
+    return (
+      <Grid item md={4} xs={12}>
+        <Button variant="contained" className={classes.button}>
+          Edit
+        </Button>
+        <Button variant="contained" className={classes.button}>
+          Deactivate
+        </Button>
+        <Button variant="contained" className={classes.button}>
+          Duplicate
+        </Button>
+      </Grid>
+    );
+  }
+
+  renderTabs() {
+    const { classes, theme } = this.props;
+    const { tabValue } = this.state;
+
+    return (
+      <React.Fragment>
+        <Tabs
+          value={this.state.tabValue}
+          indicatorColor="primary"
+          textColor="primary"
+          onChange={this.handleChange}
+        >
+          <Tab
+            label={ProjectStateDisplayMapping[ProjectState.PENDING_APPROVAL]}
+          />
+          <Tab
+            label={ProjectStateDisplayMapping[ProjectState.APPROVED_ACTIVE]}
+          />
+          <Tab
+            label={ProjectStateDisplayMapping[ProjectState.APPROVED_INACTIVE]}
+          />
+          <Tab label={ProjectStateDisplayMapping[ProjectState.REJECTED]} />
+        </Tabs>
+
+        <Grid
+          container
+          spacing={4 * theme.spacing.unit}
+          className={classes.projectListing}
+        >
+          <Grid container spacing={4 * theme.spacing.unit}>
+            <Grid item md={8} xs={12}>
+              {tabValue === 0 && (
+                <ProjectListing projectState={ProjectState.PENDING_APPROVAL} />
+              )}
+              {tabValue === 1 && (
+                <ProjectListing projectState={ProjectState.APPROVED_ACTIVE} />
+              )}
+              {tabValue === 2 && (
+                <ProjectListing projectState={ProjectState.APPROVED_INACTIVE} />
+              )}
+              {tabValue === 3 && (
+                <ProjectListing projectState={ProjectState.REJECTED} />
+              )}
+            </Grid>
+            {this.renderButtons()}
+          </Grid>
+        </Grid>
+      </React.Fragment>
+    );
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (
@@ -65,30 +129,7 @@ class _ProjectOwnerDashboard extends Component {
               </Button>
             </ListItem>
           </List>
-          <DashboardTabs />
-          {/* <ProjectListingGroup /> */}
-          <Grid
-            container
-            spacing={4 * theme.spacing.unit}
-            className={classes.projectListing}
-          >
-            <Grid container spacing={4 * theme.spacing.unit}>
-              <Grid item md={8} xs={12}>
-                <ProjectListing />
-              </Grid>
-              <Grid item md={4} xs={12}>
-                <Button variant="contained" className={classes.button}>
-                  Edit
-                </Button>
-                <Button variant="contained" className={classes.button}>
-                  Deactivate
-                </Button>
-                <Button variant="contained" className={classes.button}>
-                  Duplicate
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
+          {this.renderTabs()}
         </Paper>
         <Paper className={classes.supplementary} elevation={0}>
           <ProjectOwnerDetails
