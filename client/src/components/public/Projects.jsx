@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Paper } from '@material-ui/core';
+import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 
 import { AppContext } from 'components/main/AppContext';
 import { SearchBar } from 'components/shared/SearchBar';
@@ -28,7 +26,8 @@ class _Projects extends Component {
 
     this.state = {
       isLoading: true,
-      value: 0,
+      tabValue: 0,
+      counts: {},
     };
   }
 
@@ -44,14 +43,14 @@ class _Projects extends Component {
     if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
-      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert('getProjectCountsFailure', AlertType.ERROR, formatErrors(errors));
     }
 
     this.setState({ isLoading: false });
   }
 
-  handleChange = (event, value) => {
-    this.setState({ value });
+  handleChange = (_event, value) => {
+    this.setState({ tabValue: value });
   };
 
   getTabLabel = (projectState) => {
@@ -60,7 +59,7 @@ class _Projects extends Component {
   }
 
   renderProjectListings = () => {
-    const { value } = this.state;
+    const { tabValue } = this.state;
     const { classes } = this.props;
 
     if (this.state.isLoading) {
@@ -73,7 +72,7 @@ class _Projects extends Component {
         <Paper square>
           <Typography variant='headline' className={classes.title}>List of projects</Typography>
           <Tabs
-            value={value}
+            value={tabValue}
             onChange={this.handleChange}
             indicatorColor="primary"
             textColor="primary"
@@ -83,8 +82,8 @@ class _Projects extends Component {
           </Tabs>
         </Paper>
         <Paper className={classes.innerbox}>
-          {value === 0 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_ACTIVE}/></TabContainer>}
-          {value === 1 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/></TabContainer>}
+          {tabValue === 0 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_ACTIVE}/></TabContainer>}
+          {tabValue === 1 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/></TabContainer>}
         </Paper>
       </Paper>
     );
@@ -122,3 +121,7 @@ export const Projects = withContext(AppContext)(
     withStyles(styles)(_Projects),
   ),
 );
+
+export const _testExports = {
+  Projects: _Projects,
+};

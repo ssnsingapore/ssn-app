@@ -1,12 +1,12 @@
 import React from 'react';
 
-const defaultAppContext = {
+export const defaultAppContext = {
   currentUser: null,
   isAuthenticated: false,
   alerts: {},
   updaters: {
-    showAlert: (key, type, message) => {},
-    hideAlert: (key) => {},
+    showAlert: (_key, _type, _message) => {},
+    hideAlert: (_key) => {},
   },
   utils: {
     authenticator: null,
