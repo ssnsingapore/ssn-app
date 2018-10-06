@@ -9,8 +9,8 @@ import { Unauthorized } from './Unauthorized';
 import { HomePage } from 'components/public/HomePage';
 import { Projects } from 'components/public/Projects';
 import { Project } from 'components/public/Project';
-import { ProjectOwnerDashboard } from 'components/public/ProjectOwnerDashboard';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
+import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
@@ -47,8 +47,9 @@ class _Routes extends Component {
               />
               <Route path="/passwordReset" component={PasswordResetForm} />
               <Route path="/unauthorized" component={Unauthorized} />
-              {/* TODO: Differentitate between admin and project owner dashboards */}
-              <Route path="/dashboard" component={ProjectOwnerDashboard} />
+
+              <Route path="/project_owner/dashboard" component={ProjectOwnerDashboard} />
+
               <Route exact path="/admin" component={AdminLoginPage} />
               <Route path="/admin/dashboard" component={AdminDashboard}/>
 
