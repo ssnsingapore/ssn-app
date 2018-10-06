@@ -48,7 +48,7 @@ class _ProjectOwnerDetails extends Component {
     this.setState({ projectOwner: currentUser });
   }
 
-  renderProjectOwnerDetails = () => {
+  render = () => {
     const { classes } = this.props;
     const { projectOwner } = this.state;
 
@@ -96,10 +96,6 @@ class _ProjectOwnerDetails extends Component {
       </Card>
     );
   };
-
-  render() {
-    return <div>{this.renderProjectOwnerDetails()}</div>;
-  }
 }
 
 export const ProjectOwnerDetails = withContext(AppContext)(
