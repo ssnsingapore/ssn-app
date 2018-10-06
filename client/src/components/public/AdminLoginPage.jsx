@@ -73,9 +73,7 @@ class _AdminLoginPage extends Component {
     const { classes, fields, handleChange } = this.props;
 
     if (this.state.shouldRedirect) {
-      return <Redirect to={{
-        pathname: '/admin/dashboard',
-      }} />;
+      return <Redirect to="/admin/dashboard" />;
     }
 
     return (

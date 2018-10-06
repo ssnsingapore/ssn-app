@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import {
   Typography,
@@ -109,7 +110,12 @@ class _ProjectOwnerLoginForm extends React.Component {
   }
 
   render() {
+    if (this.state.shouldRedirect) {
+      return <Redirect to="/project_owner/dashboard"/>;
+    }
+
     const { classes, fields, handleChange } = this.props;
+
     return (
       <div className={classes.root}>
         <PasswordResetDialog
@@ -146,6 +152,7 @@ class _ProjectOwnerLoginForm extends React.Component {
             color="secondary"
             size="large"
             fullWidth
+            disabled={this.state.isLoading}
             className={classes.loginButton}
           >
             Login
