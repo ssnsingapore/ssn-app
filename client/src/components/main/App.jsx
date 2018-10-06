@@ -23,16 +23,16 @@ const theme = createMuiTheme({
       horizontal: 45,
     },
   },
+  overrides: {
+    MuiButton: {
+      raisedSecondary: {
+        color: 'white',
+      },
+    },
+  },
   formInput: {
     margin: {
       vertical: 16,
-    },
-    overrides: {
-      MuiButton: {
-        raisedSecondary: {
-          color: 'white',
-        },
-      },
     },
   },
 });
