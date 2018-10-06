@@ -117,7 +117,7 @@ class _ImageUpload extends Component {
           ...this.state.images,
           newImage,
         ],
-       });
+      });
       showAlert('imageUploadSuccess', AlertType.SUCCESS, 'Your image was uploaded successfully!');
     }
 
@@ -140,14 +140,14 @@ class _ImageUpload extends Component {
             style={{ marginBottom: '20px' }}
           >
             Confirm Upload
-        </Button>
+          </Button>
           <Button
             color="default"
             variant="contained"
             onClick={this.handleCancel}
           >
             Cancel
-        </Button>
+          </Button>
         </div>
       );
     }
@@ -160,7 +160,7 @@ class _ImageUpload extends Component {
           component="span"
         >
           Upload File
-              </Button>
+        </Button>
       </label>
     );
   }
