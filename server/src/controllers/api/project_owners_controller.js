@@ -54,27 +54,19 @@ projectOwnersRouter.post(
 async function login(req, res) {
   const { user } = req;
   if (user.isConfirmed()) {
-    return loginUser(res, user);
+    const { cookieArguments, csrfToken } = await new LoginService(user)
+      .generateCookieAndCsrfToken();
+
+    res.set('csrf-token', csrfToken);
+    res.cookie(...cookieArguments);
+    return res
+      .status(200)
+      .json({
+        user,
+      });
   }
   const message = 'Please activate your account before logging in.';
   return res
     .status(400)
     .json({ errors: [new BadRequestErrorView(message)] });
-}
-
-async function loginUser(res, user) {
-  await setJwtCookieAndCsrfToken(res, user);
-  return res
-    .status(200)
-    .json({
-      user,
-    });
-}
-
-async function setJwtCookieAndCsrfToken(res, user) {
-  const { cookieArguments, csrfToken } = await new LoginService(user)
-    .generateCookieAndCsrfToken();
-
-  res.set('csrf-token', csrfToken);
-  res.cookie(...cookieArguments);
 }
