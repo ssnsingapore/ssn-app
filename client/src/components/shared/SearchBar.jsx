@@ -158,15 +158,9 @@ const styles = theme => ({
 
 export const SearchBar =
 withContext(AppContext)(
-  withTheme()(
-    withStyles(styles)(
-      withForm(FieldName, constraints)(
-        (_SearchBar)
-      )
+  withStyles(styles)(
+    withForm(FieldName, constraints)(
+      (_SearchBar)
     )
   )
-);
-
-export const _TestSearchBar =  withStyles(styles)(
-  (_SearchBar)
 );
