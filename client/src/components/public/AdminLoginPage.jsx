@@ -7,14 +7,10 @@ import { AppContext } from '../main/AppContext';
 import { getFieldNameObject, withForm, fieldValue } from '../../util/form';
 import { AlertType } from '../shared/Alert';
 import { extractErrors, formatErrors } from '../../util/errors';
-import qs from 'qs';
-import Cookie from 'js-cookie';
 import landingImage from 'assets/bg.jpg';
 
 const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
 const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
-
-const CONFIRMATION_COOKIE_NAME = 'ssn_confirmation';
 
 const FieldName = getFieldNameObject([
   'email',
