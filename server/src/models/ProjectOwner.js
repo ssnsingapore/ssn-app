@@ -108,6 +108,7 @@ ProjectOwnerSchema.methods.toJSON = function () {
     organisationName: this.organisationName,
     description: this.description,
     personalBio: this.personalBio,
+    role: this.role,
   };
 };
 
