@@ -21,7 +21,7 @@ const ProjectStateDisplayMapping = {
   [ProjectState.APPROVED_INACTIVE]: 'Inactive',
   [ProjectState.REJECTED]: 'Rejected',
 };
-  
+
 class _AdminDashboard extends Component {
   constructor(props) {
     super(props);
@@ -29,12 +29,7 @@ class _AdminDashboard extends Component {
     this.state = {
       isLoading: true,
       tabValue: 0,
-      counts: {
-        'PENDING_APPROVAL': 1,
-        'APPROVED_ACTIVE': 5,
-        'APPROVED_INACTIVE': 2,
-        'REJECTED': 1,
-      },
+      counts: {},
     };
   }
 
@@ -60,14 +55,18 @@ class _AdminDashboard extends Component {
     this.setState({ tabValue: value });
   };
 
+  getTabLabel = (projectState) => {
+    const { counts } = this.state;
+    return `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`;
+  }
+
   render() {
     if (this.state.isLoading) {
       return <Spinner />;
-    } 
+    }
 
     const { classes } = this.props;
     const { tabValue } = this.state;
-    const { counts } = this.state;
     return (
       <Paper className={classes.root} square>
         <Paper className={classes.tabHeader} square>
@@ -75,10 +74,10 @@ class _AdminDashboard extends Component {
                 List of Projects
           </Typography>
           <Tabs value={tabValue} onChange={this.handleChange} indicatorColor="primary" textColor="primary">
-            <Tab label={ProjectStateDisplayMapping[ProjectState.PENDING_APPROVAL] + ' (' + counts[ProjectState.PENDING_APPROVAL] + ')'}/>
-            <Tab label={ProjectStateDisplayMapping[ProjectState.APPROVED_ACTIVE] + ' (' + counts[ProjectState.APPROVED_ACTIVE] + ')'}/>
-            <Tab label={ProjectStateDisplayMapping[ProjectState.APPROVED_INACTIVE] + ' (' + counts[ProjectState.APPROVED_INACTIVE] + ')'}/>
-            <Tab label={ProjectStateDisplayMapping[ProjectState.REJECTED] + ' (' + counts[ProjectState.REJECTED] + ')'}/>
+            <Tab label={this.getTabLabel(ProjectState.PENDING_APPROVAL)}/>
+            <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)}/>
+            <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)}/>
+            <Tab label={this.getTabLabel(ProjectState.REJECTED)}/>
           </Tabs>
         </Paper>
         <div className={classes.tabContainer}>
@@ -88,7 +87,7 @@ class _AdminDashboard extends Component {
           {tabValue === 3 && <ProjectListing projectState={ProjectState.REJECTED}/>}
         </div>
       </Paper>
-    ); 
+    );
   }
 }
 
