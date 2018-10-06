@@ -41,10 +41,6 @@ class _AdminLoginPage extends Component {
     };
   }
 
-  componentDidMount() {
-    this.showAccountConfirmationMessage();
-  }
-  
   handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -61,7 +57,7 @@ class _AdminLoginPage extends Component {
     const response = await authenticator.loginAdmin(email, hashedPassword);
 
     this.setState({ isLoading: false });
-  
+
     if (response.isSuccessful) {
       this.setState({ shouldRedirect: true });
       showAlert('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
@@ -77,18 +73,6 @@ class _AdminLoginPage extends Component {
     }
   }
 
-  showAccountConfirmationMessage = () => {
-    const { showAlert } = this.props.context.updaters;
-
-    if (Cookie.get(CONFIRMATION_COOKIE_NAME)) {
-      const paramsWithoutHash = this.props.location.hash.substring(1);
-      const { message, type } = qs.parse(paramsWithoutHash);
-      showAlert('confirmationMessage', type, message);
-
-      Cookie.remove(CONFIRMATION_COOKIE_NAME);
-    }
-  }
-
   render() {
     const { classes, fields, handleChange } = this.props;
 
@@ -97,7 +81,7 @@ class _AdminLoginPage extends Component {
         pathname: '/admin/dashboard',
       }} />;
     }
- 
+
     return (
       <div>
         <div className={classes.landingImage}>
@@ -127,6 +111,7 @@ class _AdminLoginPage extends Component {
               className={classes.textInput}
               id={FieldName.hashedPassword}
               label="Password"
+              type="password"
               required={true}
               onChange={handleChange}
               value={fieldValue(fields, FieldName.hashedPassword)}
