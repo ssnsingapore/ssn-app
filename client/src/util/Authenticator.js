@@ -67,17 +67,24 @@ export class Authenticator {
     email,
     password,
   ) => {
-    return this.baseLogin('/api/v1/login', email, password);
+    return this._baseLogin('/api/v1/login', email, password);
   }
 
   loginAdmin = async (
     email,
     password,
   ) => {
-    return this.baseLogin('/api/v1/admin/login', email, password);
+    return this._baseLogin('/api/v1/admins/login', email, password);
   }
 
-  baseLogin = async (
+  loginProjectOwner = async (
+    email,
+    password,
+  ) => {
+    return this._baseLogin('/api/v1/project_owners/login', email, password);
+  }
+
+  _baseLogin = async (
     loginPath,
     email,
     password,
@@ -85,21 +92,6 @@ export class Authenticator {
     const data = { user: { email, password } };
     const response = await this.requestWithAlert
       .post(loginPath, data, { authenticated: true });
-
-    if (response.isSuccessful) {
-      await this.setSuccessfulAuthState(response);
-    }
-
-    return response;
-  }
-
-  loginProjectOwner = async (
-    email,
-    password,
-  ) => {
-    const data = { user: { email, password } };
-    const response = await this.requestWithAlert
-      .post('/api/v1/project_owners/login', data, { authenticated: true });
 
     if (response.isSuccessful) {
       await this.setSuccessfulAuthState(response);
