@@ -22,7 +22,7 @@ describe('SearchBar', () => {
 
   it('renders \'all months\' for the months drop down menu when there is no selected input', () => {
     const component = mount(<SearchBar />);
-    const monthsDropDown = component.find(Select).filterWhere(n => n.props().name === 'months');
+    const monthsDropDown = component.find(Select).filterWhere(n => n.props().name === 'month');
 
     expect(monthsDropDown.props().value).toEqual('all months');
   });
@@ -36,7 +36,7 @@ describe('SearchBar', () => {
 
   it('renders \'all areas\' for the project location drop down menu when there is no selected input', () => {
     const component = mount(<SearchBar />);
-    const projectLocationDropDown = component.find(Select).filterWhere(n => n.props().name === 'projectLocations');
+    const projectLocationDropDown = component.find(Select).filterWhere(n => n.props().name === 'projectLocation');
 
     expect(projectLocationDropDown.props().value).toEqual('all areas');
   });

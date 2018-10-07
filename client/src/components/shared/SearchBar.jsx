@@ -10,64 +10,15 @@ import Select from '@material-ui/core/Select';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { getFieldNameObject, withForm, fieldValue } from 'util/form';
-
-export const IssueAddressed = {
-  AIR_QUALITY: 'AIR_QUALITY',
-  AWARENESS_AND_EDUCATION: 'AWARENESS_AND_EDUCATION',
-  BIODIVERSITY: 'BIODIVERSITY',
-  CLIMATE: 'CLIMATE',
-  CONSERVATION: 'CONSERVATION',
-  ENERGY: 'ENERGY',
-  FOOD_AND_AGRICULTURE: 'FOOD_AND_AGRICULTURE',
-  GREEN_LIFESTYLE: 'GREEN_LIFESTYLE',
-  LAND_AND_NOISE_POLLUTION: 'LAND_AND_NOISE_POLLUTION',
-  PLANNING_AND_TRANSPORTATION: 'PLANNING_AND_TRANSPORTATION',
-  PRODUCTION_AND_CONSUMPTION: 'PRODUCTION_AND_CONSUMPTION',
-  OTHER: 'OTHER',
-  SPORTS_AND_RECREATION: 'SPORTS_AND_RECREATION',
-  WASTE: 'WASTE',
-  WATER: 'WATER',
-  GREEN_TECHNOLOGY: 'GREEN_TECHNOLOGY',
-};
-
-const ProjectLocations = {
-  CENTRAL: 'CENTRAL',
-  NORTH: 'NORTH',
-  SOUTH: 'SOUTH',
-  EAST: 'EAST',
-  WEST: 'WEST',
-};
-
-const Months = {
-  1: 'JANUARY',
-  2: 'FEBRUARY',
-  3: 'MARCH',
-  4: 'APRIL',
-  5: 'MAY',
-  6: 'JUNE',
-  7: 'JULY',
-  8: 'AUGUST',
-  9: 'SEPTEMBER',
-  10: 'OCTOBER',
-  11: 'NOVEMBER',
-  12: 'DECEMBER',
-};
-
-const VolunteerRequirementType = {
-  INTERACTION: 'INTERACTION',
-  CONTENT_CREATION: 'CONTENT_CREATION',
-  EVENT_PLANNING: 'EVENT_PLANNING',
-  MEDIA_AND_SOCIAL_MEDIA: 'MEDIA_AND_SOCIAL_MEDIA',
-  EXPERT_VOLUNTEERS: 'EXPERT_VOLUNTEERS',
-  ADHOC_MANPOWER_SUPPORT: 'ADHOC_MANPOWER_SUPPORT',
-  OTHERS_SKILLED: 'OTHERS_SKILLED',
-  OTHERS_ADHOC: 'OTHERS_ADHOC',
-};
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { Month } from 'components/shared/enums/Month';
+import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 
 const FieldName = getFieldNameObject([
   'issueAddressed',
-  'projectLocations',
-  'months',
+  'projectLocation',
+  'month',
   'volunteerRequirementType',
 ]);
 
@@ -75,11 +26,11 @@ const constraints = {
   [FieldName.issueAddressed]: {
     inclusion: Object.values(IssueAddressed),
   },
-  [FieldName.projectLocations]: {
-    inclusion: Object.values(ProjectLocations),
+  [FieldName.projectLocation]: {
+    inclusion: Object.values(ProjectLocation),
   },
-  [FieldName.months]: {
-    inclusion: Object.values(Months),
+  [FieldName.month]: {
+    inclusion: Object.values(Month),
   },
   [FieldName.volunteerRequirementType]: {
     inclusion: Object.values(VolunteerRequirementType),
@@ -124,9 +75,9 @@ class _SearchBar extends Component {
         <Typography variant='title'>Filter projects</Typography>
         <Typography variant='headline'>
         I am looking for projects about {this.createDropdownMenu(FieldName.issueAddressed, IssueAddressed, 'all categories')}
-        in the month of {this.createDropdownMenu(FieldName.months, Months, 'all months')}
+        in the month of {this.createDropdownMenu(FieldName.month, Month, 'all months')}
         that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')}
-        near the {this.createDropdownMenu(FieldName.projectLocations, ProjectLocations, 'all areas')}
+        near the {this.createDropdownMenu(FieldName.projectLocation, ProjectLocation, 'all areas')}
         area.
         </Typography>
         <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
