@@ -100,17 +100,22 @@ class _SearchBar extends Component {
           name={FieldName[field]}
           onChange={handleChange}
         >
-          <MenuItem key={firstLabel} value={firstLabel}><Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography></MenuItem>
-          {Object.values(options).map(option => (
-            <MenuItem key={option} value={option}>
-              <Typography variant='body2' className={classes.menuText}>{option}</Typography>
-            </MenuItem>
-          ))}
+          {this.renderOptions({...options, firstLabel})}
         </Select>
       </FormControl>
     );
   }
 
+  renderOptions = (options) => {
+    const { classes } = this.props;
+
+    return Object.values(options).map(option => (
+      <MenuItem key={option} value={option}>
+        <Typography variant='body2' className={classes.menuText}>{option}</Typography>
+      </MenuItem>
+    ));
+  }
+   
   render() {
     const { classes, resetAllFields } = this.props;
 
@@ -164,3 +169,6 @@ withContext(AppContext)(
     )
   )
 );
+
+export {_SearchBar as TestSearchBar};
+
