@@ -302,3 +302,8 @@ export const ProjectOwnerSignUpForm = withStyles(styles)(
     ),
   ),
 );
+
+export const TestProjectOwnerSignUpForm = withForm(
+  FieldName,
+  constraints,
+)(_ProjectOwnerSignUpForm);
