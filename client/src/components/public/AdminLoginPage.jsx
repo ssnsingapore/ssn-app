@@ -84,13 +84,12 @@ class _AdminLoginPage extends Component {
             gutterBottom
             className={classes.landingHeader}
           >
-            SSN Project Admin Portal
+            SSN Admin Portal
           </Typography>
         </div>
 
         <form onSubmit={this.handleSubmit}>
           <Paper elevation={2} className={classes.root} square={true}>
-            <Typography variant="headline" className={classes.headline}>Welcome, Admin!</Typography>
             <TextField
               name={FieldName.email}
               className={classes.textInput}
