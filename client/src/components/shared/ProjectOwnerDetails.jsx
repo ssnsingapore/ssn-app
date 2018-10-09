@@ -105,16 +105,6 @@ const styles = theme => ({
     minHeight: '200px',
     objectFit: 'cover',
   },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit,
-  },
-  playIcon: {
-    height: 38,
-    width: 38,
-  },
 });
 
 export const ProjectOwnerDetails = withContext(AppContext)(
