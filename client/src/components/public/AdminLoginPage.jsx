@@ -7,6 +7,7 @@ import { AppContext } from '../main/AppContext';
 import { getFieldNameObject, withForm, fieldValue } from '../../util/form';
 import { AlertType } from '../shared/Alert';
 import { extractErrors, formatErrors } from '../../util/errors';
+
 import landingImage from 'assets/bg.jpg';
 
 const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
