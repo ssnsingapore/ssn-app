@@ -33,7 +33,7 @@ class _Routes extends Component {
     return (
       <BrowserRouter>
         <div className={classes.root}>
-          <Route path="/:any+" component={NavBar} />
+          <Route path="/admin" component={NavBar} /> 
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
