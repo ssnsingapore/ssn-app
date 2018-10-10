@@ -110,7 +110,7 @@ class _ProjectOwnerDashboard extends Component {
                   color="secondary"
                   aria-label="Add"
                   className={classes.addButton}
-                  href="/project_owner/new_project"
+                  href="/project_owner/projects/add"
                 >
                   <AddIcon />
                 </Button>
