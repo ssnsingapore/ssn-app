@@ -77,5 +77,44 @@ describe('ProjectOwnerSignUpForm', () => {
       expect(emailComponent.props().error).toBeTruthy();
       expect(emailComponent.props().helperText).toBe('Email can\'t be blank. Email is not a valid email');
     });
+
+    it('when email is invalid then validation message appears', async() => {
+      
+      const nameEvent = {
+        target: {name: 'name', value: 'Some Name'},
+      };
+      component.instance().handleChange(nameEvent);
+      const emailEvent = {
+        target: {name: 'email', value: 'invalid'},
+      };
+      component.instance().handleChange(emailEvent);
+
+      const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
+      await createAccountButton.simulate('submit');
+
+      const emailComponent = component.find(TextField).filterWhere(n => n.props().name === 'email');
+      expect(emailComponent.props().error).toBeTruthy();
+      expect(emailComponent.props().helperText).toBe('Email is not a valid email');
+    });
   });
+  // describe('submit form', () => {
+  //   it('clicking create account button with all mandatory fields filled shows success sign up', async () => {
+  //     const nameEvent = {
+  //       target: {name: 'name', value: 'Some Name'},
+  //     };
+  //     component.instance().handleChange(nameEvent);
+  //     const emailEvent = {
+  //       target: {name: 'email', value: 'some@some.com'},
+  //     };
+  //     component.instance().handleChange(emailEvent);
+      
+  //     component.update();
+
+  //     const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
+  //     await createAccountButton.simulate('submit');
+
+  //     expect(event.preventDefault).toHaveBeenCalled();
+
+  //   });
+  // });
 });
