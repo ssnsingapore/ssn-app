@@ -61,24 +61,6 @@ class _ProjectOwnerDashboard extends Component {
     })`;
   };
 
-  renderButtons() {
-    const { classes } = this.props;
-
-    return (
-      <Grid item md={4} xs={12}>
-        <Button variant="contained" className={classes.button}>
-          Edit
-        </Button>
-        <Button variant="contained" className={classes.button}>
-          Deactivate
-        </Button>
-        <Button variant="contained" className={classes.button}>
-          Duplicate
-        </Button>
-      </Grid>
-    );
-  }
-
   renderTabs() {
     const { classes, theme } = this.props;
     const { tabValue } = this.state;
@@ -96,30 +78,18 @@ class _ProjectOwnerDashboard extends Component {
           <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)} />
           <Tab label={this.getTabLabel(ProjectState.REJECTED)} />
         </Tabs>
-
-        <Grid
-          container
-          spacing={4 * theme.spacing.unit}
-          className={classes.projectListing}
-        >
-          <Grid container spacing={4 * theme.spacing.unit}>
-            <Grid item md={8} xs={12}>
-              {tabValue === 0 && (
-                <ProjectListing projectState={ProjectState.PENDING_APPROVAL} />
-              )}
-              {tabValue === 1 && (
-                <ProjectListing projectState={ProjectState.APPROVED_ACTIVE} />
-              )}
-              {tabValue === 2 && (
-                <ProjectListing projectState={ProjectState.APPROVED_INACTIVE} />
-              )}
-              {tabValue === 3 && (
-                <ProjectListing projectState={ProjectState.REJECTED} />
-              )}
-            </Grid>
-            {this.renderButtons()}
-          </Grid>
-        </Grid>
+        {tabValue === 0 && (
+          <ProjectListing projectState={ProjectState.PENDING_APPROVAL} isForProjectOwner={true} />
+        )}
+        {tabValue === 1 && (
+          <ProjectListing projectState={ProjectState.APPROVED_ACTIVE} isForProjectOwner={true} />
+        )}
+        {tabValue === 2 && (
+          <ProjectListing projectState={ProjectState.APPROVED_INACTIVE} isForProjectOwner={true}/>
+        )}
+        {tabValue === 3 && (
+          <ProjectListing projectState={ProjectState.REJECTED} isForProjectOwner={true}/>
+        )}
       </React.Fragment>
     );
   }
@@ -183,9 +153,6 @@ const styles = theme => ({
   },
   projectListing: {
     margin: '30px auto',
-  },
-  button: {
-    margin: theme.spacing.unit,
   },
 });
 

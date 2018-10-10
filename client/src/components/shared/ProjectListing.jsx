@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Button
 } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
@@ -93,57 +94,80 @@ class _ProjectListing extends Component {
     );
   };
 
+  renderActionButtons() {
+    const {classes} = this.props;
+
+    return (
+      <Grid container style={{justifyContent: "space-evenly"}}>
+        <Button variant="contained" className={classes.button}>
+          Edit
+        </Button>
+        <Button variant="contained" className={classes.button}>
+          Deactivate
+        </Button>
+        <Button variant="contained" className={classes.button}>
+          Duplicate
+        </Button>
+      </Grid>
+    )
+  }
+
   renderProjects = () => {
-    const { classes } = this.props;
+    const { classes, isForProjectOwner } = this.props;
+    const gridSize = isForProjectOwner? 8 : 12;
 
     return this.state.projects.map(project => {
       return (
-
-        <Grid item xs={12} key={project._id}>
-          <Link to={'/projects/' + project._id} className={classes.link}>
-            <Card className={classes.card}>
-              <Grid container item xs={12} key={project.title}>
-                <Grid item xs={12} md={4}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image={project.coverImageUrl}
-                  />
+        <Grid container style={{alignItems: "center"}} item xs={12} key={project._id}>
+          <Grid item xs={gridSize}>
+            <Link to={'/projects/' + project._id} className={classes.link}>
+              <Card className={classes.card}>
+                <Grid container item xs={12} key={project.title}>
+                  <Grid item xs={12} md={4}>
+                    <CardMedia
+                      className={classes.cardMedia}
+                      image={project.coverImageUrl}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={8}>
+                    <div className={classes.details}>
+                      <CardContent className={classes.content}>
+                        <Typography variant="headline" gutterBottom>
+                          {project.title}
+                        </Typography>
+                        <Typography
+                          variant="subheading"
+                          color="textSecondary"
+                          gutterBottom
+                        >
+                          <List className={classes.removePadding}>
+                            <ListItem className={classes.removePadding}>
+                              <Avatar
+                                alt="Profile Photo"
+                                src={project.projectOwner.profilePhotoUrl}
+                                className={classes.smallAvatar}
+                              />
+                              <ListItemText
+                                className={classes.removePadding}
+                                primary={project.projectOwner.name}
+                              />
+                            </ListItem>
+                          </List>
+                        </Typography>
+                        <div className={classes.tagsContainer}>
+                          {this.renderVolunteerRequirements(project)}
+                          {this.renderIssuesAddressed(project)}
+                        </div>
+                      </CardContent>
+                    </div>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={8}>
-                  <div className={classes.details}>
-                    <CardContent className={classes.content}>
-                      <Typography variant="headline" gutterBottom>
-                        {project.title}
-                      </Typography>
-                      <Typography
-                        variant="subheading"
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        <List className={classes.removePadding}>
-                          <ListItem className={classes.removePadding}>
-                            <Avatar
-                              alt="Profile Photo"
-                              src={project.projectOwner.profilePhotoUrl}
-                              className={classes.smallAvatar}
-                            />
-                            <ListItemText
-                              className={classes.removePadding}
-                              primary={project.projectOwner.name}
-                            />
-                          </ListItem>
-                        </List>
-                      </Typography>
-                      <div className={classes.tagsContainer}>
-                        {this.renderVolunteerRequirements(project)}
-                        {this.renderIssuesAddressed(project)}
-                      </div>
-                    </CardContent>
-                  </div>
-                </Grid>
-              </Grid>
-            </Card>
-          </Link>
+              </Card>
+            </Link>
+          </Grid>
+          <Grid item xs={4}>
+            {isForProjectOwner && this.renderActionButtons()}
+          </Grid>
         </Grid>
       );
     });
@@ -201,6 +225,9 @@ const styles = theme => ({
   link: {
     textDecoration: 'none',
   },
+  button: {
+    margin: theme.spacing.unit,
+  }
 });
 
 export const ProjectListing = withContext(AppContext)(
