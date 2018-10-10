@@ -12,6 +12,7 @@ import { Project } from 'components/public/Project';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
 import { ProjectOwnerNewProject } from 'components/project_owner/ProjectOwnerNewProject';
+import { NewProjectForm } from 'components/project_owner/NewProjectForm';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
@@ -41,6 +42,7 @@ class _Routes extends Component {
               <Route exact path="/login" component={ProjectOwnerLoginForm} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
               <Route exact path="/projects" component={Projects} />
+              <Route exact path="/project_owner/projects/add" component={NewProjectForm} /> 
               <Route exact path="/projects/:id" component={Project} />
 
               <Route
