@@ -1,59 +1,96 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {
   AppBar,
   Toolbar,
   Typography,
+  Button,
+  Avatar,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import ssnLogo from 'assets/ssn-logo.png';
+import adminAvatar from 'assets/placeholder-avatar.jpg';
+import { withContext } from 'util/context';
+import { AppContext } from 'components/main/AppContext';
 
-const TAB_PATHS = [
-  'about',
-  'todos',
-  'image_upload',
-];
+const Role = {
+  admin: 'admin',
+  project_owner: 'project_owner',
+};
+
+const NavBarDisplayMapping = {
+  [Role.admin]: 'SSN ADMIN',
+  [Role.project_owner]: 'PROJECT OWNER',
+};
 
 class _NavBar extends Component {
   constructor(props) {
     super(props);
 
-    const rootPath = props.location.pathname.split('/')[1];
-
-    const selectedTab = TAB_PATHS.indexOf(rootPath);
-
     this.state = {
-      value: selectedTab === -1 ? false : selectedTab,
+      anchorEl: null,
     };
   }
 
-  handleTabChange = (_event, value) => this.setState({ value })
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
 
   render() {
     const { classes } = this.props;
+    const { isAuthenticated } = this.props.context;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+    //const { authorize } = this.props;
+    const { anchorEl } = this.state;
+
+    if (!isAuthenticated || !currentUser) {
+      return null;
+    }
+
+    /*
+    if (!authorize.includes(currentUser.role)) {
+      return null;
+    }
+    */
 
     return (
       <AppBar position="static">
-        <Toolbar variang="dense" className={classes.toolBar}>
-          <a href="/">
-            <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
-          </a>
+        <Toolbar variant="dense" className={classes.toolBar}>
+          <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
           <Typography variant="body2" color="inherit" className={classes.barTitle}>
-            SSN ADMIN DASHBOARD
+            {NavBarDisplayMapping[currentUser.role]} DASHBOARD
           </Typography>
+          
+          <Button
+            aria-owns={anchorEl ? 'simple-menu' : null}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+            color="inherit"
+            className={classes.logout}
+          >
+            <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar}></Avatar>
+            Admin
+          </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.handleClose}
+          >
+            <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
     );
   }
 }
-
-_NavBar.propTypes = {
-  classes: PropTypes.object,
-  location: PropTypes.shape({
-    pathname: PropTypes.string,
-  }),
-};
 
 const styles = {
   toolBar: {
@@ -67,6 +104,17 @@ const styles = {
   barTitle: {
     paddingLeft: '15px',
   },
+  logout: {
+    position: 'absolute',
+    right: '0',
+  },
+  avatar: {
+    margin: '0 15px',
+  },
 };
 
-export const NavBar = withStyles(styles)(_NavBar);
+export const NavBar = withStyles(styles)(
+  withContext(AppContext)(
+    (_NavBar)
+  ),
+);

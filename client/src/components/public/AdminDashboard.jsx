@@ -106,3 +106,7 @@ export const AdminDashboard = withStyles(styles)(
     ),
   ),
 );
+
+export const _testExports = {
+  AdminDashboard: _AdminDashboard,
+};

@@ -11,6 +11,7 @@ import { Projects } from 'components/public/Projects';
 import { Project } from 'components/public/Project';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
+import { ProjectOwnerNewProject } from 'components/project_owner/ProjectOwnerNewProject';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
@@ -33,7 +34,7 @@ class _Routes extends Component {
     return (
       <BrowserRouter>
         <div className={classes.root}>
-          <Route path="/:any+" component={NavBar} />
+          <Route path="/admin" component={NavBar} /> 
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
@@ -52,6 +53,11 @@ class _Routes extends Component {
               <RouteAuthenticated
                 path="/project_owner/dashboard"
                 component={ProjectOwnerDashboard}
+                authorize={[Role.project_owner]}
+              />
+              <RouteAuthenticated
+                path="/project_owner/new_project"
+                component={ProjectOwnerNewProject}
                 authorize={[Role.project_owner]}
               />
 
