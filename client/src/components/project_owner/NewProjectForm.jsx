@@ -1,301 +1,101 @@
-import { Grid, Button, Paper, TextField, Typography } from '@material-ui/core';
+import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import React, { Component } from 'react';
-import Select from '@material-ui/core/Select';
+import { Grid, Button, Paper, TextField, Typography, IconButton } from '@material-ui/core';
+import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@material-ui/icons';
 
 import { AlertType } from 'components/shared/Alert';
+import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AppContext } from 'components/main/AppContext';
+import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { fieldErrorText, fieldHasError, getFieldNameObject, withForm, fieldValue } from 'util/form';
+import { NewProjectFormVolunteerRequirementForm } from 'components/project_owner/NewProjectFormVolunteerRequirementForm';
+
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
-import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectType } from 'components/shared/enums/ProjectType';
-import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
-import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
-import { withContext } from 'util/context';
 
-const PROJECT_ADDED_SUCCESS_MESSAGE = 'Your project has been added!';
-
-const FieldNameMainForm = getFieldNameObject([
+const FieldName = getFieldNameObject([
   'volunteerRequirementsDescription',
   'volunteerBenefitsDescription',
 ]);
 
-const FieldNameSubform = getFieldNameObject([  
-  'volunteerRequirementType',
-  'volunteerRequirementCommitmentLevel',
-  'volunteerRequirementNumber',
-]);
-
-
-const constraintsMainForm = {
-  [FieldNameMainForm.volunteerRequirementsDescription]: {
+const constraints = {
+  [FieldName.volunteerRequirementsDescription]: {
     presence: { allowEmpty: true },
     length: { maximum: 10000 },
   },
-  [FieldNameMainForm.volunteerBenefitsDescription]: {
+  [FieldName.volunteerBenefitsDescription]: {
     presence: { allowEmpty: true },
     length: { maximum: 10000 },
   }, 
+  
 };
 
-// # TODO: Need to add validation to the fields. Validation is removed in the interim.
-// const constraintsSubform = {
-//   
-//   [FieldNameSubform.volunteerRequirementType]: {
-//     inclusion: Object.values(VolunteerRequirementType),
-//   },
-//   [FieldNameSubform.volunteerRequirementCommitmentLevel]: {
-//     presence: { allowEmpty: true },
-//   },
-//   [FieldNameSubform.volunteerRequirementNumber]: {
-//     presence: { allowEmpty: true },
-//     numericality: true,
-//   },
-// };
+const PROJECT_ADDED_SUCCESS_MESSAGE = 'Your project has been added!';
 
 class _NewProjectForm extends Component {
-  
   constructor(props) {
     super(props);
-
     this.state = {
-      project: {
-      },
-      projectVolunteerRequirements: {
-        1: {
-          volunteerRequirementType: '',
-          volunteerRequirementCommitmentLevel: '',
-          volunteerRequirementNumber: null,
-        },
-        2: {
-          volunteerRequirementType: '',
-          volunteerRequirementCommitmentLevel: '',
-          volunteerRequirementNumber: null,
-        },
-      },
+      volunteerRequirementRefs: [
+        React.createRef(),
+        React.createRef(),
+      ],
       isSubmitting: false, 
       hasSubmitted: false,
     };
   }
 
-  handleChange = id => event => {
-    const { name, value } = event.target;
-    this.setState({ 
-      projectVolunteerRequirements: {
-        ...this.state.projectVolunteerRequirements,
-        [id]: 
-        {
-          ...this.state.projectVolunteerRequirements[id], 
-          [name]: value,
-        },
-      },
-    });
-  };
-
-  renderVolunteerRequirement(id) {
-    const { classes } = this.props;
-    return(
-      <React.Fragment>
-        <FormControl className={classes.volTypeDropdown}>
-          <InputLabel htmlFor={FieldNameSubform.volunteerRequirementType}>
-          Type of Volunteer
-          </InputLabel>
-          <Select
-            id={`${FieldNameSubform.volunteerRequirementType}-${id}`}
-            key={`${FieldNameSubform.volunteerRequirementType}-${id}`}
-            value={this.state.projectVolunteerRequirements[id].volunteerRequirementType}
-            name={FieldNameSubform.volunteerRequirementType}
-            onChange={this.handleChange(id)}
-            defaultValue={Object.values(VolunteerRequirementType)[0]}
-          >
-            {Object.values(VolunteerRequirementType).map(
-              (option) => {
-                return(
-                  <MenuItem key={`${option}-${id}`} value={option}>
-                    {VolunteerRequirementTypeDisplayMapping[option]}
-                  </MenuItem>
-                );
-              })}
-          </Select>
-        </FormControl>
-        <TextField 
-          InputLabelProps={{ shrink: true}}
-          label='No. of Volunteers'
-          margin='normal'
-          name={FieldNameSubform.volunteerRequirementNumber}
-          id={`${FieldNameSubform.volunteerRequirementNumber}-${id}`}
-          key={`${FieldNameSubform.volunteerRequirementNumber}-${id}`}
-          value={this.state.projectVolunteerRequirements[id].volunteerRequirementNumber}
-          // error={fieldHasError(fields, FieldNameSubform.volunteerRequirementNumber)}
-          // helper={fieldErrorText(fields, FieldNameSubform.volunteerRequirementNumber)}
-          onChange={this.handleChange(id)}
-          className={classes.textfield}/>
-        <TextField 
-          InputLabelProps={{ shrink: true}}
-          label='Commitment Level'
-          margin='normal'
-          name={FieldNameSubform.volunteerRequirementCommitmentLevel}
-          id={`${FieldNameSubform.volunteerRequirementCommitmentLevel}-${id}`}
-          key={`${FieldNameSubform.volunteerRequirementCommitmentLevel}-${id}`}
-          value={this.state.projectVolunteerRequirements[id].volunteerRequirementCommitmentLevel}
-          // error={fieldHasError(fields, FieldNameSubform.volunteerRequirementCommitmentLevel)}
-          // helper={fieldErrorText(fields, FieldNameSubform.volunteerRequirementCommitmentLevel)}
-          onChange={this.handleChange(id)}
-          className={classes.textfield}/>
-        <Button
-          key={`minimizeButton-${id}`}
-          variant="fab"
-          aria-label="Minimize"
-          className={classes.button}
-          onClick={() => this.handleRemoveRow(id)}
-          mini
-        >
-          -
-        </Button>
-      </React.Fragment>
+  validateAllSubFormFields = () => {
+    this.state.volunteerRequirementsRefs.map(ref => {
+      return(
+        ref.current.props.validateAllFields()
+      );
+    }
     );
   }
 
-  handleRemoveRow(id) {
-    const rows = { ...this.state.projectVolunteerRequirements };
-    delete rows[id];
-    this.setState({projectVolunteerRequirements: rows});
-  }
-
-  handleAddRow() {
-    const { projectVolunteerRequirements } = this.state;
-    const rowNumbers = Object.keys(projectVolunteerRequirements).map(no => Number(no));
-    const tempId = rowNumbers.length === 0 ? 1: Math.max(...rowNumbers) + 1;
-  
-    this.setState({ 
-      projectVolunteerRequirements: {
-        ...this.state.projectVolunteerRequirements,
-        [tempId]: 
-        {
-          volunteerRequirementType: '',
-          volunteerRequirementCommitmentLevel: '',
-          volunteerRequirementNumber: null,
-        },
-      },
-    });
-
-  }
-
-  renderVolunteerRequirementsRows() {
-    const { classes } = this.props;
-    const { projectVolunteerRequirements } = this.state;
-    return(
-      <Grid item xs={12} className={classes.rows}>
-        <Typography variant="caption">Type of Volunteers Needed</Typography>
-        {Object.keys(projectVolunteerRequirements).map(row => {
-          return(
-            this.renderVolunteerRequirement(row)
-          );
-
-        })}
-        <Button
-          key='addButton'
-          variant="fab"
-          aria-label="Add"
-          className={classes.addButton}
-          onClick={() => this.handleAddRow()}
-          size="medium"
-        >
-          <AddIcon/>
-        </Button>
-      </Grid>
+  resetAllSubFormFields = () => {
+    this.state.volunteerRequirementsRefs.map(ref => {
+      return(
+        ref.current.props.resetAllFields()
+      );
+    }
     );
-  }
-  
-  renderVolunteerDetailsSection() {
-    const { classes, fields, handleChange } = this.props;
-    return ( 
-      <React.Fragment>
-        <Paper square className={classes.paper}>
-          <Typography variant="headline">Volunteer Details</Typography>
-          <Grid item xs={12}>
-            <Typography>
-              <TextField 
-                fullWidth
-                InputLabelProps={{ shrink: true}}
-                label='Description of Volunteers Needed'
-                margin='normal'
-                name={FieldNameMainForm.volunteerRequirementsDescription}
-                id={FieldNameMainForm.volunteerRequirementsDescription}
-                key={FieldNameMainForm.volunteerRequirementsDescription}
-                value={fieldValue(fields, FieldNameMainForm.volunteerRequirementsDescription)}
-                error={fieldHasError(fields, FieldNameMainForm.volunteerRequirementsDescription)}
-                helper={fieldErrorText(fields, FieldNameMainForm.volunteerRequirementsDescription)}
-                onChange={handleChange}/>
-
-              {this.renderVolunteerRequirementsRows()}
-              
-              <TextField 
-                fullWidth
-                InputLabelProps={{ shrink: true}}
-                label='Volunteer Benefits'
-                margin='normal'
-                name={FieldNameMainForm.volunteerBenefitsDescription}
-                id={FieldNameMainForm.volunteerBenefitsDescription}
-                key={FieldNameMainForm.volunteerBenefitsDescription}
-                value={fieldValue(fields, FieldNameMainForm.volunteerBenefitsDescription)}
-                error={fieldHasError(fields, FieldNameMainForm.volunteerBenefitsDescription)}
-                helper={fieldErrorText(fields, FieldNameMainForm.volunteerBenefitsDescription)}
-                onChange={handleChange}/>
-            </Typography>
-          </Grid>
-        </Paper>
-      </React.Fragment>
-
-      
-    );
-  }
-
-  renderSubmitButton() {
-    const { classes } = this.props;
-    return( 
-      <div className={classes.submitButtonBox}>
-        <Button 
-          key='submitButton'
-          type="submit"
-          size="medium"
-          className={classes.submitButton}
-          disabled={this.state.isSubmitting}
-          variant="contained"
-          color="secondary"
-        >
-      Submit
-        </Button>
-      </div>);
   }
 
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!this.props.validateAllFields()) {
+    if (!this.props.validateAllFields() || !this.validateAllSubFormFields()) {
       return;
     }
 
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
-    const { volunteerRequirementsDescription, volunteerBenefitsDescription  } = this.state;
+    const { volunteerRequirementsDescription, volunteerBenefitsDescription, volunteerRequirementRefs  } = this.state;
+
+    const volunteerRequirements = volunteerRequirementRefs.map(ref => {
+      return(
+        {
+          commitmentLevel: ref.current.state.commitmentLevel,
+          number: ref.current.state.number,
+          type: ref.current.state.type,
+        }        
+      );
+    });
 
     const newProject = {
       title: 'Save the Earth',
       coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
       description: 'Save the earth description',
       volunteerSignupUrl: 'http://www.signup.org',
-      volunteerRequirements: this.state.projectVolunteerRequirementRows, // state will be changed
+      volunteerRequirements: volunteerRequirements, // state will be changed
       projectOwner: currentUser.id,
       issuesAddressed: [IssueAddressed.LAND_AND_NOISE_POLLUTION, IssueAddressed.WASTE],
       volunteerRequirementsDescription: volunteerRequirementsDescription, // state will be changed
@@ -312,6 +112,7 @@ class _NewProjectForm extends Component {
     this.setState({project: newProject});
 
     this.props.resetAllFields();
+    this.resetAllSubFormFields();
     
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
@@ -331,7 +132,93 @@ class _NewProjectForm extends Component {
     }
 
     this.setState({ hasSubmitted: true});
+
   }
+
+  handleAddVolunteerRequirement = () => {
+    this.setState({
+      volunteerRequirementRefs: [...this.state.volunteerRequirementRefs, React.createRef()],
+    });
+  }
+
+  handleDeleteVolunteerRequirement = (i) => {
+    const newVolunteerRequirementRefs = [ ...this.state.volunteerRequirementRefs];
+    newVolunteerRequirementRefs.splice(i, 1);
+    this.setState({
+      volunteerRequirementRefs: newVolunteerRequirementRefs,
+    });
+  }
+
+  renderVolunteerRequirements = () => {
+    const { volunteerRequirementRefs } = this.state;
+    const { classes } = this.props;
+
+    return volunteerRequirementRefs.map((volunteerRequirementRef, i) => {
+      return (
+        <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+          <NewProjectFormVolunteerRequirementForm ref={volunteerRequirementRef} />
+          <IconButton onClick={() => this.handleDeleteVolunteerRequirement(i)} mini className={classes.button}>
+            <RemoveCircleIcon />
+          </IconButton>
+        </div>
+      );
+    });
+  }
+
+  renderVolunteerDetails() {
+    const { fields, handleChange, classes } = this.props;
+    return ( 
+      <React.Fragment>
+        <Paper square className={classes.paper}>
+          <Typography variant="headline">Volunteer Details</Typography>
+          <Grid item xs={12}>
+            <Typography>
+              <TextField 
+                fullWidth
+                InputLabelProps={{ shrink: true}}
+                label='Description of Volunteers Needed'
+                margin='normal'
+                name={FieldName.volunteerRequirementsDescription}
+                id={FieldName.volunteerRequirementsDescription}
+                key={FieldName.volunteerRequirementsDescription}
+                value={fieldValue(fields, FieldName.volunteerRequirementsDescription)}
+                error={fieldHasError(fields, FieldName.volunteerRequirementsDescription)}
+                helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
+                onChange={handleChange}
+                multiline
+              />
+
+              <Typography variant="caption">Type of Volunteers Needed</Typography>
+              {this.renderVolunteerRequirements()}
+
+              <IconButton
+                onClick={this.handleAddVolunteerRequirement} 
+                className={classes.button} 
+              >
+                <AddCircleIcon />
+              </IconButton>
+              
+              <TextField 
+                fullWidth
+                InputLabelProps={{ shrink: true}}
+                label='Volunteer Benefits'
+                margin='normal'
+                name={FieldName.volunteerBenefitsDescription}
+                id={FieldName.volunteerBenefitsDescription}
+                key={FieldName.volunteerBenefitsDescription}
+                value={fieldValue(fields, FieldName.volunteerBenefitsDescription)}
+                error={fieldHasError(fields, FieldName.volunteerBenefitsDescription)}
+                helper={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
+                onChange={handleChange}
+                multiline
+              />
+            </Typography>
+          </Grid>
+        </Paper>
+      </React.Fragment>
+    );
+  }
+
 
   render() {
     const { classes } = this.props;
@@ -359,7 +246,7 @@ class _NewProjectForm extends Component {
             </Paper>
           </Grid>
           <Grid item xs={6}>
-            {this.renderVolunteerDetailsSection()}
+            {this.renderVolunteerDetails()}
           </Grid>
           <Grid item xs={6}>
             <Paper square className={classes.paper}>
@@ -370,16 +257,24 @@ class _NewProjectForm extends Component {
             <ProjectOwnerDetails />
           </Grid>
           <Grid item xs={12}>
-            {this.renderSubmitButton()}
+            <Button 
+              key='submitButton'
+              type="submit"
+              size="medium"
+              className={classes.submitButton}
+              disabled={this.state.isSubmitting}
+              variant="contained"
+              color="secondary"
+            >
+      Submit
+            </Button>
           </Grid>
         </Grid>
       </form>
-
-
-      
     );
   }
 }
+
 
 const styles = theme => ({
   root: {
@@ -392,10 +287,6 @@ const styles = theme => ({
     margin: '2px',
     width: '100px',
   },
-  submitButtonBox: {
-    display: 'flex',
-    flexDirection: 'row-reverse',
-  },
   img: {
     marginTop: '6px',
     marginBottom: '6px',
@@ -407,44 +298,26 @@ const styles = theme => ({
     marginBottom: '6px',
     padding: '30px',
   },
-  label: {
-    marginTop: '6px',
-    marginBottom: '6px',
-  },
-  form: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  textfield: {
-    width: '28%',
-    marginRight: '4px',
-  },
-  volTypeDropdown: {
-    width: '32%',
-    marginRight: '4px',
-  },
   button: {
-    backgroundColor: 'black',
-    color: 'white',
+    color: 'black',
+    margin: '0px',
     marginLeft: '5px',
-    marginBottom: '15px',
-  },
-  addButton: {
-    backgroundColor: 'black',
-    color: 'white',
-    marginLeft: '5px',
-    marginBottom: '15px',
+    transform: 'scale(0.8)',
+    height: '15px',
+    width: '15px',
+    marginBottom: '10px',
+    padding: '5px',
   },
   rows: {
     margin: '0px',
   },
 }); 
 
-export const NewProjectForm = 
-  withForm(FieldNameMainForm, constraintsMainForm)(
-    withContext(AppContext)(
-      withTheme()(
-        withStyles(styles)(_NewProjectForm))
-    ));
 
-
+export const NewProjectForm = withContext(AppContext)(
+  withStyles(styles)(
+    withTheme()(
+      withForm(
+        FieldName, 
+        constraints
+      )(_NewProjectForm))));

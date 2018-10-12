@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  withForm, getFieldNameObject, fieldValue, fieldErrorText, fieldHasError } from '../../util/form';
+  withForm, getFieldNameObject, fieldValue, fieldErrorText, fieldHasError } from 'util/form';
 import { TextField, IconButton, Button } from '@material-ui/core';
 import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@material-ui/icons';
 
@@ -63,7 +63,10 @@ class _NewProjectFormTest extends React.Component {
     super(props);
     this.state = {
       // read up about refs at https://reactjs.org/docs/refs-and-the-dom.html
-      volunteerRequirementRefs: [React.createRef()],
+      volunteerRequirementRefs: [
+        React.createRef(), 
+        React.createRef(),
+      ],
     };
   }
 
