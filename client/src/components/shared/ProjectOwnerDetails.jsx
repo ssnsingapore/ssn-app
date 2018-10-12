@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
+import { AccountType } from 'components/shared/enums/AccountType';
 
 class _ProjectOwnerDetails extends Component {
   constructor(props) {
@@ -18,6 +19,26 @@ class _ProjectOwnerDetails extends Component {
     const currentUser = authenticator.getCurrentUser();
 
     this.setState({ projectOwner: currentUser });
+  }
+
+  renderDescriptionOrPersonalBio = () => {
+    const { projectOwner } = this.state;
+
+    if (projectOwner.accountType === AccountType.ORGANISATION) {
+      return (
+        <Typography>
+          <strong>Description: </strong>
+          {projectOwner.description}
+        </Typography>
+      );
+    }
+
+    return (
+      <Typography>
+        <strong>Personal Bio: </strong>
+        {projectOwner.personalBio}
+      </Typography>
+    );
   }
 
   render = () => {
@@ -47,22 +68,20 @@ class _ProjectOwnerDetails extends Component {
               <strong>Account Type: </strong>
               {projectOwner.accountType}
             </Typography>
+            {projectOwner.accountType === AccountType.ORGANISATION &&
             <Typography>
               <strong>Organisation Name: </strong>
               {projectOwner.organisationName}
-            </Typography>
+            </Typography>}
             <Typography>
               <strong>Web URL: </strong>
-              {projectOwner.websiteUrl}
+              {projectOwner.websiteUrl || '-'}
             </Typography>
             <Typography>
-              <strong>Social Media: </strong>
-              {projectOwner.socialMediaLink}
+              <strong>Social Media Link: </strong>
+              {projectOwner.socialMediaLink || '-'}
             </Typography>
-            <Typography>
-              <strong>Description: </strong>
-              {projectOwner.description}
-            </Typography>
+            {this.renderDescriptionOrPersonalBio()}
           </CardContent>
         </div>
       </Card>
@@ -99,5 +118,9 @@ const styles = theme => ({
 });
 
 export const ProjectOwnerDetails = withContext(AppContext)(
-  withTheme()(withStyles(styles)(_ProjectOwnerDetails))
+  withStyles(styles)(_ProjectOwnerDetails)
 );
+
+export const _testExports = {
+  ProjectOwnerDetails: _ProjectOwnerDetails,
+};
