@@ -9,8 +9,6 @@ import {
   Tabs,
   Tab,
   Button,
-  List,
-  ListItem,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
@@ -62,7 +60,6 @@ class _ProjectOwnerDashboard extends Component {
   };
 
   renderTabs() {
-    const { classes, theme } = this.props;
     const { tabValue } = this.state;
 
     return (
@@ -100,22 +97,19 @@ class _ProjectOwnerDashboard extends Component {
       <Grid container spacing={theme.spacing.unit} className={classes.root}>
         <Grid item xs={12} >
           <Paper className={classes.projectListingContainer} elevation={1} square>
-            <List className={classes.list}>
-              <ListItem className={classes.removePadding}>
-                <Typography variant="headline" className={classes.marginBottom3}>
+            <div className={classes.header}>
+              <Typography variant="headline" className={classes.marginBottom3}>
                 My Projects
-                </Typography>
-                <Button
-                  variant="fab"
-                  color="secondary"
-                  aria-label="Add"
-                  className={classes.addButton}
-                  href="/project_owner/new_project"
-                >
-                  <AddIcon />
-                </Button>
-              </ListItem>
-            </List>
+              </Typography>
+              <Button
+                variant="fab"
+                color="secondary"
+                aria-label="Add"
+                href="/project_owner/new_project"
+              >
+                <AddIcon />
+              </Button>
+            </div>
             {this.renderTabs()}
           </Paper>
         </Grid>
@@ -139,17 +133,9 @@ const styles = theme => ({
   marginBottom3: {
     marginBottom: theme.spacing.unit * 3,
   },
-  addButton: {
-    margin: theme.spacing.unit,
-    position: 'absolute',
-    bottom: theme.spacing.unit * 0.5,
-    right: theme.spacing.unit * 1,
-  },
-  removePadding: {
-    padding: 0,
-  },
-  list: {
-    position: 'relative',
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   projectListing: {
     margin: '30px auto',
