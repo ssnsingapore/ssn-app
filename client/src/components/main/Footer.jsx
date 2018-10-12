@@ -24,7 +24,7 @@ class _Footer extends Component {
     if (response.hasError) {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
-  }
+  };
 
   render() {
     const { classes } = this.props;
@@ -37,14 +37,14 @@ class _Footer extends Component {
 
     return (
       <div className={classes.root}>
-        <p>Welcome {currentUser.name}!</p>
+        {/* <p>Welcome {currentUser.name}!</p>
         <IconButton
           aria-label="Logout"
           color="inherit"
           onClick={this.handleLogout}
         >
           <LogoutIcon className={classes.icon} />
-        </IconButton>
+        </IconButton> */}
       </div>
     );
   }
@@ -64,5 +64,4 @@ const styles = {
   },
 };
 
-export const Footer = withStyles(styles)(
-  withContext(AppContext)(_Footer));
+export const Footer = withStyles(styles)(withContext(AppContext)(_Footer));
