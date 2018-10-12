@@ -154,7 +154,5 @@ export const ProjectOwnerDashboard = withContext(AppContext)(
 );
 
 export const _testExports = {
-  ProjectOwnerDashboard: withTheme()(
-    withStyles(styles)(_ProjectOwnerDashboard)
-  ),
+  ProjectOwnerDashboard: _ProjectOwnerDashboard,
 };

@@ -46,7 +46,7 @@ describe('ProjectOwnerDashboard', () => {
     component = shallow(
       <ProjectOwnerDashboard classes={{}} context={mockContext} />,
       { disableLifecycleMethods: true },
-    ).dive().dive();
+    );
   });
 
   describe('when component mounts', () => {
@@ -78,7 +78,7 @@ describe('ProjectOwnerDashboard', () => {
         component = shallow(
           <ProjectOwnerDashboard classes={{}} context={mockContext} />,
           { disableLifecycleMethods: true },
-        ).dive().dive();
+        );
       });
 
       it('should show an error alert', async () => {
