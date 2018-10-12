@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tabs, Tab, Typography } from '@material-ui/core';
+import { createMuiTheme } from '@material-ui/core/styles';
 
 import { _testExports } from '../ProjectOwnerDashboard';
 import { defaultAppContext } from 'components/main/AppContext';
@@ -28,6 +29,7 @@ describe('ProjectOwnerDashboard', () => {
   let component;
   let counts;
   let mockContext;
+  const theme = createMuiTheme();
 
   beforeEach(() => {
     counts = {
@@ -44,7 +46,7 @@ describe('ProjectOwnerDashboard', () => {
     mockContext.updaters.showAlert = jest.fn();
 
     component = shallow(
-      <ProjectOwnerDashboard classes={{}} context={mockContext} />,
+      <ProjectOwnerDashboard theme={theme} classes={{}} context={mockContext} />,
       { disableLifecycleMethods: true },
     );
   });
@@ -76,7 +78,7 @@ describe('ProjectOwnerDashboard', () => {
         mockContext.updaters.showAlert = jest.fn();
 
         component = shallow(
-          <ProjectOwnerDashboard classes={{}} context={mockContext} />,
+          <ProjectOwnerDashboard theme={theme} classes={{}} context={mockContext} />,
           { disableLifecycleMethods: true },
         );
       });
