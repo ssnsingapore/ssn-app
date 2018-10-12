@@ -3,16 +3,10 @@ import {
   withForm, getFieldNameObject, fieldValue, fieldErrorText, fieldHasError } from '../../util/form';
 import { TextField, IconButton, Button } from '@material-ui/core';
 import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@material-ui/icons';
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { ProjectType } from 'components/shared/enums/ProjectType';
-import { ProjectState } from 'components/shared/enums/ProjectState';
-import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 
-const FieldName = getFieldNameObject(['description']);
-const constraints = {};
-
+// Put the VolunteerRequirementForm in a separate file
 const VolunteerRequirementFieldName = getFieldNameObject(['type', 'commitmentLevel']);
+// verify these constraints are correct
 const volunteerRequirementConstraints = {
   [VolunteerRequirementFieldName.type]: {
     presence: { allowEmpty: false },
@@ -60,68 +54,29 @@ const VolunteerRequirementForm = withForm(
   volunteerRequirementConstraints
 )(_VolunteerRequirementForm);
 
+// dummy fields for now, change to the proper ones
+const FieldName = getFieldNameObject(['description']);
+const constraints = {};
+
 class _NewProjectFormTest extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      // read up about refs at https://reactjs.org/docs/refs-and-the-dom.html
       volunteerRequirementRefs: [React.createRef()],
     };
   }
 
+  // implement and figure out where to use this
   validateAllSubFormFields = () => {
-    return this.state.volunteerRequirementRefs.every((volunteerRequirementRef) => {
-      return volunteerRequirementRef.current.validateAllFields();
-    });
   }
 
+  // implement figure out where to use this
   resetAllSubFormFields = () => {
-    this.state.volunteerRequirementRefs.forEach((volunteerRequirementRef) => {
-      volunteerRequirementRef.current.resetAllFields();
-    });
   }
 
   handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!this.props.validateAllFields() || !this.validateAllSubFormFields()) {
-      return;
-    }
-
-    const volunteerRequirementFieldValues = this.state.volunteerRequirementRefs.map((volunteerRequirementRef) => {
-      return volunteerRequirementRef.current.valuesForAllFields();
-    });
-
-    const { description } = this.props.valuesForAllFields();
-    console.log('description', description);
-    const newProject = {
-      title: 'Save the Earth',
-      coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
-      description,
-      volunteerSignupUrl: 'http://www.signup.org',
-      projectOwner: '5bb8b5f5d6f16b52ab02f631',
-      issuesAddressed: [IssueAddressed.LAND_AND_NOISE_POLLUTION, IssueAddressed.WASTE],
-      volunteerBenefitsDescription: 'Some description', // state will be changed
-      projectType: ProjectType.EVENT,
-      time: '9 AM',
-      location: ProjectLocation.CENTRAL,
-      state: ProjectState.APPROVED_INACTIVE,
-      startDate: new Date(2018, 12, 1),
-      endDate: new Date(2018, 12, 2),
-      frequency: ProjectFrequency.ONCE_A_WEEK,
-
-      volunteerRequirements: volunteerRequirementFieldValues,
-    };
-
-    console.log('project', newProject);
-
-    this.setState({ isSubmitting: true });
-    await fetch('/api/v1/projects/add', { body: JSON.stringify({ project: newProject }), method: 'post', headers: { 'Content-Type': 'application/json'} });
-    this.setState({ isSubmitting: false });
-
-
-    this.setState({ hasSubmitted: true});
-    this.props.resetAllFields();
-    this.resetAllSubFormFields();
+    // implement this
   }
 
   handleAddVolunteerRequirement = () => {
