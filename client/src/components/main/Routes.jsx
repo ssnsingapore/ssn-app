@@ -27,6 +27,7 @@ import { Login } from 'components/old/OldLogin';
 import { SignUp } from 'components/old/OldSignUp';
 import { ImageUpload } from 'components/old/ImageUpload';
 import { PasswordResetForm } from '../public/PasswordResetForm';
+import { NewProjectFormTest } from '../project_owner/NewProjectFormTest';
 
 class _Routes extends Component {
   render() {
@@ -38,6 +39,7 @@ class _Routes extends Component {
           <Route path="/admin" component={NavBar} /> 
           <div className={classes.content}>
             <Switch>
+              <Route path="/test" component={NewProjectFormTest} />
               <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={ProjectOwnerLoginForm} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
