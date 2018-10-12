@@ -3,7 +3,7 @@ import React from 'react';
 import { _testExports } from '../ProjectOwnerDetails';
 import { defaultAppContext } from '../../main/AppContext';
 import { AccountType } from 'components/shared/enums/AccountType';
-import { CardMedia, Typography } from '@material-ui/core';
+import { CardMedia } from '@material-ui/core';
 import { createShallow } from '@material-ui/core/test-utils';
 
 const ProjectOwnerDetails = _testExports.ProjectOwnerDetails;
