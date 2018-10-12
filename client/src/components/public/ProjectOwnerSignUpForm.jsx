@@ -64,7 +64,7 @@ class _ProjectOwnerSignUpForm extends Component {
       createdUser: null,
     };
 
-    props.setField(FieldName.accountType, AccountType.ORGANIZATION);
+    props.setField(FieldName.accountType, AccountType.ORGANISATION);
   }
 
   handleSubmit = async (event) => {
@@ -100,7 +100,7 @@ class _ProjectOwnerSignUpForm extends Component {
   renderOrganisationName = () => {
     const { classes, handleChange, fields } = this.props;
 
-    return fields[FieldName.accountType].value === AccountType.ORGANIZATION &&
+    return fields[FieldName.accountType].value === AccountType.ORGANISATION &&
       <TextField
         name={FieldName.organisationName}
         className={classes.textInput}
@@ -115,7 +115,7 @@ class _ProjectOwnerSignUpForm extends Component {
   renderDescriptionOrBio = () => {
     const { classes, handleChange, fields } = this.props;
 
-    if (fieldValue(fields, FieldName.accountType) === AccountType.ORGANIZATION) {
+    if (fieldValue(fields, FieldName.accountType) === AccountType.ORGANISATION) {
       return (
         <TextField
           name={FieldName.description}
@@ -195,7 +195,7 @@ class _ProjectOwnerSignUpForm extends Component {
             className={classes.radioGroup}
           >
             <FormControlLabel
-              value={AccountType.ORGANIZATION}
+              value={AccountType.ORGANISATION}
               control={<Radio color="primary" />}
               label="I am creating an account on behalf of an organisation" />
             <FormControlLabel

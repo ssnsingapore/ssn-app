@@ -20,7 +20,7 @@ describe('ProjectOwnerSignUpForm', () => {
   describe('radioButtons', () => {
     it('default is organisation', () => {
 
-      const organisationRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.ORGANIZATION);
+      const organisationRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.ORGANISATION);
       expect(organisationRadio.props().checked).toBeTruthy();
     });
 
@@ -41,7 +41,7 @@ describe('ProjectOwnerSignUpForm', () => {
       component.instance().handleChange(event);
       component.update();
 
-      const organisationRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.ORGANIZATION);
+      const organisationRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.ORGANISATION);
       expect(organisationRadio.props().checked).toBeFalsy();
 
       const individualRadioNew = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.INDIVIDUAL);

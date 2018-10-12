@@ -9,7 +9,7 @@ import { constructMongooseValidationError } from 'util/errors';
 import { Role } from './Role';
 
 export const AccountType = {
-  ORGANIZATION: 'ORGANIZATION',
+  ORGANISATION: 'ORGANISATION',
   INDIVIDUAL: 'INDIVIDUAL',
 };
 
@@ -53,7 +53,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
     type: String,
     required: [
       function () {
-        return this.accountType === AccountType.ORGANIZATION;
+        return this.accountType === AccountType.ORGANISATION;
       },
       'cannot be blank',
     ],
@@ -63,7 +63,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
     // TODO: Not required on the front-end. Clarify with Ying Tong
     // required: [
     //   function () {
-    //     return this.accountType === AccountType.ORGANIZATION;
+    //     return this.accountType === AccountType.ORGANISATION;
     //   },
     //   'cannot be blank',
     // ],

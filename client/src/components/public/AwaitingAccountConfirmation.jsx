@@ -11,7 +11,7 @@ const _AwaitingAccountConfirmation = (props) => {
   const { projectOwner } = props.location.state;
   let message = `Please check your email at ${projectOwner.email} to activate your account`;
 
-  projectOwner.accountType === AccountType.ORGANIZATION ?
+  projectOwner.accountType === AccountType.ORGANISATION ?
     message = `An account has been created for ${projectOwner.name} from ${projectOwner.organisationName}. ` + message :
     message = `An account has been created for ${projectOwner.name}. ` + message;
 

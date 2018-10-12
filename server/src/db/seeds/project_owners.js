@@ -10,7 +10,7 @@ projectOwner.setPassword('test123').then(async () => {
     {
       name: 'Cat Society',
       email: 'test@test.com',
-      accountType: 'ORGANIZATION',
+      accountType: 'ORGANISATION',
       websiteUrl: 'https://thecatsite.com/',
       socialMediaLink: 'https://twitter.com/awyeahcatgifs',
       profilePhotoUrl:
@@ -24,7 +24,7 @@ projectOwner.setPassword('test123').then(async () => {
     {
       name: 'Earth Society',
       email: 'test1@test.com',
-      accountType: 'ORGANIZATION',
+      accountType: 'ORGANISATION',
       websiteUrl: 'https://www.earthsocietysg.com/',
       socialMediaLink: '',
       profilePhotoUrl:
