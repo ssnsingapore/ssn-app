@@ -31,7 +31,7 @@ projectOwner.setPassword('test123').then(async () => {
       'https://s3-eu-west-1.amazonaws.com/nusdigital/group/images/12287/medium/logo.jpg',
       organisationName: 'Earth Society (Singapore)',
       description:
-      'Earth Society is a non-profit organization formed by a team of individuals who are passionate about environmental protection.',
+      'Earth Society is a non-profit organisation formed by a team of individuals who are passionate about environmental protection.',
       role: Role.project_owner,
       hashedPassword: projectOwner.hashedPassword,
       confirmedAt: new Date(),

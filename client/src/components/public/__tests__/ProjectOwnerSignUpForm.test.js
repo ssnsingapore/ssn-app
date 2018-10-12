@@ -11,7 +11,7 @@ describe('ProjectOwnerSignUpForm', () => {
 
     props = {
       classes: {},
-      renderOrganizationName: jest.fn(),
+      renderOrganisationName: jest.fn(),
     };
 
     component = mount(<TestProjectOwnerSignUpForm {...props}/>);
@@ -19,39 +19,39 @@ describe('ProjectOwnerSignUpForm', () => {
 
   describe('radioButtons', () => {
     it('default is organisation', () => {
-    
+
       const organisationRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.ORGANIZATION);
       expect(organisationRadio.props().checked).toBeTruthy();
     });
-  
+
     it('when organisation is selected then organisation name label exists', () => {
-  
+
       const organisationNameComponent = component.find(TextField).filterWhere(n => n.props().name === 'organisationName');
       expect(organisationNameComponent.exists()).toBeTruthy();
     });
-  
+
     it('when individual is selected then organisation name label does not exist', () => {
-  
+
       const individualRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.INDIVIDUAL);
       expect(individualRadio.props().checked).toBeFalsy();
-      
+
       const event = {
         target: {name: 'accountType', value: AccountType.INDIVIDUAL},
       };
       component.instance().handleChange(event);
       component.update();
-  
+
       const organisationRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.ORGANIZATION);
       expect(organisationRadio.props().checked).toBeFalsy();
-  
+
       const individualRadioNew = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.INDIVIDUAL);
       expect(individualRadioNew.props().checked).toBeTruthy();
-      
+
       const organisationNameComponent = component.find(TextField).filterWhere(n => n.props().name === 'organisationName');
       expect(organisationNameComponent.exists()).toBeFalsy();
     });
   });
-  
+
   describe('filling up mandatory fields', () => {
     it('when name is not provided then validation message appears', async() => {
 
@@ -63,7 +63,7 @@ describe('ProjectOwnerSignUpForm', () => {
       expect(nameComponent.props().helperText).toBe('Name can\'t be blank');
     });
     it('when email is not provided then validation message appears', async() => {
-      
+
       const event = {
         target: {name: 'name', value: 'Some Name'},
       };
@@ -79,7 +79,7 @@ describe('ProjectOwnerSignUpForm', () => {
     });
 
     it('when email is invalid then validation message appears', async() => {
-      
+
       const nameEvent = {
         target: {name: 'name', value: 'Some Name'},
       };
@@ -107,7 +107,7 @@ describe('ProjectOwnerSignUpForm', () => {
   //       target: {name: 'email', value: 'some@some.com'},
   //     };
   //     component.instance().handleChange(emailEvent);
-      
+
   //     component.update();
 
   //     const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');

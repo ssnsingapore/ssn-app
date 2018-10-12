@@ -97,7 +97,7 @@ class _ProjectOwnerSignUpForm extends Component {
     }
   }
 
-  renderOrganizationName = () => {
+  renderOrganisationName = () => {
     const { classes, handleChange, fields } = this.props;
 
     return fields[FieldName.accountType].value === AccountType.ORGANIZATION &&
@@ -203,7 +203,7 @@ class _ProjectOwnerSignUpForm extends Component {
               control={<Radio color="primary" />}
               label="I am an individual" />
           </RadioGroup>
-          {this.renderOrganizationName()}
+          {this.renderOrganisationName()}
           <TextField
             name={FieldName.websiteUrl}
             className={classes.textInput}

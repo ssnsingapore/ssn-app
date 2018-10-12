@@ -82,8 +82,8 @@ class _SignUp extends Component {
         createdUser: {
           // temporary to stub fields for projectOwner but not on user
           ...createdUser,
-          accountType: 'organization',
-          organizationName: 'Earth Society',
+          accountType: 'organisation',
+          organisationName: 'Earth Society',
         },
       });
       showAlert('signupSuccess', AlertType.SUCCESS, SIGNUP_SUCCESS_MESSAGE);
