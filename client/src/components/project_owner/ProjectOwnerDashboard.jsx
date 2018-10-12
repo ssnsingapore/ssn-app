@@ -17,6 +17,7 @@ import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 import { AlertType } from 'components/shared/Alert';
+import { Spinner } from 'components/shared/Spinner';
 import { extractErrors, formatErrors } from 'util/errors';
 
 class _ProjectOwnerDashboard extends Component {
@@ -42,7 +43,7 @@ class _ProjectOwnerDashboard extends Component {
     if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
-      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert('getProjectCountsFailure', AlertType.ERROR, formatErrors(errors));
     }
 
     this.setState({ isLoading: false });
@@ -54,9 +55,9 @@ class _ProjectOwnerDashboard extends Component {
 
   getTabLabel = projectState => {
     const { counts } = this.state;
-    return `${ProjectStateDisplayMapping[projectState]} (${
-      counts[projectState]
-    })`;
+    return counts[projectState] ?
+      `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})` :
+      ProjectStateDisplayMapping[projectState];
   };
 
   renderTabs() {
@@ -92,6 +93,10 @@ class _ProjectOwnerDashboard extends Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return <Spinner />;
+    }
+
     const { classes, theme } = this.props;
     return (
       <Grid container spacing={theme.spacing.unit} className={classes.root}>
@@ -143,5 +148,13 @@ const styles = theme => ({
 });
 
 export const ProjectOwnerDashboard = withContext(AppContext)(
-  withTheme()(withStyles(styles)(_ProjectOwnerDashboard))
+  withTheme()(
+    withStyles(styles)(_ProjectOwnerDashboard)
+  ),
 );
+
+export const _testExports = {
+  ProjectOwnerDashboard: withTheme()(
+    withStyles(styles)(_ProjectOwnerDashboard)
+  ),
+};
