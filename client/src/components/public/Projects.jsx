@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
 import { SearchBar } from 'components/shared/SearchBar';
@@ -55,7 +55,9 @@ class _Projects extends Component {
 
   getTabLabel = (projectState) => {
     const { counts } = this.state;
-    return `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`;
+    return counts[projectState] ?
+      `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})` :
+      ProjectStateDisplayMapping[projectState];
   }
 
   renderProjectListings = () => {
@@ -66,7 +68,6 @@ class _Projects extends Component {
       return <Spinner />;
     }
 
-    // Tutorial from https://material-ui.com/demos/tabs/
     return (
       <Paper className={classes.body} square>
         <Paper square>
@@ -99,7 +100,7 @@ class _Projects extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = {
   landingHeader: {
     textTransform: 'uppercase',
   },
@@ -114,12 +115,10 @@ const styles = theme => ({
   innerbox: {
     marginTop: '1px',
   },
-});
+};
 
 export const Projects = withContext(AppContext)(
-  withTheme()(
-    withStyles(styles)(_Projects),
-  ),
+  withStyles(styles)(_Projects),
 );
 
 export const _testExports = {

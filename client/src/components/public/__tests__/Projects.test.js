@@ -91,6 +91,16 @@ describe('Projects', () => {
           expect.any(String),
         );
       });
+
+      it('should render tab labels without counts in brackets', async () => {
+        await component.instance().componentDidMount();
+
+        const activeTab = component.find(Tab).get(0);
+        expect(activeTab.props.label).toEqual('Active');
+        const inactiveTab = component.find(Tab).get(1);
+        expect(inactiveTab.props.label).toEqual('Inactive');
+      });
+
     });
   });
 
@@ -129,7 +139,9 @@ describe('Projects', () => {
 
           expect(component.find(ProjectListing).props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
         });
+      });
 
+      describe('when inactive tab selected', () => {
         it('should render project listing with inactive project state', () => {
           component.setState({ tabValue: 1 });
           component.update();
