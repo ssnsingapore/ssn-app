@@ -28,20 +28,20 @@ const volunteerRequirementConstraints = {
   },
 };
 
-class _NewProjectFormVolunteerRequirementForm extends React.Component {
+class _VolunteerRequirementForm extends React.Component {
 
   render() {
     const { fields, handleChange, classes } = this.props;
     return (
       <div>
         <FormControl className={classes.volTypeDropdown}>
-          <InputLabel htmlFor={VolunteerRequirementFieldName.type}>
+          <InputLabel htmlFor={VolunteerRequirementFieldName.type} shrink>
           Type of Volunteer
           </InputLabel>
           <Select
             name={VolunteerRequirementFieldName.type}
             id={VolunteerRequirementFieldName.type}
-            key={VolunteerRequirementFieldName.type}
+            key={VolunteerRequirementFieldName.type} 
             value={fieldValue(fields, VolunteerRequirementFieldName.type)}
             error={fieldHasError(fields, VolunteerRequirementFieldName.type)}
             helperText={fieldErrorText(fields, VolunteerRequirementFieldName.type)}
@@ -96,21 +96,26 @@ const styles = theme => ({
     marginBottom: '0px',
     width: '33%',
     marginRight: '4px',
-    height: '44px',
+    // height: '44px',
   },
   textfield: {
     marginTop: '0px',
     marginBottom: '0px',
     width: '32%',
     marginRight: '4px',
-    height: '40px',
+    // height: '40px',
   },
 }); 
 
 
-export const NewProjectFormVolunteerRequirementForm = withStyles(styles)(
-  withTheme()(
-    withForm(
-      VolunteerRequirementFieldName,
-      volunteerRequirementConstraints
-    )(_NewProjectFormVolunteerRequirementForm)));
+export const VolunteerRequirementForm = 
+withForm(
+  VolunteerRequirementFieldName,
+  volunteerRequirementConstraints
+)(
+  withStyles(styles)(
+    withTheme()(
+      (_VolunteerRequirementForm)
+    )
+  )
+);

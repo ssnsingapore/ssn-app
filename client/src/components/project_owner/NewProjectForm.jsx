@@ -10,7 +10,7 @@ import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { fieldErrorText, fieldHasError, getFieldNameObject, withForm, fieldValue } from 'util/form';
-import { NewProjectFormVolunteerRequirementForm } from 'components/project_owner/NewProjectFormVolunteerRequirementForm';
+import { VolunteerRequirementForm } from 'components/project_owner/VolunteerRequirementForm';
 
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
@@ -26,16 +26,16 @@ const FieldName = getFieldNameObject([
 const constraints = {
   [FieldName.volunteerRequirementsDescription]: {
     presence: { allowEmpty: true },
-    length: { maximum: 10000 },
+    length: { maximum: 500 },
   },
   [FieldName.volunteerBenefitsDescription]: {
     presence: { allowEmpty: true },
-    length: { maximum: 10000 },
+    length: { maximum: 500 },
   }, 
   
 };
 
-const PROJECT_ADDED_SUCCESS_MESSAGE = 'Your project has been added!';
+const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
 
 class _NewProjectForm extends Component {
   constructor(props) {
@@ -43,29 +43,25 @@ class _NewProjectForm extends Component {
     this.state = {
       volunteerRequirementRefs: [
         React.createRef(),
-        React.createRef(),
       ],
       isSubmitting: false, 
-      hasSubmitted: false,
+      shouldRedirect: false,
     };
   }
 
   validateAllSubFormFields = () => {
-    this.state.volunteerRequirementsRefs.map(ref => {
-      return(
-        ref.current.props.validateAllFields()
-      );
-    }
-    );
+    const { volunteerRequirementRefs } = this.state;
+    return volunteerRequirementRefs.every(ref => ref.current.validateAllFields());
   }
 
   resetAllSubFormFields = () => {
-    this.state.volunteerRequirementsRefs.map(ref => {
-      return(
-        ref.current.props.resetAllFields()
-      );
-    }
-    );
+    const { volunteerRequirementRefs } = this.state;
+    volunteerRequirementRefs.forEach(ref => ref.current.resetAllFields());
+  }
+
+  valuesForAllSubFormFields = () => {
+    const { volunteerRequirementRefs } = this.state;
+    return volunteerRequirementRefs.map(ref => ref.current.valuesForAllFields());
   }
 
   handleSubmit = async (event) => {
@@ -78,28 +74,18 @@ class _NewProjectForm extends Component {
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
-    const { volunteerRequirementsDescription, volunteerBenefitsDescription, volunteerRequirementRefs  } = this.state;
+    const { volunteerRequirementsDescription, 
+      volunteerBenefitsDescription} = this.props.valuesForAllFields();
 
-    const volunteerRequirements = volunteerRequirementRefs.map(ref => {
-      return(
-        {
-          commitmentLevel: ref.current.state.commitmentLevel,
-          number: ref.current.state.number,
-          type: ref.current.state.type,
-        }        
-      );
-    });
+    const volunteerRequirements = this.valuesForAllSubFormFields();
 
     const newProject = {
       title: 'Save the Earth',
       coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
       description: 'Save the earth description',
       volunteerSignupUrl: 'http://www.signup.org',
-      volunteerRequirements: volunteerRequirements, // state will be changed
       projectOwner: currentUser.id,
       issuesAddressed: [IssueAddressed.LAND_AND_NOISE_POLLUTION, IssueAddressed.WASTE],
-      volunteerRequirementsDescription: volunteerRequirementsDescription, // state will be changed
-      volunteerBenefitsDescription: volunteerBenefitsDescription, // state will be changed
       projectType: ProjectType.EVENT,
       time: '9 AM',
       location: ProjectLocation.CENTRAL,
@@ -107,9 +93,11 @@ class _NewProjectForm extends Component {
       startDate: new Date(2018, 12, 1),
       endDate: new Date(2018, 12, 2),
       frequency: ProjectFrequency.ONCE_A_WEEK,
-    };
 
-    this.setState({project: newProject});
+      volunteerRequirements,
+      volunteerRequirementsDescription,
+      volunteerBenefitsDescription,
+    };
 
     this.props.resetAllFields();
     this.resetAllSubFormFields();
@@ -131,7 +119,7 @@ class _NewProjectForm extends Component {
       showAlert('projectAddedFailure', AlertType.ERROR, formatErrors(errors));
     }
 
-    this.setState({ hasSubmitted: true});
+    this.setState({ shouldRedirect: true});
 
   }
 
@@ -155,8 +143,8 @@ class _NewProjectForm extends Component {
 
     return volunteerRequirementRefs.map((volunteerRequirementRef, i) => {
       return (
-        <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-          <NewProjectFormVolunteerRequirementForm ref={volunteerRequirementRef} />
+        <div key={i} className={classes.volunteerRow}>
+          <VolunteerRequirementForm ref={volunteerRequirementRef} />
           <IconButton onClick={() => this.handleDeleteVolunteerRequirement(i)} mini className={classes.button}>
             <RemoveCircleIcon />
           </IconButton>
@@ -186,9 +174,10 @@ class _NewProjectForm extends Component {
                 helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
                 onChange={handleChange}
                 multiline
+                className={classes.textField}
               />
 
-              <Typography variant="caption">Type of Volunteers Needed</Typography>
+              {/* <Typography variant="caption" style={{ marginBottom: '20px' }}>Type of Volunteers Needed</Typography> */}
               {this.renderVolunteerRequirements()}
 
               <IconButton
@@ -222,8 +211,7 @@ class _NewProjectForm extends Component {
 
   render() {
     const { classes } = this.props;
-    const { hasSubmitted } = this.state;
-    if (hasSubmitted) {
+    if (this.state.shouldRedirect) {
       return <Redirect to={{
         pathname: '/project_owner/dashboard',
       }} />;
@@ -305,11 +293,20 @@ const styles = theme => ({
     transform: 'scale(0.8)',
     height: '15px',
     width: '15px',
-    marginBottom: '10px',
+    marginBottom: '20px',
+    marginTop: '5px',
     padding: '5px',
   },
   rows: {
     margin: '0px',
+  },
+  textField: {
+    marginBottom: '25px',
+  },
+  volunteerRow: {
+    display: 'flex', 
+    alignItems: 'center',
+    marginTop: '20px',
   },
 }); 
 
