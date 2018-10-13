@@ -34,6 +34,7 @@ import { AlertType } from 'components/shared/Alert';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
+import { ProjectBaseDetails } from './ProjectBaseDetails';
 
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
@@ -181,83 +182,6 @@ class _ProjectOwnerNewProject extends Component {
 
 
 
-  handleProjectTypeChange = prop => event => {
-    this.setState({ [prop]: event.target.value });
-  };
-
-  handleIssueAddressedChange = event => {
-    this.setState({ issue: event.target.value });
-  };
-
-  renderAddNewProject() {
-    const { classes, handleChange, fields } = this.props;
-
-    return (
-      <Card className={classes.card} square>
-        <div className={classes.details}>
-          <CardContent className={classes.content}>
-            <Typography variant="headline" gutterBottom>
-              Add a New Project
-            </Typography>
-            <TextField
-              required
-              label="Project Name"
-              placeholder=""
-              fullWidth
-              margin="normal"
-              style={{ paddingBottom: 16 }}
-              InputLabelProps={{ shrink: true }}
-              name={FieldName.title}
-              id={FieldName.title}
-              key={FieldName.title}
-              value={fieldValue(fields, FieldName.title)}
-              error={fieldHasError(fields, FieldName.title)}
-              helper={fieldErrorText(fields, FieldName.title)}
-              onChange={handleChange}
-            />
-            <TextField
-              required
-              label="Description"
-              placeholder=""
-              fullWidth
-              multiline
-              rows="4"
-              margin="normal"
-              style={{ paddingBottom: 16 }}
-              InputLabelProps={{ shrink: true }}
-              name={FieldName.description}
-              id={FieldName.description}
-              key={FieldName.description}
-              value={fieldValue(fields, FieldName.description)}
-              error={fieldHasError(fields, FieldName.description)}
-              helper={fieldErrorText(fields, FieldName.description)}
-              onChange={handleChange}
-            />
-            <TextField
-              label="URL for volunteer sign-up"
-              placeholder=""
-              fullWidth
-              margin="normal"
-              style={{ paddingBottom: 16 }}
-              InputLabelProps={{ shrink: true }}
-              name={FieldName.volunteerSignupUrl}
-              id={FieldName.volunteerSignupUrl}
-              key={FieldName.volunteerSignupUrl}
-              value={fieldValue(fields, FieldName.volunteerSignupUrl)}
-              error={fieldHasError(fields, FieldName.volunteerSignupUrl)}
-              helper={fieldErrorText(fields, FieldName.volunteerSignupUrl)}
-              onChange={handleChange}
-            />
-          </CardContent>
-        </div>
-        <CardMedia
-          className={classes.cover}
-          image="https://d3cbihxaqsuq0s.cloudfront.net/images/43959970_xl.jpg"
-        />
-      </Card>
-    );
-  }
-
   handleSubmit = async event => {
     event.preventDefault();
 
@@ -339,7 +263,10 @@ class _ProjectOwnerNewProject extends Component {
         <div className={classes.root}>
           <Grid container spacing={16}>
             <Grid item xs={12}>
-              {this.renderAddNewProject()}
+              <ProjectBaseDetails
+                fields={this.props.fields}
+                FieldName={FieldName}
+                handleChange={this.props.handleChange}/>
             </Grid>
             <Grid item xs={12} sm={6}>
               <ProjectVolunteerDetails
@@ -397,21 +324,7 @@ const styles = theme => ({
   paper: {
     padding: theme.spacing.unit * 2,
   },
-  card: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  content: {
-    flex: '1 0 auto',
-  },
-  cover: {
-    minWidth: '600px',
-    objectFit: 'cover',
-  },
+
   textFieldGroup: {
     justifyContent: 'flex-start',
     alignItems: 'flex-end',

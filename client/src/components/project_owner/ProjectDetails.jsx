@@ -14,7 +14,7 @@ class _ProjectDetails extends Component {
      const { FieldName, classes, handleChange, fields } = this.props;
      return fields[FieldName.projectType].value === ProjectType.RECURRING &&
     <FormControl className={classes.formControl}>
-      <InputLabel htmlFor="frequency-label-placeholder">
+      <InputLabel htmlFor="frequency-label-placeholder" shrink>
         Frequency
       </InputLabel>
       <Select
@@ -68,7 +68,7 @@ class _ProjectDetails extends Component {
         <Paper square={true}>
           <Typography variant="headline">Project Details</Typography>
           <FormControl className={classes.formControl}>
-            <InputLabel htmlFor={FieldName.projectType}>
+            <InputLabel htmlFor={FieldName.projectType} shrink>
                 Project Type
             </InputLabel>
             <Select
@@ -76,46 +76,20 @@ class _ProjectDetails extends Component {
               onChange={handleChange}
               name={FieldName.projectType}
             >
-              <MenuItem value="">
-                  None
-              </MenuItem>
               <MenuItem value={ProjectType.EVENT}>Event</MenuItem>
               <MenuItem value={ProjectType.RECURRING}>Recurring</MenuItem>
             </Select>
           </FormControl>
           {this.renderStartDate()}
           {this.renderEndDate()}
-          <TextField
-            name={FieldName.title}
-            className={classes.textInput}
-            id={FieldName.title}
-            label="Title"
-            onChange={handleChange}
-            value={fieldValue(fields, FieldName.title)}
-            error={fieldHasError(fields, FieldName.title)}
-            helperText={fieldErrorText(fields, FieldName.title)}
-            fullWidth
-            margin="normal"
-          />
           {this.renderFrequency()}
-          <TextField
-            name={FieldName.description}
-            className={classes.textInput}
-            id={FieldName.description}
-            label="Description"
-            onChange={handleChange}
-            value={fieldValue(fields, FieldName.description)}
-            error={fieldHasError(fields, FieldName.description)}
-            helperText={fieldErrorText(fields, FieldName.description)}
-            fullWidth
-            margin="normal"
-          />
           <TextField
             type="time"
             name={FieldName.time}
             className={classes.textInput}
             id={FieldName.time}
             label="Time"
+            InputLabelProps={{ shrink: true }}
             onChange={handleChange}
             value={fieldValue(fields, FieldName.time)}
             error={fieldHasError(fields, FieldName.time)}
@@ -124,7 +98,7 @@ class _ProjectDetails extends Component {
             margin="normal"
           />
           <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="location-label-placeholder">
+            <InputLabel htmlFor="location-label-placeholder" shrink>
                 Location
             </InputLabel>
             <Select
