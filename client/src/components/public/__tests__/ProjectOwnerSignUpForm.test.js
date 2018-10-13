@@ -93,7 +93,7 @@ describe('ProjectOwnerSignUpForm', () => {
 
       const emailComponent = component.find(TextField).filterWhere(n => n.props().name === 'email');
       expect(emailComponent.props().error).toBeTruthy();
-      expect(emailComponent.props().helperText).toBe('Email can\'t be blank. Email is not a valid email');
+      expect(emailComponent.props().helperText).toBe('Email can\'t be blank');
     });
 
     it('when email is invalid then validation message appears', async() => {
