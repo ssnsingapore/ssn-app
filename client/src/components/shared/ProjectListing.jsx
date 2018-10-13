@@ -11,7 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
-  Button
+  Button,
 } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
@@ -98,7 +98,7 @@ class _ProjectListing extends Component {
     const {classes} = this.props;
 
     return (
-      <Grid container style={{justifyContent: "space-evenly"}}>
+      <Grid container style={{justifyContent: 'space-evenly'}}>
         <Button variant="contained" className={classes.button}>
           Edit
         </Button>
@@ -109,18 +109,21 @@ class _ProjectListing extends Component {
           Duplicate
         </Button>
       </Grid>
-    )
+    );
   }
 
   renderProjects = () => {
-    const { classes, isForProjectOwner } = this.props;
+    const { classes, isForProjectOwner, isForAdminRoute } = this.props;
     const gridSize = isForProjectOwner? 8 : 12;
 
     return this.state.projects.map(project => {
+
+      const linkEndpoint = isForAdminRoute ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
+
       return (
-        <Grid container style={{alignItems: "center"}} item xs={12} key={project._id}>
+        <Grid container style={{alignItems: 'center'}} item xs={12} key={project._id}>
           <Grid item xs={gridSize}>
-            <Link to={'/projects/' + project._id} className={classes.link}>
+            <Link to={linkEndpoint} className={classes.link}>
               <Card className={classes.card}>
                 <Grid container item xs={12} key={project.title}>
                   <Grid item xs={12} md={4}>
@@ -227,7 +230,7 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-  }
+  },
 });
 
 export const ProjectListing = withContext(AppContext)(
