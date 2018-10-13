@@ -13,7 +13,7 @@ describe('ProjectOwnerSignUpForm', () => {
       classes: {},
       renderOrganisationName: jest.fn(),
     };
-
+    
     component = mount(<TestProjectOwnerSignUpForm {...props}/>);
   });
 
@@ -49,6 +49,24 @@ describe('ProjectOwnerSignUpForm', () => {
 
       const organisationNameComponent = component.find(TextField).filterWhere(n => n.props().name === 'organisationName');
       expect(organisationNameComponent.exists()).toBeFalsy();
+    });
+
+    it('when individual is selected then personal bio field appears', () => {
+  
+      const individualRadio = component.find(FormControlLabel).filterWhere(n => n.props().value === AccountType.INDIVIDUAL);
+      expect(individualRadio.props().checked).toBeFalsy();
+
+      const personalBioBefore = component.find(TextField).filterWhere(n => n.props().name === 'personalBio');
+      expect(personalBioBefore.exists()).toBeFalsy();
+      
+      const event = {
+        target: {name: 'accountType', value: AccountType.INDIVIDUAL},
+      };
+      component.instance().handleChange(event);
+      component.update();
+  
+      const personalBioAfter = component.find(TextField).filterWhere(n => n.props().name === 'personalBio');
+      expect(personalBioAfter.exists()).toBeTruthy();
     });
   });
 
@@ -113,7 +131,12 @@ describe('ProjectOwnerSignUpForm', () => {
   //     const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
   //     await createAccountButton.simulate('submit');
 
-  //     expect(event.preventDefault).toHaveBeenCalled();
+  //     const event = {
+  //       preventDefault: jest.fn(),
+  //     };
+  //     component.instance().handleSubmit(event);
+
+  //     expect(component.instance().handleSubmit).toHaveBeenCalled();
 
   //   });
   // });
