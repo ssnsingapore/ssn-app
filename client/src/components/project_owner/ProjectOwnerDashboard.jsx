@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import {
@@ -110,7 +112,8 @@ class _ProjectOwnerDashboard extends Component {
                 variant="fab"
                 color="secondary"
                 aria-label="Add"
-                href="/project_owner/projects/add"
+                component={Link}
+                to="/project_owner/projects/new"
               >
                 <AddIcon />
               </Button>

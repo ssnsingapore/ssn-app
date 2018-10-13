@@ -35,14 +35,13 @@ class _Routes extends Component {
     return (
       <BrowserRouter>
         <div className={classes.root}>
-          <Route path="/admin" component={NavBar} /> 
+          <Route path="/admin" component={NavBar} />
           <div className={classes.content}>
             <Switch>
               <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={ProjectOwnerLoginForm} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
               <Route exact path="/projects" component={Projects} />
-              <Route exact path="/project_owner/projects/add" component={NewProjectForm} /> 
               <Route exact path="/projects/:id" component={Project} />
 
               <Route
@@ -62,6 +61,7 @@ class _Routes extends Component {
                 component={ProjectOwnerNewProject}
                 authorize={[Role.project_owner]}
               />
+              <Route exact path="/project_owner/projects/new" component={NewProjectForm} />
 
               <Route exact path="/admin" component={AdminLoginPage} />
               <RouteAuthenticated

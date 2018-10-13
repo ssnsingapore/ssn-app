@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Tab, Typography } from '@material-ui/core';
+import { Tabs, Tab, Typography, Button } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
 
 import { _testExports } from '../ProjectOwnerDashboard';
@@ -109,8 +109,14 @@ describe('ProjectOwnerDashboard', () => {
   });
 
   describe('render', () => {
+    beforeEach(async (done) => {
+      await component.instance().componentDidMount();
+      done();
+    });
+
     it('should render a header with a button to add new projects', () => {
-      expect(component.find(Typography));
+      expect(component.find(Typography).html()).toEqual(expect.stringContaining('My Projects'));
+      expect(component.find(Button).props().to).toEqual('/project_owner/projects/new');
     });
 
     describe('when loading', () =>{
@@ -124,11 +130,6 @@ describe('ProjectOwnerDashboard', () => {
     });
 
     describe('when no longer loading', () => {
-      beforeEach(async (done) => {
-        await component.instance().componentDidMount();
-        done();
-      });
-
       it('should render all tab labels', () => {
         const pendingApprovalTab = component.find(Tab).get(0);
         expect(pendingApprovalTab.props.label).toEqual(`Pending Approval (${counts[ProjectState.PENDING_APPROVAL]})`);
