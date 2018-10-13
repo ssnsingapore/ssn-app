@@ -57,3 +57,24 @@ async function postProject(req, res) {
   await project.save();
   return res.status(201).json({ project: project.toJSON() });
 }
+
+
+projectRouter.post('/projects/:id/approve', asyncWrap(approveProject));
+async function approveProject(req, res) {
+  const { id } = req.params;
+  const project = await Project.updateOne(
+    { _id: id },
+    { $set: { state: ProjectState.APPROVED_ACTIVE } }
+  );
+  return res.status(200).json({ project });
+}
+
+projectRouter.post('/projects/:id/reject', asyncWrap(rejectProject));
+async function rejectProject(req, res) {
+  const { id } = req.params;
+  const project = await Project.updateOne(
+    { _id: id },
+    { $set: { state: ProjectState.REJECTED } }
+  );
+  return res.status(200).json({ project });
+}
