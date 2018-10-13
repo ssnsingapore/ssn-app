@@ -32,6 +32,7 @@ import { withContext } from 'util/context';
 
 import { AlertType } from 'components/shared/Alert';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
+import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 
 import { ProjectType } from 'components/shared/enums/ProjectType';
@@ -351,6 +352,10 @@ class _ProjectOwnerNewProject extends Component {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <ProjectDetails
+                fields={this.props.fields}
+                FieldName={FieldName}
+                handleChange={this.props.handleChange}/>
             </Grid>
             <Grid item xs={12}>
               <ProjectOwnerDetails />
