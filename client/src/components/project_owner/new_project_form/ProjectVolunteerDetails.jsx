@@ -4,7 +4,7 @@ import { Grid, Paper, TextField, Typography, IconButton } from '@material-ui/cor
 import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@material-ui/icons';
 
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
-import { VolunteerRequirementForm } from 'components/project_owner/VolunteerRequirementForm';
+import { VolunteerRequirementForm } from './VolunteerRequirementForm';
 
 const renderVolunteerRequirements = (volunteerRequirementRefs, classes, handleDeleteVolunteerRequirement ) => {
 

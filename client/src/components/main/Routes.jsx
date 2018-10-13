@@ -11,8 +11,7 @@ import { Projects } from 'components/public/Projects';
 import { Project } from 'components/public/Project';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
-import { ProjectOwnerNewProject } from 'components/project_owner/ProjectOwnerNewProject';
-import { NewProjectForm } from 'components/project_owner/NewProjectForm';
+import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
@@ -58,10 +57,9 @@ class _Routes extends Component {
               />
               <RouteAuthenticated
                 path="/project_owner/projects/new"
-                component={ProjectOwnerNewProject}
+                component={ProjectOwnerNewProjectForm}
                 authorize={[Role.project_owner]}
               />
-              <Route exact path="/project_owner/projects/new" component={NewProjectForm} />
 
               <Route exact path="/admin" component={AdminLoginPage} />
               <RouteAuthenticated

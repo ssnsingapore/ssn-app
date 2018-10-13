@@ -3,29 +3,14 @@ import { Redirect, Link } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import {
   Grid,
-  Paper,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Input,
-  Chip,
   BottomNavigation,
   Button,
 } from '@material-ui/core';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import {
-  fieldErrorText,
-  fieldHasError,
   getFieldNameObject,
   withForm,
-  fieldValue,
 } from 'util/form';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
@@ -86,7 +71,7 @@ const constraints = {
 
 const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
 
-class _ProjectOwnerNewProject extends Component {
+class _ProjectOwnerNewProjectForm extends Component {
   state = {
     volunteerRequirementRefs: [
       React.createRef(),
@@ -180,75 +165,9 @@ class _ProjectOwnerNewProject extends Component {
     }
   }
 
-
-
-  handleSubmit = async event => {
-    event.preventDefault();
-
-    if (!this.props.validateAllFields()) {
-      return;
-    }
-
-    const { authenticator } = this.props.context.utils;
-    const currentUser = authenticator.getCurrentUser();
-
-    const filledInProjectDetails = { ...this.props.valuesForAllFields() };
-    const { title, description, volunteerSignupUrl } = filledInProjectDetails;
-
-    const newProject = {
-      title: title,
-      coverImageUrl:
-        'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/greenland.png',
-      description: description,
-      volunteerSignupUrl: volunteerSignupUrl,
-      volunteerRequirements: '',
-      projectOwner: currentUser.id,
-      issuesAddressed: [],
-      volunteerRequirementsDescription: '',
-      volunteerBenefitsDescription: '',
-      projectType: ProjectType.RECURRING,
-      time: '9 AM',
-      location: ProjectLocation.WEST,
-      state: ProjectState.PENDING_APPROVAL,
-      startDate: new Date(2018, 10, 1),
-      endDate: new Date(2018, 10, 1),
-      frequency: ProjectFrequency.A_FEW_TIMES_A_YEAR,
-    };
-
-    this.setState({ project: newProject });
-
-    const { showAlert } = this.props.context.updaters;
-    const { requestWithAlert } = this.props.context.utils;
-
-    this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.post(
-      '/api/v1/projects/new',
-      { project: newProject },
-      { authenticated: true }
-    );
-    this.setState({ isSubmitting: false });
-
-    if (response.isSuccessful) {
-      showAlert(
-        'projectAddedSuccess',
-        AlertType.SUCCESS,
-        ADD_PROJECT_SUCCESS_MESSAGE
-      );
-      this.props.resetAllFields();
-      this.setState({ hasSubmitted: true });
-    }
-
-    if (response.hasError) {
-      const errors = await extractErrors(response);
-      showAlert('projectAddedFailure', AlertType.ERROR, formatErrors(errors));
-      this.setState({ hasSubmitted: false });
-    }
-  };
-
   render() {
     const { classes } = this.props;
-    const { hasSubmitted } = this.state;
-    if (hasSubmitted) {
+    if (this.state.shouldRedirect) {
       return (
         <Redirect
           to={{
@@ -357,52 +276,8 @@ const styles = theme => ({
   },
 });
 
-const projectType = [
-  {
-    value: 'Event',
-    label: 'Event',
-  },
-  {
-    value: 'Recurring',
-    label: 'Recurring',
-  },
-];
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const issueAddressed = [
-  'AIR_QUALITY',
-  'AWARENESS_AND_EDUCATION',
-  'BIODIVERSITY',
-  'CLIMATE',
-  'CONSERVATION',
-  'ENERGY',
-  'FOOD_AND_AGRICULTURE',
-  'GREEN_LIFESTYLE',
-  'LAND_AND_NOISE_POLLUTION',
-  'PLANNING_AND_TRANSPORTATION',
-  'PRODUCTION_AND_CONSUMPTION',
-  'OTHER',
-  'SPORTS_AND_RECREATION',
-  'WASTE',
-  'WATER',
-  'GREEN_TECHNOLOGY',
-];
-
-const ADD_PROJECT_SUCCESS_MESSAGE =
-  'You have successfully added a new project!';
-
-export const ProjectOwnerNewProject = withForm(FieldName, constraints)(
+export const ProjectOwnerNewProjectForm = withForm(FieldName, constraints)(
   withContext(AppContext)(
-    withTheme()(withStyles(styles)(_ProjectOwnerNewProject))
+    withTheme()(withStyles(styles)(_ProjectOwnerNewProjectForm))
   )
 );
