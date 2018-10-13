@@ -9,8 +9,6 @@ import {
   CardContent,
   CardMedia,
   TextField,
-  IconButton,
-  Icon,
   MenuItem,
   FormControl,
   InputLabel,
@@ -34,19 +32,153 @@ import { withContext } from 'util/context';
 
 import { AlertType } from 'components/shared/Alert';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
+import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
+
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+
+const FieldName = getFieldNameObject([
+  'title',
+  'description',
+  'volunteerSignupUrl',
+
+  'volunteerRequirementsDescription',
+  'volunteerBenefitsDescription',
+
+  'projectType',
+  'startDate',
+  'endDate',
+  'frequency',
+  'time',
+  'location',
+  'issuesAddressed',
+]);
+
+const constraints = {
+  [FieldName.title]: {
+    presence: { allowEmpty: false },
+    length: { maximum: 50 },
+  },
+  [FieldName.description]: {
+    presence: { allowEmpty: false },
+    length: { maximum: 5000 },
+  },
+  [FieldName.volunteerSignupUrl]: {
+    isUrl: { allowEmpty: true },
+  },
+
+  [FieldName.volunteerRequirementsDescription]: {
+    presence: { allowEmpty: true },
+    length: { maximum: 500 },
+  },
+  [FieldName.volunteerBenefitsDescription]: {
+    presence: { allowEmpty: true },
+    length: { maximum: 500 },
+  },
+
+  // TODO: Maryana's constraints
+};
+
+const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
 
 class _ProjectOwnerNewProject extends Component {
   state = {
-    project: {},
-    projectType: '',
-    issue: [],
+    volunteerRequirementRefs: [
+      React.createRef(),
+    ],
     isSubmitting: false,
-    hasSubmitted: false,
+    shouldRedirect: false,
   };
+
+  handleAddVolunteerRequirement = () => {
+    this.setState({
+      volunteerRequirementRefs: [...this.state.volunteerRequirementRefs, React.createRef()],
+    });
+  }
+
+  handleDeleteVolunteerRequirement = (i) => {
+    const newVolunteerRequirementRefs = [...this.state.volunteerRequirementRefs];
+    newVolunteerRequirementRefs.splice(i, 1);
+    this.setState({
+      volunteerRequirementRefs: newVolunteerRequirementRefs,
+    });
+  }
+
+  validateAllSubFormFields = () => {
+    const { volunteerRequirementRefs } = this.state;
+    return volunteerRequirementRefs.every(ref => ref.current.validateAllFields());
+  }
+
+  resetAllSubFormFields = () => {
+    const { volunteerRequirementRefs } = this.state;
+    volunteerRequirementRefs.forEach(ref => ref.current.resetAllFields());
+  }
+
+  valuesForAllSubFormFields = () => {
+    const { volunteerRequirementRefs } = this.state;
+    return volunteerRequirementRefs.map(ref => ref.current.valuesForAllFields());
+  }
+
+  handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!this.props.validateAllFields() || !this.validateAllSubFormFields()) {
+      return;
+    }
+
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    const { volunteerRequirementsDescription,
+      volunteerBenefitsDescription} = this.props.valuesForAllFields();
+
+    const volunteerRequirements = this.valuesForAllSubFormFields();
+
+    const newProject = {
+      title: 'Save the Earth',
+      coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
+      description: 'Save the earth description',
+      volunteerSignupUrl: 'http://www.signup.org',
+      projectOwner: currentUser.id,
+      issuesAddressed: [IssueAddressed.LAND_AND_NOISE_POLLUTION, IssueAddressed.WASTE],
+      projectType: ProjectType.EVENT,
+      time: '9 AM',
+      location: ProjectLocation.CENTRAL,
+      state: ProjectState.APPROVED_INACTIVE,
+      startDate: new Date(2018, 12, 1),
+      endDate: new Date(2018, 12, 2),
+      frequency: ProjectFrequency.ONCE_A_WEEK,
+
+      volunteerRequirements,
+      volunteerRequirementsDescription,
+      volunteerBenefitsDescription,
+    };
+
+    const { showAlert } = this.props.context.updaters;
+    const { requestWithAlert } = this.props.context.utils;
+
+    this.setState({ isSubmitting: true });
+    const response = await requestWithAlert
+      .post('/api/v1/projects/add', { project: newProject }, { authenticated: true });
+    this.setState({ isSubmitting: false });
+
+    if (response.isSuccessful) {
+      showAlert('projectAddedSuccess', AlertType.SUCCESS, PROJECT_ADDED_SUCCESS_MESSAGE);
+      this.props.resetAllFields();
+      this.resetAllSubFormFields();
+      this.setState({ shouldRedirect: true});
+    }
+
+    if (response.hasError) {
+      const errors = await extractErrors(response);
+      showAlert('projectAddedFailure', AlertType.ERROR, formatErrors(errors));
+    }
+  }
+
+
 
   handleProjectTypeChange = prop => event => {
     this.setState({ [prop]: event.target.value });
@@ -84,7 +216,6 @@ class _ProjectOwnerNewProject extends Component {
             />
             <TextField
               required
-              /* id="standard-multiline-static" */
               label="Description"
               placeholder=""
               fullWidth
@@ -126,177 +257,6 @@ class _ProjectOwnerNewProject extends Component {
     );
   }
 
-  renderVolunteerDetails() {
-    const { classes } = this.props;
-
-    return (
-      <Paper className={classes.paper} square>
-        <Typography variant="headline" gutterBottom>
-          Volunteer Details
-        </Typography>
-        <TextField
-          id="standard-multiline-static"
-          label="Description of Volunteers Needed"
-          placeholder=""
-          fullWidth
-          multiline
-          rows="4"
-          margin="normal"
-          style={{ paddingBottom: 16 }}
-          InputLabelProps={{ shrink: true }}
-        />
-        <Typography variant="caption" gutterBottom>
-          Type of Volunteers Needed
-        </Typography>
-        <Grid container className={classes.textFieldGroup} spacing={24}>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              id="standard-name"
-              placeholder="Volunteer Role"
-              margin="normal"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <TextField
-              id="standard-name"
-              placeholder="No. of Volunteers"
-              margin="normal"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              id="standard-name"
-              placeholder="Commitment Level"
-              margin="normal"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={1}>
-            <IconButton>
-              <Icon color="secondary">remove_circle</Icon>
-            </IconButton>
-          </Grid>
-          <IconButton>
-            <Icon color="primary">add_circle</Icon>
-          </IconButton>
-        </Grid>
-        <TextField
-          id="standard-multiline-static"
-          label="Volunteer Benefits"
-          placeholder=""
-          fullWidth
-          multiline
-          rows="4"
-          margin="normal"
-          style={{ paddingBottom: 16 }}
-          InputLabelProps={{ shrink: true }}
-        />
-      </Paper>
-    );
-  }
-
-  renderProjectDetails() {
-    const { classes, theme } = this.props;
-
-    return (
-      <Paper className={classes.paper} square>
-        <Typography variant="headline" gutterBottom>
-          Project Details
-        </Typography>
-        <Grid container className={classes.textFieldGroup} spacing={24}>
-          <Grid item xs={8} sm={6}>
-            <TextField
-              id="date"
-              type="date"
-              label="Start Date"
-              margin="normal"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={8} sm={6}>
-            <TextField
-              id="date"
-              type="date"
-              label="End Date"
-              margin="normal"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-        </Grid>
-        <TextField
-          id="standard-multiline-static"
-          label="Time"
-          placeholder=""
-          fullWidth
-          margin="normal"
-          style={{ paddingBottom: 16 }}
-          InputLabelProps={{ shrink: true }}
-        />
-        <TextField
-          id="standard-multiline-static"
-          label="Location"
-          placeholder=""
-          fullWidth
-          margin="normal"
-          style={{ paddingBottom: 16 }}
-          InputLabelProps={{ shrink: true }}
-        />
-        <TextField
-          select
-          label="Project Type"
-          placeholder="Pick a Project Type"
-          value={this.state.projectType}
-          onChange={this.handleProjectTypeChange('projectType')}
-          style={{ width: 200 }}
-        >
-          {projectType.map(option => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <FormControl className={classes.formControl} required fullWidth>
-          <InputLabel htmlFor="select-multiple-chip" shrink>
-            Issues Addressed
-          </InputLabel>
-          <Select
-            multiple
-            value={this.state.issue}
-            onChange={this.handleIssueAddressedChange}
-            input={<Input id="select-multiple-chip" />}
-            renderValue={selected => (
-              <div className={classes.chips}>
-                {selected.map(value => (
-                  <Chip key={value} label={value} className={classes.chip} />
-                ))}
-              </div>
-            )}
-            MenuProps={MenuProps}
-          >
-            {issueAddressed.map(issue => (
-              <MenuItem
-                key={issue}
-                value={issue}
-                style={{
-                  fontWeight:
-                    this.state.issue.indexOf(issue) === -1
-                      ? theme.typography.fontWeightRegular
-                      : theme.typography.fontWeightMedium,
-                }}
-              >
-                {issue}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Paper>
-    );
-  }
-
   handleSubmit = async event => {
     event.preventDefault();
 
@@ -331,10 +291,10 @@ class _ProjectOwnerNewProject extends Component {
     };
 
     this.setState({ project: newProject });
-    
+
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
-    
+
     this.setState({ isSubmitting: true });
     const response = await requestWithAlert.post(
       '/api/v1/projects/new',
@@ -342,7 +302,7 @@ class _ProjectOwnerNewProject extends Component {
       { authenticated: true }
     );
     this.setState({ isSubmitting: false });
-    
+
     if (response.isSuccessful) {
       showAlert(
         'projectAddedSuccess',
@@ -381,10 +341,16 @@ class _ProjectOwnerNewProject extends Component {
               {this.renderAddNewProject()}
             </Grid>
             <Grid item xs={12} sm={6}>
-              {this.renderVolunteerDetails()}
+              <ProjectVolunteerDetails
+                volunteerRequirementRefs={this.state.volunteerRequirementRefs}
+                FieldName={FieldName}
+                fields={this.props.fields}
+                handleChange={this.props.handleChange}
+                handleDeleteVolunteerRequirement={this.handleDeleteVolunteerRequirement}
+                handleAddVolunteerRequirement={this.handleAddVolunteerRequirement}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              {this.renderProjectDetails()}
             </Grid>
             <Grid item xs={12}>
               <ProjectOwnerDetails />
@@ -516,26 +482,6 @@ const issueAddressed = [
 
 const ADD_PROJECT_SUCCESS_MESSAGE =
   'You have successfully added a new project!';
-
-const FieldName = getFieldNameObject([
-  'title',
-  'description',
-  'volunteerSignupUrl',
-]);
-
-const constraints = {
-  [FieldName.title]: {
-    presence: { allowEmpty: false },
-    length: { maximum: 50 },
-  },
-  [FieldName.description]: {
-    presence: { allowEmpty: false },
-    length: { maximum: 5000 },
-  },
-  [FieldName.volunteerSignupUrl]: {
-    isUrl: { allowEmpty: true },
-  },
-};
 
 export const ProjectOwnerNewProject = withForm(FieldName, constraints)(
   withContext(AppContext)(
