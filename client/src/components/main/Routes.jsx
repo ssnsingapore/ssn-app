@@ -39,7 +39,6 @@ class _Routes extends Component {
           <Route path="/admin" component={NavBar} /> 
           <div className={classes.content}>
             <Switch>
-              <Route path="/test" component={NewProjectFormTest} />
               <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={ProjectOwnerLoginForm} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
