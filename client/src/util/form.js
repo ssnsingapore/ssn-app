@@ -24,7 +24,7 @@ function initializeFormFields(names) {
 
   return names.reduce((fields, name) => {
     fields[name] = {
-      value: '',
+      value: undefined,
       errors: [],
     };
 

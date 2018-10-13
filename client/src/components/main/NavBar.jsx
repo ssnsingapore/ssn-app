@@ -14,11 +14,7 @@ import ssnLogo from 'assets/ssn-logo.png';
 import adminAvatar from 'assets/placeholder-avatar.jpg';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
-
-const Role = {
-  admin: 'admin',
-  project_owner: 'project_owner',
-};
+import { Role } from 'components/shared/roles';
 
 const NavBarDisplayMapping = {
   [Role.admin]: 'SSN ADMIN',

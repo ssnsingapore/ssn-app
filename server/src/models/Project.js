@@ -124,16 +124,15 @@ const ProjectSchema = new mongoose.Schema(
     },
     time: {
       type: String,
-      required: [true, 'cannot be blank'],
     },
     location: {
       type: String,
-      required: [true, 'cannot be blank'],
       enum: Object.values(ProjectLocation),
     },
     state: {
       type: String,
       enum: Object.values(ProjectState),
+      required: [true, 'cannot be blank'],
     },
     startDate: {
       type: Date,
