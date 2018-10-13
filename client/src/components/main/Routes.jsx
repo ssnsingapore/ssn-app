@@ -58,7 +58,7 @@ class _Routes extends Component {
                 authorize={[Role.project_owner]}
               />
               <RouteAuthenticated
-                path="/project_owner/new_project"
+                path="/project_owner/projects/new"
                 component={ProjectOwnerNewProject}
                 authorize={[Role.project_owner]}
               />
