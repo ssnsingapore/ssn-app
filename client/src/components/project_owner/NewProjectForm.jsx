@@ -98,9 +98,6 @@ class _NewProjectForm extends Component {
       volunteerRequirementsDescription,
       volunteerBenefitsDescription,
     };
-
-    this.props.resetAllFields();
-    this.resetAllSubFormFields();
     
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
@@ -112,15 +109,15 @@ class _NewProjectForm extends Component {
 
     if (response.isSuccessful) {
       showAlert('projectAddedSuccess', AlertType.SUCCESS, PROJECT_ADDED_SUCCESS_MESSAGE);
+      this.props.resetAllFields();
+      this.resetAllSubFormFields();
+      this.setState({ shouldRedirect: true});
     }
 
     if (response.hasError) {
       const errors = await extractErrors(response);
       showAlert('projectAddedFailure', AlertType.ERROR, formatErrors(errors));
     }
-
-    this.setState({ shouldRedirect: true});
-
   }
 
   handleAddVolunteerRequirement = () => {
