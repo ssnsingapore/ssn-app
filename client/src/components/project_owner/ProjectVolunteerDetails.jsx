@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid, Paper, TextField, Typography, IconButton } from '@material-ui/core';
 import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@material-ui/icons';
@@ -6,76 +6,77 @@ import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@m
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 import { VolunteerRequirementForm } from 'components/project_owner/VolunteerRequirementForm';
 
-class _ProjectVolunteerDetails extends Component {
+const renderVolunteerRequirements = (volunteerRequirementRefs, classes, handleDeleteVolunteerRequirement ) => {
 
-
-  renderVolunteerRequirements = () => {
-    const { volunteerRequirementRefs, classes } = this.props;
-
-    return volunteerRequirementRefs.map((volunteerRequirementRef, i) => {
-      return (
-        <div key={i} className={classes.volunteerRow}>
-          <VolunteerRequirementForm ref={volunteerRequirementRef} />
-          <IconButton onClick={() => this.props.handleDeleteVolunteerRequirement(i)} className={classes.button}>
-            <RemoveCircleIcon />
-          </IconButton>
-        </div>
-      );
-    });
-  }
-
-  render() {
-    const { FieldName, fields, handleChange, classes } = this.props;
+  return volunteerRequirementRefs.map((volunteerRequirementRef, i) => {
     return (
-      <React.Fragment>
-        <Paper square className={classes.paper}>
-          <Typography variant="headline">Volunteer Details</Typography>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              InputLabelProps={{ shrink: true}}
-              label='Description of Volunteers Needed'
-              margin='normal'
-              name={FieldName.volunteerRequirementsDescription}
-              id={FieldName.volunteerRequirementsDescription}
-              key={FieldName.volunteerRequirementsDescription}
-              value={fieldValue(fields, FieldName.volunteerRequirementsDescription)}
-              error={fieldHasError(fields, FieldName.volunteerRequirementsDescription)}
-              helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
-              onChange={handleChange}
-              multiline
-              className={classes.textField}
-            />
-
-            {this.renderVolunteerRequirements()}
-
-            <IconButton
-              onClick={this.props.handleAddVolunteerRequirement}
-              className={classes.button}
-            >
-              <AddCircleIcon />
-            </IconButton>
-
-            <TextField
-              fullWidth
-              InputLabelProps={{ shrink: true}}
-              label='Volunteer Benefits'
-              margin='normal'
-              name={FieldName.volunteerBenefitsDescription}
-              id={FieldName.volunteerBenefitsDescription}
-              key={FieldName.volunteerBenefitsDescription}
-              value={fieldValue(fields, FieldName.volunteerBenefitsDescription)}
-              error={fieldHasError(fields, FieldName.volunteerBenefitsDescription)}
-              helper={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
-              onChange={handleChange}
-              multiline
-            />
-          </Grid>
-        </Paper>
-      </React.Fragment>
+      <div key={i} className={classes.volunteerRow}>
+        <VolunteerRequirementForm ref={volunteerRequirementRef} />
+        <IconButton onClick={() => handleDeleteVolunteerRequirement(i)} className={classes.button}>
+          <RemoveCircleIcon />
+        </IconButton>
+      </div>
     );
-  }
-}
+  });
+};
+
+const _ProjectVolunteerDetails = ({
+  volunteerRequirementRefs,
+  classes,
+  handleDeleteVolunteerRequirement,
+  FieldName,
+  fields,
+  handleChange,
+  handleAddVolunteerRequirement }) => {
+  return (
+    <React.Fragment>
+      <Paper square className={classes.paper}>
+        <Typography variant="headline">Volunteer Details</Typography>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            InputLabelProps={{ shrink: true}}
+            label='Description of Volunteers Needed'
+            margin='normal'
+            name={FieldName.volunteerRequirementsDescription}
+            id={FieldName.volunteerRequirementsDescription}
+            key={FieldName.volunteerRequirementsDescription}
+            value={fieldValue(fields, FieldName.volunteerRequirementsDescription)}
+            error={fieldHasError(fields, FieldName.volunteerRequirementsDescription)}
+            helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
+            onChange={handleChange}
+            multiline
+            className={classes.textField}
+          />
+
+          {renderVolunteerRequirements(volunteerRequirementRefs, classes, handleDeleteVolunteerRequirement)}
+
+          <IconButton
+            onClick={handleAddVolunteerRequirement}
+            className={classes.button}
+          >
+            <AddCircleIcon />
+          </IconButton>
+
+          <TextField
+            fullWidth
+            InputLabelProps={{ shrink: true}}
+            label='Volunteer Benefits'
+            margin='normal'
+            name={FieldName.volunteerBenefitsDescription}
+            id={FieldName.volunteerBenefitsDescription}
+            key={FieldName.volunteerBenefitsDescription}
+            value={fieldValue(fields, FieldName.volunteerBenefitsDescription)}
+            error={fieldHasError(fields, FieldName.volunteerBenefitsDescription)}
+            helper={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
+            onChange={handleChange}
+            multiline
+          />
+        </Grid>
+      </Paper>
+    </React.Fragment>
+  );
+};
 
 const styles = theme => ({
   root: {
