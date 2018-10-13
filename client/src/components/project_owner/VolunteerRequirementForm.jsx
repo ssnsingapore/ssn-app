@@ -33,7 +33,7 @@ class _VolunteerRequirementForm extends React.Component {
   render() {
     const { fields, handleChange, classes } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <FormControl className={classes.volTypeDropdown}>
           <InputLabel htmlFor={VolunteerRequirementFieldName.type} shrink>
           Type of Volunteer
@@ -41,10 +41,9 @@ class _VolunteerRequirementForm extends React.Component {
           <Select
             name={VolunteerRequirementFieldName.type}
             id={VolunteerRequirementFieldName.type}
-            key={VolunteerRequirementFieldName.type} 
+            key={VolunteerRequirementFieldName.type}
             value={fieldValue(fields, VolunteerRequirementFieldName.type)}
             error={fieldHasError(fields, VolunteerRequirementFieldName.type)}
-            helperText={fieldErrorText(fields, VolunteerRequirementFieldName.type)}
             onChange={handleChange}
           >
             {Object.values(VolunteerRequirementType).map(
@@ -57,7 +56,7 @@ class _VolunteerRequirementForm extends React.Component {
               })}
           </Select>
         </FormControl>
-        <TextField 
+        <TextField
           InputLabelProps={{ shrink: true}}
           label='No. of Volunteers'
           margin='normal'
@@ -70,7 +69,7 @@ class _VolunteerRequirementForm extends React.Component {
           onChange={handleChange}
           className={classes.textfield}
         />
-        <TextField 
+        <TextField
           InputLabelProps={{ shrink: true}}
           label='Commitment Level'
           margin='normal'
@@ -83,7 +82,7 @@ class _VolunteerRequirementForm extends React.Component {
           onChange={handleChange}
           className={classes.textfield}
         />
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -96,19 +95,17 @@ const styles = theme => ({
     marginBottom: '0px',
     width: '33%',
     marginRight: '4px',
-    // height: '44px',
   },
   textfield: {
     marginTop: '0px',
     marginBottom: '0px',
     width: '32%',
     marginRight: '4px',
-    // height: '40px',
   },
-}); 
+});
 
 
-export const VolunteerRequirementForm = 
+export const VolunteerRequirementForm =
 withForm(
   VolunteerRequirementFieldName,
   volunteerRequirementConstraints

@@ -31,8 +31,8 @@ const constraints = {
   [FieldName.volunteerBenefitsDescription]: {
     presence: { allowEmpty: true },
     length: { maximum: 500 },
-  }, 
-  
+  },
+
 };
 
 const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
@@ -44,7 +44,7 @@ class _NewProjectForm extends Component {
       volunteerRequirementRefs: [
         React.createRef(),
       ],
-      isSubmitting: false, 
+      isSubmitting: false,
       shouldRedirect: false,
     };
   }
@@ -74,7 +74,7 @@ class _NewProjectForm extends Component {
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
-    const { volunteerRequirementsDescription, 
+    const { volunteerRequirementsDescription,
       volunteerBenefitsDescription} = this.props.valuesForAllFields();
 
     const volunteerRequirements = this.valuesForAllSubFormFields();
@@ -98,12 +98,12 @@ class _NewProjectForm extends Component {
       volunteerRequirementsDescription,
       volunteerBenefitsDescription,
     };
-    
+
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert    
+    const response = await requestWithAlert
       .post('/api/v1/projects/add', { project: newProject }, { authenticated: true });
     this.setState({ isSubmitting: false });
 
@@ -142,7 +142,7 @@ class _NewProjectForm extends Component {
       return (
         <div key={i} className={classes.volunteerRow}>
           <VolunteerRequirementForm ref={volunteerRequirementRef} />
-          <IconButton onClick={() => this.handleDeleteVolunteerRequirement(i)} mini className={classes.button}>
+          <IconButton onClick={() => this.handleDeleteVolunteerRequirement(i)} className={classes.button}>
             <RemoveCircleIcon />
           </IconButton>
         </div>
@@ -152,53 +152,51 @@ class _NewProjectForm extends Component {
 
   renderVolunteerDetails() {
     const { fields, handleChange, classes } = this.props;
-    return ( 
+    return (
       <React.Fragment>
         <Paper square className={classes.paper}>
           <Typography variant="headline">Volunteer Details</Typography>
           <Grid item xs={12}>
-            <Typography>
-              <TextField 
-                fullWidth
-                InputLabelProps={{ shrink: true}}
-                label='Description of Volunteers Needed'
-                margin='normal'
-                name={FieldName.volunteerRequirementsDescription}
-                id={FieldName.volunteerRequirementsDescription}
-                key={FieldName.volunteerRequirementsDescription}
-                value={fieldValue(fields, FieldName.volunteerRequirementsDescription)}
-                error={fieldHasError(fields, FieldName.volunteerRequirementsDescription)}
-                helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
-                onChange={handleChange}
-                multiline
-                className={classes.textField}
-              />
+            <TextField
+              fullWidth
+              InputLabelProps={{ shrink: true}}
+              label='Description of Volunteers Needed'
+              margin='normal'
+              name={FieldName.volunteerRequirementsDescription}
+              id={FieldName.volunteerRequirementsDescription}
+              key={FieldName.volunteerRequirementsDescription}
+              value={fieldValue(fields, FieldName.volunteerRequirementsDescription)}
+              error={fieldHasError(fields, FieldName.volunteerRequirementsDescription)}
+              helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
+              onChange={handleChange}
+              multiline
+              className={classes.textField}
+            />
 
-              {/* <Typography variant="caption" style={{ marginBottom: '20px' }}>Type of Volunteers Needed</Typography> */}
-              {this.renderVolunteerRequirements()}
+            {/* <Typography variant="caption" style={{ marginBottom: '20px' }}>Type of Volunteers Needed</Typography> */}
+            {this.renderVolunteerRequirements()}
 
-              <IconButton
-                onClick={this.handleAddVolunteerRequirement} 
-                className={classes.button} 
-              >
-                <AddCircleIcon />
-              </IconButton>
-              
-              <TextField 
-                fullWidth
-                InputLabelProps={{ shrink: true}}
-                label='Volunteer Benefits'
-                margin='normal'
-                name={FieldName.volunteerBenefitsDescription}
-                id={FieldName.volunteerBenefitsDescription}
-                key={FieldName.volunteerBenefitsDescription}
-                value={fieldValue(fields, FieldName.volunteerBenefitsDescription)}
-                error={fieldHasError(fields, FieldName.volunteerBenefitsDescription)}
-                helper={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
-                onChange={handleChange}
-                multiline
-              />
-            </Typography>
+            <IconButton
+              onClick={this.handleAddVolunteerRequirement}
+              className={classes.button}
+            >
+              <AddCircleIcon />
+            </IconButton>
+
+            <TextField
+              fullWidth
+              InputLabelProps={{ shrink: true}}
+              label='Volunteer Benefits'
+              margin='normal'
+              name={FieldName.volunteerBenefitsDescription}
+              id={FieldName.volunteerBenefitsDescription}
+              key={FieldName.volunteerBenefitsDescription}
+              value={fieldValue(fields, FieldName.volunteerBenefitsDescription)}
+              error={fieldHasError(fields, FieldName.volunteerBenefitsDescription)}
+              helper={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
+              onChange={handleChange}
+              multiline
+            />
           </Grid>
         </Paper>
       </React.Fragment>
@@ -238,11 +236,11 @@ class _NewProjectForm extends Component {
               <Typography variant="headline">Project Details</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12}> 
+          <Grid item xs={12}>
             <ProjectOwnerDetails />
           </Grid>
           <Grid item xs={12}>
-            <Button 
+            <Button
               key='submitButton'
               type="submit"
               size="medium"
@@ -301,17 +299,16 @@ const styles = theme => ({
     marginBottom: '25px',
   },
   volunteerRow: {
-    display: 'flex', 
-    alignItems: 'center',
+    display: 'flex',
     marginTop: '20px',
   },
-}); 
+});
 
 
 export const NewProjectForm = withContext(AppContext)(
   withStyles(styles)(
     withTheme()(
       withForm(
-        FieldName, 
+        FieldName,
         constraints
       )(_NewProjectForm))));
