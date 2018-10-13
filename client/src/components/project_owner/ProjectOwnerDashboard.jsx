@@ -35,7 +35,10 @@ class _ProjectOwnerDashboard extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert.get('/api/v1/project_counts');
+
+    const response = await requestWithAlert.get(
+      '/api/v1/project_owner/project_counts',
+      { authenticated: true });
 
     if (response.isSuccessful) {
       const counts = (await response.json()).counts;
@@ -57,7 +60,7 @@ class _ProjectOwnerDashboard extends Component {
 
   getTabLabel = projectState => {
     const { counts } = this.state;
-    return counts[projectState] ?
+    return counts[projectState] !== undefined ?
       `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})` :
       ProjectStateDisplayMapping[projectState];
   };

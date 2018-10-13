@@ -11,7 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
-  Button
+  Button,
 } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
@@ -37,13 +37,13 @@ class _ProjectListing extends Component {
     };
   }
 
-
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
     const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
-    const endpoint = '/api/v1/projects';
+
+    const endpoint = this.props.isForProjectOwner ? '/api/v1/project_owner/projects' : '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
-    const response = await requestWithAlert.get(endpoint + queryParams);
+    const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
@@ -98,7 +98,7 @@ class _ProjectListing extends Component {
     const {classes} = this.props;
 
     return (
-      <Grid container style={{justifyContent: "space-evenly"}}>
+      <Grid container style={{justifyContent: 'space-evenly'}}>
         <Button variant="contained" className={classes.button}>
           Edit
         </Button>
@@ -109,7 +109,7 @@ class _ProjectListing extends Component {
           Duplicate
         </Button>
       </Grid>
-    )
+    );
   }
 
   renderProjects = () => {
@@ -118,7 +118,7 @@ class _ProjectListing extends Component {
 
     return this.state.projects.map(project => {
       return (
-        <Grid container style={{alignItems: "center"}} item xs={12} key={project._id}>
+        <Grid container style={{alignItems: 'center'}} item xs={12} key={project._id}>
           <Grid item xs={gridSize}>
             <Link to={'/projects/' + project._id} className={classes.link}>
               <Card className={classes.card}>
@@ -227,7 +227,7 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-  }
+  },
 });
 
 export const ProjectListing = withContext(AppContext)(
