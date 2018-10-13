@@ -55,7 +55,7 @@ class _Projects extends Component {
 
   getTabLabel = (projectState) => {
     const { counts } = this.state;
-    return counts[projectState] ?
+    return counts[projectState] !== undefined ?
       `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})` :
       ProjectStateDisplayMapping[projectState];
   }
