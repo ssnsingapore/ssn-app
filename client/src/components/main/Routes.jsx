@@ -12,6 +12,7 @@ import { Project } from 'components/public/Project';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
 import { ProjectOwnerNewProject } from 'components/project_owner/ProjectOwnerNewProject';
+import { NewProjectForm } from 'components/project_owner/NewProjectForm';
 import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
 import { Role } from 'components/shared/roles';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
@@ -26,6 +27,7 @@ import { Login } from 'components/old/OldLogin';
 import { SignUp } from 'components/old/OldSignUp';
 import { ImageUpload } from 'components/old/ImageUpload';
 import { PasswordResetForm } from '../public/PasswordResetForm';
+import { NewProjectFormTest } from '../project_owner/NewProjectFormTest';
 
 class _Routes extends Component {
   render() {
@@ -37,10 +39,12 @@ class _Routes extends Component {
           <Route path="/admin" component={NavBar} /> 
           <div className={classes.content}>
             <Switch>
+              <Route path="/test" component={NewProjectFormTest} />
               <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={ProjectOwnerLoginForm} />
               <Route exact path="/signup" component={ProjectOwnerSignUpForm} />
               <Route exact path="/projects" component={Projects} />
+              <Route exact path="/project_owner/projects/add" component={NewProjectForm} /> 
               <Route exact path="/projects/:id" component={Project} />
 
               <Route

@@ -47,3 +47,15 @@ async function getProject(req, res) {
 
   return res.status(200).json({ project });
 }
+
+projectRouter.post('/projects/add', asyncWrap(postProject));
+async function postProject(req, res) {
+  const project = new Project({
+    ...req.body.project,
+    state: ProjectState.PENDING_APPROVAL,
+  });
+  await project.save();
+  return res
+    .status(201)
+    .json({ project: project.toJSON() });
+}
