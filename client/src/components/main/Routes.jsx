@@ -27,7 +27,6 @@ import { Login } from 'components/old/OldLogin';
 import { SignUp } from 'components/old/OldSignUp';
 import { ImageUpload } from 'components/old/ImageUpload';
 import { PasswordResetForm } from '../public/PasswordResetForm';
-import { NewProjectFormTest } from '../project_owner/NewProjectFormTest';
 
 class _Routes extends Component {
   render() {
