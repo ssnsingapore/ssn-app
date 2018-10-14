@@ -9,12 +9,9 @@ import {
   DialogContentText,
 } from '@material-ui/core';
 
-
 export class ProjectApprovalConfirmationDialog extends Component {
   state = {
-    isSubmitting: false,
   }
-
 
   renderDialogContent = () => {
     return (

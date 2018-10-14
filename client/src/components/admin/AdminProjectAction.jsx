@@ -5,8 +5,8 @@ import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 import {
   Grid,
-  Paper,
   BottomNavigation,
+  BottomNavigationAction,
   Button,
 } from '@material-ui/core';
 
@@ -126,51 +126,48 @@ class _AdminProjectAction extends Component {
     const { state } = this.state.project;
 
     return (
-      <div>
-        <Paper square>
-          <BottomNavigation  className={classes.bottomNavigation}>
-            <div className={classes.buttonGroup}>
-              
-              {
-                state === ProjectState.PENDING_APPROVAL && 
-                  <form onSubmit={this.handleReject}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      className={classes.buttonGrey}
-                    >
-              Reject
-                    </Button>
-                  </form>
-              }
+      <BottomNavigation  className={classes.bottomNavigation} showLabels={false}>
+        {/* TODO: Some warning message in inspector associated with bottom nav. Unsure how to fix */}
+        <div className={classes.buttonGroup}>
 
-              { 
-                ((state === ProjectState.PENDING_APPROVAL) || (state === ProjectState.REJECTED)) && 
-                <form onSubmit={this.handleConfirmationDialogBoxOpen}>
+          {
+            state === ProjectState.PENDING_APPROVAL && 
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    className={classes.buttonGrey}
+                    onClick={this.handleReject}
+                  >
+              Reject
+                  </Button>
+
+
+          }
+
+          { 
+            ((state === ProjectState.PENDING_APPROVAL) || (state === ProjectState.REJECTED)) && 
                   <Button
                     type="submit"
                     variant="contained"
                     color="secondary"
                     className={classes.button}
+                    onClick={this.handleConfirmationDialogBoxOpen}
                   >
                 Approve
                   </Button>
-                </form>
-            
-              }
-              <Button
-                variant="contained"
-                colour="default"
-                className={classes.button}
-                component={Link}
-                to="/admin/dashboard"
-              >
-                Back to dashboard
-              </Button>
-            </div>
-          </BottomNavigation>
-        </Paper>
-      </div>
+          }
+
+          <Button
+            variant="contained"
+            colour="default"
+            className={classes.button}
+            component={Link}
+            to="/admin/dashboard"
+          >
+                Back to Dashboard
+          </Button>
+        </div>
+      </BottomNavigation>
     );
   }
 
@@ -189,17 +186,17 @@ class _AdminProjectAction extends Component {
     }
     return(
       <Grid container>
+        <ProjectApprovalConfirmationDialog
+          open={this.state.confirmationDialogBoxOpen}
+          handleClose={this.handleConfirmationDialogBoxOpenClose}
+          handleApprove={this.handleApprove}
+        />
         <Grid item xs={12}>
-          {/* TODO: To be fixed, keeps redirecting to same page upon opening */}
-          <ProjectApprovalConfirmationDialog
-            open={this.state.confirmationDialogBoxOpen}
-            handleClose={this.handleConfirmationDialogBoxOpenClose}
-            handleApprove={this.handleApprove}/>
           <div className={classes.root}>
           Component made by Sabrina for project details listing for {id}
           </div>
         </Grid>
-        <Grid item xs={12}>{this.renderNavBar()}</Grid>
+        {this.renderNavBar()}
       </Grid>
     );
   }
