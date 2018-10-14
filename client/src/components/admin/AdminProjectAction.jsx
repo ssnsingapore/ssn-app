@@ -146,7 +146,7 @@ class _AdminProjectAction extends Component {
 
               { 
                 ((state === ProjectState.PENDING_APPROVAL) || (state === ProjectState.REJECTED)) && 
-                <form onSubmit={this.handleApprove}>
+                <form onSubmit={this.handleConfirmationDialogBoxOpen}>
                   <Button
                     type="submit"
                     variant="contained"
@@ -191,10 +191,10 @@ class _AdminProjectAction extends Component {
       <Grid container>
         <Grid item xs={12}>
           {/* TODO: To be fixed, keeps redirecting to same page upon opening */}
-          {/* <ProjectApprovalConfirmationDialog
+          <ProjectApprovalConfirmationDialog
             open={this.state.confirmationDialogBoxOpen}
             handleClose={this.handleConfirmationDialogBoxOpenClose}
-            handleApprove={this.handleApprove}/> */}
+            handleApprove={this.handleApprove}/>
           <div className={classes.root}>
           Component made by Sabrina for project details listing for {id}
           </div>
