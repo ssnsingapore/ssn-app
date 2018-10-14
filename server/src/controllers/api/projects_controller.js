@@ -1,19 +1,20 @@
 import express from 'express';
+// import passport from 'passport';
+
+
 import { asyncWrap } from 'util/async_wrapper';
 import { Project, ProjectState } from 'models/Project';
+// import { Role } from '../../models/Role';
 
 // eslint-disable-next-line no-unused-vars
-import { ProjectOwner } from 'models/ProjectOwner';
 
 export const projectRouter = express.Router();
 
 projectRouter.get('/projects', asyncWrap(getProjects));
 async function getProjects(req, res) {
-  // Params
   const pageSize = Number(req.query.pageSize) || 10;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
 
-  // Queries to mongodb
   const projects = await Project.find({ state: { $eq: projectState } })
     .limit(pageSize)
     .populate('projectOwner')
@@ -37,10 +38,8 @@ async function getProjectCounts(_req, res) {
 
 projectRouter.get('/projects/:id', asyncWrap(getProject));
 async function getProject(req, res) {
-  // Params
   const { id } = req.params;
 
-  // Queries to mongodb
   const project = await Project.findById(id)
     .populate('projectOwner')
     .exec();
@@ -48,7 +47,9 @@ async function getProject(req, res) {
   return res.status(200).json({ project });
 }
 
-projectRouter.put('/projects/:id', asyncWrap(approveProject));
+projectRouter.put('/projects/:id',
+  // passport.authenticate(`${Role.admin}Jwt`, { session: false, failWithError: true }),
+  asyncWrap(approveProject));
 async function approveProject(req, res) {
   const { id } = req.params;
 
@@ -70,24 +71,3 @@ async function postProject(req, res) {
   await project.save();
   return res.status(201).json({ project: project.toJSON() });
 }
-
-
-// projectRouter.post('/projects/:id/approve', asyncWrap(approveProject));
-// async function approveProject(req, res) {
-//   const { id } = req.params;
-//   const project = await Project.updateOne(
-//     { _id: id },
-//     { $set: { state: ProjectState.APPROVED_ACTIVE } }
-//   );
-//   return res.status(200).json({ project });
-// }
-
-// projectRouter.post('/projects/:id/reject', asyncWrap(rejectProject));
-// async function rejectProject(req, res) {
-//   const { id } = req.params;
-//   const project = await Project.updateOne(
-//     { _id: id },
-//     { $set: { state: ProjectState.REJECTED } }
-//   );
-//   return res.status(200).json({ project });
-// }
