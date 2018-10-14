@@ -23,7 +23,7 @@ async function getProjects(req, res) {
 }
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
-async function getProjectCounts(req, res) {
+async function getProjectCounts(_req, res) {
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
@@ -48,6 +48,19 @@ async function getProject(req, res) {
   return res.status(200).json({ project });
 }
 
+projectRouter.put('/projects/:id', asyncWrap(approveProject));
+async function approveProject(req, res) {
+  const { id } = req.params;
+
+  const { state } = req.body.project;
+
+  const project = await Project.updateOne(
+    { _id: id },
+    { $set: { state } }
+  );
+  return res.status(200).json({ project });
+}
+
 projectRouter.post('/projects/new', asyncWrap(postProject));
 async function postProject(req, res) {
   const project = new Project({
@@ -59,22 +72,22 @@ async function postProject(req, res) {
 }
 
 
-projectRouter.post('/projects/:id/approve', asyncWrap(approveProject));
-async function approveProject(req, res) {
-  const { id } = req.params;
-  const project = await Project.updateOne(
-    { _id: id },
-    { $set: { state: ProjectState.APPROVED_ACTIVE } }
-  );
-  return res.status(200).json({ project });
-}
+// projectRouter.post('/projects/:id/approve', asyncWrap(approveProject));
+// async function approveProject(req, res) {
+//   const { id } = req.params;
+//   const project = await Project.updateOne(
+//     { _id: id },
+//     { $set: { state: ProjectState.APPROVED_ACTIVE } }
+//   );
+//   return res.status(200).json({ project });
+// }
 
-projectRouter.post('/projects/:id/reject', asyncWrap(rejectProject));
-async function rejectProject(req, res) {
-  const { id } = req.params;
-  const project = await Project.updateOne(
-    { _id: id },
-    { $set: { state: ProjectState.REJECTED } }
-  );
-  return res.status(200).json({ project });
-}
+// projectRouter.post('/projects/:id/reject', asyncWrap(rejectProject));
+// async function rejectProject(req, res) {
+//   const { id } = req.params;
+//   const project = await Project.updateOne(
+//     { _id: id },
+//     { $set: { state: ProjectState.REJECTED } }
+//   );
+//   return res.status(200).json({ project });
+// }
