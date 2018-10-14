@@ -39,11 +39,19 @@ class _ProjectListing extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
+    const {
+      pageSize = 10,
+      projectState = ProjectState.APPROVED_ACTIVE,
+    } = this.props;
 
-    const endpoint = this.props.isForProjectOwner ? '/api/v1/project_owner/projects' : '/api/v1/projects';
-    const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
-    const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
+    const endpoint = this.props.isForProjectOwner
+      ? '/api/v1/project_owner/projects'
+      : '/api/v1/projects';
+    const queryParams =
+      '?pageSize=' + pageSize + '&projectState=' + projectState;
+    const response = await requestWithAlert.get(endpoint + queryParams, {
+      authenticated: true,
+    });
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
@@ -95,10 +103,10 @@ class _ProjectListing extends Component {
   };
 
   renderActionButtons() {
-    const {classes} = this.props;
+    const { classes } = this.props;
 
     return (
-      <Grid container style={{justifyContent: 'space-evenly'}}>
+      <Grid container style={{ justifyContent: 'space-evenly' }}>
         <Button variant="contained" className={classes.button}>
           Edit
         </Button>
@@ -114,14 +122,21 @@ class _ProjectListing extends Component {
 
   renderProjects = () => {
     const { classes, isForProjectOwner, isForAdminRoute } = this.props;
-    const gridSize = isForProjectOwner? 8 : 12;
+    const gridSize = isForProjectOwner ? 8 : 12;
 
     return this.state.projects.map(project => {
-
-      const linkEndpoint = isForAdminRoute ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
+      const linkEndpoint = isForAdminRoute
+        ? `/admin/projects/${project._id}`
+        : `/projects/${project._id}`;
 
       return (
-        <Grid container style={{alignItems: 'center'}} item xs={12} key={project._id}>
+        <Grid
+          container
+          style={{ alignItems: 'center' }}
+          item
+          xs={12}
+          key={project._id}
+        >
           <Grid item xs={gridSize}>
             <Link to={linkEndpoint} className={classes.link}>
               <Card className={classes.card}>
