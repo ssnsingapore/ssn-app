@@ -36,8 +36,8 @@ class _AdminProjectAction extends Component {
     const response = await requestWithAlert.get(`/api/v1/projects/${id}`);
 
     if (response.isSuccessful) {
-      const projectState = (await response.json()).project.state;
-      this.setState({ projectState });
+      const { project } = (await response.json());
+      this.setState({ project });
     }
 
     if (response.hasError) {
@@ -49,52 +49,59 @@ class _AdminProjectAction extends Component {
     this.setState({ isLoading: false });
 
   }
+  
+  handleApprove = async (event) => {
 
-  handleReject = async (event) => {
-    // TODO: this does not work. POSTMAN works, but execute does not 
-    // TODO: make it an authenticated route
     event.preventDefault();
 
     const { id } = this.props.match.params;
-    const endpoint = `/api/v1/projects/${id}/reject`;
+    const endpoint = `/api/v1/projects/${id}`;
+
+    const updatedProject = { project: {
+      state: ProjectState.APPROVE_ACTIVE,
+    } };
+
+    console.log('UDPATED', updatedProject);
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.execute(endpoint, { authenticated: false });
+    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: false });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      showAlert('projectRejectionSuccess', AlertType.SUCCESS, PROJECT_REJECTED_SUCCESS_MESSAGE);
+      showAlert('projectApprovalSuccess', AlertType.SUCCESS, PROJECT_APPROVED_SUCCESS_MESSAGE);
       this.setState({ shouldRedirect: true});
     }
 
     if (response.hasError) {
       const errors = await extractErrors(response);
-      showAlert('projectRejectionFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert('projectApprovalFailure', AlertType.ERROR, formatErrors(errors));
     }
 
-  }
-  
-  handleApprove = async (event) => {
-    // TODO: this does not work. POSTMAN works, but execute does not 
-    // TODO: make it an authenticated route
+  };
+
+  handleReject = async (event) => {
 
     event.preventDefault();
 
     const { id } = this.props.match.params;
-    const endpoint = `/api/v1/projects/${id}/approve`;
+    const endpoint = `/api/v1/projects/${id}`;
+
+    const updatedProject = { project: {
+      state: ProjectState.REJECTED,
+    } };
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.execute(endpoint, { authenticated: false });
+    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: false });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      showAlert('projectApprovalSuccess', AlertType.SUCCESS, PROJECT_APPROVED_SUCCESS_MESSAGE);
+      showAlert('projectApprovalSuccess', AlertType.SUCCESS, PROJECT_REJECTED_SUCCESS_MESSAGE);
       this.setState({ shouldRedirect: true});
     }
 
@@ -111,28 +118,35 @@ class _AdminProjectAction extends Component {
   }
 
   handleConfirmationDialogBoxOpenClose = () => {
-    // this.setState({ confirmationDialogBoxOpen: false });
+    this.setState({ confirmationDialogBoxOpen: false });
   }
 
   renderNavBar() {
     const { classes } = this.props;
-    const { projectState } = this.state;
-    if (projectState === ProjectState.PENDING_APPROVAL) {
-      return (
-        <div>
-          <Paper square>
-            <BottomNavigation  className={classes.bottomNavigation}>
-              <div className={classes.buttonGroup}>
-                <form onSubmit={this.handleReject}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    className={classes.buttonGrey}
-                  >
-                Reject
-                  </Button>
-                </form>
-                <form onSubmit={this.handleConfirmationDialogBoxOpen}>
+    const { state } = this.state.project;
+
+    return (
+      <div>
+        <Paper square>
+          <BottomNavigation  className={classes.bottomNavigation}>
+            <div className={classes.buttonGroup}>
+              
+              {
+                state === ProjectState.PENDING_APPROVAL && 
+                  <form onSubmit={this.handleReject}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      className={classes.buttonGrey}
+                    >
+              Reject
+                    </Button>
+                  </form>
+              }
+
+              { 
+                ((state === ProjectState.PENDING_APPROVAL) || (state === ProjectState.REJECTED)) && 
+                <form onSubmit={this.handleApprove}>
                   <Button
                     type="submit"
                     variant="contained"
@@ -142,41 +156,22 @@ class _AdminProjectAction extends Component {
                 Approve
                   </Button>
                 </form>
-                <Button
-                  variant="contained"
-                  colour="default"
-                  className={classes.button}
-                  component={Link}
-                  to="/admin/dashboard"
-                >
+            
+              }
+              <Button
+                variant="contained"
+                colour="default"
+                className={classes.button}
+                component={Link}
+                to="/admin/dashboard"
+              >
                 Back to dashboard
-                </Button>
-              </div>
-            </BottomNavigation>
-          </Paper>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <Paper square>
-            <BottomNavigation  className={classes.bottomNavigation}>
-              <div className={classes.buttonGroup}>
-                <Button
-                  variant="contained"
-                  colour="default"
-                  className={classes.button}
-                  component={Link}
-                  to="/admin/dashboard"
-                >
-            Back to dashboard
-                </Button>
-              </div>
-            </BottomNavigation>
-          </Paper>
-        </div>
-      );
-    }
+              </Button>
+            </div>
+          </BottomNavigation>
+        </Paper>
+      </div>
+    );
   }
 
   render() {
@@ -186,12 +181,12 @@ class _AdminProjectAction extends Component {
     if (this.state.isLoading) {
       return <Spinner />;
     }
-    // if (this.state.shouldRedirect) {
-    //   return(
-    //     <Redirect to={{
-    //       pathname: '/admin/dashboard' }}/>
-    //   );
-    // }
+    if (this.state.shouldRedirect) {
+      return(
+        <Redirect to={{
+          pathname: '/admin/dashboard' }}/>
+      );
+    }
     return(
       <Grid container>
         <Grid item xs={12}>
