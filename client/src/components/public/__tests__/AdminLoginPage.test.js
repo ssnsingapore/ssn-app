@@ -110,7 +110,7 @@ describe('AdminLoginPage', () => {
       });
     });
 
-    describe('when there are no validation errors', () => {
+    describe('when there are no validation errors and login is successful', () => {
       let adminLoginComponent;
 
       beforeEach(() => {
@@ -122,7 +122,7 @@ describe('AdminLoginPage', () => {
           return new Promise(resolve => resolve({ isSuccessful: true }));
         });
 
-        adminLoginComponent = component.dive().dive();
+        adminLoginComponent = formComponent.dive();
         
         adminLoginComponent.instance().handleSubmit(event);
       });
@@ -137,6 +137,31 @@ describe('AdminLoginPage', () => {
 
       it('sets a login successful message', () => {
         expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, 'You\'ve successfully logged in!');
+      });
+    });
+
+    describe('when login is not successful', () => {
+      let adminLoginComponent;
+  
+      beforeEach(() => {
+        component.props().context.utils.authenticator.loginAdmin.mockImplementation(() => {
+          return new Promise(resolve => resolve({ 
+            hasError: true,
+            status: 401, 
+          }));
+        });
+  
+        adminLoginComponent = component.dive().dive();
+
+        adminLoginComponent.setProps({
+          validateAllFields: jest.fn().mockImplementation(() => true),
+        });
+  
+        adminLoginComponent.instance().handleSubmit(event);
+      });
+  
+      it('displays login failure message', () => {
+        expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginFailure', AlertType.ERROR, 'Looks like you\'ve keyed in the wrong credentials. Try again!');
       });
     });
   });
