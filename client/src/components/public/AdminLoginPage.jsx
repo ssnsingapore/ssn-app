@@ -28,7 +28,7 @@ const constraints = {
   },
 };
 
-class _AdminLoginPage extends Component {
+export class _AdminLoginPage extends Component {
   constructor(props) {
     super(props);
 
