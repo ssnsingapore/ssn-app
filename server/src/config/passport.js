@@ -79,62 +79,54 @@ export const configurePassport = () => {
     }),
   ));
 
+
+  const getUserFromJwt = model => (async (jwtPayload, done) => {
+    try {
+      const { userid } = jwtPayload;
+      const user = await model.findOne({ _id: userid });
+      if (!user) {
+        return done(null, false, {});
+      }
+
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
+  });
+
+  const secretOrKeyProvider = model => async (_req, rawJwtToken, done) => {
+    const payload = jwt.decode(rawJwtToken);
+    const { userid } = payload;
+    const user = await model.findOne({ _id: userid });
+    return done(null, `${config.AUTH_SECRET}-${user.hashedPassword}-${user.lastLogoutTime}`);
+  };
+
   // Workaround to get signing secret which requires
   // user's hashed password and last logout time
   // Not the most ideal as we have to hit the DB twice
   // with passport-jwts current API
-  const secretOrKeyProviderForUser = async (_req, rawJwtToken, done) => {
-    const payload = jwt.decode(rawJwtToken);
-    const { userid } = payload;
-    const user = await User.findOne({ _id: userid });
-
-    return done(null, `${config.AUTH_SECRET}-${user.hashedPassword}-${user.lastLogoutTime}`);
-  };
 
   passport.use(`${Role.user}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
-      secretOrKeyProvider: secretOrKeyProviderForUser,
+      secretOrKeyProvider: secretOrKeyProvider(User),
     },
-    (async (jwtPayload, done) => {
-      try {
-        const { userid } = jwtPayload;
-        const user = await User.findOne({ _id: userid });
-        if (!user) {
-          return done(null, false, {});
-        }
-
-        return done(null, user);
-      } catch (err) {
-        return done(err);
-      }
-    })
+    getUserFromJwt(User)
   ));
 
-  const secretOrKeyProviderForProjectOwner = async (_req, rawJwtToken, done) => {
-    const payload = jwt.decode(rawJwtToken);
-    const { userid } = payload;
-    const user = await ProjectOwner.findOne({ _id: userid });
-
-    return done(null, `${config.AUTH_SECRET}-${user.hashedPassword}-${user.lastLogoutTime}`);
-  };
   passport.use(`${Role.project_owner}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
-      secretOrKeyProvider: secretOrKeyProviderForProjectOwner,
+      secretOrKeyProvider: secretOrKeyProvider(ProjectOwner),
     },
-    (async (jwtPayload, done) => {
-      try {
-        const { userid } = jwtPayload;
-        const user = await ProjectOwner.findOne({ _id: userid });
-        if (!user) {
-          return done(null, false, {});
-        }
+    getUserFromJwt(ProjectOwner)
+  ));
 
-        return done(null, user);
-      } catch (err) {
-        return done(err);
-      }
-    })
+  passport.use(`${Role.admin}Jwt`, new JwtStrategy(
+    {
+      jwtFromRequest: extractJwtFromCookie,
+      secretOrKeyProvider: secretOrKeyProvider(Admin),
+    },
+    getUserFromJwt(Admin)
   ));
 };
