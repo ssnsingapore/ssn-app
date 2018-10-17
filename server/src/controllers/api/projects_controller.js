@@ -25,7 +25,7 @@ async function getProjects(req, res) {
 
 projectRouter.get(
   '/project_owner/projects',
-  passport.authenticate(`${Role.project_owner}Jwt`, { session: false, failWithError: true }),
+  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
   asyncWrap(getProjectsForProjectOwner)
 );
 async function getProjectsForProjectOwner(req, res) {
@@ -54,7 +54,7 @@ async function getProjectCounts(_req, res) {
 }
 
 projectRouter.get('/project_owner/project_counts',
-  passport.authenticate(`${Role.project_owner}Jwt`, { session: false, failWithError: true }),
+  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
   asyncWrap(getProjectCountsForProjectOwner));
 async function getProjectCountsForProjectOwner(req, res) {
   const counts = {};
@@ -94,7 +94,7 @@ async function postProject(req, res) {
 // =============================================================================
 
 projectRouter.put('/admin/projects/:id',
-  passport.authenticate(`${Role.admin}Jwt`, { session: false, failWithError: true }),
+  passport.authenticate(`${Role.ADMIN}Jwt`, { session: false, failWithError: true }),
   asyncWrap(changeProjectState));
 async function changeProjectState(req, res) {
   const { id } = req.params;

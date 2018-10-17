@@ -35,7 +35,7 @@ async function registerNewUser(req, res) {
     email,
   });
 
-  const errorsObject = await new SignUpService(user, password, Role.user).execute();
+  const errorsObject = await new SignUpService(user, password, Role.USER).execute();
 
   if (errorsObject) {
     return res

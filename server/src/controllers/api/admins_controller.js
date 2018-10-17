@@ -18,7 +18,7 @@ async function getAdmins(_req, res) {
 
 adminsRouter.post(
   '/admins/login',
-  passport.authenticate(`${Role.admin}Local`, { session: false, failWithError: true }),
+  passport.authenticate(`${Role.ADMIN}Local`, { session: false, failWithError: true }),
   asyncWrap(login)
 );
 async function login(req, res) {

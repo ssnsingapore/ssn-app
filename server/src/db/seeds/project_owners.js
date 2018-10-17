@@ -17,7 +17,7 @@ projectOwner.setPassword('test123').then(async () => {
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0-6cOe8ak3u1PWfiFXOmDrOgKan1exVg-T4lryx41j-W_78Hubg',
       organisationName: 'Cat Society',
       description: 'Everything cats.',
-      role: Role.project_owner,
+      role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
       confirmedAt: new Date(),
     },
@@ -32,7 +32,7 @@ projectOwner.setPassword('test123').then(async () => {
       organisationName: 'Earth Society (Singapore)',
       description:
       'Earth Society is a non-profit organisation formed by a team of individuals who are passionate about environmental protection.',
-      role: Role.project_owner,
+      role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
       confirmedAt: new Date(),
     },
@@ -45,7 +45,7 @@ projectOwner.setPassword('test123').then(async () => {
       profilePhotoUrl:
       'http://img.photobucket.com/albums/v252/bellper/1B61C472-A0F6-4ED1-8EFD-3D86B8ABA8EB.gif',
       personalBio: 'Save the bees for the betterment of hungry bears.',
-      role: Role.project_owner,
+      role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
       confirmedAt: new Date(),
     },

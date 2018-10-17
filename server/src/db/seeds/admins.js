@@ -8,17 +8,17 @@ admin.setPassword('test123').then(async () => {
   const adminAttributes = [
     {
       email: 'adam4@test.com',
-      role: Role.admin,
+      role: Role.ADMIN,
       hashedPassword: admin.hashedPassword,
     },
     {
       email: 'adam6@test.com',
-      role: Role.admin,
+      role: Role.ADMIN,
       hashedPassword: admin.hashedPassword,
     },
     {
       email: 'adam8@test.com',
-      role: Role.admin,
+      role: Role.ADMIN,
       hashedPassword: admin.hashedPassword,
     },
   ];

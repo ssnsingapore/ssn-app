@@ -32,7 +32,7 @@ async function registerNewProjectOwner(req, res) {
   });
   const { password } = req.body.projectOwner;
 
-  const errorsObject = await new SignUpService(projectOwner, password, Role.project_owner).execute();
+  const errorsObject = await new SignUpService(projectOwner, password, Role.PROJECT_OWNER).execute();
 
   if (errorsObject) {
     return res
@@ -47,7 +47,7 @@ async function registerNewProjectOwner(req, res) {
 
 projectOwnersRouter.post(
   '/project_owners/login',
-  passport.authenticate(`${Role.project_owner}Local`,
+  passport.authenticate(`${Role.PROJECT_OWNER}Local`,
     { session: false, failWithError: true }),
   asyncWrap(login)
 );

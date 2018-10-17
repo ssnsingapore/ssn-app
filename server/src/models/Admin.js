@@ -22,8 +22,8 @@ const AdminSchema = new mongoose.Schema(
     lastLogoutTime: Date,
     role: {
       type: String,
-      enum: [Role.admin],
-      default: [Role.admin],
+      enum: [Role.ADMIN],
+      default: [Role.ADMIN],
       required: [true, 'cannot be blank'],
     },
   },

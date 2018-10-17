@@ -6,19 +6,24 @@ import { NavBar } from './NavBar';
 import { Footer } from './Footer';
 import { NotFound } from './NotFound';
 import { Unauthorized } from './Unauthorized';
+
+import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
+
 import { HomePage } from 'components/public/HomePage';
 import { Projects } from 'components/public/Projects';
 import { Project } from 'components/public/Project';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
+import { ProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
+import { AdminLoginPage } from 'components/public/AdminLoginPage';
+import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
+
 import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
 import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
-import { RouteAuthenticated } from 'components/shared/RouteAuthenticated';
-import { Role } from 'components/shared/roles';
-import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
-import { AdminLoginPage } from 'components/public/AdminLoginPage';
-import { AdminDashboard } from 'components/public/AdminDashboard';
-import { ProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
+
+import { AdminDashboard } from 'components/admin/AdminDashboard';
 import { AdminProjectDetails } from 'components/admin/AdminProjectDetails';
+
+import { Role } from 'components/shared/enums/Role';
 
 // Components only for reference
 import { About } from 'components/old/About';
@@ -54,12 +59,12 @@ class _Routes extends Component {
               <RouteAuthenticated
                 path="/project_owner/dashboard"
                 component={ProjectOwnerDashboard}
-                authorize={[Role.project_owner]}
+                authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
                 path="/project_owner/projects/new"
                 component={ProjectOwnerNewProjectForm}
-                authorize={[Role.project_owner]}
+                authorize={[Role.PROJECT_OWNER]}
               />
 
               <Route exact path="/admin" component={AdminLoginPage} />
@@ -67,14 +72,14 @@ class _Routes extends Component {
                 exact
                 path="/admin/dashboard"
                 component={AdminDashboard}
-                authorize={[Role.admin]}
+                authorize={[Role.ADMIN]}
               />
 
               <RouteAuthenticated 
                 exact 
                 path="/admin/projects/:id" 
                 component={AdminProjectDetails}
-                authorize={[Role.admin]}
+                authorize={[Role.ADMIN]}
               />
 
               {/* Routes to old components for reference */}
@@ -84,7 +89,7 @@ class _Routes extends Component {
                 exact
                 path="/todos"
                 component={Todos}
-                authorize={[Role.user]}
+                authorize={[Role.USER]}
               />
               <Route path="/about" component={About} />
               <Route path="/image_upload" component={ImageUpload} />

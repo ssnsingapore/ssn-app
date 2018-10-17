@@ -7,7 +7,7 @@ import { authMiddleware } from 'util/auth';
 
 export const todosRouter = express.Router();
 
-todosRouter.use('/todos', authMiddleware({ authorize: Role.user }));
+todosRouter.use('/todos', authMiddleware({ authorize: Role.USER }));
 
 todosRouter.get('/todos', asyncWrap(getTodos));
 async function getTodos(_req, res) {

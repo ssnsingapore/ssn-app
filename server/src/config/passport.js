@@ -22,7 +22,7 @@ export const configurePassport = () => {
   // PASSPORT CONFIGURATION
   // =============================================================================
 
-  passport.use(`${Role.user}Local`, new LocalStrategy(
+  passport.use(`${Role.USER}Local`, new LocalStrategy(
     {
       usernameField: 'user[email]',
       passwordField: 'user[password]',
@@ -41,7 +41,7 @@ export const configurePassport = () => {
     }),
   ));
 
-  passport.use(`${Role.admin}Local`, new LocalStrategy(
+  passport.use(`${Role.ADMIN}Local`, new LocalStrategy(
     {
       usernameField: 'user[email]',
       passwordField: 'user[password]',
@@ -60,7 +60,7 @@ export const configurePassport = () => {
     }),
   ));
 
-  passport.use(`${Role.project_owner}Local`, new LocalStrategy(
+  passport.use(`${Role.PROJECT_OWNER}Local`, new LocalStrategy(
     {
       usernameField: 'user[email]',
       passwordField: 'user[password]',
@@ -106,7 +106,7 @@ export const configurePassport = () => {
   // Not the most ideal as we have to hit the DB twice
   // with passport-jwts current API
 
-  passport.use(`${Role.user}Jwt`, new JwtStrategy(
+  passport.use(`${Role.USER}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
       secretOrKeyProvider: secretOrKeyProvider(User),
@@ -114,7 +114,7 @@ export const configurePassport = () => {
     getUserFromJwt(User)
   ));
 
-  passport.use(`${Role.project_owner}Jwt`, new JwtStrategy(
+  passport.use(`${Role.PROJECT_OWNER}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
       secretOrKeyProvider: secretOrKeyProvider(ProjectOwner),
@@ -122,7 +122,7 @@ export const configurePassport = () => {
     getUserFromJwt(ProjectOwner)
   ));
 
-  passport.use(`${Role.admin}Jwt`, new JwtStrategy(
+  passport.use(`${Role.ADMIN}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
       secretOrKeyProvider: secretOrKeyProvider(Admin),
