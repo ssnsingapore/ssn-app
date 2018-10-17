@@ -5,8 +5,12 @@ import {
   Typography,
   Button,
   Avatar,
-  Menu,
+  MenuList,
   MenuItem,
+  Popper,
+  ClickAwayListener,
+  Paper,
+  Grow,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -26,62 +30,83 @@ class _NavBar extends Component {
     super(props);
 
     this.state = {
-      anchorEl: null,
+      open: false,
     };
   }
 
   handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    this.setState({ open: !this.state.open });
   };
 
   handleClose = () => {
-    this.setState({ anchorEl: null });
+    this.setState({open: !this.state.open });
   };
+  
+  getNavbarText = () => {
+    const { isAuthenticated } = this.props.context;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
 
-  render() {
+    if (!isAuthenticated || !currentUser) {
+      return '';
+    }
+
+    return `${NavBarDisplayMapping[currentUser.role]} DASHBOARD`;
+  }
+  
+  renderAvatar = () => { 
     const { classes } = this.props;
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
-    //const { authorize } = this.props;
-    const { anchorEl } = this.state;
 
     if (!isAuthenticated || !currentUser) {
-      return null;
+      return '';
     }
 
-    /*
-    if (!authorize.includes(currentUser.role)) {
-      return null;
-    }
-    */
+    return currentUser.role === Role.admin && (
+      <React.Fragment>
+        <Button
+          buttonRef={node => {
+            this.anchorEl = node;
+          }}
+          aria-owns={this.state.open ? 'simple-menu' : null}
+          aria-haspopup="true"
+          onClick={this.handleClick.bind(this)}
+          color="inherit"
+          className={classes.logout}
+        >
+          <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar}></Avatar>
+          {currentUser.email}
+        </Button>
 
-    return (
+      
+        <Popper id="simple-menu" open={this.state.open} anchorEl={this.anchorEl} transition disablePortal>
+         
+          <Paper>
+            <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
+              <MenuList>
+                <MenuItem onClick={this.handleClose.bind(this)}>Edit Profile</MenuItem>
+                <MenuItem onClick={this.handleClose.bind(this)}>Logout</MenuItem>
+              </MenuList>
+            </ClickAwayListener>
+          </Paper>
+        </Popper>
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    const { classes } = this.props; 
+
+    return this.props.location.pathname !== '/admin' && (
       <AppBar position="static">
         <Toolbar variant="dense" className={classes.toolBar}>
           <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
           <Typography variant="body2" color="inherit" className={classes.barTitle}>
-            {NavBarDisplayMapping[currentUser.role]} DASHBOARD
+            {this.getNavbarText()}
           </Typography>
-          
-          <Button
-            aria-owns={anchorEl ? 'simple-menu' : null}
-            aria-haspopup="true"
-            onClick={this.handleClick}
-            color="inherit"
-            className={classes.logout}
-          >
-            <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar}></Avatar>
-            Admin
-          </Button>
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={this.handleClose}
-          >
-            <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-          </Menu>
+          {this.renderAvatar()}
         </Toolbar>
       </AppBar>
     );
