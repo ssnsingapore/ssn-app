@@ -26,7 +26,7 @@ describe('User sign up route', () => {
       user: {
         name: 'username',
         email: 'email@email.com',
-        role: 'user',
+        role: 'USER',
       },
     });
   });
