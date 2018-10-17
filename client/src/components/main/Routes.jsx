@@ -70,7 +70,12 @@ class _Routes extends Component {
                 authorize={[Role.admin]}
               />
 
-              <Route exact path="/admin/projects/:id" component={AdminProjectDetails} />
+              <RouteAuthenticated 
+                exact 
+                path="/admin/projects/:id" 
+                component={AdminProjectDetails}
+                authorize={[Role.admin]}
+              />
 
               {/* Routes to old components for reference */}
               <Route path="/login/old" component={Login} />
