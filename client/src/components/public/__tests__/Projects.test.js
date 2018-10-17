@@ -33,9 +33,9 @@ describe('Projects', () => {
   beforeEach(() => {
     counts = {
       [ProjectState.PENDING_APPROVAL]: 1,
-      [ProjectState.APPROVED_ACTIVE]: 2,
-      [ProjectState.APPROVED_INACTIVE]: 3,
-      [ProjectState.REJECTED]: 4,
+      [ProjectState.APPROVED_ACTIVE]: 0,
+      [ProjectState.APPROVED_INACTIVE]: 2,
+      [ProjectState.REJECTED]: 3,
     };
     const mockResponse = mockSuccessfulResponse({ counts });
     mockContext = { ...defaultAppContext };

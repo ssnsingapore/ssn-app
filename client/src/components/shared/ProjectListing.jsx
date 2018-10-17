@@ -37,13 +37,13 @@ class _ProjectListing extends Component {
     };
   }
 
-
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
     const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
-    const endpoint = '/api/v1/projects';
+
+    const endpoint = this.props.isForProjectOwner ? '/api/v1/project_owner/projects' : '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
-    const response = await requestWithAlert.get(endpoint + queryParams);
+    const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;

@@ -82,6 +82,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
   },
 
   hashedPassword: String,
+  lastLogoutTime: Date,
 
   // Account confirmation
   confirmedAt: Date,
