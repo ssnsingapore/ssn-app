@@ -22,8 +22,8 @@ const UserSchema = new mongoose.Schema(
     lastLogoutTime: Date,
     role: {
       type: String,
-      enum: [Role.user],
-      default: [Role.user],
+      enum: [Role.USER],
+      default: [Role.USER],
       required: [true, 'cannot be blank'],
     },
 

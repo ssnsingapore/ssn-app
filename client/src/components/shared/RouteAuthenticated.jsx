@@ -3,7 +3,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
-import { Role } from './roles';
+import { Role } from 'components/shared/enums/Role';
 
 const _RouteAuthenticated = ({
   path,
@@ -22,9 +22,9 @@ const _RouteAuthenticated = ({
     return <Redirect to={redirectTo || '/login'} />;
   }
 
-  if (authorize.includes(Role.all)) {
+  if (authorize.includes(Role.ALL)) {
     authorize = [...authorize, Object.keys(Role)];
-    authorize = [Role.all, Role.user, Role.admin];
+    authorize = [Role.ALL, Role.USER, Role.ADMIN];
   }
 
   if (!authorize.includes(authenticator.getCurrentUser().role)) {

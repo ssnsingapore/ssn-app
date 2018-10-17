@@ -14,11 +14,11 @@ import ssnLogo from 'assets/ssn-logo.png';
 import adminAvatar from 'assets/placeholder-avatar.jpg';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
-import { Role } from 'components/shared/roles';
+import { Role } from 'components/shared/enums/Role';
 
 const NavBarDisplayMapping = {
-  [Role.admin]: 'SSN ADMIN',
-  [Role.project_owner]: 'PROJECT OWNER',
+  [Role.ADMIN]: 'SSN ADMIN',
+  [Role.PROJECT_OWNER]: 'PROJECT OWNER',
 };
 
 class _NavBar extends Component {

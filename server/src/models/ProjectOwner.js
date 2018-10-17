@@ -89,8 +89,8 @@ const ProjectOwnerSchema = new mongoose.Schema({
   confirmationToken: String,
   role: {
     type: String,
-    enum: [Role.project_owner],
-    default: [Role.project_owner],
+    enum: [Role.PROJECT_OWNER],
+    default: [Role.PROJECT_OWNER],
     required: [true, 'cannot be blank'],
   },
 });

@@ -23,7 +23,7 @@ import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project
 import { AdminDashboard } from 'components/admin/AdminDashboard';
 import { AdminProjectDetails } from 'components/admin/AdminProjectDetails';
 
-import { Role } from 'components/shared/roles';
+import { Role } from 'components/shared/enums/Role';
 
 // Components only for reference
 import { About } from 'components/old/About';
@@ -59,12 +59,12 @@ class _Routes extends Component {
               <RouteAuthenticated
                 path="/project_owner/dashboard"
                 component={ProjectOwnerDashboard}
-                authorize={[Role.project_owner]}
+                authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
                 path="/project_owner/projects/new"
                 component={ProjectOwnerNewProjectForm}
-                authorize={[Role.project_owner]}
+                authorize={[Role.PROJECT_OWNER]}
               />
 
               <Route exact path="/admin" component={AdminLoginPage} />
@@ -72,14 +72,14 @@ class _Routes extends Component {
                 exact
                 path="/admin/dashboard"
                 component={AdminDashboard}
-                authorize={[Role.admin]}
+                authorize={[Role.ADMIN]}
               />
 
               <RouteAuthenticated 
                 exact 
                 path="/admin/projects/:id" 
                 component={AdminProjectDetails}
-                authorize={[Role.admin]}
+                authorize={[Role.ADMIN]}
               />
 
               {/* Routes to old components for reference */}
@@ -89,7 +89,7 @@ class _Routes extends Component {
                 exact
                 path="/todos"
                 component={Todos}
-                authorize={[Role.user]}
+                authorize={[Role.USER]}
               />
               <Route path="/about" component={About} />
               <Route path="/image_upload" component={ImageUpload} />
