@@ -5,8 +5,6 @@ import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 import {
   Grid,
-  BottomNavigation,
-  BottomNavigationAction,
   Button,
 } from '@material-ui/core';
 
@@ -19,7 +17,7 @@ import { ProjectApprovalConfirmationDialog } from './ProjectApprovalConfirmation
 const PROJECT_APPROVED_SUCCESS_MESSAGE = 'The project has been successfully approved.';
 const PROJECT_REJECTED_SUCCESS_MESSAGE = 'The project has been successfully rejected.';
 
-class _AdminProjectAction extends Component {
+class _AdminProjectDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,8 +59,6 @@ class _AdminProjectAction extends Component {
       state: ProjectState.APPROVE_ACTIVE,
     } };
 
-    console.log('UDPATED', updatedProject);
-
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
@@ -101,13 +97,13 @@ class _AdminProjectAction extends Component {
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      showAlert('projectApprovalSuccess', AlertType.SUCCESS, PROJECT_REJECTED_SUCCESS_MESSAGE);
+      showAlert('projectRejectSuccess', AlertType.SUCCESS, PROJECT_REJECTED_SUCCESS_MESSAGE);
       this.setState({ shouldRedirect: true});
     }
 
     if (response.hasError) {
       const errors = await extractErrors(response);
-      showAlert('projectApprovalFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert('projectRejectFailure', AlertType.ERROR, formatErrors(errors));
     }
 
   };
@@ -121,55 +117,58 @@ class _AdminProjectAction extends Component {
     this.setState({ confirmationDialogBoxOpen: false });
   }
 
+  renderApproveRejectButtons(state) {
+    const { classes } = this.props;
+    if (state !== ProjectState.PENDING_APPROVAL) {
+      return null;
+    }
+    return(
+      <React.Fragment>
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          className={classes.button}
+          onClick={this.handleConfirmationDialogBoxOpen}
+        >
+                Approve
+        </Button>
+
+        <Button
+          type="submit"
+          variant="contained"
+          className={classes.buttonGrey}
+          onClick={this.handleReject}
+        >
+              Reject
+        </Button>
+
+      </React.Fragment>
+    );
+
+  }
+
   renderNavBar() {
     const { classes } = this.props;
-    const { state } = this.state.project;
+    const { project } = this.state;
 
     return (
-      <BottomNavigation  className={classes.bottomNavigation} showLabels={false}>
-        {/* TODO: Some warning message in inspector associated with bottom nav. Unsure how to fix */}
-        <div className={classes.buttonGroup}>
+      <div className={classes.bottomNavBar}>
+        <Button
+          variant="contained"
+          colour="default"
+          className={classes.button}
+          component={Link}
+          to="/admin/dashboard"
+        >
+      Back to Dashboard
+        </Button>
+        {this.renderApproveRejectButtons(project.state)}
+      </div>
 
-          {
-            state === ProjectState.PENDING_APPROVAL && 
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    className={classes.buttonGrey}
-                    onClick={this.handleReject}
-                  >
-              Reject
-                  </Button>
-
-
-          }
-
-          { 
-            ((state === ProjectState.PENDING_APPROVAL) || (state === ProjectState.REJECTED)) && 
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="secondary"
-                    className={classes.button}
-                    onClick={this.handleConfirmationDialogBoxOpen}
-                  >
-                Approve
-                  </Button>
-          }
-
-          <Button
-            variant="contained"
-            colour="default"
-            className={classes.button}
-            component={Link}
-            to="/admin/dashboard"
-          >
-                Back to Dashboard
-          </Button>
-        </div>
-      </BottomNavigation>
     );
   }
+
 
   render() {
     const { classes } = this.props;
@@ -185,15 +184,15 @@ class _AdminProjectAction extends Component {
       );
     }
     return(
-      <Grid container>
+      <Grid container className={classes.root}>
         <ProjectApprovalConfirmationDialog
           open={this.state.confirmationDialogBoxOpen}
           handleClose={this.handleConfirmationDialogBoxOpenClose}
           handleApprove={this.handleApprove}
         />
-        <Grid item xs={12}>
-          <div className={classes.root}>
-          Component made by Sabrina for project details listing for {id}
+        <Grid item xs={12} className={classes.projectDetails}>
+          <div>
+            Component made by Sabrina for project details listing for {id}
           </div>
         </Grid>
         {this.renderNavBar()}
@@ -204,35 +203,36 @@ class _AdminProjectAction extends Component {
 }
 
 const styles = theme => ({
+
   root: {
+    flexDirection: 'column',
+    minHeight: '100vw',
+  },
+  projectDetails: {
     flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
     padding: '60px 0',
   },
-  bottomNavigation: {
-    backgroundColor: '#EBEBEB',
-    width: '100%',
-    position: 'fixed',
-    bottom: 0,
-    paddingBottom: theme.spacing.unit * 8,
-  },
-  buttonGroup: {
-    width: '80vw',
+  bottomNavBar: {
+    display: 'flex',
+    position: 'sticky',
+    bottom: '0',
+    backgroundColor: theme.palette.grey[200],
+    justifyContent: 'flex-end',
   },
   button: {
     margin: theme.spacing.unit * 1.5,
-    float: 'right',
+    marginLeft: 0,
   },
   buttonGrey: {
+    backgroundColor: theme.palette.grey[500],
     margin: theme.spacing.unit * 1.5,
-    float: 'right',
-    backgroundColor: '#9F9F9F', 
-    color: 'white',
+    marginLeft: 0,
   },
 
 });
 
-export const AdminProjectAction = 
+export const AdminProjectDetails = 
   withContext(AppContext)(
-    withStyles(styles)(_AdminProjectAction));
+    withStyles(styles)(_AdminProjectDetails));
