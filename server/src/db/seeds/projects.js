@@ -18,7 +18,7 @@ import {
 connectMongoose();
 
 getProjectOwner()
-  .then(async (projectOwner) => {
+  .then(async projectOwner => {
     if (!projectOwner) {
       console.log('Please seed Project Owners first');
       return;
@@ -34,14 +34,21 @@ getProjectOwner()
     const projectAttributes = [
       {
         title: 'Save the Earth',
-        coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
-        description: 'Save the earth description',
+        coverImageUrl:
+          'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
+        description:
+          'Cat ipsum dolor sit amet, malkin yet donskoy for havana brown or balinese . American shorthair. Balinese bobcat or himalayan yet bombay. Lion panther thai. Persian british shorthair so himalayan and panther and norwegian forest and bengal. Bobcat maine coon bobcat, yet birman. Scottish fold bombay himalayan lion bombay abyssinian . Russian blue. Donskoy maine coon. Siamese lynx. Cougar tiger devonshire rex. Egyptian mau. Grimalkin persian. Burmese thai himalayan bobcat. Cornish',
         volunteerSignupUrl: '',
         volunteerRequirements: volunteerRequirementAttributes,
         projectOwner: projectOwner.id,
-        issuesAddressed: [IssueAddressed.LAND_AND_NOISE_POLLUTION, IssueAddressed.WASTE],
-        volunteerRequirementsDescription: 'requirementDescription1',
-        volunteerBenefitsDescription: 'certificate',
+        issuesAddressed: [
+          IssueAddressed.LAND_AND_NOISE_POLLUTION,
+          IssueAddressed.WASTE,
+        ],
+        volunteerRequirementsDescription:
+          'Kitten tiger malkin egyptian mau. Lynx tomcat for ragdoll. Tomcat ocelot and tabby. Savannah grimalkin and jaguar yet siberian. Malkin american shorthair turkish angora manx. Cornish rex cornish rex and norwegian forest.',
+        volunteerBenefitsDescription:
+          'Turkish angora siamese. Puma. Scottish fold. Bobcat ocicat. Kitty bombay.',
         projectType: ProjectType.EVENT,
         time: '9 AM',
         location: ProjectLocation.CENTRAL,
@@ -52,7 +59,8 @@ getProjectOwner()
       },
       {
         title: 'Cat Adoption Drive',
-        coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Singapore-Cat-Festival-2018.jpg',
+        coverImageUrl:
+          'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Singapore-Cat-Festival-2018.jpg',
         description: 'Save the earth description',
         volunteerSignupUrl: '',
         volunteerRequirements: volunteerRequirementAttributes,
@@ -70,7 +78,8 @@ getProjectOwner()
       },
       {
         title: 'Greenland Project',
-        coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/greenland.png',
+        coverImageUrl:
+          'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/greenland.png',
         description: 'Greenland Project description',
         volunteerSignupUrl: '',
         volunteerRequirements: volunteerRequirementAttributes,
@@ -207,7 +216,7 @@ getProjectOwner()
 
     await seedData(projectAttributes, Project, 'project');
   })
-  .catch((err) => {
+  .catch(err => {
     console.log(`error: ${err}`);
   })
   .finally(() => {
