@@ -18,7 +18,7 @@ import {
 connectMongoose();
 
 getProjectOwner()
-  .then(async projectOwner => {
+  .then(async (projectOwner) => {
     if (!projectOwner) {
       console.log('Please seed Project Owners first');
       return;
@@ -216,7 +216,7 @@ getProjectOwner()
 
     await seedData(projectAttributes, Project, 'project');
   })
-  .catch(err => {
+  .catch((err) => {
     console.log(`error: ${err}`);
   })
   .finally(() => {

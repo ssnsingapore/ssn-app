@@ -41,27 +41,11 @@ class _ProjectListing extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-<<<<<<< c4f1c28a107486b443401b0f96ab8ec706e6c17b
-    const {
-      pageSize = 10,
-      projectState = ProjectState.APPROVED_ACTIVE,
-    } = this.props;
-
-    const endpoint = this.props.isForProjectOwner
-      ? '/api/v1/project_owner/projects'
-      : '/api/v1/projects';
-    const queryParams =
-      '?pageSize=' + pageSize + '&projectState=' + projectState;
-    const response = await requestWithAlert.get(endpoint + queryParams, {
-      authenticated: true,
-    });
-=======
     const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE, dashboardRole } = this.props;
 
     const endpoint = dashboardRole === Role.PROJECT_OWNER ? '/api/v1/project_owner/projects' : '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
->>>>>>> [SSN-41][JQ/ES] Change project listing props to role.
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
