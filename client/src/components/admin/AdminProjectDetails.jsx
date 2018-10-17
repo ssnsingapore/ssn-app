@@ -53,7 +53,7 @@ class _AdminProjectDetails extends Component {
     event.preventDefault();
 
     const { id } = this.props.match.params;
-    const endpoint = `/api/v1/projects/${id}`;
+    const endpoint = `/api/v1/admin/projects/${id}`;
 
     const updatedProject = { project: {
       state: ProjectState.APPROVE_ACTIVE,
@@ -63,7 +63,7 @@ class _AdminProjectDetails extends Component {
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: false });
+    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
@@ -83,7 +83,7 @@ class _AdminProjectDetails extends Component {
     event.preventDefault();
 
     const { id } = this.props.match.params;
-    const endpoint = `/api/v1/projects/${id}`;
+    const endpoint = `/api/v1/admin/projects/${id}`;
 
     const updatedProject = { project: {
       state: ProjectState.REJECTED,
@@ -93,7 +93,7 @@ class _AdminProjectDetails extends Component {
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: false });
+    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {

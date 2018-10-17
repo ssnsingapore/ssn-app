@@ -79,10 +79,24 @@ async function getProject(req, res) {
   return res.status(200).json({ project });
 }
 
-projectRouter.put('/projects/:id',
-  // passport.authenticate(`${Role.admin}Jwt`, { session: false, failWithError: true }),
-  asyncWrap(approveProject));
-async function approveProject(req, res) {
+projectRouter.post('/projects/new', asyncWrap(postProject));
+async function postProject(req, res) {
+  const project = new Project({
+    ...req.body.project,
+    state: ProjectState.PENDING_APPROVAL,
+  });
+  await project.save();
+  return res.status(201).json({ project: project.toJSON() });
+}
+
+// =============================================================================
+// Admin Routes
+// =============================================================================
+
+projectRouter.put('/admin/projects/:id',
+  passport.authenticate(`${Role.admin}Jwt`, { session: false, failWithError: true }),
+  asyncWrap(changeProjectState));
+async function changeProjectState(req, res) {
   const { id } = req.params;
 
   const { state } = req.body.project;
@@ -92,14 +106,4 @@ async function approveProject(req, res) {
     { $set: { state } }
   );
   return res.status(200).json({ project });
-}
-
-projectRouter.post('/projects/new', asyncWrap(postProject));
-async function postProject(req, res) {
-  const project = new Project({
-    ...req.body.project,
-    state: ProjectState.PENDING_APPROVAL,
-  });
-  await project.save();
-  return res.status(201).json({ project: project.toJSON() });
 }
