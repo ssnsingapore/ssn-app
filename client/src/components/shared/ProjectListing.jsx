@@ -96,91 +96,104 @@ class _ProjectListing extends Component {
     );
   };
 
-  renderActionButtons(dashboardRole) {
+  renderRightColumn(dashboardRole, project) {
     const { classes } = this.props;
     if (dashboardRole !== Role.PROJECT_OWNER) {
       return null;
     }
-    return (
-      <Grid container style={{ justifyContent: 'space-evenly' }}>
-        <Button variant="contained" className={classes.button}>
+    if (project.state === ProjectState.REJECTED) {
+      return (
+        <Grid container style={ { flexDirection: 'row' } }>
+          <Grid item xs={9}>
+            <Typography variant="body1" className={classes.rejectionReason}>
+              {project.rejectionReason}
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Button variant="contained" className={classes.button}>
           Edit
-        </Button>
-        <Button variant="contained" className={classes.button}>
-          Deactivate
-        </Button>
-        <Button variant="contained" className={classes.button}>
-          Duplicate
-        </Button>
-      </Grid>
-    );
+            </Button>
+          </Grid>
+        </Grid>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <Button variant="contained" className={classes.button}>
+            Edit
+          </Button>
+          <Button variant="contained" className={classes.button}>
+            Deactivate
+          </Button>
+          <Button variant="contained" className={classes.button}>
+            Duplicate
+          </Button>
+        </React.Fragment>
+      );
+    }
   }
 
   renderProjects = () => {
     const { classes, dashboardRole } = this.props;
-    const gridSize = dashboardRole === Role.PROJECT_OWNER ? 8 : 12;
-
     return this.state.projects.map(project => {
 
       const linkEndpoint = dashboardRole === Role.ADMIN ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
 
       return (
         <Grid
-          container
           style={{ alignItems: 'center' }}
           item
           xs={12}
           key={project._id}
         >
-          <Grid item xs={gridSize}>
+          <Grid item xs={12}>
             <Link to={linkEndpoint} className={classes.link}>
-              <Card className={classes.card}>
-                <Grid container item xs={12} key={project.title}>
-                  <Grid item xs={12} md={4}>
+              <Card className={classes.card} square>
+                <Grid container xs={12} key={project.title}>
+                  <Grid item xs={12} md={3}>
                     <CardMedia
                       className={classes.cardMedia}
                       image={project.coverImageUrl}
                     />
                   </Grid>
-                  <Grid item xs={12} md={8}>
-                    <div className={classes.details}>
-                      <CardContent className={classes.content}>
-                        <Typography variant="headline" gutterBottom>
-                          {project.title}
-                        </Typography>
-                        <Typography
-                          variant="subheading"
-                          color="textSecondary"
-                          gutterBottom
-                        >
-                          <List className={classes.removePadding}>
-                            <ListItem className={classes.removePadding}>
-                              <Avatar
-                                alt="Profile Photo"
-                                src={project.projectOwner.profilePhotoUrl}
-                                className={classes.smallAvatar}
-                              />
-                              <ListItemText
-                                className={classes.removePadding}
-                                primary={project.projectOwner.name}
-                              />
-                            </ListItem>
-                          </List>
-                        </Typography>
-                        <div className={classes.tagsContainer}>
-                          {this.renderVolunteerRequirements(project)}
-                          {this.renderIssuesAddressed(project)}
-                        </div>
-                      </CardContent>
-                    </div>
+                  <Grid item xs={12} md={4}>
+                    <CardContent className={classes.content}>
+                      <Typography variant="headline" gutterBottom>
+                        {project.title}
+                      </Typography>
+                      <Typography
+                        variant="subheading"
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        <List className={classes.removePadding}>
+                          <ListItem className={classes.removePadding}>
+                            <Avatar
+                              alt="Profile Photo"
+                              src={project.projectOwner.profilePhotoUrl}
+                              className={classes.smallAvatar}
+                            />
+                            <ListItemText
+                              className={classes.removePadding}
+                              primary={project.projectOwner.name}
+                            />
+                          </ListItem>
+                        </List>
+                      </Typography>
+                      <div className={classes.tagsContainer}>
+                        {this.renderVolunteerRequirements(project)}
+                        {this.renderIssuesAddressed(project)}
+                      </div>
+                    </CardContent>
+                  </Grid>
+                  <Grid item xs={12} md={5} className={classes.buttonsGroup}>
+                    {this.renderRightColumn(dashboardRole, project)}
                   </Grid>
                 </Grid>
               </Card>
             </Link>
           </Grid>
-          <Grid item xs={4}>
-            {this.renderActionButtons(dashboardRole)}
-          </Grid>
+
         </Grid>
       );
     });
@@ -205,17 +218,13 @@ const styles = theme => ({
     display: 'flex',
     marginBottom: theme.spacing.unit,
   },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
   content: {
     flex: '1 0 auto',
   },
   cardMedia: {
     width: '100%',
     height: '100%',
-    minHeight: '200px',
+    minHeight: '150px',
     backgroundSize: 'cover',
   },
   tagsContainer: {
@@ -239,7 +248,14 @@ const styles = theme => ({
     textDecoration: 'none',
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit * 2,
+  },
+  buttonsGroup: {
+    // justifyContent: 'flex-end',
+    alignContent: 'center',
+  },
+  rejectionReason: {
+    margin: theme.spacing.unit * 2,
   },
 });
 

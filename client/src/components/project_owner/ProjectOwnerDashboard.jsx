@@ -68,14 +68,16 @@ class _ProjectOwnerDashboard extends Component {
 
   renderTabs() {
     const { tabValue } = this.state;
+    const { classes } = this.props;
 
     return (
-      <React.Fragment>
+      <div>        
         <Tabs
           value={tabValue}
           indicatorColor="primary"
           textColor="primary"
           onChange={this.handleChange}
+          className={classes.tabGroup}
         >
           <Tab label={this.getTabLabel(ProjectState.PENDING_APPROVAL)} />
           <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)} />
@@ -106,7 +108,7 @@ class _ProjectOwnerDashboard extends Component {
             dashboardRole={Role.PROJECT_OWNER} 
           />
         )}
-      </React.Fragment>
+      </div>
     );
   }
 
@@ -160,9 +162,15 @@ const styles = theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    padding: '20px',
   },
   projectListing: {
     margin: '30px auto',
+  },
+  tabGroup: {
+    marginBottom: '20px',
+    bottomBorder: '3px',
+    bottomBorderColor: theme.palette.grey[200],
   },
 });
 
