@@ -18,6 +18,7 @@ import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountCo
 import { AdminLoginPage } from 'components/public/AdminLoginPage';
 import { AdminDashboard } from 'components/public/AdminDashboard';
 import { ProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
+import { AdminProjectDetails } from 'components/admin/AdminProjectDetails';
 
 // Components only for reference
 import { About } from 'components/old/About';
@@ -66,6 +67,13 @@ class _Routes extends Component {
                 exact
                 path="/admin/dashboard"
                 component={AdminDashboard}
+                authorize={[Role.admin]}
+              />
+
+              <RouteAuthenticated 
+                exact 
+                path="/admin/projects/:id" 
+                component={AdminProjectDetails}
                 authorize={[Role.admin]}
               />
 

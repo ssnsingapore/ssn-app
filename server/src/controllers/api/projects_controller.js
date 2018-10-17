@@ -11,7 +11,6 @@ export const projectRouter = express.Router();
 
 projectRouter.get('/projects', asyncWrap(getProjects));
 async function getProjects(req, res) {
-  // Params
   const pageSize = Number(req.query.pageSize) || 10;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
 
@@ -42,7 +41,7 @@ async function getProjectsForProjectOwner(req, res) {
 }
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
-async function getProjectCounts(req, res) {
+async function getProjectCounts(_req, res) {
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
@@ -71,10 +70,8 @@ async function getProjectCountsForProjectOwner(req, res) {
 
 projectRouter.get('/projects/:id', asyncWrap(getProject));
 async function getProject(req, res) {
-  // Params
   const { id } = req.params;
 
-  // Queries to mongodb
   const project = await Project.findById(id)
     .populate('projectOwner')
     .exec();
@@ -90,4 +87,23 @@ async function postProject(req, res) {
   });
   await project.save();
   return res.status(201).json({ project: project.toJSON() });
+}
+
+// =============================================================================
+// Admin Routes
+// =============================================================================
+
+projectRouter.put('/admin/projects/:id',
+  passport.authenticate(`${Role.admin}Jwt`, { session: false, failWithError: true }),
+  asyncWrap(changeProjectState));
+async function changeProjectState(req, res) {
+  const { id } = req.params;
+
+  const { state } = req.body.project;
+
+  const project = await Project.updateOne(
+    { _id: id },
+    { $set: { state } }
+  );
+  return res.status(200).json({ project });
 }

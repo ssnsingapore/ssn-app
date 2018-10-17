@@ -113,14 +113,17 @@ class _ProjectListing extends Component {
   }
 
   renderProjects = () => {
-    const { classes, isForProjectOwner } = this.props;
+    const { classes, isForProjectOwner, isForAdminRoute } = this.props;
     const gridSize = isForProjectOwner? 8 : 12;
 
     return this.state.projects.map(project => {
+
+      const linkEndpoint = isForAdminRoute ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
+
       return (
         <Grid container style={{alignItems: 'center'}} item xs={12} key={project._id}>
           <Grid item xs={gridSize}>
-            <Link to={'/projects/' + project._id} className={classes.link}>
+            <Link to={linkEndpoint} className={classes.link}>
               <Card className={classes.card}>
                 <Grid container item xs={12} key={project.title}>
                   <Grid item xs={12} md={4}>
