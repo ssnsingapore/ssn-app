@@ -4,13 +4,9 @@ import {
   Toolbar,
   Typography,
   Button,
-  Avatar,
-  MenuList,
   MenuItem,
-  Popper,
-  ClickAwayListener,
-  Paper,
-  Grow,
+  Menu,
+  Avatar,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -30,16 +26,16 @@ class _NavBar extends Component {
     super(props);
 
     this.state = {
-      open: false,
+      anchorEl: null,
     };
   }
 
   handleClick = event => {
-    this.setState({ open: !this.state.open });
+    this.setState({ anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
-    this.setState({open: !this.state.open });
+    this.setState({anchorEl: null });
   };
   
   getNavbarText = () => {
@@ -67,31 +63,24 @@ class _NavBar extends Component {
     return currentUser.role === Role.admin && (
       <React.Fragment>
         <Button
-          buttonRef={node => {
-            this.anchorEl = node;
-          }}
-          aria-owns={this.state.open ? 'simple-menu' : null}
+          aria-owns={this.state.anchorEl ? 'simple-menu' : null}
           aria-haspopup="true"
-          onClick={this.handleClick.bind(this)}
+          onClick={this.handleClick}
           color="inherit"
           className={classes.logout}
         >
           <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar}></Avatar>
           {currentUser.email}
         </Button>
-
-      
-        <Popper id="simple-menu" open={this.state.open} anchorEl={this.anchorEl} transition disablePortal>
-         
-          <Paper>
-            <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
-              <MenuList>
-                <MenuItem onClick={this.handleClose.bind(this)}>Edit Profile</MenuItem>
-                <MenuItem onClick={this.handleClose.bind(this)}>Logout</MenuItem>
-              </MenuList>
-            </ClickAwayListener>
-          </Paper>
-        </Popper>
+        <Menu
+          id="simple-menu"
+          anchorEl={this.state.anchorEl}
+          open={Boolean(this.state.anchorEl)}
+          onClose={this.handleClose}
+        >
+          <MenuItem onClick={this.handleClose}>Edit Profile</MenuItem>
+          <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+        </Menu>
       </React.Fragment>
     );
   }
