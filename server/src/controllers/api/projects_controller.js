@@ -99,11 +99,21 @@ projectRouter.put('/admin/projects/:id',
 async function changeProjectState(req, res) {
   const { id } = req.params;
 
-  const { state } = req.body.project;
+  const { state, rejectionReason } = req.body.project;
 
-  const project = await Project.updateOne(
-    { _id: id },
-    { $set: { state } }
-  );
+  let project = {};
+
+  if (state === ProjectState.REJECTED) {
+    project = await Project.updateOne(
+      { _id: id },
+      { $set: { state, rejectionReason } }
+    );
+  } else {
+    project = await Project.updateOne(
+      { _id: id },
+      { $set: { state } }
+    );
+  }
+
   return res.status(200).json({ project });
 }
