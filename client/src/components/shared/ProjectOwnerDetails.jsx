@@ -14,11 +14,14 @@ class _ProjectOwnerDetails extends Component {
       projectOwner: {},
     };
   }
+
   async componentDidMount() {
     const { authenticator } = this.props.context.utils;
-    const currentUser = authenticator.getCurrentUser();
+    const projectOwner = this.props.projectOwner
+      ? this.props.projectOwner
+      : authenticator.getCurrentUser();
 
-    this.setState({ projectOwner: currentUser });
+    this.setState({ projectOwner });
   }
 
   renderDescriptionOrPersonalBio = () => {
@@ -39,7 +42,7 @@ class _ProjectOwnerDetails extends Component {
         {projectOwner.personalBio}
       </Typography>
     );
-  }
+  };
 
   render = () => {
     const { classes } = this.props;
@@ -68,11 +71,12 @@ class _ProjectOwnerDetails extends Component {
               <strong>Account Type: </strong>
               {projectOwner.accountType}
             </Typography>
-            {projectOwner.accountType === AccountType.ORGANISATION &&
-            <Typography>
-              <strong>Organisation Name: </strong>
-              {projectOwner.organisationName}
-            </Typography>}
+            {projectOwner.accountType === AccountType.ORGANISATION && (
+              <Typography>
+                <strong>Organisation Name: </strong>
+                {projectOwner.organisationName}
+              </Typography>
+            )}
             <Typography>
               <strong>Web URL: </strong>
               {projectOwner.websiteUrl || '-'}
