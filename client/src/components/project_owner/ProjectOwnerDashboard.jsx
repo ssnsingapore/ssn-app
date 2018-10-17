@@ -22,6 +22,7 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { extractErrors, formatErrors } from 'util/errors';
 
+import { Role } from 'components/shared/enums/Role';
 class _ProjectOwnerDashboard extends Component {
   constructor(props) {
     super(props);
@@ -82,16 +83,28 @@ class _ProjectOwnerDashboard extends Component {
           <Tab label={this.getTabLabel(ProjectState.REJECTED)} />
         </Tabs>
         {tabValue === 0 && (
-          <ProjectListing projectState={ProjectState.PENDING_APPROVAL} isForProjectOwner={true} />
+          <ProjectListing 
+            projectState={ProjectState.PENDING_APPROVAL} 
+            dashboardRole={Role.PROJECT_OWNER} 
+          />
         )}
         {tabValue === 1 && (
-          <ProjectListing projectState={ProjectState.APPROVED_ACTIVE} isForProjectOwner={true} />
+          <ProjectListing 
+            projectState={ProjectState.APPROVED_ACTIVE} 
+            dashboardRole={Role.PROJECT_OWNER} 
+          />
         )}
         {tabValue === 2 && (
-          <ProjectListing projectState={ProjectState.APPROVED_INACTIVE} isForProjectOwner={true}/>
+          <ProjectListing 
+            projectState={ProjectState.APPROVED_INACTIVE} 
+            dashboardRole={Role.PROJECT_OWNER} 
+          />
         )}
         {tabValue === 3 && (
-          <ProjectListing projectState={ProjectState.REJECTED} isForProjectOwner={true}/>
+          <ProjectListing 
+            projectState={ProjectState.REJECTED} 
+            dashboardRole={Role.PROJECT_OWNER} 
+          />
         )}
       </React.Fragment>
     );

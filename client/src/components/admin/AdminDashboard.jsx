@@ -12,6 +12,7 @@ import { ProjectState } from 'components/shared/enums/ProjectState';
 import { extractErrors, formatErrors } from 'util/errors';
 import { withContext } from 'util/context';
 
+import { Role } from 'components/shared/enums/Role';
 class _AdminDashboard extends Component {
   constructor(props) {
     super(props);
@@ -72,17 +73,17 @@ class _AdminDashboard extends Component {
         </Paper>
         <div className={classes.tabContainer}>
           {tabValue === 0 && <ProjectListing 
-            isForAdminRoute={true} 
+            dashboardRole={Role.ADMIN}
             projectState={ProjectState.PENDING_APPROVAL}
           />}
           {tabValue === 1 && <ProjectListing 
-            isForAdminRoute={true} 
+            dashboardRole={Role.ADMIN}
             projectState={ProjectState.APPROVED_ACTIVE}/>}
           {tabValue === 2 && <ProjectListing 
-            isForAdminRoute={true} 
+            dashboardRole={Role.ADMIN}
             projectState={ProjectState.APPROVED_INACTIVE}/>}
           {tabValue === 3 && <ProjectListing 
-            isForAdminRoute={true}
+            dashboardRole={Role.ADMIN}
             projectState={ProjectState.REJECTED}/>}
         </div>
       </Paper>

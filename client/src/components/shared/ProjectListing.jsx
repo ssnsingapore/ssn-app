@@ -20,6 +20,8 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 
+import { Role } from 'components/shared/enums/Role';
+
 const ProjectState = {
   PENDING_APPROVAL: 'PENDING_APPROVAL',
   APPROVED_ACTIVE: 'APPROVED_ACTIVE',
@@ -39,6 +41,7 @@ class _ProjectListing extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
+<<<<<<< c4f1c28a107486b443401b0f96ab8ec706e6c17b
     const {
       pageSize = 10,
       projectState = ProjectState.APPROVED_ACTIVE,
@@ -52,6 +55,13 @@ class _ProjectListing extends Component {
     const response = await requestWithAlert.get(endpoint + queryParams, {
       authenticated: true,
     });
+=======
+    const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE, dashboardRole } = this.props;
+
+    const endpoint = dashboardRole === Role.PROJECT_OWNER ? '/api/v1/project_owner/projects' : '/api/v1/projects';
+    const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
+    const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
+>>>>>>> [SSN-41][JQ/ES] Change project listing props to role.
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
@@ -102,9 +112,11 @@ class _ProjectListing extends Component {
     );
   };
 
-  renderActionButtons() {
+  renderActionButtons(dashboardRole) {
     const { classes } = this.props;
-
+    if (dashboardRole !== Role.PROJECT_OWNER) {
+      return null;
+    }
     return (
       <Grid container style={{ justifyContent: 'space-evenly' }}>
         <Button variant="contained" className={classes.button}>
@@ -121,13 +133,12 @@ class _ProjectListing extends Component {
   }
 
   renderProjects = () => {
-    const { classes, isForProjectOwner, isForAdminRoute } = this.props;
-    const gridSize = isForProjectOwner ? 8 : 12;
+    const { classes, dashboardRole } = this.props;
+    const gridSize = dashboardRole === Role.PROJECT_OWNER ? 8 : 12;
 
     return this.state.projects.map(project => {
-      const linkEndpoint = isForAdminRoute
-        ? `/admin/projects/${project._id}`
-        : `/projects/${project._id}`;
+
+      const linkEndpoint = dashboardRole === Role.ADMIN ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
 
       return (
         <Grid
@@ -184,7 +195,7 @@ class _ProjectListing extends Component {
             </Link>
           </Grid>
           <Grid item xs={4}>
-            {isForProjectOwner && this.renderActionButtons()}
+            {this.renderActionButtons(dashboardRole)}
           </Grid>
         </Grid>
       );
