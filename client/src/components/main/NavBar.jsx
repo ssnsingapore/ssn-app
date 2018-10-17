@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -78,8 +79,7 @@ class _NavBar extends Component {
           open={Boolean(this.state.anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose}>Edit Profile</MenuItem>
-          <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+          <MenuItem component={Link} to="/logout">Logout</MenuItem>
         </Menu>
       </React.Fragment>
     );
