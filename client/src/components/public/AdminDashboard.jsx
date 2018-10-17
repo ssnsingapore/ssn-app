@@ -75,8 +75,12 @@ class _AdminDashboard extends Component {
             isForAdminRoute={true} 
             projectState={ProjectState.PENDING_APPROVAL}
           />}
-          {tabValue === 1 && <ProjectListing projectState={ProjectState.APPROVED_ACTIVE}/>}
-          {tabValue === 2 && <ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/>}
+          {tabValue === 1 && <ProjectListing 
+            isForAdminRoute={true} 
+            projectState={ProjectState.APPROVED_ACTIVE}/>}
+          {tabValue === 2 && <ProjectListing 
+            isForAdminRoute={true} 
+            projectState={ProjectState.APPROVED_INACTIVE}/>}
           {tabValue === 3 && <ProjectListing 
             isForAdminRoute={true}
             projectState={ProjectState.REJECTED}/>}
