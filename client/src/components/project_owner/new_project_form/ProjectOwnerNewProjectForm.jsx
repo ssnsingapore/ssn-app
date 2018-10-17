@@ -165,6 +165,31 @@ class _ProjectOwnerNewProjectForm extends Component {
     }
   }
 
+  renderActionBar = () => {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.actionBar}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          className={classes.button}
+        >
+          Submit
+        </Button>
+        <Button
+          variant="contained"
+          className={classes.button}
+          component={Link}
+          to="/preview"
+        >
+          Preview
+        </Button>
+      </div>
+    );
+  }
+
   render() {
     const { classes } = this.props;
     if (this.state.shouldRedirect) {
@@ -178,8 +203,8 @@ class _ProjectOwnerNewProjectForm extends Component {
     }
 
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div className={classes.root}>
+      <form onSubmit={this.handleSubmit} className={classes.root}>
+        <div className={classes.form}>
           <Grid container spacing={16}>
             <Grid item xs={12}>
               <ProjectBaseDetails
@@ -208,26 +233,7 @@ class _ProjectOwnerNewProjectForm extends Component {
             </Grid>
           </Grid>
         </div>
-        <BottomNavigation className={classes.bottomNavigation}>
-          <div className={classes.buttonGroup}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-            >
-              Submit
-            </Button>
-            <Button
-              variant="contained"
-              className={classes.button}
-              component={Link}
-              to="/preview"
-            >
-              Preview
-            </Button>
-          </div>
-        </BottomNavigation>
+        {this.renderActionBar()}
       </form>
     );
   }
@@ -235,6 +241,11 @@ class _ProjectOwnerNewProjectForm extends Component {
 
 const styles = theme => ({
   root: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vw',
+  },
+  form: {
     flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
@@ -260,19 +271,17 @@ const styles = theme => ({
   chip: {
     margin: theme.spacing.unit / 4,
   },
-  bottomNavigation: {
-    backgroundColor: '#EBEBEB',
-    width: '100%',
-    position: 'fixed',
-    bottom: 0,
-    paddingBottom: theme.spacing.unit * 8,
-  },
   buttonGroup: {
     width: '80vw',
   },
   button: {
     margin: theme.spacing.unit * 1.5,
     float: 'right',
+  },
+  actionBar: {
+    position: 'sticky',
+    bottom: 0,
+    backgroundColor: theme.palette.grey[200],
   },
 });
 

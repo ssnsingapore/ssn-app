@@ -97,7 +97,7 @@ class _Routes extends Component {
               <Route component={NotFound} />
             </Switch>
           </div>
-          <Route path="/" component={Footer} />
+          {/* <Route path="/" component={Footer} /> */}
         </div>
       </BrowserRouter>
     );
