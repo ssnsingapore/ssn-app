@@ -12,6 +12,7 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { AdminProjectApprovalConfirmationDialog } from './AdminProjectApprovalConfirmationDialog';
 import { AdminProjectRejectionConfirmationDialog } from './AdminProjectRejectionConfirmationDialog';
 
@@ -175,9 +176,7 @@ class _AdminProjectDetails extends Component {
           projectId={id}
         />
         <Grid item xs={12} className={classes.projectDetails}>
-          <div>
-            Component made by Sabrina for project details listing for {id}
-          </div>
+          <ProjectMainInfo id={id}/>
         </Grid>
         {this.renderNavBar()}
       </Grid>

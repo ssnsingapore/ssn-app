@@ -150,7 +150,7 @@ class _ProjectListing extends Component {
     const { classes } = this.props;
     let cardContentSize = 12;
     let rejectionMessageSize = false;
-    if (project.state === ProjectState.REJECTED) {
+    if (dashboardRole === Role.PROJECT_OWNER && project.state === ProjectState.REJECTED) {
       cardContentSize = 8;
       rejectionMessageSize = 4;
     }
