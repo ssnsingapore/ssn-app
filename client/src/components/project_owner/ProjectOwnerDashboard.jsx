@@ -68,22 +68,28 @@ class _ProjectOwnerDashboard extends Component {
 
   renderTabs() {
     const { tabValue } = this.state;
-    const { classes } = this.props;
-
     return (
-      <div>        
+      <React.Fragment>
         <Tabs
           value={tabValue}
           indicatorColor="primary"
           textColor="primary"
           onChange={this.handleChange}
-          className={classes.tabGroup}
         >
           <Tab label={this.getTabLabel(ProjectState.PENDING_APPROVAL)} />
           <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)} />
           <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)} />
           <Tab label={this.getTabLabel(ProjectState.REJECTED)} />
         </Tabs>
+      </React.Fragment>
+    );
+  }
+
+  renderProjectListing() {
+    const { tabValue } = this.state;
+    const { classes } = this.props;
+    return(
+      <Paper square className={classes.projectListing}>
         {tabValue === 0 && (
           <ProjectListing 
             projectState={ProjectState.PENDING_APPROVAL} 
@@ -108,7 +114,7 @@ class _ProjectOwnerDashboard extends Component {
             dashboardRole={Role.PROJECT_OWNER} 
           />
         )}
-      </div>
+      </Paper>
     );
   }
 
@@ -138,6 +144,8 @@ class _ProjectOwnerDashboard extends Component {
             </div>
             {this.renderTabs()}
           </Paper>
+          {this.renderProjectListing()}
+
         </Grid>
         <Grid item xs={12}>
           <ProjectOwnerDetails />
@@ -155,6 +163,7 @@ const styles = theme => ({
   projectListingContainer: {
     margin: '70px auto 10px',
     padding: '40px',
+    paddingBottom: '0px',
   },
   marginBottom3: {
     marginBottom: theme.spacing.unit * 3,
@@ -165,12 +174,8 @@ const styles = theme => ({
     padding: '20px',
   },
   projectListing: {
-    margin: '30px auto',
-  },
-  tabGroup: {
-    marginBottom: '20px',
-    bottomBorder: '3px',
-    bottomBorderColor: theme.palette.grey[200],
+    margin: '5px auto',
+    padding: '40px',
   },
 });
 
