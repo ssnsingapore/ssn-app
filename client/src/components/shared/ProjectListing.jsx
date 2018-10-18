@@ -96,90 +96,153 @@ class _ProjectListing extends Component {
     );
   };
 
-  renderActionButtons(dashboardRole) {
+  renderButtons(dashboardRole, project) {
     const { classes } = this.props;
     if (dashboardRole !== Role.PROJECT_OWNER) {
       return null;
     }
-    return (
-      <Grid container style={{ justifyContent: 'space-evenly' }}>
-        <Button variant="contained" className={classes.button}>
+    if (project.state === ProjectState.REJECTED) {
+      return (
+        <Grid container>
+          <Button variant="contained" className={classes.button}>
           Edit
-        </Button>
-        <Button variant="contained" className={classes.button}>
-          Deactivate
-        </Button>
-        <Button variant="contained" className={classes.button}>
-          Duplicate
-        </Button>
+          </Button>
+        </Grid>
+      );
+    } else {
+      return (
+        <Grid container>
+          <Button variant="contained" className={classes.button}>
+            Edit
+          </Button>
+          <Button variant="contained" className={classes.button}>
+            Deactivate
+          </Button>
+          <Button variant="contained" className={classes.button}>
+            Duplicate
+          </Button>
+        </Grid>
+      );
+    }
+  }
+
+  renderRejectionMessage(dashboardRole, project) {
+    if (dashboardRole !== Role.PROJECT_OWNER) {
+      return null;
+    }
+    if (project.state !== ProjectState.REJECTED) {
+      return null;
+    } else {
+      return (
+        <React.Fragment>
+          <Typography variant="body2">
+              Rejection comments:
+          </Typography>
+          <Typography variant="body1">
+            {project.rejectionReason}
+          </Typography>
+        </React.Fragment>
+      );
+    }
+  }
+
+  renderProjectListingCardContent(dashboardRole, project) {
+    const { classes } = this.props;
+    let cardContentSize = 12;
+    let rejectionMessageSize = false;
+    if (dashboardRole === Role.PROJECT_OWNER && project.state === ProjectState.REJECTED) {
+      cardContentSize = 8;
+      rejectionMessageSize = 4;
+    }
+    
+    return(
+      <Grid container key={`${project.title}-main`}>
+        <Grid item xs={cardContentSize}> 
+          <Grid container>
+            <Card className={classes.card} square>
+              <Grid container key={`${project.title}-cardContent`}>
+                <Grid item xs={3}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image={project.coverImageUrl}
+                  />
+                </Grid>
+                <Grid item xs={9}>
+                  <CardContent className={classes.content}>
+                    <Typography variant="headline" gutterBottom>
+                      {project.title}
+                    </Typography>
+                    <Typography
+                      variant="subheading"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      <List className={classes.removePadding}>
+                        <ListItem className={classes.removePadding}>
+                          <Avatar
+                            alt="Profile Photo"
+                            src={project.projectOwner.profilePhotoUrl}
+                            className={classes.smallAvatar}
+                          />
+                          <ListItemText
+                            className={classes.removePadding}
+                            primary={project.projectOwner.name}
+                          />
+                        </ListItem>
+                      </List>
+                    </Typography>
+                    <div className={classes.tagsContainer}>
+                      {this.renderVolunteerRequirements(project)}
+                      {this.renderIssuesAddressed(project)}
+                    </div>
+                  </CardContent>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
+        </Grid>
+        {
+          project.state === ProjectState.REJECTED && 
+          <Grid item xs={rejectionMessageSize}>
+            <Grid container>
+              <Grid container className={classes.rejectionMessage} style={{ margin: 'auto'}}>
+                {this.renderRejectionMessage(dashboardRole, project)}
+              </Grid>
+            </Grid>
+          </Grid>
+        }
       </Grid>
+
     );
   }
 
   renderProjects = () => {
     const { classes, dashboardRole } = this.props;
-    const gridSize = dashboardRole === Role.PROJECT_OWNER ? 8 : 12;
-
     return this.state.projects.map(project => {
 
       const linkEndpoint = dashboardRole === Role.ADMIN ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
 
+      let contentGridSize = 12;
+      let rightColumnGridSize = false;
+      if (dashboardRole === Role.PROJECT_OWNER && project.state === ProjectState.REJECTED) {
+        contentGridSize = 11;
+        rightColumnGridSize = 1;
+      } else if (dashboardRole === Role.PROJECT_OWNER && project.state !== ProjectState.REJECTED) {
+        contentGridSize = 8;
+        rightColumnGridSize = 4;
+      }
+
       return (
-        <Grid
-          container
-          style={{ alignItems: 'center' }}
-          item
-          xs={12}
-          key={project._id}
-        >
-          <Grid item xs={gridSize}>
-            <Link to={linkEndpoint} className={classes.link}>
-              <Card className={classes.card}>
-                <Grid container item xs={12} key={project.title}>
-                  <Grid item xs={12} md={4}>
-                    <CardMedia
-                      className={classes.cardMedia}
-                      image={project.coverImageUrl}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={8}>
-                    <div className={classes.details}>
-                      <CardContent className={classes.content}>
-                        <Typography variant="headline" gutterBottom>
-                          {project.title}
-                        </Typography>
-                        <Typography
-                          variant="subheading"
-                          color="textSecondary"
-                          gutterBottom
-                        >
-                          <List className={classes.removePadding}>
-                            <ListItem className={classes.removePadding}>
-                              <Avatar
-                                alt="Profile Photo"
-                                src={project.projectOwner.profilePhotoUrl}
-                                className={classes.smallAvatar}
-                              />
-                              <ListItemText
-                                className={classes.removePadding}
-                                primary={project.projectOwner.name}
-                              />
-                            </ListItem>
-                          </List>
-                        </Typography>
-                        <div className={classes.tagsContainer}>
-                          {this.renderVolunteerRequirements(project)}
-                          {this.renderIssuesAddressed(project)}
-                        </div>
-                      </CardContent>
-                    </div>
-                  </Grid>
-                </Grid>
-              </Card>
-            </Link>
-          </Grid>
-          <Grid item xs={4}>
-            {this.renderActionButtons(dashboardRole)}
+        <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
+          <Grid container>
+            <Grid item xs={12} md={contentGridSize}>
+              <Link to={linkEndpoint} className={classes.link}>
+                {this.renderProjectListingCardContent(dashboardRole, project)}
+              </Link>
+            </Grid>
+            <Grid item xs={12} md={rightColumnGridSize} style={ {margin: 'auto'} }>
+              {this.renderButtons(dashboardRole, project)}
+            </Grid>
           </Grid>
         </Grid>
       );
@@ -204,10 +267,7 @@ const styles = theme => ({
   card: {
     display: 'flex',
     marginBottom: theme.spacing.unit,
-  },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
+    width: '100%',
   },
   content: {
     flex: '1 0 auto',
@@ -226,7 +286,6 @@ const styles = theme => ({
     fontSize: '12px',
     height: '25px',
   },
-  alignBottom: {},
   smallAvatar: {
     width: 20,
     height: 20,
@@ -240,6 +299,12 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
+    marginLeft: theme.spacing.unit * 1.5,
+    marginRight: theme.spacing.unit * 0.5,
+  },
+  rejectionMessage: {
+    padding: '15px',
+    textAlign: 'justify',
   },
 });
 

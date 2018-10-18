@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
 import { NavBar } from './NavBar';
-import { Footer } from './Footer';
+// import { Footer } from './Footer';
 import { NotFound } from './NotFound';
 import { Unauthorized } from './Unauthorized';
 
@@ -21,7 +21,7 @@ import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDash
 import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
 
 import { AdminDashboard } from 'components/admin/AdminDashboard';
-import { AdminProjectDetails } from 'components/admin/AdminProjectDetails';
+import { AdminProjectDetails } from 'components/admin/admin_project_details/AdminProjectDetails';
 
 import { Role } from 'components/shared/enums/Role';
 

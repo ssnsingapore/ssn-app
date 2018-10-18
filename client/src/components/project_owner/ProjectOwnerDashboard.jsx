@@ -68,7 +68,6 @@ class _ProjectOwnerDashboard extends Component {
 
   renderTabs() {
     const { tabValue } = this.state;
-
     return (
       <React.Fragment>
         <Tabs
@@ -82,6 +81,15 @@ class _ProjectOwnerDashboard extends Component {
           <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)} />
           <Tab label={this.getTabLabel(ProjectState.REJECTED)} />
         </Tabs>
+      </React.Fragment>
+    );
+  }
+
+  renderProjectListing() {
+    const { tabValue } = this.state;
+    const { classes } = this.props;
+    return(
+      <Paper square className={classes.projectListing}>
         {tabValue === 0 && (
           <ProjectListing 
             projectState={ProjectState.PENDING_APPROVAL} 
@@ -106,7 +114,7 @@ class _ProjectOwnerDashboard extends Component {
             dashboardRole={Role.PROJECT_OWNER} 
           />
         )}
-      </React.Fragment>
+      </Paper>
     );
   }
 
@@ -136,6 +144,8 @@ class _ProjectOwnerDashboard extends Component {
             </div>
             {this.renderTabs()}
           </Paper>
+          {this.renderProjectListing()}
+
         </Grid>
         <Grid item xs={12}>
           <ProjectOwnerDetails />
@@ -153,6 +163,7 @@ const styles = theme => ({
   projectListingContainer: {
     margin: '70px auto 10px',
     padding: '40px',
+    paddingBottom: '0px',
   },
   marginBottom3: {
     marginBottom: theme.spacing.unit * 3,
@@ -160,9 +171,11 @@ const styles = theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    padding: '20px',
   },
   projectListing: {
-    margin: '30px auto',
+    margin: '5px auto',
+    padding: '40px',
   },
 });
 

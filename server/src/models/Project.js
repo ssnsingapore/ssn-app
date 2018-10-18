@@ -159,6 +159,9 @@ const ProjectSchema = new mongoose.Schema(
       }, 'cannot be blank'],
       enum: Object.values(ProjectFrequency),
     },
+    rejectionReason: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

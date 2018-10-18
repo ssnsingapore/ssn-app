@@ -93,7 +93,7 @@ class _AdminDashboard extends Component {
 
 const styles = theme => ({
   root: {
-    width: '80vw',
+    width: '90vw',
     margin: '10px auto',
   },
   headline: {

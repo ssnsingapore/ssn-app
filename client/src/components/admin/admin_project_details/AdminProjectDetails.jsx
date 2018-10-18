@@ -12,18 +12,19 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { ProjectApprovalConfirmationDialog } from './ProjectApprovalConfirmationDialog';
+import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
+import { AdminProjectApprovalConfirmationDialog } from './AdminProjectApprovalConfirmationDialog';
+import { AdminProjectRejectionConfirmationDialog } from './AdminProjectRejectionConfirmationDialog';
 
 const PROJECT_APPROVED_SUCCESS_MESSAGE = 'The project has been successfully approved.';
-const PROJECT_REJECTED_SUCCESS_MESSAGE = 'The project has been successfully rejected.';
-
 class _AdminProjectDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isSubmitting: false,
       isLoading: true,
-      confirmationDialogBoxOpen: false,
+      approveConfirmationDialogBoxOpen: false,
+      rejectionConfirmationDialogBoxOpen: false,
     };
   }
 
@@ -78,44 +79,23 @@ class _AdminProjectDetails extends Component {
 
   };
 
-  handleReject = async (event) => {
-
-    event.preventDefault();
-
-    const { id } = this.props.match.params;
-    const endpoint = `/api/v1/admin/projects/${id}`;
-
-    const updatedProject = { project: {
-      state: ProjectState.REJECTED,
-    } };
-
-    const { showAlert } = this.props.context.updaters;
-    const { requestWithAlert } = this.props.context.utils;
-
-    this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
-    this.setState({ isSubmitting: false });
-
-    if (response.isSuccessful) {
-      showAlert('projectRejectSuccess', AlertType.SUCCESS, PROJECT_REJECTED_SUCCESS_MESSAGE);
-      this.setState({ shouldRedirect: true});
-    }
-
-    if (response.hasError) {
-      const errors = await extractErrors(response);
-      showAlert('projectRejectFailure', AlertType.ERROR, formatErrors(errors));
-    }
-
-  };
-
-
-  handleConfirmationDialogBoxOpen = () => {
-    this.setState({ confirmationDialogBoxOpen: true });
+  handleApproveConfirmationDialogBoxOpen = () => {
+    this.setState({ approveConfirmationDialogBoxOpen: true });
   }
 
-  handleConfirmationDialogBoxOpenClose = () => {
-    this.setState({ confirmationDialogBoxOpen: false });
+  handleApproveConfirmationDialogBoxClose = () => {
+    this.setState({ approveConfirmationDialogBoxOpen: false });
   }
+
+
+  handleRejectionConfirmationDialogBoxOpen = () => {
+    this.setState({ rejectionConfirmationDialogBoxOpen: true });
+  }
+
+  handleRejectionConfirmationDialogBoxClose = () => {
+    this.setState({ rejectionConfirmationDialogBoxOpen: false });
+  }
+
 
   renderApproveRejectButtons(state) {
     const { classes } = this.props;
@@ -129,7 +109,7 @@ class _AdminProjectDetails extends Component {
           variant="contained"
           color="secondary"
           className={classes.button}
-          onClick={this.handleConfirmationDialogBoxOpen}
+          onClick={this.handleApproveConfirmationDialogBoxOpen}
         >
                 Approve
         </Button>
@@ -138,7 +118,7 @@ class _AdminProjectDetails extends Component {
           type="submit"
           variant="contained"
           className={classes.buttonGrey}
-          onClick={this.handleReject}
+          onClick={this.handleRejectionConfirmationDialogBoxOpen}
         >
               Reject
         </Button>
@@ -185,15 +165,18 @@ class _AdminProjectDetails extends Component {
     }
     return(
       <Grid container className={classes.root}>
-        <ProjectApprovalConfirmationDialog
-          open={this.state.confirmationDialogBoxOpen}
-          handleClose={this.handleConfirmationDialogBoxOpenClose}
+        <AdminProjectApprovalConfirmationDialog
+          open={this.state.approveConfirmationDialogBoxOpen}
+          handleClose={this.handleApproveConfirmationDialogBoxClose}
           handleApprove={this.handleApprove}
         />
+        <AdminProjectRejectionConfirmationDialog
+          open={this.state.rejectionConfirmationDialogBoxOpen}
+          handleClose={this.handleRejectionConfirmationDialogBoxClose}
+          projectId={id}
+        />
         <Grid item xs={12} className={classes.projectDetails}>
-          <div>
-            Component made by Sabrina for project details listing for {id}
-          </div>
+          <ProjectMainInfo id={id}/>
         </Grid>
         {this.renderNavBar()}
       </Grid>
@@ -206,7 +189,7 @@ const styles = theme => ({
 
   root: {
     flexDirection: 'column',
-    minHeight: '100vw',
+    minHeight: '45vw',
   },
   projectDetails: {
     flexGrow: 1,
