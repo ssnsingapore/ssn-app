@@ -1,6 +1,5 @@
 import uid from 'uid-safe';
 
-import { User } from 'models/User';
 import { BadRequestErrorView } from 'util/errors';
 import { mailer } from 'config/mailer';
 import { config, isProduction } from 'config/environment';
@@ -11,6 +10,10 @@ export class PasswordResetService {
     sameSite: true,
     maxAge: 10 * 60 * 1000,
   };
+
+  constructor(userModel) {
+    this.userModel = userModel;
+  }
 
   trigger = async (email) => {
     const user = await this._findUser(email);
@@ -23,7 +26,7 @@ export class PasswordResetService {
   }
 
   getRedirectUrlAndCookieArgs = async (userId, passwordResetToken) => {
-    const user = await User.findById(userId);
+    const user = await this.userModel.findById(userId);
 
     let message;
     let isSuccess = false;
@@ -51,7 +54,7 @@ export class PasswordResetService {
       return { errors: [new BadRequestErrorView('Your password reset session has expired. Please try the password reset link again.')] };
     }
 
-    const user = await User.findOne({ email });
+    const user = await this.userModel.findOne({ email });
     if (!this._verifyPasswordResetToken(user, passwordResetToken)) {
       return { errors: [new BadRequestErrorView('It seems like there was something wrong resetting your password. Please try again.')] };
     }
@@ -84,7 +87,7 @@ export class PasswordResetService {
 
   _verifyPasswordResetToken = (user, passwordResetToken) => user && user.passwordResetToken === passwordResetToken
 
-   _findUser = async email => User.findOne({ email })
+   _findUser = async email => this.userModel.findOne({ email })
 
   _checkUserExists = (user) => {
     if (!user) {

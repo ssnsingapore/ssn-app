@@ -93,6 +93,10 @@ const ProjectOwnerSchema = new mongoose.Schema({
     default: [Role.PROJECT_OWNER],
     required: [true, 'cannot be blank'],
   },
+
+  // Password reset
+  passwordResetToken: String,
+  passwordResetExpiresAt: Date,
 });
 
 ProjectOwnerSchema.plugin(uniqueValidator, { message: 'is already taken.' });
@@ -157,6 +161,28 @@ ProjectOwnerSchema.methods.generateJwt = function (csrfToken) {
       expiresIn: config.JWT_EXPIRES_IN,
     },
   );
+};
+
+ProjectOwnerSchema.methods.generatePasswordResetToken = async function () {
+  const passwordResetToken = await uid(18);
+  const passwordResetExpiresAt = new Date(Date.now() + config.PASSWORD_RESET_DURATION);
+
+  this.set({ passwordResetToken, passwordResetExpiresAt });
+  await this.save();
+
+  return passwordResetToken;
+};
+
+ProjectOwnerSchema.methods.resetToRandomPassword = async function () {
+  const randomPassword = await uid(18);
+
+  this.set({ hashedPassword: randomPassword });
+  await this.save();
+};
+
+ProjectOwnerSchema.methods.clearPasswordResetFields = async function () {
+  this.set({ passwordResetToken: undefined, passwordResetExpiresAt: undefined });
+  await this.save();
 };
 
 export const ProjectOwner = mongoose.model('ProjectOwner', ProjectOwnerSchema);

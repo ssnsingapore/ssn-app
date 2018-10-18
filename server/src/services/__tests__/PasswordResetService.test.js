@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import { mailer } from 'config/mailer';
-import { User } from 'models/User';
 import { BadRequestErrorView } from 'util/errors';
 import { config, isProduction } from 'config/environment';
+import { ProjectOwner } from 'models/ProjectOwner';
 import { PasswordResetService } from '../PasswordResetService';
 
 jest.mock('config/mailer');
@@ -24,7 +24,7 @@ describe('Password reset service', () => {
   let passwordResetService;
 
   beforeEach(() => {
-    passwordResetService = new PasswordResetService();
+    passwordResetService = new PasswordResetService(ProjectOwner);
   });
 
   describe('triggering password reset', () => {
@@ -34,7 +34,7 @@ describe('Password reset service', () => {
 
     beforeEach(async (done) => {
       mailer.sendMail = jest.fn(() => ({ messageId: 'some id' }));
-      mockUser = new User({
+      mockUser = new ProjectOwner({
         name: 'test',
         email,
         hashedPassword: oldHashedPassword,
@@ -44,7 +44,7 @@ describe('Password reset service', () => {
     });
 
     afterEach(async (done) => {
-      await User.deleteMany({});
+      await ProjectOwner.deleteMany({});
       done();
     });
 
@@ -58,7 +58,7 @@ describe('Password reset service', () => {
       );
       expect(mailer.sendMail).not.toHaveBeenCalled();
 
-      const user = await User.findOne({ email });
+      const user = await ProjectOwner.findOne({ email });
       expect(user.passwordResetToken).toBeUndefined();
       expect(user.passwordResetExpiresAt).toBeUndefined();
     });
@@ -73,7 +73,7 @@ describe('Password reset service', () => {
       it('should generate a password reset token, set the reset token expiry time, and reset the password to a random value', async () => {
         await passwordResetService.trigger(email);
 
-        const user = await User.findOne({ email });
+        const user = await ProjectOwner.findOne({ email });
         expect(user.passwordResetToken).toEqual(expect.any(String));
         expect(user.passwordResetExpiresAt).toEqual(expect.any(Date));
         expect(user.hashedPassword).toEqual(expect.any(String));
@@ -83,7 +83,7 @@ describe('Password reset service', () => {
       it('should send a password reset email with a password reset token to the user', async () => {
         await passwordResetService.trigger(email);
 
-        const user = await User.findOne({ email });
+        const user = await ProjectOwner.findOne({ email });
         expect(mailer.sendMail).toHaveBeenCalledWith({
           to: email,
           subject: 'SSN Project Portal Password Reset',
@@ -98,7 +98,7 @@ describe('Password reset service', () => {
     const passwordResetToken = 'passwordResetToken';
 
     beforeEach(async (done) => {
-      const user = new User({
+      const user = new ProjectOwner({
         name: 'test',
         email: 'test@test.com',
         passwordResetToken,
@@ -110,7 +110,7 @@ describe('Password reset service', () => {
     });
 
     afterEach(async (done) => {
-      await User.deleteMany({});
+      await ProjectOwner.deleteMany({});
       done();
     });
 
@@ -175,7 +175,7 @@ describe('Password reset service', () => {
 
       describe('when the password reset link has expired', () => {
         beforeEach(async (done) => {
-          await User.findByIdAndUpdate(userId, {
+          await ProjectOwner.findByIdAndUpdate(userId, {
             passwordResetExpiresAt: new Date(Date.now() - 60 * 60 * 1000),
           });
           done();
@@ -222,7 +222,7 @@ describe('Password reset service', () => {
 
       it('should return message, password reset token, email and csrf cookie args', async () => {
         const result = await passwordResetService.getRedirectUrlAndCookieArgs(userId, passwordResetToken);
-        const user = await User.findById(userId);
+        const user = await ProjectOwner.findById(userId);
         const baseCookieOptions = {
           secure: isProduction,
           sameSite: true,
@@ -268,7 +268,7 @@ describe('Password reset service', () => {
     const newPassword = 'new password';
 
     beforeEach(async (done) => {
-      const user = new User({
+      const user = new ProjectOwner({
         name: 'test',
         email,
         passwordResetToken,
@@ -280,7 +280,7 @@ describe('Password reset service', () => {
     });
 
     afterEach(async (done) => {
-      await User.deleteMany({});
+      await ProjectOwner.deleteMany({});
       done();
     });
 
@@ -312,7 +312,7 @@ describe('Password reset service', () => {
 
     describe('when password reset token has expired', () => {
       it('should return a bad request error', async () => {
-        await User.findByIdAndUpdate(userId, { passwordResetExpiresAt: new Date(Date.now() - 60) });
+        await ProjectOwner.findByIdAndUpdate(userId, { passwordResetExpiresAt: new Date(Date.now() - 60) });
 
         const result = await passwordResetService.attemptPasswordReset(email, passwordResetToken, newPassword);
         expect(result.errors[0]).toEqual(
@@ -330,7 +330,7 @@ describe('Password reset service', () => {
       it('should set the user\'s password and clear the passwordReset fields', async () => {
         await passwordResetService.attemptPasswordReset(email, passwordResetToken, newPassword);
 
-        const user = await User.findById(userId);
+        const user = await ProjectOwner.findById(userId);
         expect(user.passwordResetToken).toBeUndefined();
         expect(user.passwordResetExpiresAt).toBeUndefined();
       });
