@@ -94,7 +94,7 @@ getProjectOwner()
         startDate: new Date(),
         endDate: new Date(),
         frequency: ProjectFrequency.A_FEW_TIMES_A_YEAR,
-        rejectionReason: 'I think your project is too controversial',
+        rejectionReason: 'Lorem ipsum dolor sit amet, id commodo invidunt persecuti nam, id alienum deserunt urbanitas eam, denique elaboraret definitiones eum at. Mea cu maluisset deseruisse, phaedrum honestatis ius ex. Sed id novum melius consulatu. No cum menandri adipiscing, ei vocent persius mei. Ex vis mutat fastidii.',
       },
       {
         title: 'Default Image Project',
