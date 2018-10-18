@@ -149,7 +149,7 @@ class _ProjectListing extends Component {
   renderProjectListingCardContent(dashboardRole, project) {
     const { classes } = this.props;
     let cardContentSize = 12;
-    let rejectionMessageSize = 0;
+    let rejectionMessageSize = false;
     if (project.state === ProjectState.REJECTED) {
       cardContentSize = 8;
       rejectionMessageSize = 4;
@@ -223,7 +223,7 @@ class _ProjectListing extends Component {
       const linkEndpoint = dashboardRole === Role.ADMIN ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
 
       let contentGridSize = 12;
-      let rightColumnGridSize = 0;
+      let rightColumnGridSize = false;
       if (dashboardRole === Role.PROJECT_OWNER && project.state === ProjectState.REJECTED) {
         contentGridSize = 11;
         rightColumnGridSize = 1;
