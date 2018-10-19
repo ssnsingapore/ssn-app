@@ -16,13 +16,6 @@ import {
   Chip,
 } from '@material-ui/core';
 
-import { AppContext } from '../main/AppContext';
-import { withContext } from 'util/context';
-import { extractErrors, formatErrors } from 'util/errors';
-import { AlertType } from 'components/shared/Alert';
-import { Spinner } from 'components/shared/Spinner';
-import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
-
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
     <strong>{label} </strong>
@@ -31,46 +24,9 @@ const renderRow = (label, value) => (
 );
 
 class _ProjectMainInfo extends Component {
-  state = {
-    isLoading: true,
-    issuesAddressed: [],
-    title: '',
-    description: '',
-    volunteerSignupUrl: '',
-    volunteerRequirements: [],
-    projectOwner: {},
-    volunteerRequirementsDescription: '',
-    volunteerBenefitsDescription: '',
-    projectType: '',
-    time: '',
-    location: '',
-    frequency: '',
-    coverImageUrl: '',
-  };
-
-  async componentDidMount() {
-    const { requestWithAlert } = this.props.context.utils;
-    const endpoint = '/api/v1/projects/';
-    const { id } = this.props;
-    const response = await requestWithAlert.get(endpoint + id);
-
-    if (response.isSuccessful) {
-      const project = (await response.json()).project;
-      this.setState({ ...project });
-    }
-
-    if (response.hasError) {
-      const { showAlert } = this.props.context.updaters;
-      const errors = await extractErrors(response);
-      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
-    }
-
-    this.setState({ isLoading: false });
-  }
-
   renderIssuesAddressed = () => {
     const { classes } = this.props;
-    const { issuesAddressed } = this.state;
+    const { issuesAddressed } = this.props.project;
 
     return (
       <React.Fragment>
@@ -94,7 +50,7 @@ class _ProjectMainInfo extends Component {
       description,
       volunteerSignupUrl,
       coverImageUrl,
-    } = this.state;
+    } = this.props.project;
 
     return (
       <Card className={classes.card} square>
@@ -134,7 +90,7 @@ class _ProjectMainInfo extends Component {
       volunteerRequirements,
       volunteerRequirementsDescription,
       volunteerBenefitsDescription,
-    } = this.state;
+    } = this.props.project;
 
     return (
       <Paper className={classes.paper} square>
@@ -192,7 +148,7 @@ class _ProjectMainInfo extends Component {
       location,
       projectType,
       frequency,
-    } = this.state;
+    } = this.props.project;
 
     return (
       <Paper className={classes.paper} square>
@@ -216,11 +172,6 @@ class _ProjectMainInfo extends Component {
   };
 
   render() {
-    if (this.state.isLoading) {
-      return <Spinner />;
-    }
-
-    console.log(this.state);
     const { classes } = this.props;
 
     return (
@@ -234,9 +185,6 @@ class _ProjectMainInfo extends Component {
           </Grid>
           <Grid item xs={12} sm={6}>
             {this.renderProjectDetails()}
-          </Grid>
-          <Grid item xs={12}>
-            <ProjectOwnerDetails projectOwner={this.state.projectOwner} />
           </Grid>
         </Grid>
       </div>
@@ -281,6 +229,4 @@ const styles = theme => ({
   },
 });
 
-export const ProjectMainInfo = withContext(AppContext)(
-  withStyles(styles)(_ProjectMainInfo)
-);
+export const ProjectMainInfo = withStyles(styles)(_ProjectMainInfo);
