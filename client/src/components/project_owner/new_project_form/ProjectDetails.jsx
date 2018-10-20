@@ -11,8 +11,7 @@ import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappin
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
 
-const isSelectedBefore = (issuesAddressed = [], data) => 
-  !!issuesAddressed.find(issue => issue === data);
+const isSelectedBefore = (issuesAddressed = [], data) => !!issuesAddressed.find(issue => issue === data);
 
 const renderFrequency = (FieldName, classes, handleChange, fields) => {
   return fields[FieldName.projectType].value === ProjectType.RECURRING &&
@@ -21,6 +20,8 @@ const renderFrequency = (FieldName, classes, handleChange, fields) => {
     select
     label="Frequency"
     value={fieldValue(fields, FieldName.frequency)}
+    error={fieldHasError(fields, FieldName.frequency)}
+    helperText={fieldErrorText(fields, FieldName.frequency)}
     onChange={handleChange}
     name={FieldName.frequency}
     InputLabelProps={{ shrink: true }}
@@ -89,6 +90,8 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 name={FieldName.projectType}
                 className={classes.columnInRow}
                 InputLabelProps={{ shrink: true }}
+                error={fieldHasError(fields, FieldName.projectType)}
+                helperText={fieldErrorText(fields, FieldName.projectType)}
               >
                 <MenuItem value={ProjectType.EVENT}>Event</MenuItem>
                 <MenuItem value={ProjectType.RECURRING}>Recurring</MenuItem>

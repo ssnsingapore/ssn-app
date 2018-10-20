@@ -53,7 +53,7 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
     const { projectId } = this.props;
     const endpoint = `/api/v1/admin/projects/${projectId}`;
 
-    const updatedProject = { 
+    const updatedProject = {
       project: {
         state: ProjectState.REJECTED,
         rejectionReason,
@@ -89,7 +89,7 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
           Are you sure you want to reject this project?
         </DialogContentText>
         <DialogContentText>
-          <TextField 
+          <TextField
             name={FieldName.rejectionReason}
             className={classes.textField}
             id={FieldName.rejectionReason}
@@ -97,7 +97,7 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
             onChange={handleChange}
             value={fieldValue(fields, FieldName.rejectionReason)}
             error={fieldHasError(fields, FieldName.rejectionReason)}
-            helper={fieldErrorText(fields, FieldName.rejectionReason)}
+            helperText={fieldErrorText(fields, FieldName.rejectionReason)}
             fullWidth
             multiline
           />
@@ -128,9 +128,9 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
             <Button onClick={handleClose} color="default">
             No
             </Button>
-            <Button 
-              type="submit" 
-              color="primary" 
+            <Button
+              type="submit"
+              color="primary"
               disabled={this.state.isSubmitting}>
             Yes
             </Button>
@@ -149,7 +149,7 @@ const styles = theme => ({
 });
 
 
-export const AdminProjectRejectionConfirmationDialog = 
+export const AdminProjectRejectionConfirmationDialog =
   withStyles(styles)(
     withForm(FieldName, constraints)(
       withContext(AppContext)(_AdminProjectRejectionConfirmationDialog)

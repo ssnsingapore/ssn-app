@@ -30,7 +30,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           key={FieldName.title}
           value={fieldValue(fields, FieldName.title)}
           error={fieldHasError(fields, FieldName.title)}
-          helper={fieldErrorText(fields, FieldName.title)}
+          helperText={fieldErrorText(fields, FieldName.title)}
           onChange={handleChange}
         />
         <TextField
@@ -48,7 +48,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           key={FieldName.description}
           value={fieldValue(fields, FieldName.description)}
           error={fieldHasError(fields, FieldName.description)}
-          helper={fieldErrorText(fields, FieldName.description)}
+          helperText={fieldErrorText(fields, FieldName.description)}
           onChange={handleChange}
         />
         <TextField
@@ -63,7 +63,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           key={FieldName.volunteerSignupUrl}
           value={fieldValue(fields, FieldName.volunteerSignupUrl)}
           error={fieldHasError(fields, FieldName.volunteerSignupUrl)}
-          helper={fieldErrorText(fields, FieldName.volunteerSignupUrl)}
+          helperText={fieldErrorText(fields, FieldName.volunteerSignupUrl)}
           onChange={handleChange}
         />
       </CardContent>
@@ -75,7 +75,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
   );
 };
 
-const styles = theme => ({
+const styles = {
   card: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -88,6 +88,6 @@ const styles = theme => ({
     minWidth: '600px',
     objectFit: 'cover',
   },
-});
+};
 
 export const ProjectBaseDetails = withStyles(styles)(_ProjectBaseDetails);
