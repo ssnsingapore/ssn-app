@@ -126,25 +126,25 @@ class _ProjectListing extends Component {
     }
   }
 
-  renderRejectionMessage(dashboardRole, project) {
+  renderRejectionMessage(dashboardRole, project, rejectionMessageSize) {
+    const { classes } = this.props;
+  
     if (dashboardRole !== Role.PROJECT_OWNER) {
       return null;
     }
     if (project.state !== ProjectState.REJECTED) {
-      return null;
-    } else {
-      return (
-        <React.Fragment>
-          <Typography variant="body2">
-              Rejection comments:
-          </Typography>
-          <br/>
-          <Typography variant="body1">
-            {project.rejectionReason}
-          </Typography>
-        </React.Fragment>
-      );
+      return null; 
     }
+    return (
+      <Grid item xs={rejectionMessageSize} className={classes.rejectionMessage} >
+        <Typography variant="body2">
+              Rejection comments: 
+        </Typography>
+        <Typography variant="body1">
+          {project.rejectionReason}
+        </Typography>
+      </Grid>
+    );
   }
 
   renderProjectListingCardContent(dashboardRole, project) {
@@ -202,16 +202,7 @@ class _ProjectListing extends Component {
             </Card>
           </Grid>
         </Grid>
-        {
-          project.state === ProjectState.REJECTED && 
-          <Grid item xs={rejectionMessageSize}>
-            <Grid container>
-              <Grid container className={classes.rejectionMessage} style={{ margin: 'auto'}}>
-                {this.renderRejectionMessage(dashboardRole, project)}
-              </Grid>
-            </Grid>
-          </Grid>
-        }
+        {this.renderRejectionMessage(dashboardRole, project, rejectionMessageSize, project.state)}
       </Grid>
 
     );
