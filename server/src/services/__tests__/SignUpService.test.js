@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { mailer } from 'config/mailer';
 import { User } from 'models/User';
 import { UnprocessableEntityErrorView } from 'util/errors';
+import { Role } from 'models/Role';
 import { SignUpService } from '../SignUpService';
 
 jest.mock('config/mailer');
@@ -26,7 +27,7 @@ describe('Sign up service', () => {
       email: 'test@test.com',
     });
     password = 'password';
-    signUpService = new SignUpService(mockUser, password);
+    signUpService = new SignUpService(mockUser, password, Role.PROJECT_OWNER);
   });
 
   afterEach((done) => {
