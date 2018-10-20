@@ -137,7 +137,11 @@ const ProjectSchema = new mongoose.Schema(
     startDate: {
       type: Date,
       validate: [function () {
-        return (this.startDate <= this.endDate);
+        if (this.projectType === ProjectType.EVENT) {
+          return (this.startDate <= this.endDate);
+        }
+
+        return true;
       }],
       required: [function () {
         return (this.projectType === ProjectType.EVENT);
@@ -146,7 +150,11 @@ const ProjectSchema = new mongoose.Schema(
     endDate: {
       type: Date,
       validate: [function () {
-        return (this.startDate <= this.endDate);
+        if (this.projectType === ProjectType.EVENT) {
+          return (this.startDate <= this.endDate);
+        }
+
+        return true;
       }],
       required: [function () {
         return (this.projectType === ProjectType.EVENT);
