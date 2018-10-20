@@ -92,14 +92,32 @@ async function postProject(req, res) {
   return res.status(201).json({ project: project.toJSON() });
 }
 
+projectRouter.put('/project_owner/projects/:id',
+  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
+  asyncWrap(projectOwnerChangeProjectState));
+async function projectOwnerChangeProjectState(req, res) {
+  const { id } = req.params;
+  const { state } = req.body.project;
+
+  // TODO: implement validation for backend project state update routes (SSN-52) e.g.,
+  // const project = await Project.findbyid(id)
+  // await project.approve()
+
+  const project = await Project.updateOne(
+    { _id: id },
+    { $set: { state } }
+  );
+  return res.status(200).json({ project });
+}
+
 // =============================================================================
 // Admin Routes
 // =============================================================================
 
 projectRouter.put('/admin/projects/:id',
   passport.authenticate(`${Role.ADMIN}Jwt`, { session: false, failWithError: true }),
-  asyncWrap(changeProjectState));
-async function changeProjectState(req, res) {
+  asyncWrap(adminChangeProjectState));
+async function adminChangeProjectState(req, res) {
   const { id } = req.params;
 
   const { state, rejectionReason } = req.body.project;
