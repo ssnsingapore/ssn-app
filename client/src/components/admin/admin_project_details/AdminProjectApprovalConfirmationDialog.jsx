@@ -9,7 +9,7 @@ import {
   DialogContentText,
 } from '@material-ui/core';
 
-export class ProjectApprovalConfirmationDialog extends Component {
+export class AdminProjectApprovalConfirmationDialog extends Component {
   state = {
   }
 

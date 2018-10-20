@@ -3,7 +3,6 @@ import { Redirect, Link } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import {
   Grid,
-  BottomNavigation,
   Button,
 } from '@material-ui/core';
 
