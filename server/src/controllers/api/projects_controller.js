@@ -82,7 +82,9 @@ async function getProjectCountsForProjectOwner(req, res) {
   return res.status(200).json({ counts });
 }
 
-projectRouter.post('/project_owner/projects/new', asyncWrap(postProject));
+projectRouter.post('/project_owner/projects/new',
+  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
+  asyncWrap(postProject));
 async function postProject(req, res) {
   const project = new Project({
     ...req.body.project,
