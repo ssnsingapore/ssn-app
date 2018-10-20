@@ -54,6 +54,24 @@ async function login(req, res) {
     .json({ errors: [new BadRequestErrorView(message)] });
 }
 
+
+projectOwnersRouter.delete(
+  '/project_owners/logout',
+  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`,
+    { session: false, failWithError: true }),
+  asyncWrap(logout)
+);
+async function logout(req, res) {
+  const { user } = req;
+
+  await user.update({ lastLogoutTime: new Date() });
+  res.clearCookie(config.TOKEN_COOKIE_NAME, {
+    httpOnly: true,
+    secure: true,
+    sameSite: true,
+  });
+  return res.status(204).end();
+}
 // =============================================================================
 // Sign Up and Account Confirmation
 // =============================================================================

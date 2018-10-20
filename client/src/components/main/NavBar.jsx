@@ -16,11 +16,15 @@ import adminAvatar from 'assets/placeholder-avatar.jpg';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
 import { Role } from 'components/shared/enums/Role';
+import { AlertType } from 'components/shared/Alert';
 
 const NavBarDisplayMapping = {
   [Role.ADMIN]: 'SSN ADMIN',
   [Role.PROJECT_OWNER]: 'PROJECT OWNER',
 };
+
+const LOGOUT_SUCCESS_MESSAGE = 'You\'ve successfully logged out!';
+const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error logging you out. Please try again!';
 
 class _NavBar extends Component {
   constructor(props) {
@@ -38,7 +42,7 @@ class _NavBar extends Component {
   handleClose = () => {
     this.setState({anchorEl: null });
   };
-  
+
   getNavbarText = () => {
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
@@ -50,8 +54,24 @@ class _NavBar extends Component {
 
     return `${NavBarDisplayMapping[currentUser.role]} DASHBOARD`;
   }
-  
-  renderAvatar = () => { 
+
+  handleLogout = async (currentUser) => {
+
+    const { authenticator } = this.props.context.utils;
+    const { showAlert } = this.props.context.updaters;
+
+    const response = currentUser.role === Role.PROJECT_OWNER ?
+      await authenticator.logoutProjectOwner() : await authenticator.logoutAdmin();
+    if (response.isSuccessful) {
+      showAlert('logoutSuccess', AlertType.SUCCESS, LOGOUT_SUCCESS_MESSAGE);
+    }
+
+    if (response.hasError) {
+      showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
+    }
+  }
+
+  renderAvatar = () => {
     const { classes } = this.props;
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
@@ -61,7 +81,7 @@ class _NavBar extends Component {
       return '';
     }
 
-    return currentUser.role === Role.admin && (
+    return currentUser && (
       <React.Fragment>
         <Button
           aria-owns={this.state.anchorEl ? 'simple-menu' : null}
@@ -79,14 +99,14 @@ class _NavBar extends Component {
           open={Boolean(this.state.anchorEl)}
           onClose={this.handleClose}
         >
-          <MenuItem component={Link} to="/logout">Logout</MenuItem>
+          <MenuItem button onClick={() => this.handleLogout(currentUser)}>Logout</MenuItem>
         </Menu>
       </React.Fragment>
     );
   }
 
   render() {
-    const { classes } = this.props; 
+    const { classes } = this.props;
 
     return this.props.location.pathname !== '/admin' && (
       <AppBar position="static">

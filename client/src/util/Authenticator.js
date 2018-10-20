@@ -100,9 +100,19 @@ export class Authenticator {
     return response;
   }
 
-  logout = async () => {
+  logoutAdmin = async () => {
+    return this._baseLogout('/api/v1/admins/logout');
+  }
+
+  logoutProjectOwner = async () => {
+    return this._baseLogout('/api/v1/project_owners/logout');
+  }
+
+  _baseLogout = async (
+    logoutPath,
+  ) => {
     const response = await this.requestWithAlert
-      .delete('/api/v1/logout', { authenticated: true });
+      .delete(logoutPath, { authenticated: true });
 
     if (response.isSuccessful) {
       this.clearAuthState();

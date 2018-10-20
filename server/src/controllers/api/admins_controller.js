@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 
+import { config } from 'config/environment';
 import { asyncWrap } from 'util/async_wrapper';
 import { Admin } from 'models/Admin';
 import { LoginService } from 'services/LoginService';
@@ -33,4 +34,22 @@ async function login(req, res) {
     .json({
       user,
     });
+}
+
+adminsRouter.delete(
+  '/admins/logout',
+  passport.authenticate(`${Role.ADMIN}Jwt`,
+    { session: false, failWithError: true }),
+  asyncWrap(logout)
+);
+async function logout(req, res) {
+  const { user } = req;
+
+  await user.update({ lastLogoutTime: new Date() });
+  res.clearCookie(config.TOKEN_COOKIE_NAME, {
+    httpOnly: true,
+    secure: true,
+    sameSite: true,
+  });
+  return res.status(204).end();
 }
