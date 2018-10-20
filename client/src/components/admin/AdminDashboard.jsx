@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Paper, Tabs, Tab} from '@material-ui/core';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
 import { ProjectListing } from 'components/shared/ProjectListing';
@@ -11,9 +11,8 @@ import { ProjectState } from 'components/shared/enums/ProjectState';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { withContext } from 'util/context';
-
 import { Role } from 'components/shared/enums/Role';
-class _AdminDashboard extends Component {
+export class _AdminDashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -58,6 +57,7 @@ class _AdminDashboard extends Component {
 
     const { classes } = this.props;
     const { tabValue } = this.state;
+
     return (
       <Paper className={classes.root} square>
         <Paper className={classes.tabHeader} square>
@@ -91,7 +91,7 @@ class _AdminDashboard extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = {
   root: {
     width: '90vw',
     margin: '10px auto',
@@ -107,16 +107,10 @@ const styles = theme => ({
     padding: '30px',
     paddingBottom: '0px',
   },
-});
+};
 
 export const AdminDashboard = withStyles(styles)(
-  withTheme()(
-    withContext(AppContext)(
-      (_AdminDashboard)
-    ),
+  withContext(AppContext)(
+    (_AdminDashboard)
   ),
 );
-
-export const _testExports = {
-  AdminDashboard: _AdminDashboard,
-};

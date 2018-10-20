@@ -303,3 +303,6 @@ const styles = theme => ({
 export const ProjectListing = withContext(AppContext)(
   withTheme()(withStyles(styles)(_ProjectListing))
 );
+
+//set displayName for tests to allow parent components to find component
+ProjectListing.displayName = 'ProjectListing';
