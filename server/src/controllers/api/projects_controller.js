@@ -23,6 +23,32 @@ async function getProjects(req, res) {
   return res.status(200).json({ projects });
 }
 
+projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
+async function getProjectCounts(_req, res) {
+  const counts = {};
+  const projectStates = Object.keys(ProjectState);
+
+  for (let i = 0; i < projectStates.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    counts[projectStates[i]] = await Project.count({ state: projectStates[i] });
+  }
+
+  return res.status(200).json({ counts });
+}
+projectRouter.get('/projects/:id', asyncWrap(getProject));
+async function getProject(req, res) {
+  const { id } = req.params;
+
+  const project = await Project.findById(id)
+    .populate('projectOwner')
+    .exec();
+
+  return res.status(200).json({ project });
+}
+
+// =============================================================================
+// Project Owner Routes
+// =============================================================================
 projectRouter.get(
   '/project_owner/projects',
   passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
@@ -40,18 +66,6 @@ async function getProjectsForProjectOwner(req, res) {
   return res.status(200).json({ projects });
 }
 
-projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
-async function getProjectCounts(_req, res) {
-  const counts = {};
-  const projectStates = Object.keys(ProjectState);
-
-  for (let i = 0; i < projectStates.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    counts[projectStates[i]] = await Project.count({ state: projectStates[i] });
-  }
-
-  return res.status(200).json({ counts });
-}
 
 projectRouter.get('/project_owner/project_counts',
   passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
@@ -68,18 +82,7 @@ async function getProjectCountsForProjectOwner(req, res) {
   return res.status(200).json({ counts });
 }
 
-projectRouter.get('/projects/:id', asyncWrap(getProject));
-async function getProject(req, res) {
-  const { id } = req.params;
-
-  const project = await Project.findById(id)
-    .populate('projectOwner')
-    .exec();
-
-  return res.status(200).json({ project });
-}
-
-projectRouter.post('/projects/new', asyncWrap(postProject));
+projectRouter.post('/project_owner/projects/new', asyncWrap(postProject));
 async function postProject(req, res) {
   const project = new Project({
     ...req.body.project,
