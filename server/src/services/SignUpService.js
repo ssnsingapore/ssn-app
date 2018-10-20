@@ -75,7 +75,7 @@ export class SignUpService {
     <p><em>SSN</em></p>
   `)
 
-  _confirmationUrl = () => encodeURI(`${config.API_BASE_URL}/api/v1/${this.userType}s/${this.user.id}/confirmation/${this.user.confirmationToken}`)
+  _confirmationUrl = () => encodeURI(`${config.API_BASE_URL}/api/v1/${this.userType.toLowerCase()}s/${this.user.id}/confirmation/${this.user.confirmationToken}`)
 
   testExports = {
     confirmationEmailHtml: this._confirmationEmailHtml,
