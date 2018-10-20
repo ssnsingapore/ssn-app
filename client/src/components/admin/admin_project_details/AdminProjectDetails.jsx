@@ -13,6 +13,7 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
+import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AdminProjectApprovalConfirmationDialog } from './AdminProjectApprovalConfirmationDialog';
 import { AdminProjectRejectionConfirmationDialog } from './AdminProjectRejectionConfirmationDialog';
 
@@ -176,7 +177,14 @@ class _AdminProjectDetails extends Component {
           projectId={id}
         />
         <Grid item xs={12} className={classes.projectDetails}>
-          <ProjectMainInfo id={id}/>
+          <Grid container spacing={16}>
+            <Grid item xs={12}>
+              <ProjectMainInfo project={this.state.project} />
+            </Grid>
+            <Grid item xs={12}>
+              <ProjectOwnerDetails projectOwner={this.state.project.projectOwner} />
+            </Grid>
+          </Grid>
         </Grid>
         {this.renderNavBar()}
       </Grid>
