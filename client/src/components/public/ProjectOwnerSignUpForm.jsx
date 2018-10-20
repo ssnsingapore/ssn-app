@@ -123,7 +123,7 @@ class _ProjectOwnerSignUpForm extends Component {
           id={FieldName.description}
           label="Description"
           onChange={handleChange}
-          value={fieldValue(fields, FieldName.description)}
+          value={fieldValue(fields, FieldName.description) || ''}
           error={fieldHasError(fields, FieldName.description)}
           helperText={fieldErrorText(fields, FieldName.description)}
           fullWidth
@@ -139,7 +139,7 @@ class _ProjectOwnerSignUpForm extends Component {
         id={FieldName.personalBio}
         label="Personal bio"
         onChange={handleChange}
-        value={fieldValue(fields, FieldName.personalBio)}
+        value={fieldValue(fields, FieldName.personalBio) || ''}
         error={fieldHasError(fields, FieldName.personalBio)}
         helperText={fieldErrorText(fields, FieldName.personalBio)}
         fullWidth
@@ -169,7 +169,7 @@ class _ProjectOwnerSignUpForm extends Component {
             label="Name"
             required={true}
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.name)}
+            value={fieldValue(fields, FieldName.name) || ''}
             error={fieldHasError(fields, FieldName.name)}
             helperText={fieldErrorText(fields, FieldName.name)}
             fullWidth
@@ -182,7 +182,7 @@ class _ProjectOwnerSignUpForm extends Component {
             label="Email"
             required={true}
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.email)}
+            value={fieldValue(fields, FieldName.email) || ''}
             error={fieldHasError(fields, FieldName.email)}
             helperText={fieldErrorText(fields, FieldName.email)}
             fullWidth
@@ -190,7 +190,7 @@ class _ProjectOwnerSignUpForm extends Component {
           />
           <RadioGroup
             name={FieldName.accountType}
-            value={fieldValue(fields, FieldName.accountType)}
+            value={fieldValue(fields, FieldName.accountType) || ''}
             onChange={handleChange}
             className={classes.radioGroup}
           >
@@ -210,7 +210,7 @@ class _ProjectOwnerSignUpForm extends Component {
             id={FieldName.websiteUrl}
             label="Web URL"
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.websiteUrl)}
+            value={fieldValue(fields, FieldName.websiteUrl) || ''}
             error={fieldHasError(fields, FieldName.websiteUrl)}
             helperText={fieldErrorText(fields, FieldName.websiteUrl)}
             fullWidth
@@ -222,7 +222,7 @@ class _ProjectOwnerSignUpForm extends Component {
             id={FieldName.socialMediaLink}
             label="Social Media"
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.socialMediaLink)}
+            value={fieldValue(fields, FieldName.socialMediaLink) || ''}
             error={fieldHasError(fields, FieldName.socialMediaLink)}
             helperText={fieldErrorText(fields, FieldName.socialMediaLink)}
             fullWidth
@@ -235,7 +235,7 @@ class _ProjectOwnerSignUpForm extends Component {
             id={FieldName.password}
             label="Password" required={true}
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.password)}
+            value={fieldValue(fields, FieldName.password) || ''}
             error={fieldHasError(fields, FieldName.password)}
             helperText={fieldErrorText(fields, FieldName.password)}
             type="password"
@@ -249,7 +249,7 @@ class _ProjectOwnerSignUpForm extends Component {
             required={true}
             label="Password Confirmation"
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.passwordConfirmation)}
+            value={fieldValue(fields, FieldName.passwordConfirmation) || ''}
             error={fieldHasError(fields, FieldName.passwordConfirmation)}
             helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
             type="password"

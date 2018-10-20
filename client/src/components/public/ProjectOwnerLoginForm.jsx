@@ -148,7 +148,7 @@ class _ProjectOwnerLoginForm extends React.Component {
             placeholder="Email"
             margin="normal"
             name={FieldName.email}
-            value={fieldValue(fields, FieldName.email)}
+            value={fieldValue(fields, FieldName.email) || ''}
             error={fieldHasError(fields, FieldName.email)}
             helperText={fieldErrorText(fields, FieldName.email)}
             onChange={handleChange}
