@@ -47,7 +47,7 @@ class _PasswordResetDialog extends Component {
     const data = { email: fieldValue(fields, FieldName.email) };
 
     this.setState({ isLoading: true });
-    const response = await requestWithAlert.post('/api/v1/users/passwordReset', data);
+    const response = await requestWithAlert.post('/api/v1/project_owners/passwordReset', data);
     this.setState({ isLoading: false });
 
     if (response.isSuccessful) {

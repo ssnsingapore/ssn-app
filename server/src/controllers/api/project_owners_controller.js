@@ -1,13 +1,15 @@
 import express from 'express';
+import passport from 'passport';
+import { createError } from 'http-errors';
+
+import { config, isProduction } from 'config/environment';
 import { asyncWrap } from 'util/async_wrapper';
+import { BadRequestErrorView } from 'util/errors';
 import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
-import passport from 'passport';
 import { LoginService } from 'services/LoginService';
-import { BadRequestErrorView } from 'util/errors';
-import { config, isProduction } from 'config/environment';
-import { SignUpService } from '../../services/SignUpService';
-
+import { SignUpService } from 'services/SignUpService';
+import { PasswordResetService } from 'services/PasswordResetService';
 
 export const projectOwnersRouter = express.Router();
 
@@ -23,26 +25,6 @@ async function getProjectOwner(req, res) {
   const { id } = req.params;
   const projectOwner = await ProjectOwner.findById(id);
   return res.status(200).json({ projectOwner });
-}
-
-projectOwnersRouter.post('/project_owners', asyncWrap(registerNewProjectOwner));
-async function registerNewProjectOwner(req, res) {
-  const projectOwner = new ProjectOwner({
-    ...req.body.projectOwner,
-  });
-  const { password } = req.body.projectOwner;
-
-  const errorsObject = await new SignUpService(projectOwner, password, Role.PROJECT_OWNER).execute();
-
-  if (errorsObject) {
-    return res
-      .status(422)
-      .json(errorsObject);
-  }
-
-  return res
-    .status(201)
-    .json({ projectOwner });
 }
 
 projectOwnersRouter.post(
@@ -72,6 +54,30 @@ async function login(req, res) {
     .json({ errors: [new BadRequestErrorView(message)] });
 }
 
+// =============================================================================
+// Sign Up and Account Confirmation
+// =============================================================================
+
+projectOwnersRouter.post('/project_owners', asyncWrap(registerNewProjectOwner));
+async function registerNewProjectOwner(req, res) {
+  const projectOwner = new ProjectOwner({
+    ...req.body.projectOwner,
+  });
+  const { password } = req.body.projectOwner;
+
+  const errorsObject = await new SignUpService(projectOwner, password, Role.PROJECT_OWNER).execute();
+
+  if (errorsObject) {
+    return res
+      .status(422)
+      .json(errorsObject);
+  }
+
+  return res
+    .status(201)
+    .json({ projectOwner });
+}
+
 projectOwnersRouter.get('/project_owners/:id/confirmation/:confirmationToken', asyncWrap(confirmProjectOwner));
 async function confirmProjectOwner(req, res) {
   const { id, confirmationToken } = req.params;
@@ -98,4 +104,71 @@ async function confirmProjectOwner(req, res) {
   await projectOwner.confirm();
   const message = 'Your account has been successfully confirmed! You will now be able to login.';
   return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=SUCCESS&message=${encodeURIComponent(message)}`);
+}
+
+// =============================================================================
+// Password Reset
+// =============================================================================
+
+const passwordResetService = new PasswordResetService(ProjectOwner);
+
+projectOwnersRouter.post('/project_owners/passwordReset', asyncWrap(triggerPasswordReset));
+async function triggerPasswordReset(req, res) {
+  const { email } = req.body;
+  const errorsObject = await passwordResetService.trigger(email);
+
+  if (errorsObject) {
+    return res
+      .status(400)
+      .json(errorsObject);
+  }
+
+  return res
+    .status(204)
+    .json();
+}
+
+projectOwnersRouter.get('/project_owners/:id/passwordReset/:passwordResetToken', asyncWrap(redirectToPasswordResetForm));
+async function redirectToPasswordResetForm(req, res) {
+  const { id, passwordResetToken } = req.params;
+  const { redirectUrl, cookieArgs } = await passwordResetService.getRedirectUrlAndCookieArgs(
+    id,
+    passwordResetToken
+  );
+
+  Object.keys(cookieArgs).forEach((type) => {
+    res.cookie(...cookieArgs[type]);
+  });
+
+  return res.redirect(redirectUrl);
+}
+
+projectOwnersRouter.put('/project_owners/passwordReset', asyncWrap(resetPassword));
+async function resetPassword(req, res, next) {
+  const csrfToken = req.get('csrf-token');
+  if (!csrfToken) {
+    next(createError.Unauthorized());
+  }
+
+  const email = req.cookies[config.PASSWORD_RESET_EMAIL_COOKIE_NAME];
+  const passwordResetToken = req.cookies[config.PASSWORD_RESET_TOKEN_COOKIE_NAME];
+  const { password } = req.body;
+
+  const errorsObject = await passwordResetService.attemptPasswordReset(
+    email,
+    passwordResetToken,
+    password,
+  );
+
+  if (errorsObject) {
+    return res
+      .status(400)
+      .json(errorsObject);
+  }
+
+  const cookieArgsObject = await passwordResetService.getClearCookieArgs();
+  res.clearCookie(...cookieArgsObject.passwordResetToken);
+  res.clearCookie(...cookieArgsObject.email);
+
+  return res.status(204).json();
 }
