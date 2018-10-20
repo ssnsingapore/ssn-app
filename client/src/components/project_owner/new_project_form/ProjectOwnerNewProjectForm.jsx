@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
+import validate from 'validate.js';
+import moment from 'moment';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import {
   Grid,
@@ -67,17 +69,24 @@ const constraints = {
   [FieldName.projectType]: {
     presence: { allowEmpty: false },
   },
-  [FieldName.startDate]: {
-    // presence: { allowEmpty: false },
-    // isBeforeEndDate: {
-    //   other: FieldName.endDate,
-    // },
+  [FieldName.startDate]: (value, attributes) => {
+    if (attributes.projectType ===  ProjectType.RECURRING || !attributes.endDate) return null;
+
+    return {
+      datetime: {
+        dateOnly: true,
+        latest: attributes.endDate, 
+      },
+    };
   },
-  [FieldName.endDate]: {
-    // presence: { allowEmpty: false },
-    // isAfterStartDate: {
-    //   other: FieldName.startDate,
-    // },
+  // [FieldName.endDate]: {  
+  //   presence: { allowEmpty: false },
+  //   isAfterStartDate: {
+  //     other: FieldName.startDate,
+  //   },  
+  // },
+  [FieldName.frequency]: {
+    presence: { allowEmpty: false },
   },
   // [FieldName.frequency]: {
   //   presence: { allowEmpty: false },

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as _ from 'lodash';
 import validate from 'validate.js';
+import moment from 'moment';
 
 // takes an array of fieldsNames and returns a field name object like
 // {
@@ -99,6 +100,14 @@ validate.validators.isUrl = (value, options) => {
     pattern: /[-a-zA-Z0-9@:%_\+.~#?&\/\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)?/i,
   }});
 };
+
+validate.extend(validate.validators.datetime, {
+  parse: (value) => +moment.utc(value),
+  format: (value, options) => {
+    const format = options.dateOnly ? 'YYYY-MM-DD' : 'YYYY-MM-DD hh:mm:ss';
+    return moment.utc(value).format(format);
+  },
+});
 
 // Validations
 
