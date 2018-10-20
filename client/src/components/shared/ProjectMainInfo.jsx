@@ -61,15 +61,19 @@ const renderProjectBaseDetails = (classes, project) => {
         >
           {description}
         </Typography>
-        <Button
-          variant="contained"
-          href={volunteerSignupUrl}
-          fullWidth
-          color="secondary"
-          size="large"
-        >
-          Sign up as a volunteer!
-        </Button>
+        {volunteerSignupUrl ? (
+          <Button
+            variant="contained"
+            href={volunteerSignupUrl}
+            fullWidth
+            color="secondary"
+            size="large"
+          >
+            Sign up as a volunteer!
+          </Button>
+        ) : (
+          ''
+        )}
       </CardContent>
       <CardMedia className={classes.cover} image={coverImageUrl} />
     </Card>
