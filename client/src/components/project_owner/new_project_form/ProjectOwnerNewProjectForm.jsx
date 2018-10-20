@@ -57,11 +57,9 @@ const constraints = {
   },
 
   [FieldName.volunteerRequirementsDescription]: {
-    presence: { allowEmpty: true },
     length: { maximum: 500 },
   },
   [FieldName.volunteerBenefitsDescription]: {
-    presence: { allowEmpty: true },
     length: { maximum: 500 },
   },
 
@@ -110,6 +108,7 @@ class _ProjectOwnerNewProjectForm extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
+    console.log('VALUES', this.props.valuesForAllFields());
 
     if (!this.props.validateAllFields() || !this.validateAllSubFormFields()) {
       return;
@@ -118,37 +117,19 @@ class _ProjectOwnerNewProjectForm extends Component {
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
-    const { volunteerRequirementsDescription,
-      volunteerBenefitsDescription} = this.props.valuesForAllFields();
-
     const volunteerRequirements = this.valuesForAllSubFormFields();
 
     const newProject = {
-      title: 'Save the Earth',
-      coverImageUrl: 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
-      description: 'Save the earth description',
-      volunteerSignupUrl: 'http://www.signup.org',
-      projectOwner: currentUser.id,
-      issuesAddressed: [IssueAddressed.LAND_AND_NOISE_POLLUTION, IssueAddressed.WASTE],
-      projectType: ProjectType.EVENT,
-      time: '9 AM',
-      location: ProjectLocation.CENTRAL,
-      state: ProjectState.APPROVED_INACTIVE,
-      startDate: new Date(2018, 12, 1),
-      endDate: new Date(2018, 12, 2),
-      frequency: ProjectFrequency.ONCE_A_WEEK,
-
+      ...this.props.valuesForAllFields(),
       volunteerRequirements,
-      volunteerRequirementsDescription,
-      volunteerBenefitsDescription,
+      projectOwner: currentUser.id,
     };
-
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
     const response = await requestWithAlert
-      .post('/api/v1/projects/add', { project: newProject }, { authenticated: true });
+      .post('/api/v1/project_owner/projects/new', { project: newProject }, { authenticated: true });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
@@ -242,7 +223,6 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '100vw',
   },
   form: {
     flexGrow: 1,
