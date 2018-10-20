@@ -43,7 +43,7 @@ const _ProjectVolunteerDetails = ({
             key={FieldName.volunteerRequirementsDescription}
             value={fieldValue(fields, FieldName.volunteerRequirementsDescription)}
             error={fieldHasError(fields, FieldName.volunteerRequirementsDescription)}
-            helper={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
+            helperText={fieldErrorText(fields, FieldName.volunteerRequirementsDescription)}
             onChange={handleChange}
             multiline
             className={classes.textField}
@@ -68,7 +68,7 @@ const _ProjectVolunteerDetails = ({
             key={FieldName.volunteerBenefitsDescription}
             value={fieldValue(fields, FieldName.volunteerBenefitsDescription)}
             error={fieldHasError(fields, FieldName.volunteerBenefitsDescription)}
-            helper={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
+            helperText={fieldErrorText(fields, FieldName.volunteerBenefitsDescription)}
             onChange={handleChange}
             multiline
           />
