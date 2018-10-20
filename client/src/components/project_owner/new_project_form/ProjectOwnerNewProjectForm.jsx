@@ -64,18 +64,52 @@ const constraints = {
   },
 
   // TODO: Maryana's constraints
+  [FieldName.projectType]: {
+    presence: { allowEmpty: false },
+  },
+  [FieldName.startDate]: {
+    presence: { allowEmpty: false },
+    isBeforeEndDate: {
+      other: FieldName.endDate,
+    },  
+  },
+  [FieldName.endDate]: {  
+    presence: { allowEmpty: false },
+    isAfterStartDate: {
+      other: FieldName.startDate,
+    },  
+  },
+  [FieldName.frequency]: {
+    presence: { allowEmpty: false },
+  },
+  [FieldName.time]: {
+    presence: { allowEmpty: true },
+  },
+  [FieldName.location]: {
+    presence: { allowEmpty: true },
+  }, 
+  [FieldName.issuesAddressed]: {
+    presence: { allowEmpty: true },
+  }, 
 };
 
 const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
 
 class _ProjectOwnerNewProjectForm extends Component {
-  state = {
-    volunteerRequirementRefs: [
-      React.createRef(),
-    ],
-    isSubmitting: false,
-    shouldRedirect: false,
-  };
+  
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      volunteerRequirementRefs: [
+        React.createRef(),
+      ],
+      isSubmitting: false,
+      shouldRedirect: false,
+    };
+
+    props.setField(FieldName.issuesAddressed, []);
+  }
 
   handleAddVolunteerRequirement = () => {
     this.setState({
