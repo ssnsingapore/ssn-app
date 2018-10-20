@@ -154,17 +154,34 @@ describe('withForm', () => {
       component = shallow(<FormComponent></FormComponent>);
     });
 
-    it('updates field value in state', () => {
-      const event = {
-        target: {
-          name: 'name',
-          value: 'new name',
-        },
-      };
+    describe('when the value is non-empty', () => {
+      it('updates field value in state', () => {
+        const event = {
+          target: {
+            name: 'name',
+            value: 'new name',
+          },
+        };
 
-      component.instance().handleChange(event);
+        component.instance().handleChange(event);
 
-      expect(component.state().name.value).toEqual('new name');
+        expect(component.state().name.value).toEqual('new name');
+      });
+    });
+
+    describe('when the value is empty', () => {
+      it('sets the field value to undefined', () => {
+        const event = {
+          target: {
+            name: 'name',
+            value: '',
+          },
+        };
+
+        component.instance().handleChange(event);
+
+        expect(component.state().name.value).toBeUndefined();
+      });
     });
   });
 
@@ -180,7 +197,7 @@ describe('withForm', () => {
       component = shallow(<FormComponent></FormComponent>);
     });
 
-    it('resets field to an empty value', () => {
+    it('resets field to undefined', () => {
       component.setState({
         [fieldNames.name]: {
           value: 'Bob',
@@ -189,7 +206,7 @@ describe('withForm', () => {
 
       component.instance().resetField(fieldNames.name);
 
-      expect(component.state().name.value).toEqual('');
+      expect(component.state().name.value).toBeUndefined();
     });
   });
 
@@ -217,8 +234,8 @@ describe('withForm', () => {
 
       component.instance().resetAllFields();
 
-      expect(component.state().name.value).toEqual('');
-      expect(component.state().email.value).toEqual('');
+      expect(component.state().name.value).toBeUndefined();
+      expect(component.state().email.value).toBeUndefined();
     });
   });
 

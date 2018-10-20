@@ -163,19 +163,23 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
     }
 
     handleChange = (event) => {
-      const { name, value } = event.target;
-      this.setField(name, value);
+      let { value } = event.target;
+
+      if (!value) {
+        value = undefined;
+      }
+      this.setField(event.target.name, value);
     }
 
     resetField = (name) => {
       this.setState({
-        ...updateFormField(this.state, name, '', []),
+        ...updateFormField(this.state, name, undefined, []),
       });
     }
 
     resetAllFields = () => {
       const updatedFields = Object.keys(fieldNames).reduce((fields, name) => {
-        return updateFormField(fields, name, '', []);
+        return updateFormField(fields, name, undefined, []);
       }, this.state);
 
       this.setState({
