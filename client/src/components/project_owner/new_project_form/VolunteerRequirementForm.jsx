@@ -59,6 +59,8 @@ class _VolunteerRequirementForm extends React.Component {
         <TextField
           InputLabelProps={{ shrink: true}}
           label='No. of Volunteers'
+          type="number"
+          inputProps={{ min: '1'}}
           margin='normal'
           name={VolunteerRequirementFieldName.number}
           id={VolunteerRequirementFieldName.number}
