@@ -171,6 +171,7 @@ const styles = theme => ({
   root: {},
   paper: {
     padding: theme.spacing.unit * 3,
+    height: '100%',
   },
   card: {
     display: 'flex',
