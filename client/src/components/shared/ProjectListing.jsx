@@ -138,6 +138,7 @@ class _ProjectListing extends Component {
           <Typography variant="body2">
               Rejection comments:
           </Typography>
+          <br/>
           <Typography variant="body1">
             {project.rejectionReason}
           </Typography>
