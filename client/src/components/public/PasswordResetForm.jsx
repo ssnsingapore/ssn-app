@@ -76,7 +76,7 @@ class _PasswordResetForm extends Component {
     const { requestWithAlert } = this.props.context.utils;
     const password = fieldValue(this.props.fields, FieldName.password);
     const response = await requestWithAlert
-      .put('/api/v1/users/passwordReset', { password }, { authenticated: true });
+      .put('/api/v1/project_owners/passwordReset', { password }, { authenticated: true });
 
     this.setState({ isLoading: false });
 

@@ -127,7 +127,7 @@ export class PasswordResetService {
     <p><em>SSN</em></p>
   `)
 
-  _passwordResetUrl = user => encodeURI(`${config.API_BASE_URL}/api/v1/users/${user.id}/passwordReset/${user.passwordResetToken}`)
+  _passwordResetUrl = user => encodeURI(`${config.API_BASE_URL}/api/v1/${user.role.toLowerCase()}s/${user.id}/passwordReset/${user.passwordResetToken}`)
 
  _getPasswordResetCookieArgs = async (isSuccess, user) => {
    const messageCookieArgs = [
