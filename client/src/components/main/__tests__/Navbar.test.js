@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { Typography, Avatar, Button, MenuItem } from '@material-ui/core';
 
 import { _testExports } from '../NavBar';
@@ -14,6 +15,23 @@ describe('Navbar', () => {
     it('should not render on admin homepage', () => {
       component = shallow(<NavBar location={{ pathname: '/admin' }} />);
       expect(component.html()).toEqual('');
+    });
+
+    it('should render a logo that links to the homepage', () => {
+      mockContext = { ...defaultAppContext, isAuthenticated: false };
+      mockContext.utils.authenticator = {
+        getCurrentUser: jest.fn(() => null),
+      };
+      component = mount(
+        <BrowserRouter>
+          <NavBar location={{ pathname: '/someroute' }} context={mockContext} />
+        </BrowserRouter>
+      );
+
+      expect(component.find(Button).prop('to')).toEqual('/');
+      expect(component.find(Button).html()).toEqual(
+        expect.stringContaining('<img')
+      );
     });
 
     describe('when project owner is logged in', () => {
@@ -42,7 +60,7 @@ describe('Navbar', () => {
       // TODO: future story should add a Edit Profile button
       it('should render avatar with dropdown and logout button', () => {
         expect(component.find(Avatar).exists()).toBeTruthy();
-        expect(component.find(Button).html()).toEqual(
+        expect(component.find(Button).at(1).html()).toEqual(
           expect.stringContaining('projectowner@email.com')
         );
         expect(component.find(MenuItem).html()).toEqual(
@@ -77,7 +95,7 @@ describe('Navbar', () => {
 
       it('should render avatar with dropdown and logout button', () => {
         expect(component.find(Avatar).exists()).toBeTruthy();
-        expect(component.find(Button).html()).toEqual(
+        expect(component.find(Button).at(1).html()).toEqual(
           expect.stringContaining('admin@email.com')
         );
         expect(component.find(MenuItem).html()).toEqual(
@@ -104,7 +122,7 @@ describe('Navbar', () => {
       it('should not render any text or avatar when no one is logged in', () => {
         expect(component.find(Typography).exists()).toBeFalsy();
         expect(component.find(Avatar).exists()).toBeFalsy();
-        expect(component.find(Button).exists()).toBeFalsy();
+        expect(component.find(Button).at(1).exists()).toBeFalsy();
       });
     });
   });

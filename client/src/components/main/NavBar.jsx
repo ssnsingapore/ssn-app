@@ -17,6 +17,7 @@ import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
 import { Role } from 'components/shared/enums/Role';
 import { AlertType } from 'components/shared/Alert';
+import { Link } from 'react-router-dom';
 
 const NavBarDisplayMapping = {
   [Role.ADMIN]: 'SSN ADMIN',
@@ -124,7 +125,12 @@ class _NavBar extends Component {
     return this.props.location.pathname !== '/admin' && (
       <AppBar position="static">
         <Toolbar variant="dense" className={classes.toolBar}>
-          <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
+          <Button
+            component={Link}
+            to="/"
+          >
+            <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
+          </Button>
           {this.renderNavbarText()}
           {this.renderAvatar()}
         </Toolbar>
