@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Typography, Grid, Paper, Button } from '@material-ui/core';
+import { Typography, Grid, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { ProjectListing } from 'components/shared/ProjectListing';
@@ -67,9 +67,7 @@ class _HomePage extends Component {
                 Sign up as a project owner to post a project, or login if you
                 already have an account.
               </Typography>
-              <Paper>
-                <ProjectOwnerLoginForm />
-              </Paper>
+              <ProjectOwnerLoginForm />
             </Grid>
           </Grid>
         </Grid>

@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
   TextField,
+  Paper,
 } from '@material-ui/core';
 import Cookie from 'js-cookie';
 import qs from 'qs';
@@ -42,11 +43,12 @@ const constraints = {
 
 const styles = theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
-    position: 'relative',
-    minHeight: 200,
-
     padding: theme.spacing.unit * 4,
+  },
+  standaloneRoot: {
+    maxWidth: '400px',
+    padding: theme.spacing.unit * 4,
+    margin: `${theme.container.margin.vertical}px auto`,
   },
   loginButton: {
     marginTop: theme.spacing.unit * 6,
@@ -135,9 +137,11 @@ class _ProjectOwnerLoginForm extends React.Component {
     }
 
     const { classes, fields, handleChange } = this.props;
+    const rootStyle = this.props.location && this.props.location.pathname === '/login' ?
+      classes.standaloneRoot : classes.root;
 
     return (
-      <div className={classes.root}>
+      <Paper className={rootStyle} square>
         <PasswordResetDialog
           open={this.state.passwordResetDialogOpen}
           handleClose={this.handlePasswordResetDialogClose}
@@ -204,7 +208,7 @@ class _ProjectOwnerLoginForm extends React.Component {
             Sign Up
           </Button>
         </form>
-      </div>
+      </Paper>
     );
   }
 }
