@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -10,6 +9,7 @@ import {
   Avatar,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 import ssnLogo from 'assets/ssn-logo.png';
 import adminAvatar from 'assets/placeholder-avatar.jpg';
@@ -43,16 +43,20 @@ class _NavBar extends Component {
     this.setState({anchorEl: null });
   };
 
-  getNavbarText = () => {
+  renderNavbarText = () => {
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
     if (!isAuthenticated || !currentUser) {
-      return '';
+      return null;
     }
 
-    return `${NavBarDisplayMapping[currentUser.role]} DASHBOARD`;
+    return (
+      <Typography variant="body2" color="inherit" className={this.props.classes.barTitle}>
+        {NavBarDisplayMapping[currentUser.role]} DASHBOARD
+      </Typography>
+    );
   }
 
   handleLogout = async (currentUser) => {
@@ -78,7 +82,7 @@ class _NavBar extends Component {
     const currentUser = authenticator.getCurrentUser();
 
     if (!isAuthenticated || !currentUser) {
-      return '';
+      return null;
     }
 
     return currentUser && (
@@ -90,14 +94,23 @@ class _NavBar extends Component {
           color="inherit"
           className={classes.logout}
         >
-          <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar}></Avatar>
+          <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar} />
           {currentUser.email}
+          <ArrowDropDownIcon />
         </Button>
         <Menu
           id="simple-menu"
           anchorEl={this.state.anchorEl}
           open={Boolean(this.state.anchorEl)}
           onClose={this.handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
         >
           <MenuItem button onClick={() => this.handleLogout(currentUser)}>Logout</MenuItem>
         </Menu>
@@ -112,9 +125,7 @@ class _NavBar extends Component {
       <AppBar position="static">
         <Toolbar variant="dense" className={classes.toolBar}>
           <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
-          <Typography variant="body2" color="inherit" className={classes.barTitle}>
-            {this.getNavbarText()}
-          </Typography>
+          {this.renderNavbarText()}
           {this.renderAvatar()}
         </Toolbar>
       </AppBar>
@@ -140,6 +151,8 @@ const styles = {
   },
   avatar: {
     margin: '0 15px',
+    width: '30px',
+    height: '30px',
   },
 };
 
@@ -148,3 +161,7 @@ export const NavBar = withStyles(styles)(
     (_NavBar)
   ),
 );
+
+export const _testExports = {
+  NavBar: withStyles(styles)(_NavBar),
+};
