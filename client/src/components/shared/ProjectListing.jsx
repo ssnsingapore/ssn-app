@@ -19,15 +19,12 @@ import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
+import { ProjectDeactivateConfirmationDialog } from 'components/shared/ProjectDeactivateConfirmationDialog';
+import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActivateConfirmationDialog';
 
 import { Role } from 'components/shared/enums/Role';
+import { ProjectState } from 'components/shared/enums/ProjectState';
 
-const ProjectState = {
-  PENDING_APPROVAL: 'PENDING_APPROVAL',
-  APPROVED_ACTIVE: 'APPROVED_ACTIVE',
-  APPROVED_INACTIVE: 'APPROVED_INACTIVE',
-  REJECTED: 'REJECTED',
-};
 
 class _ProjectListing extends Component {
   constructor(props) {
@@ -36,6 +33,8 @@ class _ProjectListing extends Component {
     this.state = {
       projects: [],
       isLoading: true,
+      projectDeactivateConfirmationDialogOpen: false,
+      projectActivateConfirmationDialogOpen: false,
     };
   }
 
@@ -43,7 +42,8 @@ class _ProjectListing extends Component {
     const { requestWithAlert } = this.props.context.utils;
     const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE, dashboardRole } = this.props;
 
-    const endpoint = dashboardRole === Role.PROJECT_OWNER ? '/api/v1/project_owner/projects' : '/api/v1/projects';
+    const endpoint = dashboardRole === Role.PROJECT_OWNER ? 
+      '/api/v1/project_owner/projects' : '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
@@ -63,7 +63,6 @@ class _ProjectListing extends Component {
 
   renderIssuesAddressed = project => {
     const { classes } = this.props;
-
     return (
       <React.Fragment>
         <Typography variant="body1">Issues addressed:</Typography>
@@ -96,49 +95,102 @@ class _ProjectListing extends Component {
     );
   };
 
-  renderButtons(dashboardRole, project) {
-    const { classes } = this.props;
-    if (dashboardRole !== Role.PROJECT_OWNER) {
-      return null;
-    }
-    if (project.state === ProjectState.REJECTED) {
-      return (
-        <Grid container>
-          <Button variant="contained" className={classes.button}>
-          Edit
-          </Button>
-        </Grid>
-      );
-    } else {
-      return (
-        <Grid container>
-          <Button variant="contained" className={classes.button}>
-            Edit
-          </Button>
-          <Button variant="contained" className={classes.button}>
-            Deactivate
-          </Button>
-          <Button variant="contained" className={classes.button}>
-            Duplicate
-          </Button>
-        </Grid>
-      );
-    }
+  handleProjectDeactivateConfirmationDialogOpen = () => {
+    this.setState({ projectDeactivateConfirmationDialogOpen: true });
   }
 
-  renderRejectionMessage(dashboardRole, project, rejectionMessageSize) {
+  handleProjectDeactivateConfirmationDialogClose = () => {
+    this.setState({ projectDeactivateConfirmationDialogOpen: false });
+  }
+
+  handleProjectActivateConfirmationDialogOpen = () => {
+    this.setState({ projectActivateConfirmationDialogOpen: true });
+  }
+
+  handleProjectActivateConfirmationDialogClose = () => {
+    this.setState({ projectActivateConfirmationDialogOpen: false });
+  }
+
+  _isAdmin(dashboardRole) {
+    return dashboardRole === Role.ADMIN;
+  }
+
+  _isProjectOwner(dashboardRole) {
+    return dashboardRole === Role.PROJECT_OWNER;
+  }
+
+  _isApprovedActive(project) {
+    return project.state === ProjectState.APPROVED_ACTIVE;
+  }
+
+  _isApprovedInactive(project) {
+    return project.state === ProjectState.APPROVED_INACTIVE;
+  }
+
+  _isPendingApproval(project) {
+    return project.state === ProjectState.PENDING_APPROVAL;
+  }
+
+  _isRejected(project) {
+    return project.state === ProjectState.REJECTED;
+  }
+
+  renderButtons(dashboardRole, project) {
     const { classes } = this.props;
-  
-    if (dashboardRole !== Role.PROJECT_OWNER) {
+
+    if (
+      !(
+        (this._isAdmin(dashboardRole) && this._isApprovedActive(project)) || 
+        (this._isAdmin(dashboardRole) && this._isApprovedInactive(project)) || 
+        (this._isProjectOwner(dashboardRole))
+      )
+    ) {
       return null;
     }
-    if (project.state !== ProjectState.REJECTED) {
-      return null; 
+    return (
+      <Grid container style={ { justifyContent: 'center' } }>
+        {
+          this._isProjectOwner(dashboardRole) && 
+          <Button 
+            variant="contained" 
+            className={classes.button}
+            component={Link}
+            to={`/project_owner/projects/${project._id}`}
+          >
+          Edit
+          </Button>
+        }
+        {
+          this._isApprovedActive(project) &&
+          <Button 
+            onClick={this.handleProjectDeactivateConfirmationDialogOpen}
+            variant="contained"
+            className={classes.button}>
+            Deactivate
+          </Button>
+        }
+        {
+          this._isApprovedInactive(project) &&
+          <Button 
+            onClick={this.handleProjectActivateConfirmationDialogOpen}
+            variant="contained"
+            className={classes.button}>
+            Activate
+          </Button>
+        }
+      </Grid>
+    );
+  }
+
+  renderRejectionMessage(project, rejectionMessageSize) {
+    const { classes } = this.props;
+    if (!this._isRejected(project)) {
+      return null;
     }
     return (
       <Grid item xs={rejectionMessageSize} className={classes.rejectionMessage} >
         <Typography variant="body2">
-              Rejection comments: 
+          Rejection comments: 
         </Typography>
         <Typography variant="body1">
           {project.rejectionReason}
@@ -147,15 +199,12 @@ class _ProjectListing extends Component {
     );
   }
 
-  renderProjectListingCardContent(dashboardRole, project) {
+  renderProjectListingCardContent(project) {
     const { classes } = this.props;
-    let cardContentSize = 12;
-    let rejectionMessageSize = false;
-    if (dashboardRole === Role.PROJECT_OWNER && project.state === ProjectState.REJECTED) {
-      cardContentSize = 8;
-      rejectionMessageSize = 4;
-    }
     
+    const cardContentSize = this._isRejected(project) ? 8 : 12;
+    const rejectionMessageSize = cardContentSize === 12 ? false : 12 - cardContentSize;
+
     return(
       <Grid container key={`${project.title}-main`}>
         <Grid item xs={cardContentSize}> 
@@ -202,34 +251,72 @@ class _ProjectListing extends Component {
             </Card>
           </Grid>
         </Grid>
-        {this.renderRejectionMessage(dashboardRole, project, rejectionMessageSize, project.state)}
+        {this.renderRejectionMessage(project, rejectionMessageSize)}
       </Grid>
 
     );
+  }
+
+  _getContentGridSize(dashboardRole, project) {
+    let contentGridSize = 12;
+    if (
+      (this._isProjectOwner(dashboardRole) && this._isRejected(project)) ||
+      (this._isProjectOwner(dashboardRole) && this._isPendingApproval(project)) ||
+      (this._isAdmin(dashboardRole) && this._isApprovedActive(project)) ||
+      (this._isAdmin(dashboardRole) && this._isApprovedInactive(project))
+    ) {
+      contentGridSize = 10;
+    } else if (
+      (this._isProjectOwner(dashboardRole) && this._isApprovedActive(project)) || 
+      (this._isProjectOwner(dashboardRole) && this._isApprovedInactive(project))
+    ) {
+      contentGridSize = 9;
+    }
+    return contentGridSize;
+  }
+
+  _getLinkEndpoint(dashboardRole, project) {
+    let linkEndpoint = '';
+    switch(dashboardRole){
+    case Role.ADMIN:
+      linkEndpoint =  `/admin/projects/${project._id}`;
+      break;
+    case Role.PROJECT_OWNER:
+      linkEndpoint = `/project_owner/projects/${project._id}`;
+      break;
+    default:
+      linkEndpoint = `/projects/${project._id}`;
+    }
+    return linkEndpoint;
   }
 
   renderProjects = () => {
     const { classes, dashboardRole } = this.props;
     return this.state.projects.map(project => {
 
-      const linkEndpoint = dashboardRole === Role.ADMIN ? `/admin/projects/${project._id}` : `/projects/${project._id}`;
+      const linkEndpoint = this._getLinkEndpoint(dashboardRole, project);
 
-      let contentGridSize = 12;
-      let rightColumnGridSize = false;
-      if (dashboardRole === Role.PROJECT_OWNER && project.state === ProjectState.REJECTED) {
-        contentGridSize = 11;
-        rightColumnGridSize = 1;
-      } else if (dashboardRole === Role.PROJECT_OWNER && project.state !== ProjectState.REJECTED) {
-        contentGridSize = 8;
-        rightColumnGridSize = 4;
-      }
+      const contentGridSize = this._getContentGridSize(dashboardRole, project);
+      const rightColumnGridSize = contentGridSize === 12 ? false : 12 - contentGridSize;
 
       return (
-        <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
+        <Grid style={ { alignItems: 'center' } } item xs={12} key={project._id}>
+          <ProjectDeactivateConfirmationDialog
+            open={this.state.projectDeactivateConfirmationDialogOpen}
+            handleClose={this.handleProjectDeactivateConfirmationDialogClose}
+            dashboardRole={dashboardRole}
+            project={project}
+          />
+          <ProjectActivateConfirmationDialog
+            open={this.state.projectActivateConfirmationDialogOpen}
+            handleClose={this.handleProjectActivateConfirmationDialogClose}
+            dashboardRole={dashboardRole}
+            project={project}
+          />
           <Grid container>
             <Grid item xs={12} md={contentGridSize}>
               <Link to={linkEndpoint} className={classes.link}>
-                {this.renderProjectListingCardContent(dashboardRole, project)}
+                {this.renderProjectListingCardContent(project)}
               </Link>
             </Grid>
             <Grid item xs={12} md={rightColumnGridSize} style={ {margin: 'auto'} }>
@@ -293,6 +380,7 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     marginLeft: theme.spacing.unit * 1.5,
     marginRight: theme.spacing.unit * 0.5,
+    minWidth: '80px',
   },
   rejectionMessage: {
     padding: '15px',
