@@ -104,9 +104,9 @@ describe('ProjectOwnerSignUpForm', () => {
       passwordEvent = {
         target: {name: 'password', value: 'password123'},
       };
-      passwordConfirmationEvent = {
-        target: {name: 'password', value: 'password123'},
-      };
+      // passwordConfirmationEvent = {
+      //   target: {name: 'password', value: 'password123'},
+      // };
       noMatchPasswordConfirmationEvent = {
         target: {name: 'passwordConfirmation', value: 'nomatch'},
       };
