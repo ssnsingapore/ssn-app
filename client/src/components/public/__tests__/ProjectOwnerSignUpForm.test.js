@@ -205,6 +205,7 @@ describe('ProjectOwnerSignUpForm', () => {
       expect(emailComponent.props().helperText).toBe('Email is not a valid email');
     });
   });
+  //to be continued
   // describe('submit form', () => {
   //   fit('clicking create account button with all mandatory fields filled shows success sign up', async () => {
   //     const nameEvent = {
