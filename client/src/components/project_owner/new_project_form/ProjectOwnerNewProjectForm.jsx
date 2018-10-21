@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import validate from 'validate.js';
-import moment from 'moment';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import {
   Grid,
@@ -23,10 +21,6 @@ import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 import { ProjectBaseDetails } from './ProjectBaseDetails';
 
 import { ProjectType } from 'components/shared/enums/ProjectType';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
-import { ProjectState } from 'components/shared/enums/ProjectState';
-import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 
 const FieldName = getFieldNameObject([
   'title',
@@ -75,15 +69,15 @@ const constraints = {
     return {
       datetime: {
         dateOnly: true,
-        latest: attributes.endDate, 
+        latest: attributes.endDate,
       },
     };
   },
-  // [FieldName.endDate]: {  
+  // [FieldName.endDate]: {
   //   presence: { allowEmpty: false },
   //   isAfterStartDate: {
   //     other: FieldName.startDate,
-  //   },  
+  //   },
   // },
   [FieldName.frequency]: {
     presence: { allowEmpty: false },
