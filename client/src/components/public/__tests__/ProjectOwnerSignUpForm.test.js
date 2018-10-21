@@ -2,7 +2,6 @@ import React from 'react';
 import { TestProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { TextField, FormControlLabel, Button } from '@material-ui/core';
 import { AccountType } from 'components/shared/enums/AccountType';
-import { Redirect } from 'react-router-dom';
 
 describe('ProjectOwnerSignUpForm', () => {
   let props;
@@ -85,7 +84,7 @@ describe('ProjectOwnerSignUpForm', () => {
   });
 
   describe('filling up mandatory fields', () => {
-    let event, nameEvent, emailEvent, invalidEmailEvent, lessThan6PasswordEvent, passwordEvent, passwordConfirmationEvent, noMatchPasswordConfirmationEvent;
+    let event, nameEvent, emailEvent, invalidEmailEvent, lessThan6PasswordEvent, passwordEvent, noMatchPasswordConfirmationEvent;
     beforeEach(() => {
       event = {
         target: {name: 'name', value: 'Some Name'},
