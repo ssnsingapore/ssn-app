@@ -68,11 +68,9 @@ class _ProjectOwnerSignUpForm extends Component {
   }
 
   handleSubmit = async (event) => {
-    console.log('reached');
     event.preventDefault();
 
     if (!this.props.validateAllFields()) {
-      console.log('validation error');
       return;
     }
 
@@ -85,7 +83,6 @@ class _ProjectOwnerSignUpForm extends Component {
     const response = await authenticator.signUpProjectOwner(projectOwner);
     this.setState({ isSubmitting: false });
 
-    console.log('reached here too');
     if (response.isSuccessful) {
       const createdUser = (await response.json()).projectOwner;
       this.setState({
