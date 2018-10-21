@@ -42,7 +42,8 @@ class _ProjectListing extends Component {
     const { requestWithAlert } = this.props.context.utils;
     const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE, dashboardRole } = this.props;
 
-    const endpoint = dashboardRole === Role.PROJECT_OWNER ? '/api/v1/project_owner/projects' : '/api/v1/projects';
+    const endpoint = dashboardRole === Role.PROJECT_OWNER ? 
+      '/api/v1/project_owner/projects' : '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
@@ -114,18 +115,21 @@ class _ProjectListing extends Component {
     const { classes } = this.props;
     const { state } = project;
 
-    const isProjectOwner = dashboardRole === Role.PROJECT_OWNER;
-    const isAdminAndApprovedActive = (dashboardRole === Role.ADMIN && 
-        state === ProjectState.APPROVED_ACTIVE);
-    const isAdminAndApprovedInactive = (dashboardRole === Role.ADMIN &&
-         state === ProjectState.APPROVED_INACTIVE);
+    const isAdmin = (dashboardRole === Role.ADMIN);
+    const isProjectOwner = (dashboardRole === Role.PROJECT_OWNER);
+    const isApprovedActive = (state === ProjectState.APPROVED_ACTIVE);
+    const isApprovedInactive = (state === ProjectState.APPROVED_INACTIVE);
+    const isPendingApproval = (state === ProjectState.PENDING_APPROVAL);
+    const isRejected = (state === ProjectState.REJECTED);
 
-
-    if (!(isProjectOwner | isAdminAndApprovedActive | isAdminAndApprovedInactive)) {
+    if (
+      (isAdmin && (isPendingApproval || isRejected)) || 
+      !(isProjectOwner)
+    ) {
       return null;
     }
     return (
-      <Grid container>
+      <Grid container style={ { justifyContent: 'center' } }>
         {
           isProjectOwner && 
           <Button 
@@ -138,7 +142,7 @@ class _ProjectListing extends Component {
           </Button>
         }
         {
-          isAdminAndApprovedActive &&
+          isApprovedActive &&
           <Button 
             onClick={this.handleProjectDeactivateConfirmationDialogOpen}
             variant="contained"
@@ -147,7 +151,7 @@ class _ProjectListing extends Component {
           </Button>
         }
         {
-          isAdminAndApprovedInactive &&
+          isApprovedInactive &&
           <Button 
             onClick={this.handleProjectActivateConfirmationDialogOpen}
             variant="contained"
@@ -159,13 +163,13 @@ class _ProjectListing extends Component {
     );
   }
 
-  renderRejectionMessage(dashboardRole, project, rejectionMessageSize) {
+  renderRejectionMessage(project, rejectionMessageSize) {
     const { classes } = this.props;
     const { state } = project;
 
-    const isProjectOwnerAndRejected = (dashboardRole === Role.PROJECT_OWNER && state === ProjectState.REJECTED);
+    const isRejected = (state === ProjectState.REJECTED);
   
-    if (!isProjectOwnerAndRejected) {
+    if (!isRejected) {
       return null;
     }
     return (
@@ -184,11 +188,11 @@ class _ProjectListing extends Component {
     const { classes } = this.props;
     const { state } = project;
     
-    const isProjectOwnerAndRejected = (dashboardRole === Role.PROJECT_OWNER && state === ProjectState.REJECTED);
+    const isRejected = (state === ProjectState.REJECTED);
 
     let cardContentSize = 12;
     let rejectionMessageSize = false;
-    if (isProjectOwnerAndRejected) {
+    if (isRejected) {
       cardContentSize = 8;
       rejectionMessageSize = 4;
     }
@@ -239,7 +243,7 @@ class _ProjectListing extends Component {
             </Card>
           </Grid>
         </Grid>
-        {this.renderRejectionMessage(dashboardRole, project, rejectionMessageSize, project.state)}
+        {this.renderRejectionMessage(project, rejectionMessageSize)}
       </Grid>
 
     );
@@ -250,11 +254,7 @@ class _ProjectListing extends Component {
     return this.state.projects.map(project => {
 
       const { state } = project;
-
-      const isProjectOwner = (dashboardRole === Role.PROJECT_OWNER);
-      const isAdmin = (dashboardRole === Role.ADMIN);
-      const isApproved = (state === ProjectState.APPROVED_INACTIVE || state === ProjectState.APPROVED_ACTIVE);
-
+  
       let linkEndpoint = '';
       switch(dashboardRole){
       case Role.ADMIN:
@@ -266,13 +266,30 @@ class _ProjectListing extends Component {
       default:
         linkEndpoint = `/projects/${project._id}`;
       }
-
+      
+      const isAdmin = (dashboardRole === Role.ADMIN);
+      const isProjectOwner = (dashboardRole === Role.PROJECT_OWNER);
+      const isApprovedActive = (state === ProjectState.APPROVED_ACTIVE);
+      const isApprovedInactive = (state === ProjectState.APPROVED_INACTIVE);
+      const isPendingApproval = (state === ProjectState.PENDING_APPROVAL);
+      const isRejected = (state === ProjectState.REJECTED);
+  
       let contentGridSize = 12;
-      let rightColumnGridSize = false;
-      if (isProjectOwner || (isAdmin && isApproved)) {
+      if (
+        (isProjectOwner && isRejected) ||
+        (isProjectOwner && isPendingApproval) ||
+        (isAdmin && isApprovedActive) ||
+        (isAdmin && isApprovedInactive)
+      ) {
         contentGridSize = 11;
-        rightColumnGridSize = 1;
+      } else if (
+        (isProjectOwner && isApprovedActive) || 
+        (isProjectOwner && isApprovedInactive)
+      ) {
+        contentGridSize = 9;
       }
+
+      const rightColumnGridSize = contentGridSize === 12 ? false : 12 - contentGridSize;
 
       return (
         <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
