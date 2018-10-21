@@ -151,7 +151,6 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
     validateAllFields = () => {
       const values = this.valuesForAllFields();
       const errors = validate(values, constraints);
-      console.log('errors', errors);
       if (errors) {
         this.setState({
           ...updateFormErrors(this.state, errors),
