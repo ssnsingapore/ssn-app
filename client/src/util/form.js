@@ -34,6 +34,9 @@ function initializeFormFields(names) {
 };
 
 function updateFormField(fields, fieldName, value, errors = []) {
+  console.log('feilds', fields);
+  console.log('value', value);
+  console.log('errors', errors);
   return {
     ...fields,
     [fieldName]: {
@@ -165,10 +168,11 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
     setField = (name, value) => {
       const values = this.valuesForAllFields();
       const errors = validateField(name, value, values, constraints);
-
+      console.log('error', errors);
       this.setState({
         ...updateFormField(this.state, name, value, errors),
       });
+      console.log('state', this.state);
     }
 
     handleChange = (event) => {

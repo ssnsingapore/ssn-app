@@ -224,3 +224,8 @@ export const ProjectOwnerLoginForm =
       ),
     ),
   );
+
+export const TestProjectOwnerLoginForm = withForm(
+  FieldName,
+  constraints,
+)(_ProjectOwnerLoginForm);
