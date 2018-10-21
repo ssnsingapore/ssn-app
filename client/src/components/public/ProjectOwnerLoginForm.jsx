@@ -137,6 +137,7 @@ class _ProjectOwnerLoginForm extends React.Component {
     }
 
     const { classes, fields, handleChange } = this.props;
+    console.log('fieldsFromRender', fields);
     const rootStyle = this.props.location && this.props.location.pathname === '/login' ?
       classes.standaloneRoot : classes.root;
 
