@@ -129,7 +129,7 @@ class _ProjectOwnerDashboard extends Component {
         <Grid item xs={12} >
           <Paper className={classes.projectListingContainer} elevation={1} square>
             <div className={classes.header}>
-              <Typography variant="headline" className={classes.marginBottom3}>
+              <Typography variant="headline" style={{ marginBottom: theme.spacing.unit * 3 }}>
                 My Projects
               </Typography>
               <Button
@@ -145,7 +145,6 @@ class _ProjectOwnerDashboard extends Component {
             {this.renderTabs()}
           </Paper>
           {this.renderProjectListing()}
-
         </Grid>
         <Grid item xs={12}>
           <ProjectOwnerDetails />
@@ -159,14 +158,12 @@ const styles = theme => ({
   root: {
     width: '80vw',
     margin: '0 auto',
+    padding: '60px 0',
   },
   projectListingContainer: {
-    margin: '70px auto 10px',
+    margin: '0 auto 10px',
     padding: '40px',
     paddingBottom: '0px',
-  },
-  marginBottom3: {
-    marginBottom: theme.spacing.unit * 3,
   },
   header: {
     display: 'flex',

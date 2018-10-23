@@ -108,7 +108,7 @@ const styles = {
     padding: '30px',
   },
   body: {
-    width: '85%',
+    width: '80vw',
     margin: '0 auto',
     marginTop: '20px',
   },
