@@ -4,6 +4,7 @@ import React from 'react';
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
 import { ProjectType } from 'components/shared/enums/ProjectType';
+import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
@@ -93,8 +94,12 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 error={fieldHasError(fields, FieldName.projectType)}
                 helperText={fieldErrorText(fields, FieldName.projectType)}
               >
-                <MenuItem value={ProjectType.EVENT}>Event</MenuItem>
-                <MenuItem value={ProjectType.RECURRING}>Recurring</MenuItem>
+                <MenuItem value={ProjectType.EVENT}>
+                  {ProjectTypeDisplayMapping[ProjectType.EVENT]}
+                </MenuItem>
+                <MenuItem value={ProjectType.RECURRING}>
+                  {ProjectTypeDisplayMapping[ProjectType.RECURRING]}
+                </MenuItem>
               </TextField>
               {renderFrequency(FieldName, classes, handleChange, fields)}
             </div>

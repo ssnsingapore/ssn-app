@@ -15,6 +15,11 @@ import {
   TableRow,
   Chip,
 } from '@material-ui/core';
+import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
+import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
+import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
+import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
+import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
@@ -37,7 +42,7 @@ const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
         return (
           <TableRow key={requirement._id}>
             <TableCell component="th" scope="row">
-              {requirement.type}
+              {VolunteerRequirementTypeDisplayMapping[requirement.type]}
             </TableCell>
             <TableCell numeric>{requirement.number} volunteers</TableCell>
             <TableCell numeric>{requirement.commitmentLevel}</TableCell>
@@ -67,6 +72,43 @@ const renderAllVolunteerRequirements = (
   </React.Fragment>
 );
 
+const dateFormatter = inputDate => {
+  const newDate = new Date(inputDate);
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const day = days[newDate.getUTCDay()];
+
+  const date = newDate.getUTCDate();
+  function getOrdinal(n) {
+    return ['st', 'nd', 'rd'][((((n + 90) % 100) - 10) % 10) - 1] || 'th';
+  }
+
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  const month = months[newDate.getUTCMonth()];
+  const year = newDate.getUTCFullYear();
+
+  return day + ', ' + date + getOrdinal(date) + ' ' + month + ' ' + year;
+};
+
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
 
@@ -78,7 +120,7 @@ const renderIssuesAddressed = (classes, project) => {
           return (
             <Chip
               key={issueAddressed}
-              label={issueAddressed}
+              label={IssuesAddressedDisplayMapping[issueAddressed]}
               className={classes.chip}
             />
           );
@@ -182,9 +224,9 @@ const renderProjectDetails = (classes, project) => {
       {renderRow('Start date', startDate)}
       {renderRow('End date', endDate)}
       {renderRow('Time', time)}
-      {renderRow('Location', location)}
-      {renderRow('Project Type', projectType)}
-      {renderRow('Frequency', frequency)}
+      {renderRow('Location', ProjectLocationDisplayMapping[location])}
+      {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
+      {renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
   );
@@ -240,7 +282,8 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit * 2.5,
   },
   chip: {
-    margin: theme.spacing.unit / 2,
+    marginRight: theme.spacing.unit / 2,
+    marginTop: theme.spacing.unit,
     fontSize: '12px',
     height: '25px',
   },
