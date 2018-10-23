@@ -59,32 +59,38 @@ const constraints = {
     length: { maximum: 500 },
   },
 
-  // TODO: Maryana's constraints
   [FieldName.projectType]: {
     presence: { allowEmpty: false },
   },
   [FieldName.startDate]: (value, attributes) => {
-    if (attributes.projectType ===  ProjectType.RECURRING || !attributes.endDate) return null;
+    if (attributes.projectType ===  ProjectType.RECURRING) return null;
 
     return {
       datetime: {
         dateOnly: true,
         latest: attributes.endDate,
       },
+      presence: { allowEmpty: false },
     };
   },
-  // [FieldName.endDate]: {
-  //   presence: { allowEmpty: false },
-  //   isAfterStartDate: {
-  //     other: FieldName.startDate,
-  //   },
-  // },
-  [FieldName.frequency]: {
-    presence: { allowEmpty: false },
+  [FieldName.endDate]: (value, attributes) => {
+    if (attributes.projectType ===  ProjectType.RECURRING) return null;
+
+    return {
+      datetime: {
+        dateOnly: true,
+        earliest: attributes.startDate,
+      },
+      presence: { allowEmpty: false },
+    };
   },
-  // [FieldName.frequency]: {
-  //   presence: { allowEmpty: false },
-  // },
+  [FieldName.frequency]: (value, attributes) => {
+    if (attributes.projectType ===  ProjectType.EVENT) return null;
+
+    return {
+      presence: { allowEmpty: false },
+    };
+  },
 };
 
 const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
@@ -234,7 +240,8 @@ class _ProjectOwnerNewProjectForm extends Component {
               <ProjectDetails
                 fields={this.props.fields}
                 FieldName={FieldName}
-                handleChange={this.props.handleChange}/>
+                handleChange={this.props.handleChange}
+                handleProjectTypeChange={this.props.handleProjectTypeChange}/>
             </Grid>
             <Grid item xs={12}>
               <ProjectOwnerDetails />
