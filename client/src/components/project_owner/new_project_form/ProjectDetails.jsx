@@ -150,7 +150,11 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 renderValue={selected => (
                   <div className={classes.chips}>
                     {selected.map(value => (
-                      <Chip key={value} label={IssuesAddressedDisplayMapping[value]}/>
+                      <Chip
+                        key={value}
+                        label={IssuesAddressedDisplayMapping[value]}
+                        className={classes.chip}
+                      />
                     ))}
                   </div>
                 )}
@@ -179,9 +183,8 @@ const styles = theme => ({
     margin: '0 auto',
   },
   paper: {
-    marginTop: '6px',
-    marginBottom: '6px',
     padding: '30px',
+    height: '100%',
   },
   textField: {
     marginTop: '20px',
@@ -198,7 +201,9 @@ const styles = theme => ({
   chips: {
     display: 'flex',
     flexWrap: 'wrap',
-    margin: '6px',
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
   },
 });
 

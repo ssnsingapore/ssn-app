@@ -81,24 +81,11 @@ const _ProjectVolunteerDetails = ({
 const styles = theme => ({
   root: {
     display: 'flex',
-    width: '80vw',
     margin: '0 auto',
   },
-  submitButton: {
-    padding: '2px',
-    margin: '2px',
-    width: '100px',
-  },
-  img: {
-    marginTop: '6px',
-    marginBottom: '6px',
-    marginLeft: '0px',
-    padding: '30px',
-  },
   paper: {
-    marginTop: '6px',
-    marginBottom: '6px',
     padding: '30px',
+    height: '100%',
   },
   button: {
     color: 'black',
@@ -110,9 +97,6 @@ const styles = theme => ({
     marginBottom: '20px',
     marginTop: '5px',
     padding: '5px',
-  },
-  rows: {
-    margin: '0px',
   },
   textField: {
     marginBottom: '25px',
