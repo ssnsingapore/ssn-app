@@ -4,14 +4,7 @@ import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
-import {
-  Paper,
-  Typography,
-  Grid,
-  Tabs,
-  Tab,
-  Button,
-} from '@material-ui/core';
+import { Paper, Typography, Grid, Tabs, Tab, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
 import { ProjectListing } from 'components/shared/ProjectListing';
@@ -23,6 +16,7 @@ import { Spinner } from 'components/shared/Spinner';
 import { extractErrors, formatErrors } from 'util/errors';
 
 import { Role } from 'components/shared/enums/Role';
+
 class _ProjectOwnerDashboard extends Component {
   constructor(props) {
     super(props);
@@ -39,7 +33,8 @@ class _ProjectOwnerDashboard extends Component {
 
     const response = await requestWithAlert.get(
       '/api/v1/project_owner/project_counts',
-      { authenticated: true });
+      { authenticated: true }
+    );
 
     if (response.isSuccessful) {
       const counts = (await response.json()).counts;
@@ -49,7 +44,11 @@ class _ProjectOwnerDashboard extends Component {
     if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
-      showAlert('getProjectCountsFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert(
+        'getProjectCountsFailure',
+        AlertType.ERROR,
+        formatErrors(errors)
+      );
     }
 
     this.setState({ isLoading: false });
@@ -61,9 +60,9 @@ class _ProjectOwnerDashboard extends Component {
 
   getTabLabel = projectState => {
     const { counts } = this.state;
-    return counts[projectState] !== undefined ?
-      `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})` :
-      ProjectStateDisplayMapping[projectState];
+    return counts[projectState] !== undefined
+      ? `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`
+      : ProjectStateDisplayMapping[projectState];
   };
 
   renderTabs() {
@@ -85,35 +84,41 @@ class _ProjectOwnerDashboard extends Component {
     );
   }
 
+  renderContent = (value, message, state) => {
+    const { tabValue, counts } = this.state;
+    const { theme } = this.props;
+
+    return (
+      tabValue === value &&
+      (counts === 0 ? (
+        <Typography
+          variant="subheading"
+          style={{ color: theme.palette.grey[500] }}
+        >
+          You have no projects that {message}.
+        </Typography>
+      ) : (
+        <ProjectListing
+          projectState={state}
+          dashboardRole={Role.PROJECT_OWNER}
+        />
+      ))
+    );
+  };
+
   renderProjectListing() {
-    const { tabValue } = this.state;
     const { classes } = this.props;
-    return(
+
+    return (
       <Paper square className={classes.projectListing}>
-        {tabValue === 0 && (
-          <ProjectListing 
-            projectState={ProjectState.PENDING_APPROVAL} 
-            dashboardRole={Role.PROJECT_OWNER} 
-          />
+        {this.renderContent(
+          0,
+          'are pending approval',
+          ProjectState.PENDING_APPROVAL
         )}
-        {tabValue === 1 && (
-          <ProjectListing 
-            projectState={ProjectState.APPROVED_ACTIVE} 
-            dashboardRole={Role.PROJECT_OWNER} 
-          />
-        )}
-        {tabValue === 2 && (
-          <ProjectListing 
-            projectState={ProjectState.APPROVED_INACTIVE} 
-            dashboardRole={Role.PROJECT_OWNER} 
-          />
-        )}
-        {tabValue === 3 && (
-          <ProjectListing 
-            projectState={ProjectState.REJECTED} 
-            dashboardRole={Role.PROJECT_OWNER} 
-          />
-        )}
+        {this.renderContent(1, 'are active', ProjectState.APPROVED_ACTIVE)}
+        {this.renderContent(2, 'are inactive', ProjectState.APPROVED_INACTIVE)}
+        {this.renderContent(3, 'have been rejected', ProjectState.REJECTED)}
       </Paper>
     );
   }
@@ -126,10 +131,17 @@ class _ProjectOwnerDashboard extends Component {
     const { classes, theme } = this.props;
     return (
       <Grid container spacing={theme.spacing.unit} className={classes.root}>
-        <Grid item xs={12} >
-          <Paper className={classes.projectListingContainer} elevation={1} square>
+        <Grid item xs={12}>
+          <Paper
+            className={classes.projectListingContainer}
+            elevation={1}
+            square
+          >
             <div className={classes.header}>
-              <Typography variant="headline" style={{ marginBottom: theme.spacing.unit * 3 }}>
+              <Typography
+                variant="headline"
+                style={{ marginBottom: theme.spacing.unit * 3 }}
+              >
                 My Projects
               </Typography>
               <Button
@@ -177,9 +189,7 @@ const styles = theme => ({
 });
 
 export const ProjectOwnerDashboard = withContext(AppContext)(
-  withTheme()(
-    withStyles(styles)(_ProjectOwnerDashboard)
-  ),
+  withTheme()(withStyles(styles)(_ProjectOwnerDashboard))
 );
 
 export const _testExports = {

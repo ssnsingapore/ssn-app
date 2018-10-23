@@ -38,7 +38,7 @@ getProjectOwner()
           'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Terra-recycling.jpg',
         description:
           'Cat ipsum dolor sit amet, malkin yet donskoy for havana brown or balinese . American shorthair. Balinese bobcat or himalayan yet bombay. Lion panther thai. Persian british shorthair so himalayan and panther and norwegian forest and bengal. Bobcat maine coon bobcat, yet birman. Scottish fold bombay himalayan lion bombay abyssinian . Russian blue. Donskoy maine coon. Siamese lynx. Cougar tiger devonshire rex. Egyptian mau. Grimalkin persian. Burmese thai himalayan bobcat. Cornish',
-        volunteerSignupUrl: '',
+        volunteerSignupUrl: 'http://www.techladies.co/',
         volunteerRequirements: volunteerRequirementAttributes,
         projectOwner: projectOwner.id,
         issuesAddressed: [
@@ -94,7 +94,8 @@ getProjectOwner()
         startDate: new Date(),
         endDate: new Date(),
         frequency: ProjectFrequency.A_FEW_TIMES_A_YEAR,
-        rejectionReason: 'Lorem ipsum dolor sit amet, id commodo invidunt persecuti nam, id alienum deserunt urbanitas eam, denique elaboraret definitiones eum at. Mea cu maluisset deseruisse, phaedrum honestatis ius ex. Sed id novum melius consulatu. No cum menandri adipiscing, ei vocent persius mei. Ex vis mutat fastidii.',
+        rejectionReason:
+          'Lorem ipsum dolor sit amet, id commodo invidunt persecuti nam, id alienum deserunt urbanitas eam, denique elaboraret definitiones eum at. Mea cu maluisset deseruisse, phaedrum honestatis ius ex. Sed id novum melius consulatu. No cum menandri adipiscing, ei vocent persius mei. Ex vis mutat fastidii.',
       },
       {
         title: 'Default Image Project',
@@ -146,9 +147,9 @@ getProjectOwner()
         frequency: ProjectFrequency.A_FEW_TIMES_A_YEAR,
       },
       {
-        title: 'Default Image Project',
+        title: 'Not So Default Image Project',
         description: 'Default Image Project description',
-        volunteerSignupUrl: '',
+        volunteerSignupUrl: 'www.google.com',
         volunteerRequirements: volunteerRequirementAttributes,
         projectOwner: projectOwner.id,
         issuesAddressed: [IssueAddressed.WASTE, IssueAddressed.GREEN_LIFESTYLE],
@@ -163,9 +164,9 @@ getProjectOwner()
         frequency: ProjectFrequency.A_FEW_TIMES_A_YEAR,
       },
       {
-        title: 'Default Image Project',
+        title: 'Image Project',
         description: 'Default Image Project description',
-        volunteerSignupUrl: '',
+        volunteerSignupUrl: 'https://stackoverflow.com/',
         volunteerRequirements: volunteerRequirementAttributes,
         projectOwner: projectOwner.id,
         issuesAddressed: [IssueAddressed.WASTE, IssueAddressed.GREEN_LIFESTYLE],
@@ -199,7 +200,7 @@ getProjectOwner()
       {
         title: 'Some inactive project',
         description: 'Random text here',
-        volunteerSignupUrl: '',
+        volunteerSignupUrl: 'github.com',
         volunteerRequirements: volunteerRequirementAttributes,
         projectOwner: projectOwner.id,
         issuesAddressed: [IssueAddressed.OTHER, IssueAddressed.BIODIVERSITY],
