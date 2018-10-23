@@ -74,6 +74,7 @@ const renderAllVolunteerRequirements = (
 
 const dateFormatter = inputDate => {
   const newDate = new Date(inputDate);
+  const days = [
     'Sunday',
     'Monday',
     'Tuesday',
@@ -221,8 +222,8 @@ const renderProjectDetails = (classes, project) => {
       <Typography variant="headline" gutterBottom className={classes.headline}>
         Project Details
       </Typography>
-      {renderRow('Start date', startDate)}
-      {renderRow('End date', endDate)}
+      {renderRow('Start date', dateFormatter(startDate))}
+      {renderRow('End date', dateFormatter(endDate))}
       {renderRow('Time', time)}
       {renderRow('Location', ProjectLocationDisplayMapping[location])}
       {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
