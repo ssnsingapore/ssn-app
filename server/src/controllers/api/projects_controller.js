@@ -6,6 +6,8 @@ import { Project, ProjectState } from 'models/Project';
 // eslint-disable-next-line no-unused-vars
 import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
+import { UnprocessableEntityErrorView } from 'util/errors';
+import { ProjectOwnerAllowedTransitions, AdminAllowedTransitions } from 'config/stateChangePermissions';
 
 export const projectRouter = express.Router();
 
@@ -104,15 +106,23 @@ async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const { state } = req.body.project;
 
-  // TODO: implement validation for backend project state update routes (SSN-52) e.g.,
-  // const project = await Project.findbyid(id)
-  // await project.approve()
+  const project = await Project.findById(id).exec();
 
-  const project = await Project.updateOne(
-    { _id: id },
-    { $set: { state } }
-  );
-  return res.status(200).json({ project });
+  const allowedTransitions = ProjectOwnerAllowedTransitions[project.state];
+
+  if (allowedTransitions.includes(state)) {
+    project.set({ state });
+    project.save();
+    return res
+      .status(200)
+      .json({ project });
+  }
+  return res
+    .status(422)
+    .json({
+      errors: [new UnprocessableEntityErrorView('Invalid state change.',
+        `Project state ${project.state} cannot be changed to ${state}.`)],
+    });
 }
 
 // =============================================================================
@@ -124,22 +134,23 @@ projectRouter.put('/admin/projects/:id',
   asyncWrap(adminChangeProjectState));
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
+  const { state } = req.body.project;
 
-  const { state, rejectionReason } = req.body.project;
+  const project = await Project.findById(id).exec();
 
-  let project = {};
+  const allowedTransitions = AdminAllowedTransitions[project.state];
 
-  if (state === ProjectState.REJECTED) {
-    project = await Project.updateOne(
-      { _id: id },
-      { $set: { state, rejectionReason } }
-    );
-  } else {
-    project = await Project.updateOne(
-      { _id: id },
-      { $set: { state } }
-    );
+  if (allowedTransitions.includes(state)) {
+    project.set({ state });
+    project.save();
+    return res
+      .status(200)
+      .json({ project });
   }
-
-  return res.status(200).json({ project });
+  return res
+    .status(422)
+    .json({
+      errors: [new UnprocessableEntityErrorView('Invalid state change.',
+        `Project state ${project.state} cannot be changed to ${state}.`)],
+    });
 }
