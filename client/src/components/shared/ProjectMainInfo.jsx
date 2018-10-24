@@ -135,6 +135,13 @@ const renderIssuesAddressed = (classes, project) => {
 const renderProjectBaseDetails = (classes, project) => {
   const { title, description, volunteerSignupUrl, coverImageUrl } = project;
 
+  const httpPatternRegex = /^http(s?):\/\//;
+
+  let inputUrl = volunteerSignupUrl;
+  if (!httpPatternRegex.test(volunteerSignupUrl)) {
+    inputUrl = 'http://' + volunteerSignupUrl;
+  }
+
   return (
     <Card className={classes.card} square>
       <CardContent className={classes.content}>
@@ -155,7 +162,7 @@ const renderProjectBaseDetails = (classes, project) => {
         {volunteerSignupUrl ? (
           <Button
             variant="contained"
-            href={volunteerSignupUrl}
+            href={inputUrl}
             fullWidth
             color="secondary"
             size="large"
