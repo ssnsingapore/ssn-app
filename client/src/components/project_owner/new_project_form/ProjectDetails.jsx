@@ -10,7 +10,7 @@ import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
+import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 
 const isSelectedBefore = (issuesAddressed = [], data) => !!issuesAddressed.find(issue => issue === data);
 
@@ -151,7 +151,7 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                   {selected.map(value => (
                     <Chip
                       key={value}
-                      label={IssuesAddressedDisplayMapping[value]}
+                      label={IssueAddressedDisplayMapping[value]}
                       className={classes.chip}
                     />
                   ))}
@@ -162,7 +162,7 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 return (
                   <MenuItem value={data} key={data}>
                     <Checkbox checked={isSelectedBefore(fields.issuesAddressed.value, data)} />
-                    <ListItemText primary={IssuesAddressedDisplayMapping[data]} />
+                    <ListItemText primary={IssueAddressedDisplayMapping[data]} />
                   </MenuItem>
                 );
               })}

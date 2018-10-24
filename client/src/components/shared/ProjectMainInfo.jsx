@@ -16,7 +16,7 @@ import {
   TableRow,
   Chip,
 } from '@material-ui/core';
-import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
+import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
@@ -84,7 +84,7 @@ const renderIssuesAddressed = (classes, project) => {
           return (
             <Chip
               key={issueAddressed}
-              label={IssuesAddressedDisplayMapping[issueAddressed]}
+              label={IssueAddressedDisplayMapping[issueAddressed]}
               className={classes.chip}
             />
           );

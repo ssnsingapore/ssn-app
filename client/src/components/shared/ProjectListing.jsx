@@ -24,7 +24,7 @@ import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActi
 
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
+import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 
 class _ProjectListing extends Component {
@@ -43,7 +43,7 @@ class _ProjectListing extends Component {
     const { requestWithAlert } = this.props.context.utils;
     const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE, dashboardRole } = this.props;
 
-    const endpoint = dashboardRole === Role.PROJECT_OWNER ? 
+    const endpoint = dashboardRole === Role.PROJECT_OWNER ?
       '/api/v1/project_owner/projects' : '/api/v1/projects';
     const queryParams = '?pageSize='+ pageSize + '&projectState=' + projectState;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
@@ -71,7 +71,7 @@ class _ProjectListing extends Component {
           return (
             <Chip
               key={issueAddressed}
-              label={IssuesAddressedDisplayMapping[issueAddressed]}
+              label={IssueAddressedDisplayMapping[issueAddressed]}
               className={classes.chip}
               color="primary"
             />
@@ -145,8 +145,8 @@ class _ProjectListing extends Component {
 
     if (
       !(
-        (this._isAdmin(dashboardRole) && this._isApprovedActive(project)) || 
-        (this._isAdmin(dashboardRole) && this._isApprovedInactive(project)) || 
+        (this._isAdmin(dashboardRole) && this._isApprovedActive(project)) ||
+        (this._isAdmin(dashboardRole) && this._isApprovedInactive(project)) ||
         (this._isProjectOwner(dashboardRole))
       )
     ) {
@@ -155,9 +155,9 @@ class _ProjectListing extends Component {
     return (
       <Grid container style={ { justifyContent: 'center' } }>
         {
-          this._isProjectOwner(dashboardRole) && 
-          <Button 
-            variant="contained" 
+          this._isProjectOwner(dashboardRole) &&
+          <Button
+            variant="contained"
             className={classes.button}
             component={Link}
             to={`/project_owner/projects/${project._id}`}
@@ -167,7 +167,7 @@ class _ProjectListing extends Component {
         }
         {
           this._isApprovedActive(project) &&
-          <Button 
+          <Button
             onClick={this.handleProjectDeactivateConfirmationDialogOpen}
             variant="contained"
             className={classes.button}>
@@ -176,7 +176,7 @@ class _ProjectListing extends Component {
         }
         {
           this._isApprovedInactive(project) &&
-          <Button 
+          <Button
             onClick={this.handleProjectActivateConfirmationDialogOpen}
             variant="contained"
             className={classes.button}>
@@ -195,7 +195,7 @@ class _ProjectListing extends Component {
     return (
       <Grid item xs={rejectionMessageSize} className={classes.rejectionMessage} >
         <Typography variant="body2">
-          Rejection comments: 
+          Rejection comments:
         </Typography>
         <Typography variant="body1">
           {project.rejectionReason}
@@ -206,13 +206,13 @@ class _ProjectListing extends Component {
 
   renderProjectListingCardContent(project) {
     const { classes } = this.props;
-    
+
     const cardContentSize = this._isRejected(project) ? 8 : 12;
     const rejectionMessageSize = cardContentSize === 12 ? false : 12 - cardContentSize;
 
     return(
       <Grid container key={`${project.title}-main`}>
-        <Grid item xs={cardContentSize}> 
+        <Grid item xs={cardContentSize}>
           <Grid container>
             <Card className={classes.card} square>
               <Grid container key={`${project.title}-cardContent`}>
@@ -272,7 +272,7 @@ class _ProjectListing extends Component {
     ) {
       contentGridSize = 10;
     } else if (
-      (this._isProjectOwner(dashboardRole) && this._isApprovedActive(project)) || 
+      (this._isProjectOwner(dashboardRole) && this._isApprovedActive(project)) ||
       (this._isProjectOwner(dashboardRole) && this._isApprovedInactive(project))
     ) {
       contentGridSize = 9;
