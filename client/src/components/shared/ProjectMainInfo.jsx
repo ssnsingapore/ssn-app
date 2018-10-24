@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Grid,
@@ -71,44 +72,6 @@ const renderAllVolunteerRequirements = (
     )}
   </React.Fragment>
 );
-
-const dateFormatter = inputDate => {
-  const newDate = new Date(inputDate);
-  const days = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
-  const day = days[newDate.getUTCDay()];
-
-  const date = newDate.getUTCDate();
-  function getOrdinal(n) {
-    return ['st', 'nd', 'rd'][((((n + 90) % 100) - 10) % 10) - 1] || 'th';
-  }
-
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-  const month = months[newDate.getUTCMonth()];
-  const year = newDate.getUTCFullYear();
-
-  return day + ', ' + date + getOrdinal(date) + ' ' + month + ' ' + year;
-};
 
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
@@ -229,9 +192,19 @@ const renderProjectDetails = (classes, project) => {
       <Typography variant="headline" gutterBottom className={classes.headline}>
         Project Details
       </Typography>
-      {renderRow('Start date', dateFormatter(startDate))}
-      {renderRow('End date', dateFormatter(endDate))}
-      {renderRow('Time', time)}
+      {renderRow(
+        'Start date',
+        moment(startDate)
+          .utc()
+          .format('dddd, Do MMMM YYYY')
+      )}
+      {renderRow(
+        'End date',
+        moment(endDate)
+          .utc()
+          .format('dddd, Do MMMM YYYY')
+      )}
+      {renderRow('Time', moment(time, 'HH:mm').format('h:mm A'))}
       {renderRow('Location', ProjectLocationDisplayMapping[location])}
       {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
       {renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
