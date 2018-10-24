@@ -20,7 +20,7 @@ const renderFrequency = (FieldName, classes, handleChange, fields) => {
     required
     select
     label="Frequency"
-    value={fieldValue(fields, FieldName.frequency)}
+    value={fieldValue(fields, FieldName.frequency) || ''}
     error={fieldHasError(fields, FieldName.frequency)}
     helperText={fieldErrorText(fields, FieldName.frequency)}
     onChange={handleChange}
@@ -48,7 +48,7 @@ const renderStartEndDate = (FieldName, classes, handleChange, fields) => {
       id={FieldName.startDate}
       label="Start Date"
       onChange={handleChange}
-      value={fieldValue(fields, FieldName.startDate)}
+      value={fieldValue(fields, FieldName.startDate) || ''}
       InputLabelProps={{ shrink: true}}
       error={fieldHasError(fields, FieldName.startDate)}
       helperText={fieldErrorText(fields, FieldName.startDate)}
@@ -62,7 +62,7 @@ const renderStartEndDate = (FieldName, classes, handleChange, fields) => {
       id={FieldName.endDate}
       label="End Date"
       onChange={handleChange}
-      value={fieldValue(fields, FieldName.endDate)}
+      value={fieldValue(fields, FieldName.endDate) || ''}
       InputLabelProps={{ shrink: true}}
       error={fieldHasError(fields, FieldName.endDate)}
       helperText={fieldErrorText(fields, FieldName.endDate)}
@@ -72,7 +72,17 @@ const renderStartEndDate = (FieldName, classes, handleChange, fields) => {
   </div>;
 };
 
-export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) => {
+const handleProjectTypeChange = ( event, handleChange, resetField, FieldName ) => {
+  if (event.target.value === ProjectType.RECURRING) {
+    resetField(FieldName.startDate);
+    resetField(FieldName.endDate);
+  } else {
+    resetField(FieldName.frequency);
+  }
+  handleChange(event);
+};
+
+export const _ProjectDetails = ({ FieldName, classes, fields, handleChange, resetField }) => {
 
   return (
     <div>
@@ -86,8 +96,8 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 select
                 label="Project Type"
                 fullWidth
-                value={fieldValue(fields, FieldName.projectType)}
-                onChange={handleChange}
+                value={fieldValue(fields, FieldName.projectType) || ''}
+                onChange={event => handleProjectTypeChange(event, handleChange, resetField, FieldName)}
                 name={FieldName.projectType}
                 className={classes.columnInRow}
                 InputLabelProps={{ shrink: true }}
@@ -112,9 +122,8 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
               label="Time"
               InputLabelProps={{ shrink: true }}
               onChange={handleChange}
-              value={fieldValue(fields, FieldName.time)}
+              value={fieldValue(fields, FieldName.time) || ''}
               fullWidth
-              defaultValue="12:00"
               inputProps={{
                 step: 1800, // 30mins
               }}
@@ -123,7 +132,7 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
               select
               label="Location"
               className={classes.textField}
-              value={fieldValue(fields, FieldName.location)}
+              value={fieldValue(fields, FieldName.location) || ''}
               onChange={handleChange}
               name={FieldName.location}
               InputLabelProps={{ shrink: true }}

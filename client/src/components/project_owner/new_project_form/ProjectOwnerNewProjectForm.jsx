@@ -243,7 +243,7 @@ class _ProjectOwnerNewProjectForm extends Component {
                 fields={this.props.fields}
                 FieldName={FieldName}
                 handleChange={this.props.handleChange}
-                handleProjectTypeChange={this.props.handleProjectTypeChange}/>
+                resetField={this.props.resetField}/>
             </Grid>
             <Grid item xs={12}>
               <ProjectOwnerDetails />
@@ -269,6 +269,7 @@ const styles = theme => ({
   },
   paper: {
     padding: theme.spacing.unit * 2,
+    height: '100%',
   },
 
   textFieldGroup: {

@@ -164,9 +164,10 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
     setField = (name, value) => {
       const values = this.valuesForAllFields();
       const errors = validateField(name, value, values, constraints);
-      this.setState({
-        ...updateFormField(this.state, name, value, errors),
-      });
+      this.setState((state) => {
+        return updateFormField(state, name, value, errors);
+      }
+      );
     }
 
     handleChange = (event) => {
@@ -177,11 +178,12 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
       }
       this.setField(event.target.name, value);
     }
-
+    
     resetField = (name) => {
-      this.setState({
-        ...updateFormField(this.state, name, undefined, []),
-      });
+      this.setState((state) => {
+        return updateFormField(state, name, undefined, []);
+      }
+      );
     }
 
     resetAllFields = () => {
