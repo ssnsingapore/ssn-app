@@ -24,8 +24,7 @@ import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActi
 
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
-import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
+
 
 class _ProjectListing extends Component {
   constructor(props) {
@@ -71,7 +70,7 @@ class _ProjectListing extends Component {
           return (
             <Chip
               key={issueAddressed}
-              label={IssuesAddressedDisplayMapping[issueAddressed]}
+              label={issueAddressed}
               className={classes.chip}
               color="primary"
             />
@@ -87,29 +86,33 @@ class _ProjectListing extends Component {
     return (
       <React.Fragment>
         <Typography variant="body1">We need:</Typography>
-        {project.volunteerRequirements.map(requirement => {
+        {project.volunteerRequirements.map(data => {
           return (
-            <Chip
-              key={requirement.type}
-              label={VolunteerRequirementTypeDisplayMapping[requirement.type]}
-              className={classes.chip}
-            />
+            <Chip key={data.type} label={data.type} className={classes.chip} />
           );
         })}
       </React.Fragment>
     );
   };
 
-  handleProjectDeactivateConfirmationDialogOpen = () => {
-    this.setState({ projectDeactivateConfirmationDialogOpen: true });
+  handleProjectDeactivateConfirmationDialogOpen = (dashboardRole, project) => {
+    this.setState({ 
+      projectDeactivateConfirmationDialogOpen: true,
+      dashboardRole,
+      project,
+    });
   }
 
   handleProjectDeactivateConfirmationDialogClose = () => {
     this.setState({ projectDeactivateConfirmationDialogOpen: false });
   }
 
-  handleProjectActivateConfirmationDialogOpen = () => {
-    this.setState({ projectActivateConfirmationDialogOpen: true });
+  handleProjectActivateConfirmationDialogOpen = (dashboardRole, project) => {
+    this.setState({ 
+      projectActivateConfirmationDialogOpen: true,
+      dashboardRole,
+      project,
+    });
   }
 
   handleProjectActivateConfirmationDialogClose = () => {
@@ -160,7 +163,7 @@ class _ProjectListing extends Component {
             variant="contained" 
             className={classes.button}
             component={Link}
-            to={`/project_owner/projects/${project._id}`}
+            to={`/project_owner/projects/${project._id}/edit`}
           >
           Edit
           </Button>
@@ -168,7 +171,7 @@ class _ProjectListing extends Component {
         {
           this._isApprovedActive(project) &&
           <Button 
-            onClick={this.handleProjectDeactivateConfirmationDialogOpen}
+            onClick={() => this.handleProjectDeactivateConfirmationDialogOpen(dashboardRole, project)}
             variant="contained"
             className={classes.button}>
             Deactivate
@@ -177,7 +180,7 @@ class _ProjectListing extends Component {
         {
           this._isApprovedInactive(project) &&
           <Button 
-            onClick={this.handleProjectActivateConfirmationDialogOpen}
+            onClick={() => this.handleProjectActivateConfirmationDialogOpen(dashboardRole, project)}
             variant="contained"
             className={classes.button}>
             Activate
@@ -306,18 +309,6 @@ class _ProjectListing extends Component {
 
       return (
         <Grid style={ { alignItems: 'center' } } item xs={12} key={project._id}>
-          <ProjectDeactivateConfirmationDialog
-            open={this.state.projectDeactivateConfirmationDialogOpen}
-            handleClose={this.handleProjectDeactivateConfirmationDialogClose}
-            dashboardRole={dashboardRole}
-            project={project}
-          />
-          <ProjectActivateConfirmationDialog
-            open={this.state.projectActivateConfirmationDialogOpen}
-            handleClose={this.handleProjectActivateConfirmationDialogClose}
-            dashboardRole={dashboardRole}
-            project={project}
-          />
           <Grid container>
             <Grid item xs={12} md={contentGridSize}>
               <Link to={linkEndpoint} className={classes.link}>
@@ -339,8 +330,23 @@ class _ProjectListing extends Component {
     }
 
     const { theme } = this.props;
+    const { dashboardRole, project } = this.state;
+
     return (
       <Grid container spacing={theme.spacing.unit}>
+        <ProjectDeactivateConfirmationDialog
+          open={this.state.projectDeactivateConfirmationDialogOpen}
+          handleClose={this.handleProjectDeactivateConfirmationDialogClose}
+          dashboardRole={dashboardRole}
+          project={project}
+        />
+        <ProjectActivateConfirmationDialog
+          open={this.state.projectActivateConfirmationDialogOpen}
+          handleClose={this.handleProjectActivateConfirmationDialogClose}
+          dashboardRole={dashboardRole}
+          project={project}
+        />
+
         {this.renderProjects()}
       </Grid>
     );
