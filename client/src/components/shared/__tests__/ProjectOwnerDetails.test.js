@@ -5,6 +5,7 @@ import { defaultAppContext } from '../../main/AppContext';
 import { AccountType } from 'components/shared/enums/AccountType';
 import { CardMedia } from '@material-ui/core';
 import { createShallow } from '@material-ui/core/test-utils';
+import { AccountTypeDisplayMapping } from 'components/shared/display_mappings/AccountTypeDisplayMapping';
 
 const ProjectOwnerDetails = _testExports.ProjectOwnerDetails;
 describe('ProjectOwnerDetails', () => {
@@ -71,7 +72,7 @@ describe('ProjectOwnerDetails', () => {
 
       it('should render the account type', () => {
         expect(component.html()).toEqual(
-          expect.stringContaining(`<strong>Account Type: </strong>${organisationProjectOwner.accountType}`)
+          expect.stringContaining(`<strong>Account Type: </strong>${AccountTypeDisplayMapping[organisationProjectOwner.accountType]}`)
         );
       });
     });

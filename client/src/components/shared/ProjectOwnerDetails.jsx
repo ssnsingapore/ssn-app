@@ -5,6 +5,7 @@ import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { AccountType } from 'components/shared/enums/AccountType';
+import { AccountTypeDisplayMapping } from 'components/shared/display_mappings/AccountTypeDisplayMapping';
 
 class _ProjectOwnerDetails extends Component {
   constructor(props) {
@@ -69,7 +70,7 @@ class _ProjectOwnerDetails extends Component {
             </Typography>
             <Typography>
               <strong>Account Type: </strong>
-              {projectOwner.accountType}
+              {AccountTypeDisplayMapping[projectOwner.accountType]}
             </Typography>
             {projectOwner.accountType === AccountType.ORGANISATION && (
               <Typography>

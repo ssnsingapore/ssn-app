@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Paper, Tabs, Tab} from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
 import { ProjectListing } from 'components/shared/ProjectListing';
@@ -23,7 +23,7 @@ export class _AdminDashboard extends Component {
     };
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get('/api/v1/project_counts');
 
@@ -45,10 +45,34 @@ export class _AdminDashboard extends Component {
     this.setState({ tabValue: value });
   };
 
-  getTabLabel = (projectState) => {
+  getTabLabel = projectState => {
     const { counts } = this.state;
-    return `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`;
-  }
+    return `${ProjectStateDisplayMapping[projectState]} (${
+      counts[projectState]
+    })`;
+  };
+
+  renderContent = (value, message, projectState) => {
+    const { tabValue, counts } = this.state;
+    const { theme } = this.props;
+
+    return (
+      tabValue === value &&
+      (counts === 0 ? (
+        <Typography
+          variant="subheading"
+          style={{ color: theme.palette.grey[500] }}
+        >
+          There are no {message} at the moment.
+        </Typography>
+      ) : (
+        <ProjectListing
+          projectState={projectState}
+          dashboardRole={Role.ADMIN}
+        />
+      ))
+    );
+  };
 
   render() {
     if (this.state.isLoading) {
@@ -62,29 +86,37 @@ export class _AdminDashboard extends Component {
       <Paper className={classes.root} square>
         <Paper className={classes.tabHeader} square>
           <Typography variant="headline" className={classes.headline}>
-                List of Projects
+            List of Projects
           </Typography>
-          <Tabs value={tabValue} onChange={this.handleChange} indicatorColor="primary" textColor="primary">
-            <Tab label={this.getTabLabel(ProjectState.PENDING_APPROVAL)}/>
-            <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)}/>
-            <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)}/>
-            <Tab label={this.getTabLabel(ProjectState.REJECTED)}/>
+          <Tabs
+            value={tabValue}
+            onChange={this.handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+          >
+            <Tab label={this.getTabLabel(ProjectState.PENDING_APPROVAL)} />
+            <Tab label={this.getTabLabel(ProjectState.APPROVED_ACTIVE)} />
+            <Tab label={this.getTabLabel(ProjectState.APPROVED_INACTIVE)} />
+            <Tab label={this.getTabLabel(ProjectState.REJECTED)} />
           </Tabs>
         </Paper>
         <div className={classes.tabContainer}>
-          {tabValue === 0 && <ProjectListing 
-            dashboardRole={Role.ADMIN}
-            projectState={ProjectState.PENDING_APPROVAL}
-          />}
-          {tabValue === 1 && <ProjectListing 
-            dashboardRole={Role.ADMIN}
-            projectState={ProjectState.APPROVED_ACTIVE}/>}
-          {tabValue === 2 && <ProjectListing 
-            dashboardRole={Role.ADMIN}
-            projectState={ProjectState.APPROVED_INACTIVE}/>}
-          {tabValue === 3 && <ProjectListing 
-            dashboardRole={Role.ADMIN}
-            projectState={ProjectState.REJECTED}/>}
+          {this.renderContent(
+            0,
+            'projects pending approval',
+            ProjectState.PENDING_APPROVAL
+          )}
+          {this.renderContent(
+            1,
+            'active projects',
+            ProjectState.APPROVED_ACTIVE
+          )}
+          {this.renderContent(
+            2,
+            'inactive projects',
+            ProjectState.APPROVED_INACTIVE
+          )}
+          {this.renderContent(3, 'rejected projects', ProjectState.REJECTED)}
         </div>
       </Paper>
     );
@@ -93,7 +125,7 @@ export class _AdminDashboard extends Component {
 
 const styles = {
   root: {
-    width: '90vw',
+    width: '80vw',
     margin: '10px auto',
   },
   headline: {
@@ -109,8 +141,6 @@ const styles = {
   },
 };
 
-export const AdminDashboard = withStyles(styles)(
-  withContext(AppContext)(
-    (_AdminDashboard)
-  ),
+export const AdminDashboard = withContext(AppContext)(
+  withTheme()(withStyles(styles)(_AdminDashboard))
 );

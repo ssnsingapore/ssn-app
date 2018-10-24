@@ -24,7 +24,8 @@ import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActi
 
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-
+import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
+import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 
 class _ProjectListing extends Component {
   constructor(props) {
@@ -70,7 +71,7 @@ class _ProjectListing extends Component {
           return (
             <Chip
               key={issueAddressed}
-              label={issueAddressed}
+              label={IssuesAddressedDisplayMapping[issueAddressed]}
               className={classes.chip}
               color="primary"
             />
@@ -86,9 +87,13 @@ class _ProjectListing extends Component {
     return (
       <React.Fragment>
         <Typography variant="body1">We need:</Typography>
-        {project.volunteerRequirements.map(data => {
+        {project.volunteerRequirements.map(requirement => {
           return (
-            <Chip key={data.type} label={data.type} className={classes.chip} />
+            <Chip
+              key={requirement.type}
+              label={VolunteerRequirementTypeDisplayMapping[requirement.type]}
+              className={classes.chip}
+            />
           );
         })}
       </React.Fragment>

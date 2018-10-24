@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
 import { SearchBar } from 'components/shared/SearchBar';
@@ -43,7 +43,11 @@ class _Projects extends Component {
     if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
-      showAlert('getProjectCountsFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert(
+        'getProjectCountsFailure',
+        AlertType.ERROR,
+        formatErrors(errors)
+      );
     }
 
     this.setState({ isLoading: false });
@@ -53,12 +57,35 @@ class _Projects extends Component {
     this.setState({ tabValue: value });
   };
 
-  getTabLabel = (projectState) => {
+  getTabLabel = projectState => {
     const { counts } = this.state;
-    return counts[projectState] !== undefined ?
-      `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})` :
-      ProjectStateDisplayMapping[projectState];
-  }
+    return counts[projectState] !== undefined
+      ? `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`
+      : ProjectStateDisplayMapping[projectState];
+  };
+
+  renderContent = (value, projectState) => {
+    const { tabValue, counts } = this.state;
+    const { theme } = this.props;
+    const state = ProjectStateDisplayMapping[projectState].toLowerCase();
+
+    return (
+      tabValue === value && (
+        <TabContainer>
+          {counts === 0 ? (
+            <Typography
+              variant="subheading"
+              style={{ color: theme.palette.grey[500] }}
+            >
+              There are no {state} projects at the moment.
+            </Typography>
+          ) : (
+            <ProjectListing projectState={projectState} />
+          )}
+        </TabContainer>
+      )
+    );
+  };
 
   renderProjectListings = () => {
     const { tabValue } = this.state;
@@ -71,7 +98,9 @@ class _Projects extends Component {
     return (
       <Paper className={classes.body} square>
         <Paper square>
-          <Typography variant='headline' className={classes.title}>List of projects</Typography>
+          <Typography variant="headline" className={classes.title}>
+            List of projects
+          </Typography>
           <Tabs
             value={tabValue}
             onChange={this.handleChange}
@@ -83,8 +112,8 @@ class _Projects extends Component {
           </Tabs>
         </Paper>
         <Paper className={classes.innerbox}>
-          {tabValue === 0 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_ACTIVE}/></TabContainer>}
-          {tabValue === 1 && <TabContainer><ProjectListing projectState={ProjectState.APPROVED_INACTIVE}/></TabContainer>}
+          {this.renderContent(0, ProjectState.APPROVED_ACTIVE)}
+          {this.renderContent(1, ProjectState.APPROVED_INACTIVE)}
         </Paper>
       </Paper>
     );
@@ -108,9 +137,8 @@ const styles = {
     padding: '30px',
   },
   body: {
-    width: '85%',
-    margin: '0 auto',
-    marginTop: '20px',
+    width: '80vw',
+    margin: '20px auto 60px',
   },
   innerbox: {
     marginTop: '1px',
@@ -118,7 +146,7 @@ const styles = {
 };
 
 export const Projects = withContext(AppContext)(
-  withStyles(styles)(_Projects),
+  withTheme()(withStyles(styles)(_Projects))
 );
 
 export const _testExports = {

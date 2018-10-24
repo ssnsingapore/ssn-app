@@ -4,6 +4,7 @@ import React from 'react';
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
 import { ProjectType } from 'components/shared/enums/ProjectType';
+import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
@@ -93,8 +94,12 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 error={fieldHasError(fields, FieldName.projectType)}
                 helperText={fieldErrorText(fields, FieldName.projectType)}
               >
-                <MenuItem value={ProjectType.EVENT}>Event</MenuItem>
-                <MenuItem value={ProjectType.RECURRING}>Recurring</MenuItem>
+                <MenuItem value={ProjectType.EVENT}>
+                  {ProjectTypeDisplayMapping[ProjectType.EVENT]}
+                </MenuItem>
+                <MenuItem value={ProjectType.RECURRING}>
+                  {ProjectTypeDisplayMapping[ProjectType.RECURRING]}
+                </MenuItem>
               </TextField>
               {renderFrequency(FieldName, classes, handleChange, fields)}
             </div>
@@ -145,7 +150,11 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange }) =>
                 renderValue={selected => (
                   <div className={classes.chips}>
                     {selected.map(value => (
-                      <Chip key={value} label={IssuesAddressedDisplayMapping[value]}/>
+                      <Chip
+                        key={value}
+                        label={IssuesAddressedDisplayMapping[value]}
+                        className={classes.chip}
+                      />
                     ))}
                   </div>
                 )}
@@ -174,9 +183,8 @@ const styles = theme => ({
     margin: '0 auto',
   },
   paper: {
-    marginTop: '6px',
-    marginBottom: '6px',
     padding: '30px',
+    height: '100%',
   },
   textField: {
     marginTop: '20px',
@@ -193,7 +201,9 @@ const styles = theme => ({
   chips: {
     display: 'flex',
     flexWrap: 'wrap',
-    margin: '6px',
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
   },
 });
 

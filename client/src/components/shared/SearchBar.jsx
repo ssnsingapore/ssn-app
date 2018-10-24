@@ -72,17 +72,19 @@ class _SearchBar extends Component {
 
     return (
       <Paper className={classes.searchBox}>
-        <Typography variant='title'>Filter projects</Typography>
-        <Typography variant='headline'>
-        I am looking for projects about {this.createDropdownMenu(FieldName.issueAddressed, IssueAddressed, 'all categories')}
-        in the month of {this.createDropdownMenu(FieldName.month, Month, 'all months')}
-        that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')}
-        near the {this.createDropdownMenu(FieldName.projectLocation, ProjectLocation, 'all areas')}
-        area.
-        </Typography>
-        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
-            Reset
-        </Button>
+        <div style={{width: '80vw', margin:'0 auto'}}>
+          <Typography variant='title'>Filter projects</Typography>
+          <Typography variant='headline'>
+          I am looking for projects about {this.createDropdownMenu(FieldName.issueAddressed, IssueAddressed, 'all categories')}
+          in the month of {this.createDropdownMenu(FieldName.month, Month, 'all months')}
+          that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')}
+          near the {this.createDropdownMenu(FieldName.projectLocation, ProjectLocation, 'all areas')}
+          area.
+          </Typography>
+          <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
+              Reset
+          </Button>
+        </div>
       </Paper>
     );
   }
@@ -90,13 +92,9 @@ class _SearchBar extends Component {
 
 const styles = theme => ({
   searchBox: {
-    paddingLeft: 100,
-    paddingRight: 100,
-    paddingTop: 30,
-    paddingBottom: 30,
-    width: '100%',
+    padding: '30px 0',
+    width: '100vw',
     backgroundColor: theme.palette.grey[100],
-
   },
   formControl: {
     minWidth: 200,

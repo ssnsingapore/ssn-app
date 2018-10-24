@@ -184,22 +184,24 @@ class _ProjectOwnerNewProjectForm extends Component {
 
     return (
       <div className={classes.actionBar}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-        >
-          Submit
-        </Button>
-        <Button
-          variant="contained"
-          className={classes.button}
-          component={Link}
-          to="/preview"
-        >
-          Preview
-        </Button>
+        <div style={{width: '90vw'}}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+          >
+            Submit
+          </Button>
+          <Button
+            variant="contained"
+            className={classes.button}
+            component={Link}
+            to="/preview"
+          >
+            Preview
+          </Button>
+        </div>
       </div>
     );
   }
@@ -289,7 +291,10 @@ const styles = theme => ({
     width: '80vw',
   },
   button: {
-    margin: theme.spacing.unit * 1.5,
+    marginTop: theme.spacing.unit * 1.5,
+    marginRight: 0,
+    marginBottom: theme.spacing.unit * 1.5,
+    marginLeft: theme.spacing.unit * 2,
     float: 'right',
   },
   actionBar: {
