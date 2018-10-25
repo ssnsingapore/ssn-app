@@ -13,11 +13,14 @@ projectRouter.get('/projects', asyncWrap(getProjects));
 async function getProjects(req, res) {
   const pageSize = Number(req.query.pageSize) || 10;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
+  const sortParams = (projectState === ProjectState.PENDING_APPROVAL)
+    ? { createdAt: 'ascending' } : { updatedAt: 'descending' };
 
   // Queries to mongodb
   const projects = await Project.find({ state: projectState })
     .limit(pageSize)
     .populate('projectOwner')
+    .sort(sortParams)
     .exec();
 
   return res.status(200).json({ projects });
