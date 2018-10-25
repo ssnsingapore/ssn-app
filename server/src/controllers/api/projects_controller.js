@@ -113,6 +113,7 @@ async function projectOwnerChangeProjectState(req, res) {
   if (allowedTransitions.includes(state)) {
     project.set({ state });
     project.save();
+
     return res
       .status(200)
       .json({ project });
@@ -134,15 +135,19 @@ projectRouter.put('/admin/projects/:id',
   asyncWrap(adminChangeProjectState));
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
-  const { state } = req.body.project;
+  const { state, rejectionReason } = req.body.project;
 
   const project = await Project.findById(id).exec();
 
   const allowedTransitions = AdminAllowedTransitions[project.state];
 
   if (allowedTransitions.includes(state)) {
-    project.set({ state });
-    project.save();
+    if (state === ProjectState.REJECTED) {
+      project.set({ state, rejectionReason });
+    } else {
+      project.set({ state });
+    }
+    await project.save();
     return res
       .status(200)
       .json({ project });

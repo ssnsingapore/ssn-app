@@ -396,6 +396,7 @@ const styles = theme => ({
   rejectionMessage: {
     padding: '15px',
     textAlign: 'justify',
+    wordWrap: 'break-word',
   },
 });
 
