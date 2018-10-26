@@ -184,7 +184,7 @@ class _ProjectOwnerNewProjectForm extends Component {
 
     return (
       <div className={classes.actionBar}>
-        <div style={{width: '90vw'}}>
+        <div className={classes.buttonGroup}>
           <Button
             type="submit"
             variant="contained"
@@ -271,7 +271,6 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     height: '100%',
   },
-
   textFieldGroup: {
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
@@ -289,7 +288,7 @@ const styles = theme => ({
     margin: theme.spacing.unit / 4,
   },
   buttonGroup: {
-    width: '80vw',
+    width: '90vw',
   },
   button: {
     marginTop: theme.spacing.unit * 1.5,
