@@ -72,6 +72,10 @@ class _Routes extends Component {
                 component={EditProjectPreview}
                 authorize={[Role.PROJECT_OWNER]}
               />
+              <RouteAuthenticated
+                path="/project_owner/projects/:id/edit"
+                authorize={[Role.PROJECT_OWNER]}
+              />
 
               <Route exact path="/admin" component={AdminLoginPage} />
               <RouteAuthenticated
