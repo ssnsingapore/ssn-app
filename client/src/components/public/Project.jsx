@@ -19,9 +19,9 @@ class _Project extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const endpoint = '/api/v1/projects/';
     const { id } = this.props.match.params;
-    const response = await requestWithAlert.get(endpoint + id);
+    const endpoint = `/api/v1/projects/${id}`;
+    const response = await requestWithAlert.get(endpoint);
 
     if (response.isSuccessful) {
       const { project } = await response.json();
