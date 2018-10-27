@@ -47,11 +47,11 @@ class _SearchBar extends Component {
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor={field}></InputLabel>
         <Select
-          value={fieldValue(fields, field) === '' ? firstLabel : fieldValue(fields, field)}
+          value={fieldValue(fields, field) || firstLabel}
           name={FieldName[field]}
           onChange={handleChange}
         >
-          {this.renderOptions({...options, firstLabel})}
+          {this.renderOptions({firstLabel, ...options})}
         </Select>
       </FormControl>
     );
@@ -69,7 +69,6 @@ class _SearchBar extends Component {
    
   render() {
     const { classes, resetAllFields } = this.props;
-
     return (
       <Paper className={classes.searchBox}>
         <div style={{width: '80vw', margin:'0 auto'}}>
