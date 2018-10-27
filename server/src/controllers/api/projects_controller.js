@@ -101,8 +101,8 @@ async function postProject(req, res) {
 
 projectRouter.put('/project_owner/projects/:id',
   passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
-  asyncWrap(projectOwnerChangeProjectState));
-async function projectOwnerChangeProjectState(req, res) {
+  asyncWrap(projectOwnerUpdateProject));
+async function projectOwnerUpdateProject(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
   const { projectOwner } = req.body;
@@ -110,9 +110,11 @@ async function projectOwnerChangeProjectState(req, res) {
   const allowedTransitions = ProjectOwnerAllowedTransitions[project.state];
 
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
-  const isCorrectProjectOwnerEdit = !updatedProject.state && projectOwner === project.projectOwner.id;
 
-  if (isUpdatedStateAllowed || isCorrectProjectOwnerEdit) {
+  const { _id } = project.projectOwner;
+  const isCorrectProjectOwner = projectOwner === _id.toString();
+
+  if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     project.set(updatedProject);
     project.save();
 
@@ -134,14 +136,22 @@ async function projectOwnerChangeProjectState(req, res) {
 
 projectRouter.put('/admin/projects/:id',
   passport.authenticate(`${Role.ADMIN}Jwt`, { session: false, failWithError: true }),
-  asyncWrap(adminChangeProjectState));
-async function adminChangeProjectState(req, res) {
+  asyncWrap(adminUpdateProject));
+async function adminUpdateProject(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
   const project = await Project.findById(id).exec();
   const allowedTransitions = AdminAllowedTransitions[project.state];
 
-  if (allowedTransitions.includes(updatedProject.state)) {
+  if (updatedProject.state && allowedTransitions.includes(updatedProject.state)) {
+    if (project.state === ProjectState.PENDING_APPROVAL && updatedProject.rejectionReason === undefined) {
+      return res
+        .status(422)
+        .json({
+          errors: [new UnprocessableEntityErrorView('Invalid state change.',
+            'This change is not allowed.')],
+        });
+    }
     project.set(updatedProject);
     await project.save();
     return res

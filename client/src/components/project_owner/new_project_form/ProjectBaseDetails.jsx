@@ -10,7 +10,7 @@ import {
 
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
-const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
+const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields, coverImageUrl }) => {
   return (
     <Card className={classes.card} square>
       <CardContent className={classes.content}>
@@ -67,10 +67,18 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           onChange={handleChange}
         />
       </CardContent>
-      <CardMedia
-        className={classes.cover}
-        image="https://d3cbihxaqsuq0s.cloudfront.net/images/43959970_xl.jpg"
-      />
+      { coverImageUrl ? 
+        <CardMedia
+          className={classes.cover}
+          image={coverImageUrl}
+        /> :       
+        <CardMedia
+          className={classes.cover}
+          image="https://d3cbihxaqsuq0s.cloudfront.net/images/43959970_xl.jpg"
+        />
+      
+      }
+
     </Card>
   );
 };
