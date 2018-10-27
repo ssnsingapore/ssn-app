@@ -60,6 +60,20 @@ class _NavBar extends Component {
     );
   }
 
+  getLink = () => {
+    const { isAuthenticated } = this.props.context;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    if (!isAuthenticated || !currentUser)
+      return '/';
+  
+    if (currentUser.role === Role.ADMIN)
+      return '/admin/dashboard';
+
+    return '/project_owner/dashboard';
+  }
+
   handleLogout = async (currentUser) => {
 
     const { authenticator } = this.props.context.utils;
@@ -129,7 +143,7 @@ class _NavBar extends Component {
         <Toolbar variant="dense" className={classes.toolBar}>
           <Button
             component={Link}
-            to="/"
+            to={this.getLink()}
           >
             <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
           </Button>
