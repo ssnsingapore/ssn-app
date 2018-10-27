@@ -15,6 +15,7 @@ const renderOrganisationName = (classes, FieldName, fields, handleChange) => {
       id={FieldName.organisationName}
       label="Organisation Name"
       onChange={handleChange}
+      value={fieldValue(fields, FieldName.organisationName) || ''}
       error={fieldHasError(fields, FieldName.organisationName)}
       helperText={fieldErrorText(fields, FieldName.organisationName)}
       fullWidth />;
@@ -53,7 +54,41 @@ const renderDescriptionOrBio = (classes, FieldName, fields, handleChange) => {
   );
 };
 
-const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange, handleSubmit, isSubmitting }) => {
+const renderPassword = (classes, FieldName, fields, handleChange) => {
+  return !!fields[FieldName.password] && (
+    <React.Fragment>
+      <TextField
+        name={FieldName.password}
+        className={classes.textInput}
+        id={FieldName.password}
+        label="Password" required={true}
+        onChange={handleChange}
+        value={fieldValue(fields, FieldName.password) || ''}
+        error={fieldHasError(fields, FieldName.password)}
+        helperText={fieldErrorText(fields, FieldName.password)}
+        type="password"
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        name={FieldName.passwordConfirmation}
+        className={classes.textInput}
+        id={FieldName.passwordConfirmation}
+        required={true}
+        label="Password Confirmation"
+        onChange={handleChange}
+        value={fieldValue(fields, FieldName.passwordConfirmation) || ''}
+        error={fieldHasError(fields, FieldName.passwordConfirmation)}
+        helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
+        type="password"
+        fullWidth
+        margin="normal"
+      />
+    </React.Fragment>
+  );
+};
+
+const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange, handleSubmit, isSubmitting, isEditProfileForm }) => {
   return (
     <Paper elevation={2} className={classes.root} square={true}>
       <Typography variant="headline">Project Owner Details</Typography>
@@ -125,33 +160,7 @@ const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange
           margin="normal"
         />
         {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
-        <TextField
-          name={FieldName.password}
-          className={classes.textInput}
-          id={FieldName.password}
-          label="Password" required={true}
-          onChange={handleChange}
-          value={fieldValue(fields, FieldName.password) || ''}
-          error={fieldHasError(fields, FieldName.password)}
-          helperText={fieldErrorText(fields, FieldName.password)}
-          type="password"
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          name={FieldName.passwordConfirmation}
-          className={classes.textInput}
-          id={FieldName.passwordConfirmation}
-          required={true}
-          label="Password Confirmation"
-          onChange={handleChange}
-          value={fieldValue(fields, FieldName.passwordConfirmation) || ''}
-          error={fieldHasError(fields, FieldName.passwordConfirmation)}
-          helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
-          type="password"
-          fullWidth
-          margin="normal"
-        />
+        {renderPassword(classes, FieldName, fields, handleChange)}
 
         <Button
           type="submit"
@@ -161,7 +170,7 @@ const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange
           variant="contained"
           color="secondary"
         >
-            Create Account
+          {isEditProfileForm ? 'Update Account' : 'Create Account'}
         </Button>
       </form>
 

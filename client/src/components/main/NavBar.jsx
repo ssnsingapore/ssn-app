@@ -112,8 +112,10 @@ class _NavBar extends Component {
             vertical: 'bottom',
             horizontal: 'right',
           }}
+          getContentAnchorEl={null}
         >
           <MenuItem button onClick={() => this.handleLogout(currentUser)}>Logout</MenuItem>
+          <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>Edit Profile</MenuItem>
         </Menu>
       </React.Fragment>
     );
