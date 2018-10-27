@@ -42,7 +42,7 @@ class _VolunteerRequirementForm extends React.Component {
             name={VolunteerRequirementFieldName.type}
             id={VolunteerRequirementFieldName.type}
             key={VolunteerRequirementFieldName.type}
-            value={fieldValue(fields, VolunteerRequirementFieldName.type)}
+            value={fieldValue(fields, VolunteerRequirementFieldName.type) || ''}
             error={fieldHasError(fields, VolunteerRequirementFieldName.type)}
             onChange={handleChange}
           >
@@ -65,7 +65,7 @@ class _VolunteerRequirementForm extends React.Component {
           name={VolunteerRequirementFieldName.number}
           id={VolunteerRequirementFieldName.number}
           key={VolunteerRequirementFieldName.number}
-          value={fieldValue(fields, VolunteerRequirementFieldName.number)}
+          value={fieldValue(fields, VolunteerRequirementFieldName.number) || ''}
           error={fieldHasError(fields, VolunteerRequirementFieldName.number)}
           helperText={fieldErrorText(fields, VolunteerRequirementFieldName.number)}
           onChange={handleChange}
@@ -78,7 +78,7 @@ class _VolunteerRequirementForm extends React.Component {
           name={VolunteerRequirementFieldName.commitmentLevel}
           id={VolunteerRequirementFieldName.commitmentLevel}
           key={VolunteerRequirementFieldName.commitmentLevel}
-          value={fieldValue(fields, VolunteerRequirementFieldName.commitmentLevel)}
+          value={fieldValue(fields, VolunteerRequirementFieldName.commitmentLevel) || ''}
           error={fieldHasError(fields, VolunteerRequirementFieldName.commitmentLevel)}
           helperText={fieldErrorText(fields, VolunteerRequirementFieldName.commitmentLevel)}
           onChange={handleChange}

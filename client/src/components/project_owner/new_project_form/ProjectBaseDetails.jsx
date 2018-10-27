@@ -28,7 +28,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           name={FieldName.title}
           id={FieldName.title}
           key={FieldName.title}
-          value={fieldValue(fields, FieldName.title)}
+          value={fieldValue(fields, FieldName.title) || ''}
           error={fieldHasError(fields, FieldName.title)}
           helperText={fieldErrorText(fields, FieldName.title)}
           onChange={handleChange}
@@ -46,7 +46,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           name={FieldName.description}
           id={FieldName.description}
           key={FieldName.description}
-          value={fieldValue(fields, FieldName.description)}
+          value={fieldValue(fields, FieldName.description) || ''}
           error={fieldHasError(fields, FieldName.description)}
           helperText={fieldErrorText(fields, FieldName.description)}
           onChange={handleChange}
@@ -61,7 +61,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
           name={FieldName.volunteerSignupUrl}
           id={FieldName.volunteerSignupUrl}
           key={FieldName.volunteerSignupUrl}
-          value={fieldValue(fields, FieldName.volunteerSignupUrl)}
+          value={fieldValue(fields, FieldName.volunteerSignupUrl) || ''}
           error={fieldHasError(fields, FieldName.volunteerSignupUrl)}
           helperText={fieldErrorText(fields, FieldName.volunteerSignupUrl)}
           onChange={handleChange}
