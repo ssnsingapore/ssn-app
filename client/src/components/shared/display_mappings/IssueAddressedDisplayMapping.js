@@ -1,6 +1,6 @@
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 
-export const IssuesAddressedDisplayMapping = {
+export const IssueAddressedDisplayMapping = {
   [IssueAddressed.AIR_QUALITY]: 'Air Quality',
   [IssueAddressed.AWARENESS_AND_EDUCATION]: 'Awareness and Education',
   [IssueAddressed.BIODIVERSITY]: 'Biodiversity',

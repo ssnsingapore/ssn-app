@@ -10,7 +10,7 @@ import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { IssuesAddressedDisplayMapping } from 'components/shared/display_mappings/IssuesAddressedDisplayMapping';
+import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 
 const isSelectedBefore = (issuesAddressed = [], data) => !!issuesAddressed.find(issue => issue === data);
 
@@ -85,103 +85,101 @@ const handleProjectTypeChange = ( event, handleChange, resetField, FieldName ) =
 export const _ProjectDetails = ({ FieldName, classes, fields, handleChange, resetField }) => {
 
   return (
-    <div>
-      <React.Fragment>
-        <Paper square className={classes.paper}>
-          <Typography variant="headline">Project Details</Typography>
-          <Grid item xs={12}>
-            <div className={classes.sharedRow}>
-              <TextField
-                required
-                select
-                label="Project Type"
-                fullWidth
-                value={fieldValue(fields, FieldName.projectType) || ''}
-                onChange={event => handleProjectTypeChange(event, handleChange, resetField, FieldName)}
-                name={FieldName.projectType}
-                className={classes.columnInRow}
-                InputLabelProps={{ shrink: true }}
-                error={fieldHasError(fields, FieldName.projectType)}
-                helperText={fieldErrorText(fields, FieldName.projectType)}
-              >
-                <MenuItem value={ProjectType.EVENT}>
-                  {ProjectTypeDisplayMapping[ProjectType.EVENT]}
-                </MenuItem>
-                <MenuItem value={ProjectType.RECURRING}>
-                  {ProjectTypeDisplayMapping[ProjectType.RECURRING]}
-                </MenuItem>
-              </TextField>
-              {renderFrequency(FieldName, classes, handleChange, fields)}
-            </div>
-            {renderStartEndDate(FieldName, classes, handleChange, fields)}
+    <React.Fragment>
+      <Paper square className={classes.paper}>
+        <Typography variant="headline">Project Details</Typography>
+        <Grid item xs={12}>
+          <div className={classes.sharedRow}>
             <TextField
-              type="time"
-              name={FieldName.time}
-              className={classes.textField}
-              id={FieldName.time}
-              label="Time"
-              InputLabelProps={{ shrink: true }}
-              onChange={handleChange}
-              value={fieldValue(fields, FieldName.time) || ''}
-              fullWidth
-              inputProps={{
-                step: 1800, // 30mins
-              }}
-            />
-            <TextField
+              required
               select
-              label="Location"
-              className={classes.textField}
-              value={fieldValue(fields, FieldName.location) || ''}
-              onChange={handleChange}
-              name={FieldName.location}
-              InputLabelProps={{ shrink: true }}
+              label="Project Type"
               fullWidth
+              value={fieldValue(fields, FieldName.projectType) || ''}
+              onChange={event => handleProjectTypeChange(event, handleChange, resetField, FieldName)}
+              name={FieldName.projectType}
+              className={classes.columnInRow}
+              InputLabelProps={{ shrink: true }}
+              error={fieldHasError(fields, FieldName.projectType)}
+              helperText={fieldErrorText(fields, FieldName.projectType)}
             >
-              <MenuItem value="">
-                <em>Undecided</em>
+              <MenuItem value={ProjectType.EVENT}>
+                {ProjectTypeDisplayMapping[ProjectType.EVENT]}
               </MenuItem>
-              <MenuItem value={ProjectLocation.CENTRAL}>{ProjectLocationDisplayMapping[ProjectLocation.CENTRAL]}</MenuItem>
-              <MenuItem value={ProjectLocation.NORTH}>{ProjectLocationDisplayMapping[ProjectLocation.NORTH]}</MenuItem>
-              <MenuItem value={ProjectLocation.SOUTH}>{ProjectLocationDisplayMapping[ProjectLocation.SOUTH]}</MenuItem>
-              <MenuItem value={ProjectLocation.EAST}>{ProjectLocationDisplayMapping[ProjectLocation.EAST]}</MenuItem>
-              <MenuItem value={ProjectLocation.WEST}>{ProjectLocationDisplayMapping[ProjectLocation.WEST]}</MenuItem>
+              <MenuItem value={ProjectType.RECURRING}>
+                {ProjectTypeDisplayMapping[ProjectType.RECURRING]}
+              </MenuItem>
             </TextField>
-            <div className={classes.textField}>
-              <InputLabel htmlFor="issues-addressed-select" style={{fontSize: 12}}>Issues Addressed</InputLabel>
-              <Select
-                multiple
-                value={fieldValue(fields, FieldName.issuesAddressed) || []}
-                onChange={handleChange}
-                name={FieldName.issuesAddressed}
-                input={<Input id="issues-addressed-select"/>}
-                fullWidth
-                renderValue={selected => (
-                  <div className={classes.chips}>
-                    {selected.map(value => (
-                      <Chip
-                        key={value}
-                        label={IssuesAddressedDisplayMapping[value]}
-                        className={classes.chip}
-                      />
-                    ))}
-                  </div>
-                )}
-              >
-                {Object.keys(IssueAddressed).map(data => {
-                  return (
-                    <MenuItem value={data} key={data}>
-                      <Checkbox checked={isSelectedBefore(fields.issuesAddressed.value, data)} />
-                      <ListItemText primary={IssuesAddressedDisplayMapping[data]} />
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </div>
-          </Grid>
-        </Paper>
-      </React.Fragment>
-    </div>
+            {renderFrequency(FieldName, classes, handleChange, fields)}
+          </div>
+          {renderStartEndDate(FieldName, classes, handleChange, fields)}
+          <TextField
+            type="time"
+            name={FieldName.time}
+            className={classes.textField}
+            id={FieldName.time}
+            label="Time"
+            InputLabelProps={{ shrink: true }}
+            onChange={handleChange}
+            value={fieldValue(fields, FieldName.time) || ''}
+            fullWidth
+            inputProps={{
+              step: 1800, // 30mins
+            }}
+          />
+          <TextField
+            select
+            label="Location"
+            className={classes.textField}
+            value={fieldValue(fields, FieldName.location) || ''}
+            onChange={handleChange}
+            name={FieldName.location}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+          >
+            <MenuItem value="">
+              <em>Undecided</em>
+            </MenuItem>
+            <MenuItem value={ProjectLocation.CENTRAL}>{ProjectLocationDisplayMapping[ProjectLocation.CENTRAL]}</MenuItem>
+            <MenuItem value={ProjectLocation.NORTH}>{ProjectLocationDisplayMapping[ProjectLocation.NORTH]}</MenuItem>
+            <MenuItem value={ProjectLocation.SOUTH}>{ProjectLocationDisplayMapping[ProjectLocation.SOUTH]}</MenuItem>
+            <MenuItem value={ProjectLocation.EAST}>{ProjectLocationDisplayMapping[ProjectLocation.EAST]}</MenuItem>
+            <MenuItem value={ProjectLocation.WEST}>{ProjectLocationDisplayMapping[ProjectLocation.WEST]}</MenuItem>
+          </TextField>
+          <div className={classes.textField}>
+            <InputLabel htmlFor="issues-addressed-select" style={{fontSize: 12}}>Issues Addressed</InputLabel>
+            <Select
+              multiple
+              value={fieldValue(fields, FieldName.issuesAddressed) || []}
+              onChange={handleChange}
+              name={FieldName.issuesAddressed}
+              input={<Input id="issues-addressed-select"/>}
+              fullWidth
+              renderValue={selected => (
+                <div className={classes.chips}>
+                  {selected.map(value => (
+                    <Chip
+                      key={value}
+                      label={IssueAddressedDisplayMapping[value]}
+                      className={classes.chip}
+                    />
+                  ))}
+                </div>
+              )}
+            >
+              {Object.keys(IssueAddressed).map(data => {
+                return (
+                  <MenuItem value={data} key={data}>
+                    <Checkbox checked={isSelectedBefore(fields.issuesAddressed.value, data)} />
+                    <ListItemText primary={IssueAddressedDisplayMapping[data]} />
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </div>
+        </Grid>
+      </Paper>
+    </React.Fragment>
   );
 
 };
