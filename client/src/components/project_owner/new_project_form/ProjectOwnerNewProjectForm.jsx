@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import {
-  Grid,
-  Button,
-} from '@material-ui/core';
+import { Grid, Button, Paper } from '@material-ui/core';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 import { extractErrors, formatErrors } from 'util/errors';
-import {
-  getFieldNameObject,
-  withForm,
-} from 'util/form';
+import { getFieldNameObject, withForm } from 'util/form';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 
 import { AlertType } from 'components/shared/Alert';
+import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
@@ -63,7 +59,7 @@ const constraints = {
     presence: { allowEmpty: false },
   },
   [FieldName.startDate]: (value, attributes) => {
-    if (attributes.projectType ===  ProjectType.RECURRING) return null;
+    if (attributes.projectType === ProjectType.RECURRING) return null;
 
     return {
       datetime: {
@@ -74,7 +70,7 @@ const constraints = {
     };
   },
   [FieldName.endDate]: (value, attributes) => {
-    if (attributes.projectType ===  ProjectType.RECURRING) return null;
+    if (attributes.projectType === ProjectType.RECURRING) return null;
 
     return {
       datetime: {
@@ -85,7 +81,7 @@ const constraints = {
     };
   },
   [FieldName.frequency]: (value, attributes) => {
-    if (attributes.projectType ===  ProjectType.EVENT) return null;
+    if (attributes.projectType === ProjectType.EVENT) return null;
 
     return {
       presence: { allowEmpty: false },
@@ -93,19 +89,19 @@ const constraints = {
   },
 };
 
-const PROJECT_ADDED_SUCCESS_MESSAGE = 'You have submitted this project successfully! It will now be pending admin approval.';
+const PROJECT_ADDED_SUCCESS_MESSAGE =
+  'You have submitted this project successfully! It will now be pending admin approval.';
 
 class _ProjectOwnerNewProjectForm extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      volunteerRequirementRefs: [
-        React.createRef(),
-      ],
+      volunteerRequirementRefs: [React.createRef()],
       isSubmitting: false,
       shouldRedirect: false,
+      preview: false,
+      project: {},
     };
 
     props.setField(FieldName.issuesAddressed, []);
@@ -113,34 +109,58 @@ class _ProjectOwnerNewProjectForm extends Component {
 
   handleAddVolunteerRequirement = () => {
     this.setState({
-      volunteerRequirementRefs: [...this.state.volunteerRequirementRefs, React.createRef()],
+      volunteerRequirementRefs: [
+        ...this.state.volunteerRequirementRefs,
+        React.createRef(),
+      ],
     });
-  }
+  };
 
-  handleDeleteVolunteerRequirement = (i) => {
-    const newVolunteerRequirementRefs = [...this.state.volunteerRequirementRefs];
+  handleDeleteVolunteerRequirement = i => {
+    const newVolunteerRequirementRefs = [
+      ...this.state.volunteerRequirementRefs,
+    ];
     newVolunteerRequirementRefs.splice(i, 1);
     this.setState({
       volunteerRequirementRefs: newVolunteerRequirementRefs,
     });
-  }
+  };
 
   validateAllSubFormFields = () => {
     const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.every(ref => ref.current.validateAllFields());
-  }
+    return volunteerRequirementRefs.every(ref =>
+      ref.current.validateAllFields()
+    );
+  };
 
   resetAllSubFormFields = () => {
     const { volunteerRequirementRefs } = this.state;
     volunteerRequirementRefs.forEach(ref => ref.current.resetAllFields());
-  }
+  };
 
   valuesForAllSubFormFields = () => {
     const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.map(ref => ref.current.valuesForAllFields());
-  }
+    return volunteerRequirementRefs.map(ref =>
+      ref.current.valuesForAllFields()
+    );
+  };
 
-  handleSubmit = async (event) => {
+  togglePreviewOn = () => {
+    const { fields } = this.props;
+    const project = {};
+
+    for (const [key, valueObject] of Object.entries(fields)) {
+      project[key] = valueObject.value;
+    }
+
+    this.setState({ preview: true, project });
+  };
+
+  togglePreviewOff = () => {
+    this.setState({ preview: false });
+  };
+
+  handleSubmit = async event => {
     event.preventDefault();
     console.log('VALUES', this.props.valuesForAllFields());
 
@@ -162,25 +182,46 @@ class _ProjectOwnerNewProjectForm extends Component {
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert
-      .post('/api/v1/project_owner/projects/new', { project: newProject }, { authenticated: true });
+    const response = await requestWithAlert.post(
+      '/api/v1/project_owner/projects/new',
+      { project: newProject },
+      { authenticated: true }
+    );
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      showAlert('projectAddedSuccess', AlertType.SUCCESS, PROJECT_ADDED_SUCCESS_MESSAGE);
+      showAlert(
+        'projectAddedSuccess',
+        AlertType.SUCCESS,
+        PROJECT_ADDED_SUCCESS_MESSAGE
+      );
       this.props.resetAllFields();
       this.resetAllSubFormFields();
-      this.setState({ shouldRedirect: true});
+      this.setState({ shouldRedirect: true });
     }
 
     if (response.hasError) {
       const errors = await extractErrors(response);
       showAlert('projectAddedFailure', AlertType.ERROR, formatErrors(errors));
     }
-  }
+  };
+
+  renderPreviewNotice = () => {
+    const { classes } = this.props;
+
+    return (
+      <Paper square className={classes.previewNotice}>
+        <Button disabled fullWidth>
+          <RemoveRedEyeIcon className={classes.leftIcon} />
+          This is a preview
+        </Button>
+      </Paper>
+    );
+  };
 
   renderActionBar = () => {
     const { classes } = this.props;
+    const { preview } = this.state;
 
     return (
       <div className={classes.actionBar}>
@@ -193,21 +234,32 @@ class _ProjectOwnerNewProjectForm extends Component {
           >
             Submit
           </Button>
-          <Button
-            variant="contained"
-            className={classes.button}
-            component={Link}
-            to="/preview"
-          >
-            Preview
-          </Button>
+          {!preview ? (
+            <Button
+              variant="contained"
+              className={classes.button}
+              onClick={this.togglePreviewOn}
+            >
+              Preview
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              className={classes.button}
+              onClick={this.togglePreviewOff}
+            >
+              Back to form
+            </Button>
+          )}
         </div>
       </div>
     );
-  }
+  };
 
   render() {
     const { classes } = this.props;
+    const { preview } = this.state;
+
     if (this.state.shouldRedirect) {
       return (
         <Redirect
@@ -222,29 +274,47 @@ class _ProjectOwnerNewProjectForm extends Component {
       <form onSubmit={this.handleSubmit} className={classes.root}>
         <div className={classes.form}>
           <Grid container spacing={16}>
-            <Grid item xs={12}>
-              <ProjectBaseDetails
-                fields={this.props.fields}
-                FieldName={FieldName}
-                handleChange={this.props.handleChange}/>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <ProjectVolunteerDetails
-                volunteerRequirementRefs={this.state.volunteerRequirementRefs}
-                FieldName={FieldName}
-                fields={this.props.fields}
-                handleChange={this.props.handleChange}
-                handleDeleteVolunteerRequirement={this.handleDeleteVolunteerRequirement}
-                handleAddVolunteerRequirement={this.handleAddVolunteerRequirement}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <ProjectDetails
-                fields={this.props.fields}
-                FieldName={FieldName}
-                handleChange={this.props.handleChange}
-                resetField={this.props.resetField}/>
-            </Grid>
+            {!preview ? (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <ProjectBaseDetails
+                    fields={this.props.fields}
+                    FieldName={FieldName}
+                    handleChange={this.props.handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <ProjectVolunteerDetails
+                    volunteerRequirementRefs={
+                      this.state.volunteerRequirementRefs
+                    }
+                    FieldName={FieldName}
+                    fields={this.props.fields}
+                    handleChange={this.props.handleChange}
+                    handleDeleteVolunteerRequirement={
+                      this.handleDeleteVolunteerRequirement
+                    }
+                    handleAddVolunteerRequirement={
+                      this.handleAddVolunteerRequirement
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <ProjectDetails
+                    fields={this.props.fields}
+                    FieldName={FieldName}
+                    handleChange={this.props.handleChange}
+                    resetField={this.props.resetField}
+                  />
+                </Grid>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <ProjectMainInfo project={this.state.project} />
+                </Grid>
+              </React.Fragment>
+            )}
             <Grid item xs={12}>
               <ProjectOwnerDetails />
             </Grid>
