@@ -104,14 +104,14 @@ projectRouter.put('/project_owner/projects/:id',
   asyncWrap(projectOwnerChangeProjectState));
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  const { state } = req.body.project;
-
+  const updatedProject = req.body.project;
   const project = await Project.findById(id).exec();
-
   const allowedTransitions = ProjectOwnerAllowedTransitions[project.state];
 
-  if (allowedTransitions.includes(state)) {
-    project.set({ state });
+  const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
+
+  if (isUpdatedStateAllowed || !updatedProject.state) {
+    project.set(updatedProject);
     project.save();
 
     return res
@@ -122,7 +122,7 @@ async function projectOwnerChangeProjectState(req, res) {
     .status(422)
     .json({
       errors: [new UnprocessableEntityErrorView('Invalid state change.',
-        `Project state ${project.state} cannot be changed to ${state}.`)],
+        'This change is not allowed.')],
     });
 }
 
@@ -135,18 +135,12 @@ projectRouter.put('/admin/projects/:id',
   asyncWrap(adminChangeProjectState));
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
-  const { state, rejectionReason } = req.body.project;
-
+  const updatedProject = req.body.project;
   const project = await Project.findById(id).exec();
-
   const allowedTransitions = AdminAllowedTransitions[project.state];
 
-  if (allowedTransitions.includes(state)) {
-    if (state === ProjectState.REJECTED) {
-      project.set({ state, rejectionReason });
-    } else {
-      project.set({ state });
-    }
+  if (allowedTransitions.includes(updatedProject.state)) {
+    project.set(updatedProject);
     await project.save();
     return res
       .status(200)
@@ -156,6 +150,6 @@ async function adminChangeProjectState(req, res) {
     .status(422)
     .json({
       errors: [new UnprocessableEntityErrorView('Invalid state change.',
-        `Project state ${project.state} cannot be changed to ${state}.`)],
+        'This change is not allowed.')],
     });
 }
