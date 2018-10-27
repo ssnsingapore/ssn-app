@@ -11,6 +11,10 @@ import { AppContext } from 'components/main/AppContext';
 import { ProjectOwnerBaseProfileForm } from 'components/shared/ProjectOwnerBaseProfileForm';
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
+
+const DISPLAY_WIDTH = 200;
+const DISPLAY_HEIGHT = 200;
+
 const FieldName = getFieldNameObject([
   'email',
   'name',
@@ -74,17 +78,59 @@ class _ProjectOwnerSignUpForm extends Component {
     props.setField(FieldName.accountType, AccountType.ORGANISATION);
   }
 
+  resizeImage = () => {
+    const image = new Image();
+
+    const profilePhoto = this.profilePhotoInput.current.files[0];
+    const profilePhotoSrc = window.URL.createObjectURL(profilePhoto);
+
+    image.src = profilePhotoSrc;
+
+    // Resize to cover the display width and height
+    const width = image.width;
+    const height = image.height;
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width < height && width > DISPLAY_WIDTH) {
+      finalWidth = DISPLAY_WIDTH;
+      finalHeight = height / width * DISPLAY_WIDTH;
+    }
+
+    if (height < width && height > DISPLAY_HEIGHT) {
+      finalHeight = DISPLAY_HEIGHT;
+      finalWidth = width / height * DISPLAY_HEIGHT;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, finalWidth, finalHeight);
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.6);
+    });
+  }
+
   handleSubmit = async (event) => {
     event.preventDefault();
+
 
     if (!this.props.validateAllFields()) {
       return;
     }
 
+    const resizedProfilePhoto = await this.resizeImage();
+
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const projectOwner = { ...this.props.valuesForAllFields() };
+
+    const formData = new FormData();
+    formData.append('profilePhoto', resizedProfilePhoto);
+    Object.keys(projectOwner).forEach( key => formData.append(key, projectOwner[key]));
 
     this.setState({ isSubmitting: true });
     const response = await authenticator.signUpProjectOwner(projectOwner);
