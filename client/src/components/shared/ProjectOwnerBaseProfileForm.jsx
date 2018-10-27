@@ -5,6 +5,7 @@ import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
 import { AccountType } from 'components/shared/enums/AccountType';
 import { Spinner } from 'components/shared/Spinner';
+import { ProjectOwnerProfilePhotoUpload } from './ProjectOwnerProfilePhotoUpload';
 
 const renderOrganisationName = (classes, FieldName, fields, handleChange) => {
   return fields[FieldName.accountType].value === AccountType.ORGANISATION &&
@@ -88,7 +89,15 @@ const renderPassword = (classes, FieldName, fields, handleChange) => {
   );
 };
 
-export const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange, handleSubmit, isSubmitting, isEditProfileForm }) => {
+const _ProjectOwnerBaseProfileForm = ({
+  FieldName,
+  classes,
+  fields,
+  handleChange,
+  handleSubmit,
+  isSubmitting,
+  isEditProfileForm,
+  profilePhotoInput }) => {
   return (
     <Paper elevation={2} className={classes.root} square={true}>
       <Typography variant="headline">Project Owner Details</Typography>
@@ -161,7 +170,7 @@ export const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handl
         />
         {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
         {renderPassword(classes, FieldName, fields, handleChange)}
-
+        <ProjectOwnerProfilePhotoUpload profilePhotoInput={profilePhotoInput} />
         <Button
           type="submit"
           size="medium"

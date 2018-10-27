@@ -64,6 +64,8 @@ class _ProjectOwnerSignUpForm extends Component {
   constructor(props) {
     super(props);
 
+    this.profilePhotoInput = React.createRef();
+
     this.state = {
       isSubmitting: false,
       createdUser: null,
@@ -110,16 +112,18 @@ class _ProjectOwnerSignUpForm extends Component {
       }} />;
     }
     return (
-      <ProjectOwnerBaseProfileForm FieldName={FieldName}
+      <ProjectOwnerBaseProfileForm
+        profilePhotoInput={this.profilePhotoInput}
+        FieldName={FieldName}
         fields={this.props.fields}
-        handleChange={this.props.handleChange} 
+        handleChange={this.props.handleChange}
         handleSubmit={this.handleSubmit}
         isSubmitting={this.state.isSubmitting}/>
     );
   }
 }
 
-export const ProjectOwnerSignUpForm = 
+export const ProjectOwnerSignUpForm =
   withTheme()(
     withContext(AppContext)(
       withForm(
