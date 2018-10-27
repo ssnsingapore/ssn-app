@@ -23,6 +23,10 @@ export class Authenticator {
     return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
   }
 
+  setCurrentUser = (newUser) => {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
+  }
+
   setSuccessfulAuthState = async (response) => {
     const { user } = await response.json();
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));

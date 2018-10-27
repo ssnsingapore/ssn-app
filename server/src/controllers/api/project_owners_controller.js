@@ -72,6 +72,14 @@ async function logout(req, res) {
   });
   return res.status(204).end();
 }
+
+projectOwnersRouter.put('/project_owners/:id', asyncWrap(updateProjectOwner));
+async function updateProjectOwner(req, res) {
+  const { id } = req.params;
+  const { projectOwner } = req.body;
+  const updatedProjectOwner = await ProjectOwner.findByIdAndUpdate(id, projectOwner, { new: true });
+  return res.status(200).json({ projectOwner: updatedProjectOwner });
+}
 // =============================================================================
 // Sign Up and Account Confirmation
 // =============================================================================
