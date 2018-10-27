@@ -35,6 +35,7 @@ class _ProjectListing extends Component {
       isLoading: true,
       projectDeactivateConfirmationDialogOpen: false,
       projectActivateConfirmationDialogOpen: false,
+      project: {},
     };
   }
 
@@ -98,7 +99,6 @@ class _ProjectListing extends Component {
   handleProjectDeactivateConfirmationDialogOpen = (dashboardRole, project) => {
     this.setState({ 
       projectDeactivateConfirmationDialogOpen: true,
-      dashboardRole,
       project,
     });
   }
@@ -110,7 +110,6 @@ class _ProjectListing extends Component {
   handleProjectActivateConfirmationDialogOpen = (dashboardRole, project) => {
     this.setState({ 
       projectActivateConfirmationDialogOpen: true,
-      dashboardRole,
       project,
     });
   }
@@ -329,8 +328,8 @@ class _ProjectListing extends Component {
       return <Spinner />;
     }
 
-    const { theme } = this.props;
-    const { dashboardRole, project } = this.state;
+    const { theme, dashboardRole } = this.props;
+    const { project } = this.state;
 
     return (
       <Grid container spacing={theme.spacing.unit}>
