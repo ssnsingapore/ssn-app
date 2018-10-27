@@ -32,7 +32,8 @@ import { Todos } from 'components/old/Todos';
 import { Login } from 'components/old/OldLogin';
 import { SignUp } from 'components/old/OldSignUp';
 import { ImageUpload } from 'components/old/ImageUpload';
-import { PasswordResetForm } from '../public/PasswordResetForm';
+import { PasswordResetForm } from 'components/public/PasswordResetForm';
+import { ProjectOwnerEditProfileForm } from 'components/public/ProjectOwnerEditProfileForm';
 
 class _Routes extends Component {
   render() {
@@ -73,7 +74,8 @@ class _Routes extends Component {
                 authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
-                path="/project_owner/projects/:id/edit"
+                path="/project_owner/edit_profile"
+                component={ProjectOwnerEditProfileForm}
                 authorize={[Role.PROJECT_OWNER]}
               />
 

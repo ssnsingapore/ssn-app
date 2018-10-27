@@ -1,6 +1,5 @@
 import { withTheme } from '@material-ui/core/styles';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
@@ -9,8 +8,9 @@ import { AccountType } from 'components/shared/enums/AccountType';
 import { AlertType } from 'components/shared/Alert';
 import { AppContext } from 'components/main/AppContext';
 import { ProjectOwnerBaseProfileForm } from 'components/shared/ProjectOwnerBaseProfileForm';
+import { Spinner } from 'components/shared/Spinner';
 
-const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
+const EDIT_PROFILE_SUCCESS = 'You\'ve successfully updated your profile!';
 const FieldName = getFieldNameObject([
   'email',
   'name',
@@ -20,8 +20,6 @@ const FieldName = getFieldNameObject([
   'socialMediaLink',
   'description',
   'personalBio',
-  'password',
-  'passwordConfirmation',
 ]);
 
 const constraints = {
@@ -39,18 +37,6 @@ const constraints = {
   [FieldName.websiteUrl]: {
     isUrl: { allowEmpty: true },
   },
-  [FieldName.password]: {
-    presence: { allowEmpty: false },
-    length: {
-      minimum: 6,
-    },
-  },
-  [FieldName.passwordConfirmation]: {
-    presence: { allowEmpty: false },
-    sameValueAs: {
-      other: FieldName.password,
-    },
-  },
   [FieldName.organisationName]: (value, attributes) => {
     if (attributes.accountType ===  AccountType.INDIVIDUAL) return null;
 
@@ -60,76 +46,105 @@ const constraints = {
   },
 };
 
-class _ProjectOwnerSignUpForm extends Component {
+class _ProjectOwnerEditProfileForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isSubmitting: false,
-      createdUser: null,
+      isLoading: true,
     };
+  }
 
-    props.setField(FieldName.accountType, AccountType.ORGANISATION);
+  async componentDidMount () {
+    const { requestWithAlert } = this.props.context.utils;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    const endPoint = `/api/v1/project_owners/${currentUser.id}`;
+    const response = await requestWithAlert.get(endPoint, 
+      { authenticated: true });
+
+    if (response.isSuccessful) {
+      const projectOwner = (await response.json()).projectOwner;
+      Object.keys(projectOwner).map (data => this.props.setField(data, projectOwner[data]));
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectOwnerFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
   }
 
   handleSubmit = async (event) => {
     event.preventDefault();
 
+    console.log('submitting');
     if (!this.props.validateAllFields()) {
       return;
     }
+    console.log('submitting after');
 
-    const { authenticator } = this.props.context.utils;
+
     const { showAlert } = this.props.context.updaters;
+    const { requestWithAlert, authenticator} = this.props.context.utils;
 
     const projectOwner = { ...this.props.valuesForAllFields() };
 
     this.setState({ isSubmitting: true });
-    const response = await authenticator.signUpProjectOwner(projectOwner);
+
+    const currentUser = authenticator.getCurrentUser();
+    const data = { projectOwner };
+    
+    const response = await requestWithAlert
+      .put(`/api/v1/project_owners/${currentUser.id}`, data, { authenticated: true });
+    
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      const createdUser = (await response.json()).projectOwner;
-      this.setState({
-        createdUser,
-      });
-      showAlert('signupSuccess', AlertType.SUCCESS, SIGNUP_SUCCESS_MESSAGE);
+      const newUser = (await response.json()).projectOwner;
+      authenticator.setCurrentUser(newUser);
+      showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
+      window.location.reload();
     }
 
     if (response.hasError) {
       const errors = await extractErrors(response);
-      showAlert('signupFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert('editProfileFailure', AlertType.ERROR, formatErrors(errors));
     }
+    
   }
 
   render () {
-    if (this.state.createdUser) {
-      return <Redirect to={{
-        pathname: '/signup/confirmation',
-        state: { projectOwner: this.state.createdUser },
-      }} />;
+    if (this.state.isLoading) {
+      return <Spinner/>;
     }
+    
     return (
       <ProjectOwnerBaseProfileForm FieldName={FieldName}
         fields={this.props.fields}
         handleChange={this.props.handleChange} 
         handleSubmit={this.handleSubmit}
-        isSubmitting={this.state.isSubmitting}/>
+        isSubmitting={this.state.isSubmitting}
+        isEditProfileForm={true}/>
     );
   }
 }
 
-export const ProjectOwnerSignUpForm = 
+export const ProjectOwnerEditProfileForm = 
   withTheme()(
     withContext(AppContext)(
       withForm(
         FieldName,
         constraints,
-      )(_ProjectOwnerSignUpForm)
+      )(_ProjectOwnerEditProfileForm)
     ),
   );
 
-export const TestProjectOwnerSignUpForm = withForm(
+export const TestProjectOwnerEditProfileForm = withForm(
   FieldName,
   constraints,
-)(_ProjectOwnerSignUpForm);
+)(_ProjectOwnerEditProfileForm);
