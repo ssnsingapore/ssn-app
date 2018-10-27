@@ -19,6 +19,7 @@ import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountCo
 
 import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDashboard';
 import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
+import { ProjectOwnerEditProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerEditProjectForm';
 import { EditProjectPreview } from 'components/project_owner/EditProjectPreview';
 
 import { AdminDashboard } from 'components/admin/AdminDashboard';
@@ -69,8 +70,8 @@ class _Routes extends Component {
                 authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
-                path="/project_owner/projects/:id"
-                component={EditProjectPreview}
+                path="/project_owner/projects/:id/edit"
+                component={ProjectOwnerEditProjectForm}
                 authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
