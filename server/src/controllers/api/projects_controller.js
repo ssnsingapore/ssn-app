@@ -6,6 +6,8 @@ import { Project, ProjectState } from 'models/Project';
 // eslint-disable-next-line no-unused-vars
 import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
+import { UnprocessableEntityErrorView } from 'util/errors';
+import { ProjectOwnerAllowedTransitions, AdminAllowedTransitions } from 'config/stateChangePermissions';
 
 export const projectRouter = express.Router();
 
@@ -102,17 +104,26 @@ projectRouter.put('/project_owner/projects/:id',
   asyncWrap(projectOwnerChangeProjectState));
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  const { state } = req.body.project;
+  const updatedProject = req.body.project;
+  const project = await Project.findById(id).exec();
+  const allowedTransitions = ProjectOwnerAllowedTransitions[project.state];
 
-  // TODO: implement validation for backend project state update routes (SSN-52) e.g.,
-  // const project = await Project.findbyid(id)
-  // await project.approve()
+  const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
 
-  const project = await Project.updateOne(
-    { _id: id },
-    { $set: { state } }
-  );
-  return res.status(200).json({ project });
+  if (isUpdatedStateAllowed || !updatedProject.state) {
+    project.set(updatedProject);
+    project.save();
+
+    return res
+      .status(200)
+      .json({ project });
+  }
+  return res
+    .status(422)
+    .json({
+      errors: [new UnprocessableEntityErrorView('Invalid state change.',
+        'This change is not allowed.')],
+    });
 }
 
 // =============================================================================
@@ -124,22 +135,21 @@ projectRouter.put('/admin/projects/:id',
   asyncWrap(adminChangeProjectState));
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
+  const updatedProject = req.body.project;
+  const project = await Project.findById(id).exec();
+  const allowedTransitions = AdminAllowedTransitions[project.state];
 
-  const { state, rejectionReason } = req.body.project;
-
-  let project = {};
-
-  if (state === ProjectState.REJECTED) {
-    project = await Project.updateOne(
-      { _id: id },
-      { $set: { state, rejectionReason } }
-    );
-  } else {
-    project = await Project.updateOne(
-      { _id: id },
-      { $set: { state } }
-    );
+  if (allowedTransitions.includes(updatedProject.state)) {
+    project.set(updatedProject);
+    await project.save();
+    return res
+      .status(200)
+      .json({ project });
   }
-
-  return res.status(200).json({ project });
+  return res
+    .status(422)
+    .json({
+      errors: [new UnprocessableEntityErrorView('Invalid state change.',
+        'This change is not allowed.')],
+    });
 }

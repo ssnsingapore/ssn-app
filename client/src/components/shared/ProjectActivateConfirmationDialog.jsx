@@ -82,7 +82,7 @@ class _ProjectActivateConfirmationDialog extends Component {
   render() {
     const { open, handleClose } = this.props;
     if (this.state.shouldRefreshPage) {
-      window.location.reload();
+      window.location.reload(); // could not use Redirect and pass state. shows error.
     }
 
     return (
