@@ -60,8 +60,6 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
       },
     };
 
-    console.log(updatedProject);
-
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 

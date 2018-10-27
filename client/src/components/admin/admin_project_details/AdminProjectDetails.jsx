@@ -58,7 +58,7 @@ class _AdminProjectDetails extends Component {
     const endpoint = `/api/v1/admin/projects/${id}`;
 
     const updatedProject = { project: {
-      state: ProjectState.APPROVE_ACTIVE,
+      state: ProjectState.APPROVED_ACTIVE,
     } };
 
     const { showAlert } = this.props.context.updaters;
