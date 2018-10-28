@@ -53,8 +53,12 @@ describe('ProjectOwnerLoginForm', () => {
   describe('handleSubmit happy flow',  () => {
     let props;
     let component;
+    let email;
+    let password;
   
     beforeEach(() => {
+      email = 'test@test.com';
+      password = 'test123';
   
       props = {
         classes: {},
@@ -75,6 +79,12 @@ describe('ProjectOwnerLoginForm', () => {
         validateAllFields: jest.fn(() => {
           return true;
         }),
+        valuesForAllFields: jest.fn(() => {
+          return {
+            email,
+            password, 
+          };
+        }),
       };
 
       component = shallow(<TestProjectOwnerLoginForm {...props}/>);
@@ -92,24 +102,14 @@ describe('ProjectOwnerLoginForm', () => {
       expect(component.props().validateAllFields()).toBeTruthy();
     });
 
-    it('should invoke authenticator when handleSubmit is clicked', async () => {      
+    it('should invoke authenticator when handleSubmit is clicked', async () => {
 
       const event = {
         preventDefault: jest.fn(),
       };
       component.dive().instance().handleSubmit(event);
 
-      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalled();
-    });
-
-    it('should invoke authenticator  when handleSubmit is clicked', async () => {      
-
-      const event = {
-        preventDefault: jest.fn(),
-      };
-      component.dive().instance().handleSubmit(event);
-
-      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith();
+      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
     });
   });
   
