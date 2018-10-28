@@ -1,10 +1,15 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
 import { TestProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
+import { AlertType } from 'components/shared/Alert';
 
 describe('ProjectOwnerLoginForm', () => {
   let props;
   let component;
+
+  const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
+  const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
+
 
   beforeEach(() => {
 
@@ -14,19 +19,7 @@ describe('ProjectOwnerLoginForm', () => {
         updaters: {
           showAlert: jest.fn(),
         },
-        utils: {
-          authenticator: {
-            loginProjectOwner: jest.fn(() => {
-              return new Promise(resolve => resolve({
-                isSuccessful: true,
-              }));
-            }),
-          },
-        },
       },
-      validateAllFields: jest.fn(() => {
-        return true;
-      }),
     };
     
     component = shallow(<TestProjectOwnerLoginForm {...props}/>);
@@ -53,6 +46,8 @@ describe('ProjectOwnerLoginForm', () => {
   describe('handleSubmit happy flow',  () => {
     let props;
     let component;
+    const valuesForAllFields = {email: 'test@test.com',
+      password: 'test123'};
   
     beforeEach(() => {
   
@@ -72,6 +67,9 @@ describe('ProjectOwnerLoginForm', () => {
             },
           },
         },
+        valuesForAllFields: jest.fn(() => {
+          return valuesForAllFields;
+        }),
         validateAllFields: jest.fn(() => {
           return true;
         }),
@@ -99,17 +97,88 @@ describe('ProjectOwnerLoginForm', () => {
       };
       component.dive().instance().handleSubmit(event);
 
-      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalled();
+      const {email, password} = valuesForAllFields;
+
+      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
+      expect(await component.props().context.utils.authenticator.loginProjectOwner(email, password)).toEqual({isSuccessful: true});
     });
 
-    it('should invoke authenticator  when handleSubmit is clicked', async () => {      
+    it('should show success alert when authentication successful', async () => {      
 
       const event = {
         preventDefault: jest.fn(),
       };
       component.dive().instance().handleSubmit(event);
 
-      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith();
+      const {email, password} = valuesForAllFields;
+      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+
+      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
+    });
+  });
+
+  describe('handleSubmit not so happy flow',  () => {
+    let props;
+    let component;
+    const valuesForAllFields = {email: 'test@test.com',
+      password: 'test123'};
+    const response = {
+      isSuccessful: false,
+      hasError: true,
+      status: 401,
+    };
+  
+    beforeEach(() => {
+  
+      props = {
+        classes: {},
+        context: {
+          updaters: {
+            showAlert: jest.fn(),
+          },
+          utils: {
+            authenticator: {
+              loginProjectOwner: jest.fn(() => {
+                return new Promise(resolve => resolve(response));
+              }),
+            },
+          },
+        },
+        valuesForAllFields: jest.fn(() => {
+          return valuesForAllFields;
+        }),
+        validateAllFields: jest.fn(() => {
+          return true;
+        }),
+      };
+
+      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
+    });
+
+    it('should invoke authenticator when handleSubmit is clicked', async () => {      
+
+      const event = {
+        preventDefault: jest.fn(),
+      };
+      component.dive().instance().handleSubmit(event);
+
+      const {email, password} = valuesForAllFields;
+
+      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
+      expect(await component.props().context.utils.authenticator.loginProjectOwner(email, password)).toEqual(response);
+    });
+
+    it('should show failure alert when authentication failed', async () => {      
+
+      const event = {
+        preventDefault: jest.fn(),
+      };
+      component.dive().instance().handleSubmit(event);
+
+      const {email, password} = valuesForAllFields;
+      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+
+      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginFailure', AlertType.ERROR, LOGIN_FAILURE_MESSAGE);
     });
   });
   
