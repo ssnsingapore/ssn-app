@@ -88,7 +88,7 @@ const renderPassword = (classes, FieldName, fields, handleChange) => {
   );
 };
 
-const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange, handleSubmit, isSubmitting, isEditProfileForm }) => {
+export const _ProjectOwnerBaseProfileForm = ({ FieldName, classes, fields, handleChange, handleSubmit, isSubmitting, isEditProfileForm }) => {
   return (
     <Paper elevation={2} className={classes.root} square={true}>
       <Typography variant="headline">Project Owner Details</Typography>
@@ -197,3 +197,5 @@ const styles = theme => ({
 });
 
 export const ProjectOwnerBaseProfileForm = withStyles(styles)(_ProjectOwnerBaseProfileForm);
+
+ProjectOwnerBaseProfileForm.displayName = 'ProjectOwnerBaseProfileForm';
