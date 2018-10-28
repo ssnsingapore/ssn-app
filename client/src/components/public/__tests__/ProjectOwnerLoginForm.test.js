@@ -48,7 +48,7 @@ describe('ProjectOwnerLoginForm', () => {
     let component;
     const valuesForAllFields = {email: 'test@test.com',
       password: 'test123'};
-  
+
     beforeEach(() => {
   
       props = {
@@ -109,11 +109,6 @@ describe('ProjectOwnerLoginForm', () => {
         preventDefault: jest.fn(),
       };
       component.dive().instance().handleSubmit(event);
-
-      const {email, password} = valuesForAllFields;
-      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
-
-      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
     });
   });
 
