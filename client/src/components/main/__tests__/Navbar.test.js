@@ -7,14 +7,13 @@ import { defaultAppContext } from 'components/main/AppContext';
 import { Role } from 'components/shared/enums/Role';
 
 const NavBar = _testExports.NavBar;
-xdescribe('Navbar', () => {
+describe('Navbar', () => {
   let component;
   let mockContext;
 
   describe('render', () => {
     it('should not render on admin homepage', () => {
       component = shallow(<NavBar location={{ pathname: '/admin' }} />);
-      console.log(component.debug());
       expect(component.html()).toEqual('');
     });
 
@@ -58,15 +57,20 @@ xdescribe('Navbar', () => {
         );
       });
 
-      // TODO: future story should add a Edit Profile button
       it('should render avatar with dropdown and logout button', () => {
         expect(component.find(Avatar).exists()).toBeTruthy();
         expect(component.find(Button).at(1).html()).toEqual(
           expect.stringContaining('projectowner@email.com')
         );
-        expect(component.find(MenuItem).html()).toEqual(
+
+        expect(component.find(MenuItem).at(0).html()).toEqual(
           expect.stringContaining('Logout')
         );
+      });
+
+      it('should render a button that navigates to edit profile project owner page', () => {
+        expect(component.find(MenuItem).get(1).props.children).toEqual('Edit Profile');
+        expect(component.find(MenuItem).get(1).props.to).toEqual('/project_owner/edit_profile');
       });
     });
 
@@ -99,7 +103,8 @@ xdescribe('Navbar', () => {
         expect(component.find(Button).at(1).html()).toEqual(
           expect.stringContaining('admin@email.com')
         );
-        expect(component.find(MenuItem).html()).toEqual(
+
+        expect(component.find(MenuItem).at(0).html()).toEqual(
           expect.stringContaining('Logout')
         );
 
@@ -149,7 +154,7 @@ xdescribe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
-        await component.find(MenuItem).simulate('click');
+        await component.find(MenuItem).at(0).simulate('click');
 
         expect(mockContext.utils.authenticator.logoutProjectOwner).toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).not.toHaveBeenCalled();
@@ -176,7 +181,7 @@ xdescribe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
-        await component.find(MenuItem).simulate('click');
+        await component.find(MenuItem).at(0).simulate('click');
 
         expect(mockContext.utils.authenticator.logoutProjectOwner).not.toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).toHaveBeenCalled();
