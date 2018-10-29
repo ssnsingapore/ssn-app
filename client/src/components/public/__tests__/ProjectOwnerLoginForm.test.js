@@ -109,6 +109,8 @@ describe('ProjectOwnerLoginForm', () => {
         preventDefault: jest.fn(),
       };
       component.dive().instance().handleSubmit(event);
+
+      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSucess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
     });
   });
 
