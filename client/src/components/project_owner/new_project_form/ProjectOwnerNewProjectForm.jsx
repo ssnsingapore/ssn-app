@@ -276,6 +276,7 @@ class _ProjectOwnerNewProjectForm extends Component {
           <Grid container spacing={16}>
             {!preview ? (
               <React.Fragment>
+                <Grid item xs={12} style={{ paddingTop: '56px' }} />
                 <Grid item xs={12}>
                   <ProjectBaseDetails
                     fields={this.props.fields}
@@ -311,6 +312,9 @@ class _ProjectOwnerNewProjectForm extends Component {
             ) : (
               <React.Fragment>
                 <Grid item xs={12}>
+                  {this.renderPreviewNotice()}
+                </Grid>
+                <Grid item xs={12}>
                   <ProjectMainInfo project={this.state.project} />
                 </Grid>
               </React.Fragment>
@@ -335,7 +339,11 @@ const styles = theme => ({
     flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
-    padding: '60px 0',
+    padding: '0 0 60px',
+  },
+  previewNotice: {
+    padding: theme.spacing.unit / 2,
+    backgroundColor: theme.palette.grey[200],
   },
   paper: {
     padding: theme.spacing.unit * 2,

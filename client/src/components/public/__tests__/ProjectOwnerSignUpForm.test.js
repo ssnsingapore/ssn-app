@@ -1,130 +1,149 @@
 import React from 'react';
-import { TextField, Button } from '@material-ui/core';
 
 import { TestProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { AccountType } from 'components/shared/enums/AccountType';
+import { defaultAppContext } from 'components/main/AppContext'; 
 
 describe('ProjectOwnerSignUpForm', () => {
-  let props;
-  let component;
-
-  beforeEach(() => {
-
-    props = {
-      classes: {},
-      renderOrganisationName: jest.fn(),
-      context: {
-        utils: {
-          authenticator: {
-            signUpProjectOwner: jest.fn(() => new Promise(resolve => resolve({ 
-              hasError: true,
-              status: 401, 
-            }))),
-          },
-        },
-        updaters: {
-          showAlert: jest.fn(),
-        },
-      },
-    };
-    
-    component = shallow(<TestProjectOwnerSignUpForm {...props}/>);
-  });
-
   it('sets account type to organisation as a default field', () => {
+    const component = shallow(<TestProjectOwnerSignUpForm />);
     //dive to load HOC form component
     component.dive();
 
     expect(component.state('accountType').value).toEqual(AccountType.ORGANISATION);
   });
 
-  xdescribe('constraints', () => {
-    it('name text field displays error message', () => {
-      const nameComponent = component.find(TextField).filterWhere(n => n.props().name === 'name');
-
-      expect(nameComponent.props().error).toBeTruthy();
-      expect(nameComponent.props().helperText).toBe('Name can\'t be blank');
+  describe('constraints', () => {
+    let component; 
+    
+    beforeEach(() => {
+      component = shallow(<TestProjectOwnerSignUpForm />);
     });
 
-    it('email text field displays error message', () => {
-      const emailComponent = component.find(TextField).filterWhere(n => n.props().name === 'email');
+    it('when name is empty there is a validation error message', () => {
+      component.instance().setField('name', '');
       
-      expect(emailComponent.props().error).toBeTruthy();
-      expect(emailComponent.props().helperText).toBe('Email can\'t be blank');
+      expect(component.state('name').errors).toEqual(['Name can\'t be blank']);
     });
 
-    it('password text field displays error message', async() => {
-      const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
-      await createAccountButton.simulate('submit');
+    it('when email is empty there is a validation error message', () => {
+      component.instance().setField('email', '');
+      
+      expect(component.state('email').errors).toEqual(['Email can\'t be blank', 'Email is not a valid email']);
+    });
 
-      const passwordComponent = component.find(TextField).filterWhere(n => n.props().name === 'password');
-      expect(passwordComponent.props().error).toBeTruthy();
-      expect(passwordComponent.props().helperText).toBe('Password can\'t be blank');
+    it('when password is empty there are validation error messages', async() => {
+      component.instance().setField('password', '');
 
+      expect(component.state('password').errors).toEqual(['Password can\'t be blank', 'Password is too short (minimum is 6 characters)']);
     });
 
     it('when password does not match passwordConfirmation then validation message appears', async() => {
-      const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
-      await createAccountButton.simulate('submit');
+      component.instance().setField('password', 'some password');
+      component.instance().setField('passwordConfirmation', 'different password');
 
-      const passwordConfirmationComponent = component.find(TextField).filterWhere(n => n.props().name === 'passwordConfirmation');
-      expect(passwordConfirmationComponent.props().error).toBeTruthy();
-      expect(passwordConfirmationComponent.props().helperText).toBe('Password confirmation should be the same as password');
+      expect(component.state('passwordConfirmation').errors).toEqual(['Password confirmation should be the same as password']);
 
     });
 
     it('when password is less than 6 chars then validation message appears', async() => {
-      const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
-      await createAccountButton.simulate('submit');
+      component.instance().setField('password', 'short');
 
-      const passwordComponent = component.find(TextField).filterWhere(n => n.props().name === 'password');
-      expect(passwordComponent.props().error).toBeTruthy();
-      expect(passwordComponent.props().helperText).toBe('Password is too short (minimum is 6 characters)');
+      expect(component.state('password').errors).toEqual(['Password is too short (minimum is 6 characters)']);
 
     });
 
     it('when email is invalid then validation message appears', async() => {
-      const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
-      await createAccountButton.simulate('submit');
+      component.instance().setField('email', 'invalid email');
 
-      const emailComponent = component.find(TextField).filterWhere(n => n.props().name === 'email');
-      expect(emailComponent.props().error).toBeTruthy();
-      expect(emailComponent.props().helperText).toBe('Email is not a valid email');
+      expect(component.state('email').errors).toEqual(['Email is not a valid email']);
     });
   });
-  //to be continued
-  // describe('submit form', () => {
-  //   fit('clicking create account button with all mandatory fields filled shows success sign up', async () => {
-  //     const nameEvent = {
-  //       target: {name: 'name', value: 'Some Name'},
-  //     };
-  //     component.instance().handleChange(nameEvent);
-  //     const emailEvent = {
-  //       target: {name: 'email', value: 'some@some.com'},
-  //     };
-  //     component.instance().handleChange(emailEvent);
+  
+  describe('handleSubmit', () => {
+    let mockEvent, mockContext;
 
-  //     const passwordEvent = {
-  //       target: {name: 'password', value: 'password123'},
-  //     };
-  //     component.instance().handleChange(passwordEvent);
+    const mockSuccessfulResponse = (body) => {
+      const mockResponse = new Response(
+        JSON.stringify(body),
+      );
+      mockResponse.isSuccessful = true;
+      return mockResponse;
+    };
 
-  //     const passwordConfirmationEvent = {
-  //       target: {name: 'passwordConfirmation', value: 'password123'},
-  //     };
-  //     component.instance().handleChange(passwordConfirmationEvent);
+    beforeEach(() => {
+      mockEvent = {
+        preventDefault: jest.fn(),
+      };
 
-  //     component.update();
+      mockContext = { ...defaultAppContext };
+    });
 
-  //     const createAccountButton = component.find(Button).filterWhere(n => n.text() === 'Create Account');
-  //     await createAccountButton.simulate('submit');
+    it('prevents default submission of form', () => {
+      const component = shallow(<TestProjectOwnerSignUpForm />);
 
-  //     const event = {
-  //       preventDefault: jest.fn(),
-  //     };
-  //     //component.instance().handleSubmit(event);
-  //     //console.log(component.debug());
-  //     expect(component.find(Redirect).props().to).toEqual('/signup/confirmation');
-  //   });
-  //});
+      component.dive().instance().handleSubmit(mockEvent);
+
+      expect(mockEvent.preventDefault).toHaveBeenCalled();
+    });
+
+    it('does not call authenticator if validation of fields returns false', () => {
+      const props = {
+        validateAllFields: jest.fn(() => false),
+      };
+
+      mockContext.utils.authenticator = {
+        signUpProjectOwner: jest.fn(),
+      };
+
+      const component = shallow(<TestProjectOwnerSignUpForm {...props} context={mockContext} />);
+
+      component.dive().instance().handleSubmit(mockEvent);
+
+      expect(mockContext.utils.authenticator.signUpProjectOwner).not.toHaveBeenCalled();  
+    });
+
+    it('calls authenticator with projectOwner details if there are no validation errors', () => {
+      const projectOwner = {
+        name: 'owner',
+        role: 'project owner',
+      };
+
+      const props = {
+        validateAllFields: jest.fn(() => true),
+        valuesForAllFields: jest.fn(() => projectOwner),
+      };
+
+      mockContext.utils.authenticator = {
+        signUpProjectOwner: jest.fn(() => Promise.resolve(mockSuccessfulResponse({}))),
+      };
+
+      const component = shallow(<TestProjectOwnerSignUpForm {...props} context={mockContext} />);
+
+      component.dive().instance().handleSubmit(mockEvent);
+
+      expect(mockContext.utils.authenticator.signUpProjectOwner).toHaveBeenCalledWith(projectOwner);  
+    });
+
+    it('sets created user to state after receiving successful response', async () => {
+      const projectOwner = {
+        name: 'owner',
+        role: 'project owner',
+      };
+
+      const props = {
+        validateAllFields: jest.fn(() => true),
+      };
+
+      mockContext.utils.authenticator = {
+        signUpProjectOwner: jest.fn(() => Promise.resolve(mockSuccessfulResponse({ projectOwner }))),
+      };
+
+      const component = shallow(<TestProjectOwnerSignUpForm {...props} context={mockContext} />).dive();
+
+      await component.instance().handleSubmit(mockEvent);
+
+      expect(component.state('createdUser')).toEqual(projectOwner);
+    });
+  });
 });
