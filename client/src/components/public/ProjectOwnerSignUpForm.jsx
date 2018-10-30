@@ -74,6 +74,7 @@ class _ProjectOwnerSignUpForm extends Component {
     this.profilePhotoInput = React.createRef();
 
     this.state = {
+      isImageTooLowResolution: false,
       isSubmitting: false,
       createdUser: null,
     };
@@ -99,6 +100,10 @@ class _ProjectOwnerSignUpForm extends Component {
 
     // Resize to cover the display width and height
     const { width, height } = await this.getImageDimensions(image);
+
+    if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
+      this.setState({ isImageTooLowResolution: true });
+    }
 
     let finalWidth = width;
     let finalHeight = height;
@@ -127,7 +132,7 @@ class _ProjectOwnerSignUpForm extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!this.props.validateAllFields()) {
+    if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
       return;
     }
 
