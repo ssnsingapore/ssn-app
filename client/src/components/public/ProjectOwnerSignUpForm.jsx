@@ -67,6 +67,16 @@ const constraints = {
   },
 };
 
+const validateGroupsMap = {
+  fields: {
+    [FieldName.password]: 'password',
+    [FieldName.passwordConfirmation]: 'password',
+  },
+  validateGroups: {
+    password: [FieldName.password, FieldName.passwordConfirmation],
+  },
+};
+
 class _ProjectOwnerSignUpForm extends Component {
   constructor(props) {
     super(props);
@@ -190,6 +200,7 @@ export const ProjectOwnerSignUpForm =
       withForm(
         FieldName,
         constraints,
+        validateGroupsMap,
       )(_ProjectOwnerSignUpForm)
     ),
   );
@@ -197,4 +208,5 @@ export const ProjectOwnerSignUpForm =
 export const TestProjectOwnerSignUpForm = withForm(
   FieldName,
   constraints,
+  validateGroupsMap,
 )(_ProjectOwnerSignUpForm);

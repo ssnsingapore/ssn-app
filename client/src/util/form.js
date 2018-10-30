@@ -126,6 +126,7 @@ function validateField(fieldName, value, values, constraints) {
 // HOC
 // Takes a field name object
 // along with a constraints object for validation
+// and an optional validateGroupsMap object
 // and returns a HOC with the form state like
 // {
 //  fieldName1: { value: '', errors: [] },
@@ -133,7 +134,18 @@ function validateField(fieldName, value, values, constraints) {
 //  ...
 // }
 
-export const withForm = (fieldNames, constraints)  => (FormComponent) => {
+// the validateGroupsMap object should be of the form:
+// {
+//   fields: {
+//     "<fieldName1>": "<validate-group-name>",
+//     "<fieldName2>": "<validate-group-name>",
+//   },
+//   validateGroups: {
+//     "<validate-group-name": ["<fieldName1>", "<fieldName2>"],
+//   },
+// }
+
+export const withForm = (fieldNames, constraints, validateGroupsMap)  => (FormComponent) => {
   return class Form extends Component {
     constructor(props) {
       super(props);
@@ -141,9 +153,9 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
       this.state = initializeFormFields(fieldNames);
     }
 
-    valuesForAllFields = () => {
+    valuesForAllFields = (state) => {
       return valuesForFields(
-        this.state,
+        state || this.state,
         Object.keys(fieldNames),
       );
     }
@@ -161,13 +173,27 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
       return true;
     }
 
-    setField = (name, value) => {
-      const values = this.valuesForAllFields();
-      const errors = validateField(name, value, values, constraints);
-      this.setState((state) => {
-        return updateFormField(state, name, value, errors);
+    crossValidateFields = (name) => {
+      if (validateGroupsMap && validateGroupsMap.fields[name]) {
+        const validateGroupName = validateGroupsMap.fields[name];
+        const validateGroup = validateGroupsMap.validateGroups[validateGroupName];
+        validateGroup.forEach((fieldName) => {
+          if (fieldName === name) {
+            return;
+          }
+          const value = fieldValue(this.state, fieldName);
+          this.setField(fieldName, value);
+        });
       }
-      );
+
+    }
+
+    setField = (name, value) => {
+      this.setState((state) => {
+        const values = this.valuesForAllFields(state);
+        const errors = validateField(name, value, values, constraints);
+        return updateFormField(state, name, value, errors);
+      });
     }
 
     handleChange = (event) => {
@@ -176,9 +202,12 @@ export const withForm = (fieldNames, constraints)  => (FormComponent) => {
       if (!value) {
         value = undefined;
       }
-      this.setField(event.target.name, value);
+
+      const { name } = event.target;
+      this.setField(name, value);
+      this.crossValidateFields(name);
     }
-    
+
     resetField = (name) => {
       this.setState((state) => {
         return updateFormField(state, name, undefined, []);

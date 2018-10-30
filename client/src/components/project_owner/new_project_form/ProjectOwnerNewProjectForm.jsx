@@ -89,6 +89,16 @@ const constraints = {
   },
 };
 
+const validateGroupsMap = {
+  fields: {
+    [FieldName.startDate]: 'eventDate',
+    [FieldName.endDate]: 'eventDate',
+  },
+  validateGroups: {
+    eventDate: [FieldName.startDate, FieldName.endDate],
+  },
+};
+
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
 
@@ -382,7 +392,7 @@ const styles = theme => ({
   },
 });
 
-export const ProjectOwnerNewProjectForm = withForm(FieldName, constraints)(
+export const ProjectOwnerNewProjectForm = withForm(FieldName, constraints, validateGroupsMap)(
   withContext(AppContext)(
     withTheme()(withStyles(styles)(_ProjectOwnerNewProjectForm))
   )
