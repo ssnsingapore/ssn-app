@@ -192,22 +192,27 @@ const renderProjectDetails = (classes, project) => {
       <Typography variant="headline" gutterBottom className={classes.headline}>
         Project Details
       </Typography>
-      {renderRow(
-        'Start date',
-        moment(startDate)
-          .utc()
-          .format('dddd, Do MMMM YYYY')
-      )}
-      {renderRow(
-        'End date',
-        moment(endDate)
-          .utc()
-          .format('dddd, Do MMMM YYYY')
-      )}
+      {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
+      {projectType === 'EVENT'
+        ? [
+          renderRow(
+            'Start date',
+            moment(startDate)
+              .utc()
+              .format('dddd, Do MMMM YYYY')
+          ),
+          renderRow(
+            'End date',
+            moment(endDate)
+              .utc()
+              .format('dddd, Do MMMM YYYY')
+          ),
+        ]
+        : projectType === 'RECURRING'
+          ? renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])
+          : ''}
       {renderRow('Time', moment(time, 'HH:mm').format('h:mm A'))}
       {renderRow('Location', ProjectLocationDisplayMapping[location])}
-      {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
-      {renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
   );
