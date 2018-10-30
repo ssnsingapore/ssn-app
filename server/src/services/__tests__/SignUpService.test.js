@@ -73,5 +73,16 @@ describe('Sign up service', () => {
       expect(user).toBeNull();
       expect(mailer.sendMail).not.toHaveBeenCalled();
     });
+
+    it('should throw if there is some other validation error on the user to be created', async () => {
+      mockUser = new User({
+        name: '',
+        email: 'test@test.com',
+      });
+      password = 'password';
+      signUpService = new SignUpService(mockUser, password, Role.PROJECT_OWNER);
+
+      await expect(signUpService.execute()).rejects.toEqual(expect.any(Error));
+    });
   });
 });
