@@ -208,3 +208,7 @@ const styles = theme => ({
 export const ProjectOwnerBaseProfileForm = withStyles(styles)(_ProjectOwnerBaseProfileForm);
 
 ProjectOwnerBaseProfileForm.displayName = 'ProjectOwnerBaseProfileForm';
+
+export const _testExports = {
+  ProjectOwnerBaseProfileForm: _ProjectOwnerBaseProfileForm,
+};
