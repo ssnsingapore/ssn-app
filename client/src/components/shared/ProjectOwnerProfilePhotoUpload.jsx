@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { withStyles } from '@material-ui/core/styles';
+import classnames from 'classnames';
+import { PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT, PROJECT_OWNER_PROFILE_DISPLAY_WIDTH } from '../public/ProjectOwnerSignUpForm';
 
 export class _ProjectOwnerProfilePhotoUpload extends Component {
   constructor(props) {
     super(props);
     this.state = {
       imageSrc: '',
+      isImageTooLowResolution: false,
     };
 
   }
@@ -16,17 +19,21 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
     const file = this.props.profilePhotoInput.current.files[0];
     const imageSrc = window.URL.createObjectURL(file);
 
-    // Add some logic to notify user if uploaded image is too low resolution
     const image = new Image();
     image.src = imageSrc;
-    image.onload(() => console.log(image.width, image.height));
+    image.addEventListener('load', () => {
+      if (image.height < PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT ||
+        image.width < PROJECT_OWNER_PROFILE_DISPLAY_WIDTH) {
+        this.setState({ isImageTooLowResolution: true });
+      }
+    });
 
     this.setState({ imageSrc });
   }
 
   handleCancel = () => {
     this.props.profilePhotoInput.current.value = '';
-    this.setState({imageSrc: ''});
+    this.setState({ imageSrc: '', isImageTooLowResolution: false });
   }
 
   renderButton = () => {
@@ -45,7 +52,12 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
           Upload profile photo
             <CloudUploadIcon className={classes.rightIcon} />
           </Button>
-        </label>) : (
+          <p style={{ fontSize: '0.75rem' }}>
+            The display size will be 200 x 200 pixels
+          </p>
+        </label>
+
+      ) : (
         <Button
           color="default"
           variant="contained"
@@ -61,11 +73,24 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
 
   render() {
     const { classes } = this.props;
-    const { imageSrc } = this.state;
+    const { imageSrc, isImageTooLowResolution } = this.state;
+
+    const imageClass = isImageTooLowResolution ?
+      classnames(classes.image, classes.imageWithError) : classes.image;
 
     return (
       <React.Fragment>
-        {imageSrc && <img alt="Profile" src={imageSrc} className={classes.image} />}
+        {imageSrc &&
+          <img
+            alt="Profile"
+            src={imageSrc}
+            className={imageClass}
+          />
+        }
+        {isImageTooLowResolution &&
+        <p className={classes.errorText}>
+          The image you have uploaded is smaller than the display resolution of 200 x 200 pixels.
+        </p>}
         <input
           type="file"
           accept="image/*"
@@ -92,8 +117,15 @@ const styles = theme => ({
     objectFit: 'cover',
     display: 'block',
   },
+  imageWithError: {
+    border: `1px solid ${theme.palette.error.main}`,
+  },
   rightIcon: {
     marginLeft: theme.spacing.unit,
+  },
+  errorText: {
+    color: theme.palette.error.main,
+    fontSize: '0.75rem',
   },
 });
 

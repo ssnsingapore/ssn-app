@@ -12,8 +12,11 @@ import { ProjectOwnerBaseProfileForm } from 'components/shared/ProjectOwnerBaseP
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
 
-const DISPLAY_WIDTH = 200;
-const DISPLAY_HEIGHT = 200;
+export const PROJECT_OWNER_PROFILE_DISPLAY_WIDTH = 200;
+export const PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT = 200;
+
+const DISPLAY_WIDTH = PROJECT_OWNER_PROFILE_DISPLAY_WIDTH;
+const DISPLAY_HEIGHT = PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT;
 
 const FieldName = getFieldNameObject([
   'email',
@@ -78,7 +81,15 @@ class _ProjectOwnerSignUpForm extends Component {
     props.setField(FieldName.accountType, AccountType.ORGANISATION);
   }
 
-  resizeImage = () => {
+  getImageDimensions = (image) => {
+    return new Promise((resolve) => {
+      image.addEventListener('load', () => {
+        resolve({ width: image.width, height: image.height });
+      });
+    });
+  }
+
+  resizeImage = async () => {
     const image = new Image();
 
     const profilePhoto = this.profilePhotoInput.current.files[0];
@@ -87,8 +98,8 @@ class _ProjectOwnerSignUpForm extends Component {
     image.src = profilePhotoSrc;
 
     // Resize to cover the display width and height
-    const width = image.width;
-    const height = image.height;
+    const { width, height } = await this.getImageDimensions(image);
+
     let finalWidth = width;
     let finalHeight = height;
 
@@ -115,7 +126,6 @@ class _ProjectOwnerSignUpForm extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
-
 
     if (!this.props.validateAllFields()) {
       return;
