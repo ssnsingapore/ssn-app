@@ -110,7 +110,10 @@ describe('ProjectOwnerLoginForm', () => {
       };
       component.dive().instance().handleSubmit(event);
 
-      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSucess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
+      const {email, password} = valuesForAllFields;
+      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+
+      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
     });
   });
 
