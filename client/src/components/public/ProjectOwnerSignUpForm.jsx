@@ -146,19 +146,20 @@ class _ProjectOwnerSignUpForm extends Component {
       return;
     }
 
-    const resizedProfilePhoto = await this.resizeImage();
+    const formData = new FormData();
+    if (this.profilePhotoInput.current.files[0]) {
+      const resizedProfilePhoto = await this.resizeImage();
+      formData.append('profilePhoto', resizedProfilePhoto);
+    }
+
+    const projectOwner = { ...this.props.valuesForAllFields() };
+    Object.keys(projectOwner).forEach( key => formData.append(key, projectOwner[key]));
 
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
-    const projectOwner = { ...this.props.valuesForAllFields() };
-
-    const formData = new FormData();
-    formData.append('profilePhoto', resizedProfilePhoto);
-    Object.keys(projectOwner).forEach( key => formData.append(key, projectOwner[key]));
-
     this.setState({ isSubmitting: true });
-    const response = await authenticator.signUpProjectOwner(projectOwner);
+    const response = await authenticator.signUpProjectOwner(formData);
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
