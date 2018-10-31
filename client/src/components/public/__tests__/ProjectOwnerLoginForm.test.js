@@ -2,6 +2,7 @@ import React from 'react';
 import { TextField, Button } from '@material-ui/core';
 import { TestProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
 import { AlertType } from 'components/shared/Alert';
+import { PasswordResetDialog } from '../PasswordResetDialog';
 
 describe('ProjectOwnerLoginForm', () => {
   let props;
@@ -201,7 +202,54 @@ describe('ProjectOwnerLoginForm', () => {
 
       component = shallow(<TestProjectOwnerLoginForm {...props}/>);
 
-      expect(component.dive().find(Button).filterWhere(button => button.props().to === '/signup')).toBeTruthy();
+      const signUpButton = component.dive().find(Button).filterWhere(button => button.props().to === '/signup');
+
+      expect(signUpButton.dive()).toBeTruthy();
+
+    });
+  });
+
+  describe('Forgot password button', () => {
+    let props;
+    let component;
+    beforeEach(() => {
+
+      props = {
+        classes: {},
+        context: {
+          updaters: {
+            showAlert: jest.fn(),
+          },
+        },
+        handlePasswordResetDialog: jest.fn(),
+      };
+      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
+      
+    });
+    it('should exist', () => {
+
+      const forgotPasswordButton = component.dive().find(Button).at(1);
+    
+      expect(forgotPasswordButton.dive()).toBeTruthy();
+
+    });
+
+    it('onclick should passwordResetDialogOpen = true', () => { 
+
+      const wrapper = component.dive(); 
+      const forgotPasswordButton = wrapper.find(Button).at(1);
+
+      expect(wrapper.state().passwordResetDialogOpen).toEqual(false);
+
+      let dialog = wrapper.find(PasswordResetDialog);
+      expect(dialog.prop('open')).toEqual(false);
+      
+      forgotPasswordButton.dive().simulate('click');
+
+      expect(wrapper.state().passwordResetDialogOpen).toEqual(true);
+
+      dialog = wrapper.find(PasswordResetDialog);
+      expect(dialog.prop('open')).toEqual(true);
 
     });
   });
