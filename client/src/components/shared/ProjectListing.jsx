@@ -320,18 +320,25 @@ class _ProjectListing extends Component {
   }
 
   renderProjects = () => {
-    const { classes, dashboardRole } = this.props;
+    const { classes, theme, dashboardRole } = this.props;
 
     if (this.state.projects.length === 0) {
-      // TODO: Sabrina - remove logic in Projects, AdminDashboard and ProjectOwnerDashboard
-      // for rendering this and fix the casing/display message below
-
-      return  ( <Typography
-        variant="subheading"
-        // style={{ color: theme.palette.grey[500] }}
-      >
-        There are no {ProjectStateDisplayMapping[this.props.projectState]} projects at the moment.
-      </Typography>);
+      return (
+        <Typography
+          variant="subheading"
+          style={{ color: theme.palette.grey[500] }}
+        >
+          There are no
+          {this.props.projectState === 'PENDING_APPROVAL'
+            ? ` projects ${ProjectStateDisplayMapping[
+              this.props.projectState
+            ].toLowerCase()} `
+            : ` ${ProjectStateDisplayMapping[
+              this.props.projectState
+            ].toLowerCase()} projects `}
+          at the moment.
+        </Typography>
+      );
     }
 
     return this.state.projects.map(project => {
