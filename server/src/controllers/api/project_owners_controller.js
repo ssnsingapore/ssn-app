@@ -11,6 +11,7 @@ import { Role } from 'models/Role';
 import { LoginService } from 'services/LoginService';
 import { SignUpService } from 'services/SignUpService';
 import { PasswordResetService } from 'services/PasswordResetService';
+import { authMiddleware } from 'util/auth';
 
 export const projectOwnersRouter = express.Router();
 
@@ -58,8 +59,7 @@ async function login(req, res) {
 
 projectOwnersRouter.delete(
   '/project_owners/logout',
-  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`,
-    { session: false, failWithError: true }),
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   asyncWrap(logout)
 );
 async function logout(req, res) {

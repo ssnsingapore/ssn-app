@@ -6,6 +6,7 @@ import { asyncWrap } from 'util/async_wrapper';
 import { Admin } from 'models/Admin';
 import { LoginService } from 'services/LoginService';
 import { Role } from 'models/Role';
+import { authMiddleware } from 'util/auth';
 
 export const adminsRouter = express.Router();
 
@@ -38,8 +39,7 @@ async function login(req, res) {
 
 adminsRouter.delete(
   '/admins/logout',
-  passport.authenticate(`${Role.ADMIN}Jwt`,
-    { session: false, failWithError: true }),
+  ...authMiddleware({ authorize: Role.ADMIN }),
   asyncWrap(logout)
 );
 async function logout(req, res) {
