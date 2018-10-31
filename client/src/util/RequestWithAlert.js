@@ -80,7 +80,7 @@ export class RequestWithAlert {
     );
   }
 
-  uploadFile = async (url, formData) => {
+  uploadForm = async (url, formData) => {
     // Do not include any content-type headers to
     // ensure that browser correctly sets a boundary
     // for the multipart request.

@@ -86,6 +86,7 @@ class _Routes extends Component {
                 path="/admin/dashboard"
                 component={AdminDashboard}
                 authorize={[Role.ADMIN]}
+                redirectTo="/admin"
               />
 
               <RouteAuthenticated
@@ -93,6 +94,7 @@ class _Routes extends Component {
                 path="/admin/projects/:id"
                 component={AdminProjectDetails}
                 authorize={[Role.ADMIN]}
+                redirectTo="/admin"
               />
 
               {/* Routes to old components for reference */}

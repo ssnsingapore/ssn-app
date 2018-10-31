@@ -13,6 +13,8 @@ export const AccountType = {
   INDIVIDUAL: 'INDIVIDUAL',
 };
 
+const DEFAULT_PROFILE_PHOTO_URL = 'https://s3-ap-southeast-1.amazonaws.com/ssn-app-test/placeholder-avatar.jpg';
+
 const ProjectOwnerSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -48,6 +50,7 @@ const ProjectOwnerSchema = new mongoose.Schema({
   },
   profilePhotoUrl: {
     type: String,
+    default: DEFAULT_PROFILE_PHOTO_URL,
   },
   organisationName: {
     type: String,

@@ -1,5 +1,4 @@
 import express from 'express';
-import passport from 'passport';
 
 import { asyncWrap } from 'util/async_wrapper';
 import { Project, ProjectState } from 'models/Project';
@@ -8,6 +7,7 @@ import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
 import { UnprocessableEntityErrorView } from 'util/errors';
 import { ProjectOwnerAllowedTransitions, AdminAllowedTransitions } from 'config/stateChangePermissions';
+import { authMiddleware } from 'util/auth';
 
 export const projectRouter = express.Router();
 
@@ -56,7 +56,7 @@ async function getProject(req, res) {
 // =============================================================================
 projectRouter.get(
   '/project_owner/projects',
-  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   asyncWrap(getProjectsForProjectOwner)
 );
 async function getProjectsForProjectOwner(req, res) {
@@ -73,7 +73,7 @@ async function getProjectsForProjectOwner(req, res) {
 
 
 projectRouter.get('/project_owner/project_counts',
-  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   asyncWrap(getProjectCountsForProjectOwner));
 async function getProjectCountsForProjectOwner(req, res) {
   const counts = {};
@@ -88,7 +88,7 @@ async function getProjectCountsForProjectOwner(req, res) {
 }
 
 projectRouter.post('/project_owner/projects/new',
-  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   asyncWrap(postProject));
 async function postProject(req, res) {
   const project = new Project({
@@ -100,9 +100,9 @@ async function postProject(req, res) {
 }
 
 projectRouter.put('/project_owner/projects/:id',
-  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`, { session: false, failWithError: true }),
-  asyncWrap(projectOwnerUpdateProject));
-async function projectOwnerUpdateProject(req, res) {
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
+  asyncWrap(projectOwnerChangeProjectState));
+async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
   const { projectOwner } = req.body;
@@ -116,7 +116,7 @@ async function projectOwnerUpdateProject(req, res) {
 
   if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     project.set(updatedProject);
-    project.save();
+    await project.save();
 
     return res
       .status(200)
@@ -135,9 +135,9 @@ async function projectOwnerUpdateProject(req, res) {
 // =============================================================================
 
 projectRouter.put('/admin/projects/:id',
-  passport.authenticate(`${Role.ADMIN}Jwt`, { session: false, failWithError: true }),
-  asyncWrap(adminUpdateProject));
-async function adminUpdateProject(req, res) {
+  ...authMiddleware({ authorize: Role.ADMIN }),
+  asyncWrap(adminChangeProjectState));
+async function adminChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
   const project = await Project.findById(id).exec();

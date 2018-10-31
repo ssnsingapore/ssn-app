@@ -32,7 +32,7 @@ class _ProjectOwnerDetails extends Component {
       return (
         <Typography>
           <strong>Description: </strong>
-          {projectOwner.description}
+          {projectOwner.description || '-'}
         </Typography>
       );
     }
@@ -40,7 +40,7 @@ class _ProjectOwnerDetails extends Component {
     return (
       <Typography>
         <strong>Personal Bio: </strong>
-        {projectOwner.personalBio}
+        {projectOwner.personalBio || '-'}
       </Typography>
     );
   };

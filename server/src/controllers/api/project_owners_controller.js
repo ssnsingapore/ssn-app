@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { createError } from 'http-errors';
+import multer from 'multer';
 
 import { config, isProduction } from 'config/environment';
 import { asyncWrap } from 'util/async_wrapper';
@@ -10,6 +11,7 @@ import { Role } from 'models/Role';
 import { LoginService } from 'services/LoginService';
 import { SignUpService } from 'services/SignUpService';
 import { PasswordResetService } from 'services/PasswordResetService';
+import { authMiddleware } from 'util/auth';
 
 export const projectOwnersRouter = express.Router();
 
@@ -57,8 +59,7 @@ async function login(req, res) {
 
 projectOwnersRouter.delete(
   '/project_owners/logout',
-  passport.authenticate(`${Role.PROJECT_OWNER}Jwt`,
-    { session: false, failWithError: true }),
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   asyncWrap(logout)
 );
 async function logout(req, res) {
@@ -83,16 +84,17 @@ async function updateProjectOwner(req, res) {
 // =============================================================================
 // Sign Up and Account Confirmation
 // =============================================================================
-
-projectOwnersRouter.post('/project_owners', asyncWrap(registerNewProjectOwner));
+const upload = multer();
+projectOwnersRouter.post('/project_owners',
+  upload.single('profilePhoto'),
+  asyncWrap(registerNewProjectOwner));
 async function registerNewProjectOwner(req, res) {
+  const { file, body } = req;
   const projectOwner = new ProjectOwner({
-    ...req.body.projectOwner,
+    ...body,
   });
-  const { password } = req.body.projectOwner;
 
-  const errorsObject = await new SignUpService(projectOwner, password, Role.PROJECT_OWNER).execute();
-
+  const errorsObject = await new SignUpService(projectOwner, body.password, Role.PROJECT_OWNER, file).execute();
   if (errorsObject) {
     return res
       .status(422)

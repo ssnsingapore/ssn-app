@@ -67,6 +67,16 @@ const constraints = {
   },
 };
 
+const validateGroupsMap = {
+  fields: {
+    [FieldName.password]: 'password',
+    [FieldName.passwordConfirmation]: 'password',
+  },
+  validateGroups: {
+    password: [FieldName.password, FieldName.passwordConfirmation],
+  },
+};
+
 class _ProjectOwnerSignUpForm extends Component {
   constructor(props) {
     super(props);
@@ -103,6 +113,8 @@ class _ProjectOwnerSignUpForm extends Component {
 
     if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
       this.setState({ isImageTooLowResolution: true });
+    } else {
+      this.setState({ isImageTooLowResolution: false });
     }
 
     let finalWidth = width;
@@ -132,23 +144,26 @@ class _ProjectOwnerSignUpForm extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
+    const formData = new FormData();
+    if (this.profilePhotoInput.current.files[0]) {
+      const resizedProfilePhoto = await this.resizeImage();
+      formData.append('profilePhoto', resizedProfilePhoto);
+    }
+
     if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
       return;
     }
 
-    const resizedProfilePhoto = await this.resizeImage();
+    const projectOwner = { ...this.props.valuesForAllFields() };
+    Object.keys(projectOwner)
+      .filter(key => projectOwner[key] !== undefined)
+      .forEach (key => formData.append(key, projectOwner[key]));
 
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
-    const projectOwner = { ...this.props.valuesForAllFields() };
-
-    const formData = new FormData();
-    formData.append('profilePhoto', resizedProfilePhoto);
-    Object.keys(projectOwner).forEach( key => formData.append(key, projectOwner[key]));
-
     this.setState({ isSubmitting: true });
-    const response = await authenticator.signUpProjectOwner(projectOwner);
+    const response = await authenticator.signUpProjectOwner(formData);
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
@@ -190,6 +205,7 @@ export const ProjectOwnerSignUpForm =
       withForm(
         FieldName,
         constraints,
+        validateGroupsMap,
       )(_ProjectOwnerSignUpForm)
     ),
   );
@@ -197,4 +213,5 @@ export const ProjectOwnerSignUpForm =
 export const TestProjectOwnerSignUpForm = withForm(
   FieldName,
   constraints,
+  validateGroupsMap,
 )(_ProjectOwnerSignUpForm);
