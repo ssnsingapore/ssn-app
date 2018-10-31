@@ -44,13 +44,12 @@ export class Authenticator {
   }
 
   signUpProjectOwner = async (
-    projectOwner,
+    projectOwnerFormData,
     networkErrorHandler,
   ) => {
-    const data = { projectOwner };
     const response = await this.requestWithAlert
       .onNetworkError(networkErrorHandler)
-      .post('/api/v1/project_owners', data);
+      .uploadForm('/api/v1/project_owners', projectOwnerFormData);
 
     return response;
   }

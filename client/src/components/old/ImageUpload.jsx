@@ -104,7 +104,7 @@ class _ImageUpload extends Component {
     formData.append('image', resizedImage);
 
     const response = await requestWithAlert
-      .uploadFile('/api/v1/images', formData);
+      .uploadForm('/api/v1/images', formData);
 
     if (response.isSuccessful) {
       // Doing this also resets the readonly FileList object (this.fileInput.current.files)
