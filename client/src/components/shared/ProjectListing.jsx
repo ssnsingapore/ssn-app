@@ -26,6 +26,7 @@ import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
+import { ProjectStateDisplayMapping } from './display_mappings/ProjectStateDisplayMapping';
 
 class _ProjectListing extends Component {
   constructor(props) {
@@ -320,6 +321,19 @@ class _ProjectListing extends Component {
 
   renderProjects = () => {
     const { classes, dashboardRole } = this.props;
+
+    if (this.state.projects.length === 0) {
+      // TODO: Sabrina - remove logic in Projects, AdminDashboard and ProjectOwnerDashboard
+      // for rendering this and fix the casing/display message below
+
+      return  ( <Typography
+        variant="subheading"
+        // style={{ color: theme.palette.grey[500] }}
+      >
+        There are no {ProjectStateDisplayMapping[this.props.projectState]} projects at the moment.
+      </Typography>);
+    }
+
     return this.state.projects.map(project => {
       const linkEndpoint = this._getLinkEndpoint(dashboardRole, project);
 
