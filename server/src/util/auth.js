@@ -35,16 +35,13 @@ const roleAuthorization = role => (req, _res, next) => {
 };
 
 export const authMiddleware = ({ authorize: role } = {}) => {
-  if (role) {
-    return [
-      csrfProtection,
-      roleAuthorization(role),
-      passport.authenticate(`${role}Jwt`, { session: false, failWithError: true }),
-    ];
+  if (!role) {
+    throw new Error('authMiddleware function must be passed a role to the `authorize` option');
   }
 
   return [
     csrfProtection,
+    roleAuthorization(role),
     // See here https://github.com/jaredhanson/passport/issues/458 for failWithError option that allows propagation to error-handling middleware
     passport.authenticate(`${role}Jwt`, { session: false, failWithError: true }),
   ];

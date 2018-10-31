@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TestProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { AccountType } from 'components/shared/enums/AccountType';
-import { defaultAppContext } from 'components/main/AppContext'; 
+import { defaultAppContext } from 'components/main/AppContext';
 
 describe('ProjectOwnerSignUpForm', () => {
   it('sets account type to organisation as a default field', () => {
@@ -14,21 +14,21 @@ describe('ProjectOwnerSignUpForm', () => {
   });
 
   describe('constraints', () => {
-    let component; 
-    
+    let component;
+
     beforeEach(() => {
       component = shallow(<TestProjectOwnerSignUpForm />);
     });
 
     it('when name is empty there is a validation error message', () => {
       component.instance().setField('name', '');
-      
+
       expect(component.state('name').errors).toEqual(['Name can\'t be blank']);
     });
 
     it('when email is empty there is a validation error message', () => {
       component.instance().setField('email', '');
-      
+
       expect(component.state('email').errors).toEqual(['Email can\'t be blank', 'Email is not a valid email']);
     });
 
@@ -59,9 +59,9 @@ describe('ProjectOwnerSignUpForm', () => {
       expect(component.state('email').errors).toEqual(['Email is not a valid email']);
     });
   });
-  
+
   describe('handleSubmit', () => {
-    let mockEvent, mockContext;
+    let mockEvent, mockContext, mockRefCurrent;
 
     const mockSuccessfulResponse = (body) => {
       const mockResponse = new Response(
@@ -77,12 +77,20 @@ describe('ProjectOwnerSignUpForm', () => {
       };
 
       mockContext = { ...defaultAppContext };
+      mockRefCurrent = { files: [new Blob()]};
+
+      // Note: window.URL.createObjectURL is not a function in jsdom
+      // see https://github.com/jsdom/jsdom/issues/1721
+      window.URL.createObjectURL = jest.fn(() => 'some image src');
     });
 
     it('prevents default submission of form', () => {
       const component = shallow(<TestProjectOwnerSignUpForm />);
 
-      component.dive().instance().handleSubmit(mockEvent);
+      const instance = component.dive().instance();
+      instance.profilePhotoInput.current = mockRefCurrent;
+
+      instance.handleSubmit(mockEvent);
 
       expect(mockEvent.preventDefault).toHaveBeenCalled();
     });
@@ -98,12 +106,15 @@ describe('ProjectOwnerSignUpForm', () => {
 
       const component = shallow(<TestProjectOwnerSignUpForm {...props} context={mockContext} />);
 
-      component.dive().instance().handleSubmit(mockEvent);
+      const instance = component.dive().instance();
+      instance.profilePhotoInput.current = mockRefCurrent;
 
-      expect(mockContext.utils.authenticator.signUpProjectOwner).not.toHaveBeenCalled();  
+      instance.handleSubmit(mockEvent);
+
+      expect(mockContext.utils.authenticator.signUpProjectOwner).not.toHaveBeenCalled();
     });
 
-    it('calls authenticator with projectOwner details if there are no validation errors', () => {
+    it('calls authenticator with projectOwner details if there are no validation errors', async () => {
       const projectOwner = {
         name: 'owner',
         role: 'project owner',
@@ -119,10 +130,13 @@ describe('ProjectOwnerSignUpForm', () => {
       };
 
       const component = shallow(<TestProjectOwnerSignUpForm {...props} context={mockContext} />);
+      const instance = component.dive().instance();
+      instance.profilePhotoInput.current = mockRefCurrent;
+      instance.resizeImage = jest.fn(() => Promise.resolve(new Blob()));
 
-      component.dive().instance().handleSubmit(mockEvent);
+      await instance.handleSubmit(mockEvent);
 
-      expect(mockContext.utils.authenticator.signUpProjectOwner).toHaveBeenCalledWith(projectOwner);  
+      expect(mockContext.utils.authenticator.signUpProjectOwner).toHaveBeenCalledWith(projectOwner);
     });
 
     it('sets created user to state after receiving successful response', async () => {
@@ -140,8 +154,11 @@ describe('ProjectOwnerSignUpForm', () => {
       };
 
       const component = shallow(<TestProjectOwnerSignUpForm {...props} context={mockContext} />).dive();
+      const instance = component.instance();
+      instance.profilePhotoInput.current = mockRefCurrent;
+      instance.resizeImage = jest.fn(() => Promise.resolve(new Blob()));
 
-      await component.instance().handleSubmit(mockEvent);
+      await instance.handleSubmit(mockEvent);
 
       expect(component.state('createdUser')).toEqual(projectOwner);
     });

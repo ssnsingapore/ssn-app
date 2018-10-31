@@ -2,12 +2,14 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
-import { _ProjectOwnerBaseProfileForm } from '../ProjectOwnerBaseProfileForm';
+import { _testExports } from '../ProjectOwnerBaseProfileForm';
 import { AccountType } from 'components/shared/enums/AccountType';
+
+const _ProjectOwnerBaseProfileForm = _testExports.ProjectOwnerBaseProfileForm;
 
 describe('ProjectOwnerBaseProfileForm', () => {
   let ProjectOwnerBaseProfileForm, FieldName, fields;
-  
+
   beforeEach(() => {
     const mockStyles = {
       root: '',
@@ -97,7 +99,7 @@ describe('ProjectOwnerBaseProfileForm', () => {
 
   describe('when individual is selected', () => {
     let component;
-    
+
     beforeEach(() => {
       fields[FieldName.accountType].value = AccountType.INDIVIDUAL;
       component = shallow(<ProjectOwnerBaseProfileForm FieldName={FieldName} fields={fields} />).dive();
@@ -128,11 +130,11 @@ describe('ProjectOwnerBaseProfileForm', () => {
     });
 
     it('all text fields display error messages', () => {
-      const component = shallow(<ProjectOwnerBaseProfileForm 
-        FieldName={FieldName} 
-        fields={fields} 
+      const component = shallow(<ProjectOwnerBaseProfileForm
+        FieldName={FieldName}
+        fields={fields}
       />).dive();
-      
+
       component.find(TextField).forEach(field => {
         expect(field.props().error).toBeTruthy();
         expect(field.props().helperText).toEqual(`${field.props().name} ${errorMessage}`);

@@ -31,7 +31,7 @@ export class SignUpService {
   }
 
   _checkForDuplicateEmail = (err) => {
-    if (err.name === 'ValidationError'
+    if (err.name === 'ValidationError' && err.errors && err.errors.email
       && err.errors.email.message === 'should be unique') {
       return {
         errors: [

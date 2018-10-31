@@ -5,6 +5,9 @@ env:
   global:
   - NODE_PATH="src/"
   - NODE_ENV=test
+  - TOKEN_COOKIE_NAME=test_token
+  - AUTH_SECRET=secret
+  - JWT_EXPIRES_IN='1 day'
 before_install: if [[ `npm -v` != 6.1.0 ]]; then npm i -g npm@6.1.0; fi
 install:
 - npm run ci-install

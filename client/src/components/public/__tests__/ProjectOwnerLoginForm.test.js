@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, Button } from '@material-ui/core';
 import { TestProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
 import { AlertType } from 'components/shared/Alert';
 
@@ -109,10 +109,15 @@ describe('ProjectOwnerLoginForm', () => {
         preventDefault: jest.fn(),
       };
       component.dive().instance().handleSubmit(event);
+
+      const {email, password} = valuesForAllFields;
+      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+
+      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
     });
   });
 
-  describe('handleSubmit not so happy flow',  () => {
+  describe('handleSubmit not so happy flow', () => {
     let props;
     let component;
     const valuesForAllFields = {email: 'test@test.com',
@@ -177,4 +182,27 @@ describe('ProjectOwnerLoginForm', () => {
     });
   });
   
+  describe('sign up button', () => {
+    let props;
+    let component;
+    beforeEach(() => {
+
+      props = {
+        classes: {},
+        context: {
+          updaters: {
+            showAlert: jest.fn(),
+          },
+        },
+      };
+      
+    });
+    it('should exist', () => {
+
+      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
+
+      expect(component.dive().find(Button).filterWhere(button => button.props().to === '/signup')).toBeTruthy();
+
+    });
+  });
 });

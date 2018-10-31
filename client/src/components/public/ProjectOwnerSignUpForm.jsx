@@ -11,6 +11,13 @@ import { AppContext } from 'components/main/AppContext';
 import { ProjectOwnerBaseProfileForm } from 'components/shared/ProjectOwnerBaseProfileForm';
 
 const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
+
+export const PROJECT_OWNER_PROFILE_DISPLAY_WIDTH = 200;
+export const PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT = 200;
+
+const DISPLAY_WIDTH = PROJECT_OWNER_PROFILE_DISPLAY_WIDTH;
+const DISPLAY_HEIGHT = PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT;
+
 const FieldName = getFieldNameObject([
   'email',
   'name',
@@ -64,7 +71,10 @@ class _ProjectOwnerSignUpForm extends Component {
   constructor(props) {
     super(props);
 
+    this.profilePhotoInput = React.createRef();
+
     this.state = {
+      isImageTooLowResolution: false,
       isSubmitting: false,
       createdUser: null,
     };
@@ -72,17 +82,70 @@ class _ProjectOwnerSignUpForm extends Component {
     props.setField(FieldName.accountType, AccountType.ORGANISATION);
   }
 
+  getImageDimensions = (image) => {
+    return new Promise((resolve) => {
+      image.addEventListener('load', () => {
+        resolve({ width: image.width, height: image.height });
+      });
+    });
+  }
+
+  resizeImage = async () => {
+    const image = new Image();
+
+    const profilePhoto = this.profilePhotoInput.current.files[0];
+    const profilePhotoSrc = window.URL.createObjectURL(profilePhoto);
+
+    image.src = profilePhotoSrc;
+
+    // Resize to cover the display width and height
+    const { width, height } = await this.getImageDimensions(image);
+
+    if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
+      this.setState({ isImageTooLowResolution: true });
+    }
+
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width < height && width > DISPLAY_WIDTH) {
+      finalWidth = DISPLAY_WIDTH;
+      finalHeight = height / width * DISPLAY_WIDTH;
+    }
+
+    if (height < width && height > DISPLAY_HEIGHT) {
+      finalHeight = DISPLAY_HEIGHT;
+      finalWidth = width / height * DISPLAY_HEIGHT;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, finalWidth, finalHeight);
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.6);
+    });
+  }
+
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!this.props.validateAllFields()) {
+    if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
       return;
     }
+
+    const resizedProfilePhoto = await this.resizeImage();
 
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     const projectOwner = { ...this.props.valuesForAllFields() };
+
+    const formData = new FormData();
+    formData.append('profilePhoto', resizedProfilePhoto);
+    Object.keys(projectOwner).forEach( key => formData.append(key, projectOwner[key]));
 
     this.setState({ isSubmitting: true });
     const response = await authenticator.signUpProjectOwner(projectOwner);
@@ -110,16 +173,18 @@ class _ProjectOwnerSignUpForm extends Component {
       }} />;
     }
     return (
-      <ProjectOwnerBaseProfileForm FieldName={FieldName}
+      <ProjectOwnerBaseProfileForm
+        profilePhotoInput={this.profilePhotoInput}
+        FieldName={FieldName}
         fields={this.props.fields}
-        handleChange={this.props.handleChange} 
+        handleChange={this.props.handleChange}
         handleSubmit={this.handleSubmit}
         isSubmitting={this.state.isSubmitting}/>
     );
   }
 }
 
-export const ProjectOwnerSignUpForm = 
+export const ProjectOwnerSignUpForm =
   withTheme()(
     withContext(AppContext)(
       withForm(
