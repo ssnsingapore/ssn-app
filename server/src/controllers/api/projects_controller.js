@@ -112,7 +112,7 @@ async function projectOwnerChangeProjectState(req, res) {
 
   if (isUpdatedStateAllowed || !updatedProject.state) {
     project.set(updatedProject);
-    project.save();
+    await project.save();
 
     return res
       .status(200)
