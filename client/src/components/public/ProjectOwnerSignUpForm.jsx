@@ -113,6 +113,8 @@ class _ProjectOwnerSignUpForm extends Component {
 
     if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
       this.setState({ isImageTooLowResolution: true });
+    } else {
+      this.setState({ isImageTooLowResolution: false });
     }
 
     let finalWidth = width;
@@ -142,18 +144,20 @@ class _ProjectOwnerSignUpForm extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
-      return;
-    }
-
     const formData = new FormData();
     if (this.profilePhotoInput.current.files[0]) {
       const resizedProfilePhoto = await this.resizeImage();
       formData.append('profilePhoto', resizedProfilePhoto);
     }
 
+    if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
+      return;
+    }
+
     const projectOwner = { ...this.props.valuesForAllFields() };
-    Object.keys(projectOwner).forEach( key => formData.append(key, projectOwner[key]));
+    Object.keys(projectOwner)
+      .filter(key => projectOwner[key] !== undefined)
+      .forEach (key => formData.append(key, projectOwner[key]));
 
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;

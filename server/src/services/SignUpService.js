@@ -1,17 +1,20 @@
+import { s3 } from 'config/aws';
 import { mailer } from 'config/mailer';
 import { config } from 'config/environment';
 import { UnprocessableEntityErrorView } from 'util/errors';
 
 export class SignUpService {
-  constructor(user, password, userType) {
+  constructor(user, password, userType, profilePhotoImage) {
     this.user = user;
     this.password = password;
     this.userType = userType;
+    this.profilePhotoImage = profilePhotoImage;
   }
 
   execute = async () => {
     const errorsObject = await this._saveUser();
     if (!errorsObject) {
+      this._uploadProfilePhotoAndSetUrl();
       await this._sendConfirmationEmail();
     }
 
@@ -44,6 +47,20 @@ export class SignUpService {
     }
 
     throw err;
+  }
+
+  _uploadProfilePhotoAndSetUrl = async () => {
+    if (this.profilePhotoImage) {
+      const response = await s3.upload({
+        Body: this.profilePhotoImage.buffer,
+        Key: `${new Date().getTime()}-${this.user.id}-${this.user.name}`,
+        ACL: 'public-read',
+        Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
+      }).promise();
+
+      this.user.set({ profilePhotoUrl: response.Location });
+      await this.user.save();
+    }
   }
 
   _sendConfirmationEmail = async () => {
