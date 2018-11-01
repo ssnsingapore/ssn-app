@@ -76,7 +76,7 @@ const renderAllVolunteerRequirements = (
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
 
-  if (issuesAddressed) {
+  if (issuesAddressed.length !== 0) {
     return (
       <React.Fragment>
         <br />
@@ -187,6 +187,11 @@ const renderProjectDetails = (classes, project) => {
     frequency,
   } = project;
 
+  let formattedTime;
+  time
+    ? (formattedTime = moment(time, 'HH:mm').format('h:mm A'))
+    : (formattedTime = undefined);
+
   return (
     <Paper className={classes.paper} square>
       <Typography variant="headline" gutterBottom className={classes.headline}>
@@ -211,7 +216,7 @@ const renderProjectDetails = (classes, project) => {
         : projectType === 'RECURRING'
           ? renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])
           : ''}
-      {renderRow('Time', moment(time, 'HH:mm').format('h:mm A'))}
+      {renderRow('Time', formattedTime)}
       {renderRow('Location', ProjectLocationDisplayMapping[location])}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
