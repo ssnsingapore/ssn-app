@@ -19,6 +19,8 @@ describe('/project_owner/projects/:id', () => {
   let csrfToken;
   let project;
   let projectOwner;
+  const ERROR_TITLE = 'Invalid state change.';
+  const ERROR_MESSAGE = 'This change is not allowed.';
 
   const setProjectState = (state) => {
     project.set({
@@ -97,8 +99,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
 
     test('returns 422 status code for change to inactive', async () => {
@@ -109,8 +111,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
 
     test('returns 422 status code for change to rejected', async () => {
@@ -121,8 +123,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
   });
 
@@ -157,8 +159,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
 
     test('returns 422 status code for change to rejected', async () => {
@@ -169,8 +171,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
   });
 
@@ -205,8 +207,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
 
     test('returns 422 status code for change to rejected', async () => {
@@ -217,8 +219,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
   });
 
@@ -253,8 +255,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
 
     test('returns 422 status code for change to inactive', async () => {
@@ -265,8 +267,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
 
     test('returns 422 status code for change to rejected', async () => {
@@ -277,8 +279,8 @@ describe('/project_owner/projects/:id', () => {
       });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Invalid state change.');
-      expect(response.body.errors[0].detail).toEqual('This change is not allowed.');
+      expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+      expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
     });
   });
 });
