@@ -5,6 +5,7 @@ import { AddCircle as AddCircleIcon, RemoveCircle as RemoveCircleIcon } from '@m
 
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 import { VolunteerRequirementForm } from './VolunteerRequirementForm';
+import { FieldName } from './ProjectFormFields';
 
 const renderVolunteerRequirements = (volunteerRequirementRefs, classes, handleDeleteVolunteerRequirement ) => {
 
@@ -12,7 +13,9 @@ const renderVolunteerRequirements = (volunteerRequirementRefs, classes, handleDe
     return (
       <div key={i} className={classes.volunteerRow}>
         <VolunteerRequirementForm ref={volunteerRequirementRef} />
-        <IconButton onClick={() => handleDeleteVolunteerRequirement(i)} className={classes.button}>
+        <IconButton 
+          onClick={() => handleDeleteVolunteerRequirement(i)} className={classes.button}
+        >
           <RemoveCircleIcon />
         </IconButton>
       </div>
@@ -24,7 +27,6 @@ const _ProjectVolunteerDetails = ({
   volunteerRequirementRefs,
   classes,
   handleDeleteVolunteerRequirement,
-  FieldName,
   fields,
   handleChange,
   handleAddVolunteerRequirement }) => {

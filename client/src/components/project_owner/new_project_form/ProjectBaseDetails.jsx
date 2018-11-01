@@ -9,8 +9,9 @@ import {
 } from '@material-ui/core';
 
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
+import { FieldName } from './ProjectFormFields';
 
-const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields, coverImageUrl }) => {
+const _ProjectBaseDetails = ({ classes, handleChange, fields }) => {
   return (
     <Card className={classes.card} square>
       <CardContent className={classes.content}>
@@ -67,18 +68,10 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields, coverIm
           onChange={handleChange}
         />
       </CardContent>
-      { coverImageUrl ? 
-        <CardMedia
-          className={classes.cover}
-          image={coverImageUrl}
-        /> :       
-        <CardMedia
-          className={classes.cover}
-          image="https://d3cbihxaqsuq0s.cloudfront.net/images/43959970_xl.jpg"
-        />
-      
-      }
-
+      <CardMedia
+        className={classes.cover}
+        image="https://d3cbihxaqsuq0s.cloudfront.net/images/43959970_xl.jpg"
+      />
     </Card>
   );
 };
