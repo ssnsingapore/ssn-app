@@ -66,6 +66,19 @@ describe('/project_owner/projects/:id', () => {
     expect(response.body.errors[0].title).toEqual('Unauthorized');
   });
 
+  test('returns forbidden error when request does not contain CSRF token in header', async () => {
+    const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
+      .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+      .send({
+        project: {
+          title: 'updated name',
+        },
+      });
+
+    expect(response.status).toEqual(403);
+    expect(response.body.errors[0].title).toEqual('Forbidden');
+  });
+
   test('returns 200 status code and updates project details', async () => {
     const newTitle = 'updated name';
 
