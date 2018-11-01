@@ -106,21 +106,21 @@ async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
   const { projectOwner } = req.body;
-  const project = await Project.findById(id).exec();
-  const allowedTransitions = ProjectOwnerAllowedTransitions[project.state];
+
+  const existingProject = await Project.findById(id).exec();
+  const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
 
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
-
-  const { _id } = project.projectOwner;
+  const { _id } = existingProject.projectOwner;
   const isCorrectProjectOwner = projectOwner === _id.toString();
 
   if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
-    project.set(updatedProject);
-    await project.save();
+    existingProject.set(updatedProject);
+    await existingProject.save();
 
     return res
       .status(200)
-      .json({ project });
+      .json({ existingProject });
   }
   return res
     .status(422)
@@ -140,11 +140,12 @@ projectRouter.put('/admin/projects/:id',
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
-  const project = await Project.findById(id).exec();
-  const allowedTransitions = AdminAllowedTransitions[project.state];
+
+  const existingProject = await Project.findById(id).exec();
+  const allowedTransitions = AdminAllowedTransitions[existingProject.state];
 
   if (updatedProject.state && allowedTransitions.includes(updatedProject.state)) {
-    if (project.state === ProjectState.PENDING_APPROVAL && updatedProject.rejectionReason === undefined) {
+    if (existingProject.state === ProjectState.PENDING_APPROVAL && !updatedProject.rejectionReason) {
       return res
         .status(422)
         .json({
@@ -152,11 +153,11 @@ async function adminChangeProjectState(req, res) {
             'This change is not allowed.')],
         });
     }
-    project.set(updatedProject);
-    await project.save();
+    existingProject.set(updatedProject);
+    await existingProject.save();
     return res
       .status(200)
-      .json({ project });
+      .json({ existingProject });
   }
   return res
     .status(422)
