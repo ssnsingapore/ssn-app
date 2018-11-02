@@ -132,11 +132,34 @@ describe('ProjectOwnerDetails', () => {
         );
       });
 
-      it('should render the description instead of personal bio or dash if absent', () => {
+      it('should render the description instead of personal bio', () => {
         expect(component.html()).toEqual(
           expect.stringContaining(`<strong>Description: </strong>${organisationProjectOwner.description}`)
         );
         expect(component.html().match('<strong>Personal Bio: </strong>')).toBeNull();
+      });
+
+      it('should render a dash for description if absent', async () => {
+        organisationProjectOwner = {
+          ...organisationProjectOwner,
+          description: undefined,
+        };
+        mockContext = { ...defaultAppContext };
+        mockContext.utils.authenticator = {
+          getCurrentUser: jest.fn(() => organisationProjectOwner),
+        };
+
+        component = shallow(
+          <ProjectOwnerDetails classes={{}} context={mockContext} />,
+          {
+            disableLifeCycleMethods: true,
+          }
+        );
+        await component.instance().componentDidMount();
+
+        expect(component.html()).toEqual(
+          expect.stringContaining('<strong>Description: </strong>-'),
+        );
       });
     });
 
@@ -161,12 +184,36 @@ describe('ProjectOwnerDetails', () => {
         expect(component.html().match('<strong>Organisation Name: </strong>')).toBeNull();
       });
 
-      it('should render the personal bio instead of description or dash if absent', () => {
+      it('should render the personal bio instead of description', () => {
         expect(component.html()).toEqual(
           expect.stringContaining(`<strong>Personal Bio: </strong>${individualProjectOwner.personalBio}`)
         );
         expect(component.html().match('<strong>Description: </strong>')).toBeNull();
       });
+
+      it('should render a dash for personal bio if absent', async () => {
+        individualProjectOwner = {
+          ...individualProjectOwner,
+          personalBio: undefined,
+        };
+        mockContext = { ...defaultAppContext };
+        mockContext.utils.authenticator = {
+          getCurrentUser: jest.fn(() => individualProjectOwner),
+        };
+
+        component = shallow(
+          <ProjectOwnerDetails classes={{}} context={mockContext} />,
+          {
+            disableLifeCycleMethods: true,
+          }
+        );
+        await component.instance().componentDidMount();
+
+        expect(component.html()).toEqual(
+          expect.stringContaining('<strong>Personal Bio: </strong>-'),
+        );
+      });
+
     });
   });
 });
