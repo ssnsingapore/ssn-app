@@ -116,9 +116,13 @@ describe('ProjectOwnerSignUpForm', () => {
 
     it('calls authenticator with projectOwner details if there are no validation errors', async () => {
       const projectOwner = {
-        name: 'owner',
+        name: 'owner name',
         role: 'project owner',
       };
+      
+      const formData = new FormData();
+      formData.append('name', projectOwner.name);
+      formData.append('role', projectOwner.role);
 
       const props = {
         validateAllFields: jest.fn(() => true),
@@ -136,7 +140,7 @@ describe('ProjectOwnerSignUpForm', () => {
 
       await instance.handleSubmit(mockEvent);
 
-      expect(mockContext.utils.authenticator.signUpProjectOwner).toHaveBeenCalledWith(projectOwner);
+      expect(mockContext.utils.authenticator.signUpProjectOwner).toHaveBeenCalledWith(formData);
     });
 
     it('sets created user to state after receiving successful response', async () => {
