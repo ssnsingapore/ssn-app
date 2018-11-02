@@ -100,15 +100,15 @@ class _ProjectOwnerProjectForm extends Component {
       return <Spinner/>;
     };
 
-    // if (this.props.shouldRedirect) {
-    //   return (
-    //     <Redirect
-    //       to={{
-    //         pathname: '/project_owner/dashboard',
-    //       }}
-    //     />
-    //   );
-    // }
+    if (this.props.shouldRedirect) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/project_owner/dashboard',
+          }}
+        />
+      );
+    }
 
     return (
       <form 
