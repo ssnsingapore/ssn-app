@@ -142,6 +142,69 @@ describe('withForm', () => {
     });
   });
 
+  // Note: Cannot get this test to fail even with the incorrect
+  // implementation that assumes setState calls are synchronous
+  // because Enzyme indeed processes such calls synchronously
+  // whereas this is not actually guaranteed by React
+  // see https://github.com/airbnb/enzyme/issues/1608#issuecomment-379896758
+  describe('setField', () => {
+    let component;
+    let fieldNames;
+
+    beforeEach(() => {
+      fieldNames = {
+        password: 'password',
+        passwordConfirmation: 'passwordConfirmation',
+      };
+      const constraints = {
+        [fieldNames.passwordConfirmation]: {
+          equality: {
+            attribute: fieldNames.password,
+            message: 'should be the same as password',
+          },
+        },
+      };
+      const FormComponent = withForm(fieldNames, constraints)(DummyComponent);
+      component = shallow(<FormComponent></FormComponent>);
+    });
+
+    it('should setState with the latest state when called in sequence', () => {
+      const instance = component.instance();
+      expect(instance.setField(fieldNames.password, 'password'));
+      expect(instance.setField(fieldNames.passwordConfirmation, 'password'));
+
+      expect(component.state()).toEqual({
+        [fieldNames.password]: {
+          value: 'password',
+          errors: [],
+        },
+        [fieldNames.passwordConfirmation]: {
+          value: 'password',
+          errors: [],
+        },
+      });
+    });
+
+    describe('validation', () => {
+      it('should validate based on the latest state when called in sequence', () => {
+        const instance = component.instance();
+        expect(instance.setField(fieldNames.password, 'password'));
+        expect(instance.setField(fieldNames.passwordConfirmation, 'password2'));
+
+        expect(component.state()).toEqual({
+          [fieldNames.password]: {
+            value: 'password',
+            errors: [],
+          },
+          [fieldNames.passwordConfirmation]: {
+            value: 'password2',
+            errors: ['Password confirmation should be the same as password'],
+          },
+        });
+      });
+    });
+  });
+
   describe('handleChange', () => {
     let component;
 
@@ -183,6 +246,112 @@ describe('withForm', () => {
         expect(component.state().name.value).toBeUndefined();
       });
     });
+
+    describe('when there are cross-field validations', () => {
+      let fieldNames;
+
+      beforeEach(() => {
+        fieldNames = {
+          smallest: 'smallest',
+          middle: 'middle',
+          largest: 'largest',
+        };
+        const constraints = {
+          [fieldNames.smallest]: (value, attributes) => {
+            return {
+              numericality: {
+                lessThan: attributes.middle,
+              },
+            };
+          },
+          [fieldNames.middle]: (value, attributes) => {
+            return {
+              numericality: {
+                lessThan: attributes.largest,
+                greaterThan: attributes.smallest,
+              },
+            };
+          },
+          [fieldNames.largest]: (value, attributes) => {
+            return {
+              numericality: {
+                greaterThan: attributes.middle,
+              },
+            };
+          },
+        };
+        const validateGroupsMap = {
+          fields: {
+            [fieldNames.smallest]: 'group',
+            [fieldNames.middle]: 'group',
+            [fieldNames.largest]: 'group',
+          },
+          validateGroups: {
+            group: [fieldNames.smallest, fieldNames.middle, fieldNames.largest],
+          },
+        };
+        const FormComponent = withForm(fieldNames, constraints, validateGroupsMap)(DummyComponent);
+        component = shallow(<FormComponent></FormComponent>);
+      });
+
+      describe('when current field value changes to pass some cross-field validations', () => {
+        it('should re-validate and remove errors on related fields', () => {
+          const instance = component.instance();
+          instance.setField(fieldNames.smallest, 10);
+          instance.setField(fieldNames.middle, 8);
+          instance.setField(fieldNames.largest, 4);
+          instance.validateAllFields();
+
+          let state = component.state();
+          expect(state[fieldNames.smallest].errors).toHaveLength(1);
+          expect(state[fieldNames.middle].errors).toHaveLength(2);
+          expect(state[fieldNames.largest].errors).toHaveLength(1);
+
+          const event = {
+            target: {
+              name: fieldNames.smallest,
+              value: 6,
+            },
+          };
+
+          instance.handleChange(event);
+
+          state = component.state();
+          expect(state[fieldNames.smallest].errors).toHaveLength(0);
+          expect(state[fieldNames.middle].errors).toHaveLength(1);
+          expect(state[fieldNames.largest].errors).toHaveLength(1);
+        });
+      });
+
+      describe('when current field value changes to fail cross-field validation', () => {
+        it('should re-validate and add errors to related fields', () => {
+          const instance = component.instance();
+          instance.setField(fieldNames.smallest, 5);
+          instance.setField(fieldNames.middle, 6);
+          instance.setField(fieldNames.largest, 7);
+          instance.validateAllFields();
+
+          let state = component.state();
+          expect(state[fieldNames.smallest].errors).toHaveLength(0);
+          expect(state[fieldNames.middle].errors).toHaveLength(0);
+          expect(state[fieldNames.largest].errors).toHaveLength(0);
+
+          const event = {
+            target: {
+              name: fieldNames.smallest,
+              value: 8,
+            },
+          };
+
+          instance.handleChange(event);
+
+          state = component.state();
+          expect(state[fieldNames.smallest].errors).toHaveLength(1);
+          expect(state[fieldNames.middle].errors).toHaveLength(1);
+          expect(state[fieldNames.largest].errors).toHaveLength(0);
+        });
+      });
+    });
   });
 
   describe('resetField', () => {
@@ -207,6 +376,32 @@ describe('withForm', () => {
       component.instance().resetField(fieldNames.name);
 
       expect(component.state().name.value).toBeUndefined();
+    });
+
+    // Note: Cannot get this test to fail even with the incorrect
+    // implementation that assumes setState calls are synchronous
+    // because Enzyme indeed processes such calls synchronously
+    // whereas this is not actually guaranteed by React
+    // see https://github.com/airbnb/enzyme/issues/1608#issuecomment-379896758
+    it('should reset fields correctly when called in sequence', () => {
+      component.setState({
+        [fieldNames.name]: {
+          value: 'Bob',
+          errors: ['some error'],
+        },
+        [fieldNames.email]: {
+          value: 'bob@bob.com',
+          errors: ['some error'],
+        },
+      });
+
+      component.instance().resetField(fieldNames.name);
+      component.instance().resetField(fieldNames.email);
+
+      expect(component.state().name.value).toBeUndefined();
+      expect(component.state().name.errors).toEqual([]);
+      expect(component.state().email.value).toBeUndefined();
+      expect(component.state().email.errors).toEqual([]);
     });
   });
 
