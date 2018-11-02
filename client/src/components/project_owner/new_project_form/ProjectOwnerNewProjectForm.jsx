@@ -102,6 +102,12 @@ const validateGroupsMap = {
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
 
+export const PROJECT_IMAGE_DISPLAY_WIDTH = 480;
+export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
+
+const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
+const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
+
 class _ProjectOwnerNewProjectForm extends Component {
   constructor(props) {
     super(props);
@@ -157,6 +163,54 @@ class _ProjectOwnerNewProjectForm extends Component {
     );
   };
 
+  getImageDimensions = image => {
+    return new Promise(resolve => {
+      image.addEventListener('load', () => {
+        resolve({ width: image.width, height: image.height });
+      });
+    });
+  };
+
+  resizeImage = async () => {
+    const image = new Image();
+
+    const projectImage = this.projectImageInput.current.files[0];
+    const projectImageSrc = window.URL.createObjectURL(projectImage);
+
+    image.src = projectImageSrc;
+
+    const { width, height } = await this.getImageDimensions(image);
+
+    if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
+      this.setState({ isImageResolutionTooLow: true });
+    } else {
+      this.setState({ isImageResolutionTooLow: false });
+    }
+
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width < height && width > DISPLAY_WIDTH) {
+      finalWidth = DISPLAY_WIDTH;
+      finalHeight = (height / width) * DISPLAY_WIDTH;
+    }
+
+    if (height < width && height > DISPLAY_HEIGHT) {
+      finalHeight = DISPLAY_HEIGHT;
+      finalWidth = (width / height) * DISPLAY_HEIGHT;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, finalWidth, finalHeight);
+    return new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.6);
+    });
+  };
+
   togglePreviewOn = () => {
     const { fields } = this.props;
     const project = {};
@@ -176,7 +230,17 @@ class _ProjectOwnerNewProjectForm extends Component {
     event.preventDefault();
     console.log('VALUES', this.props.valuesForAllFields());
 
-    if (!this.props.validateAllFields() || !this.validateAllSubFormFields()) {
+    const formData = new FormData();
+    if (this.projectImageInput.current.files[0]) {
+      const resizedProjectImage = await this.resizeImage();
+      formData.append('projectImage', resizedProjectImage);
+    }
+
+    if (
+      !this.props.validateAllFields() ||
+      !this.validateAllSubFormFields() ||
+      this.state.isImageResolutionTooLow
+    ) {
       return;
     }
 
@@ -190,6 +254,10 @@ class _ProjectOwnerNewProjectForm extends Component {
       volunteerRequirements,
       projectOwner: currentUser.id,
     };
+    Object.keys(newProject)
+      .filter(key => newProject[key] !== undefined)
+      .forEach(key => formData.append(key, newProject[key]));
+
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 

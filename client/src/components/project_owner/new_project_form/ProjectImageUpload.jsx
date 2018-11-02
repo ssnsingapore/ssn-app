@@ -1,31 +1,84 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Grid, IconButton } from '@material-ui/core';
+import {
+  Button,
+  Grid,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@material-ui/core';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+
+// import classnames from 'classnames';
+import {
+  PROJECT_IMAGE_DISPLAY_HEIGHT,
+  PROJECT_IMAGE_DISPLAY_WIDTH,
+} from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
 
 export class _ProjectImageUpload extends Component {
   state = {
     imageSrc: '',
+    isImageResolutionTooLow: false,
   };
 
   handleChange = () => {
     const file = this.props.projectImageInput.current.files[0];
     const imageSrc = window.URL.createObjectURL(file);
+
     const image = new Image();
     image.src = imageSrc;
-    // image.onload(() => console.log(image.width, image.height));
+    image.addEventListener('load', () => {
+      if (
+        image.height < PROJECT_IMAGE_DISPLAY_HEIGHT ||
+        image.width < PROJECT_IMAGE_DISPLAY_WIDTH
+      ) {
+        this.setState({ isImageResolutionTooLow: true });
+      }
+    });
+
     this.setState({ imageSrc });
   };
 
   handleCancel = () => {
     this.props.projectImageInput.current.value = '';
-    this.setState({ imageSrc: '' });
+    this.setState({ imageSrc: '', isImageResolutionTooLow: false });
   };
+
+  renderDialog() {
+    return (
+      <div>
+        <Dialog
+          open={this.state.isImageResolutionTooLow}
+          keepMounted
+          onClose={this.handleCancel}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle id="alert-dialog-slide-title">
+            {'Your image resolution is too low'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              Please pick an image larger than 480 x 480 pixels.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleCancel} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  }
 
   renderButton = () => {
     const { classes } = this.props;
-    const { imageSrc } = this.state;
+    const { imageSrc, isImageResolutionTooLow } = this.state;
 
     return !imageSrc ? (
       <Grid className={classes.defaultImage}>
@@ -48,9 +101,14 @@ export class _ProjectImageUpload extends Component {
           backgroundImage: `url(${imageSrc})`,
         }}
       >
-        <IconButton className={classes.iconButton} onClick={this.handleCancel}>
+        <IconButton
+          color="secondary"
+          className={classes.iconButton}
+          onClick={this.handleCancel}
+        >
           <HighlightOffIcon />
         </IconButton>
+        {isImageResolutionTooLow && this.renderDialog()}
       </Grid>
     );
   };
