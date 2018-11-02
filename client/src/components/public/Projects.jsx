@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
-import { withStyles, withTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
 import { SearchBar } from 'components/shared/SearchBar';
@@ -11,6 +11,33 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { withContext } from 'util/context';
+import { getFieldNameObject, withForm } from 'util/form';
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { Month } from 'components/shared/enums/Month';
+import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+
+const FieldName = getFieldNameObject([
+  'issueAddressed',
+  'projectLocation',
+  'month',
+  'volunteerRequirementType',
+]);
+
+const constraints = {
+  [FieldName.issueAddressed]: {
+    inclusion: Object.values(IssueAddressed),
+  },
+  [FieldName.projectLocation]: {
+    inclusion: Object.values(ProjectLocation),
+  },
+  [FieldName.month]: {
+    inclusion: Object.values(Month),
+  },
+  [FieldName.volunteerRequirementType]: {
+    inclusion: Object.values(VolunteerRequirementType),
+  },
+};
 
 function TabContainer(props) {
   return (
@@ -53,7 +80,7 @@ class _Projects extends Component {
     this.setState({ isLoading: false });
   }
 
-  handleChange = (_event, value) => {
+  handleTabValueChange = (_event, value) => {
     this.setState({ tabValue: value });
   };
 
@@ -92,7 +119,7 @@ class _Projects extends Component {
           </Typography>
           <Tabs
             value={tabValue}
-            onChange={this.handleChange}
+            onChange={this.handleTabValueChange}
             indicatorColor="primary"
             textColor="primary"
           >
@@ -111,7 +138,12 @@ class _Projects extends Component {
   render() {
     return (
       <div>
-        <SearchBar />
+        <SearchBar FieldName={FieldName}
+          classes={this.props.classes}
+          fields={this.props.fields}
+          handleChange={this.props.handleChange}
+          resetAllFields={this.props.resetAllFields}
+        />
         {this.renderProjectListings()}
       </div>
     );
@@ -134,8 +166,14 @@ const styles = {
   },
 };
 
-export const Projects = withContext(AppContext)(
-  withTheme()(withStyles(styles)(_Projects))
+export const Projects = 
+withForm(FieldName, constraints)(
+  withContext(AppContext)(
+    (withStyles(styles)(
+      (_Projects)
+    )
+    )
+  )
 );
 
 export const _testExports = {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Button } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -6,88 +6,129 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
-import { getFieldNameObject, withForm, fieldValue } from 'util/form';
+import { fieldValue } from 'util/form';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { Month } from 'components/shared/enums/Month';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
-
-const FieldName = getFieldNameObject([
-  'issueAddressed',
-  'projectLocation',
-  'month',
-  'volunteerRequirementType',
-]);
-
-const constraints = {
-  [FieldName.issueAddressed]: {
-    inclusion: Object.values(IssueAddressed),
-  },
-  [FieldName.projectLocation]: {
-    inclusion: Object.values(ProjectLocation),
-  },
-  [FieldName.month]: {
-    inclusion: Object.values(Month),
-  },
-  [FieldName.volunteerRequirementType]: {
-    inclusion: Object.values(VolunteerRequirementType),
-  },
+import { IssueAddressedDisplayMapping } from './display_mappings/IssueAddressedDisplayMapping';
+import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
+import { ProjectLocationDisplayMapping } from './display_mappings/ProjectLocationDisplayMapping';
+/* Using form control */
+const createIssueAddressedMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel htmlFor={field}></InputLabel>
+      <Select
+        value={fieldValue(fields, field) || firstLabel}
+        name={FieldName[field]}
+        onChange={handleChange}
+      >
+        <MenuItem key={firstLabel} value={firstLabel}>
+          <Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography>
+        </MenuItem>
+        {Object.values(IssueAddressed).map(option => { 
+          return (
+            <MenuItem key={option} value={option}>
+              <Typography variant='body2' className={classes.menuText}>{IssueAddressedDisplayMapping[option]}</Typography>
+            </MenuItem>
+          );
+        })};
+      </Select>
+    </FormControl>
+  );
 };
 
-class _SearchBar extends Component {
+const createMonthMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel htmlFor={field}></InputLabel>
+      <Select
+        value={fieldValue(fields, field) || firstLabel}
+        name={FieldName[field]}
+        onChange={handleChange}
+      >
+        {Object.values({firstLabel: firstLabel, ...Month}).map(option => { 
+          return (
+            <MenuItem key={option} value={option}>
+              <Typography variant='body2' className={classes.menuText}>{option}</Typography>
+            </MenuItem>
+          );
+        })};
+      </Select>
+    </FormControl>
+  );
+};
 
-  /* Using form control */
-  createDropdownMenu = (field, options, firstLabel) => {
-    const { classes, fields, handleChange } = this.props;
+const createVolunteerRequirementTypeMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel htmlFor={field}></InputLabel>
+      <Select
+        value={fieldValue(fields, field) || firstLabel}
+        name={FieldName[field]}
+        onChange={handleChange}
+      >
+        <MenuItem key={firstLabel} value={firstLabel}>
+          <Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography>
+        </MenuItem>
+        {Object.values(VolunteerRequirementType).map(option => { 
+          return (
+            <MenuItem key={option} value={option}>
+              <Typography variant='body2' className={classes.menuText}>{VolunteerRequirementTypeDisplayMapping[option]}</Typography>
+            </MenuItem>
+          );
+        })};
+      </Select>
+    </FormControl>
+  );
+};
 
-    return (
-      <FormControl className={classes.formControl}>
-        <InputLabel htmlFor={field}></InputLabel>
-        <Select
-          value={fieldValue(fields, field) || firstLabel}
-          name={FieldName[field]}
-          onChange={handleChange}
-        >
-          {this.renderOptions({firstLabel, ...options})}
-        </Select>
-      </FormControl>
-    );
-  }
+const createProjectLocationMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel htmlFor={field}></InputLabel>
+      <Select
+        value={fieldValue(fields, field) || firstLabel}
+        name={FieldName[field]}
+        onChange={handleChange}
+      >
+        <MenuItem key={firstLabel} value={firstLabel}>
+          <Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography>
+        </MenuItem>
+        {Object.values(ProjectLocation).map(option => { 
+          return (
+            <MenuItem key={option} value={option}>
+              <Typography variant='body2' className={classes.menuText}>{ProjectLocationDisplayMapping[option]}</Typography>
+            </MenuItem>
+          );
+        })};
+      </Select>
+    </FormControl>
+  );
+};
 
-  renderOptions = (options) => {
-    const { classes } = this.props;
-
-    return Object.values(options).map(option => (
-      <MenuItem key={option} value={option}>
-        <Typography variant='body2' className={classes.menuText}>{option}</Typography>
-      </MenuItem>
-    ));
-  }
-   
-  render() {
-    const { classes, resetAllFields } = this.props;
-    return (
-      <Paper className={classes.searchBox}>
-        <div style={{width: '80vw', margin:'0 auto'}}>
-          <Typography variant='title'>Filter projects</Typography>
-          <Typography variant='headline'>
-          I am looking for projects about {this.createDropdownMenu(FieldName.issueAddressed, IssueAddressed, 'all categories')}
-          in the month of {this.createDropdownMenu(FieldName.month, Month, 'all months')}
-          that requires volunteers for {this.createDropdownMenu(FieldName.volunteerRequirementType, VolunteerRequirementType, 'all roles')}
-          near the {this.createDropdownMenu(FieldName.projectLocation, ProjectLocation, 'all areas')}
+export const _SearchBar = ({ FieldName, classes, fields, handleChange, resetAllFields }) => {   
+  return (
+    <Paper className={classes.searchBox}>
+      <div style={{width: '80vw', margin:'0 auto'}}>
+        <Typography variant='title'>Filter projects</Typography>
+        <Typography variant='headline'>
+          I am looking for projects about {createIssueAddressedMenu(FieldName.issueAddressed, 'all categories', classes, fields, handleChange, FieldName)}
+          in the month of {createMonthMenu(FieldName.month, 'all months', classes, fields, handleChange, FieldName)}
+          that requires volunteers for {createVolunteerRequirementTypeMenu(FieldName.volunteerRequirementType, 'all roles', classes, fields, handleChange, FieldName)}
+          near the {createProjectLocationMenu(FieldName.projectLocation, 'all areas', classes, fields, handleChange, FieldName)}
           area.
-          </Typography>
-          <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
+        </Typography>
+        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
               Reset
-          </Button>
-        </div>
-      </Paper>
-    );
-  }
-}
+        </Button>
+      </div>
+    </Paper>
+  );
+};
 
 const styles = theme => ({
   searchBox: {
@@ -112,9 +153,7 @@ const styles = theme => ({
 export const SearchBar =
 withContext(AppContext)(
   withStyles(styles)(
-    withForm(FieldName, constraints)(
-      (_SearchBar)
-    )
+    (_SearchBar)
   )
 );
 
