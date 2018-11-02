@@ -106,6 +106,8 @@ class _ProjectOwnerNewProjectForm extends Component {
   constructor(props) {
     super(props);
 
+    this.projectImageInput = React.createRef();
+
     this.state = {
       volunteerRequirementRefs: [React.createRef()],
       isSubmitting: false,
@@ -292,6 +294,7 @@ class _ProjectOwnerNewProjectForm extends Component {
                     fields={this.props.fields}
                     FieldName={FieldName}
                     handleChange={this.props.handleChange}
+                    projectImageInput={this.projectImageInput}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -392,7 +395,11 @@ const styles = theme => ({
   },
 });
 
-export const ProjectOwnerNewProjectForm = withForm(FieldName, constraints, validateGroupsMap)(
+export const ProjectOwnerNewProjectForm = withForm(
+  FieldName,
+  constraints,
+  validateGroupsMap
+)(
   withContext(AppContext)(
     withTheme()(withStyles(styles)(_ProjectOwnerNewProjectForm))
   )

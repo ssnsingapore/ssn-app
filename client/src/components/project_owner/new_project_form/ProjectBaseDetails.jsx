@@ -5,7 +5,13 @@ import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
 import { ProjectImageUpload } from 'components/project_owner/new_project_form/ProjectImageUpload';
 
-const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
+const _ProjectBaseDetails = ({
+  FieldName,
+  classes,
+  handleChange,
+  fields,
+  projectImageInput,
+}) => {
   return (
     <Paper className={classes.paper} square>
       <Grid item xs={7}>
@@ -65,7 +71,7 @@ const _ProjectBaseDetails = ({ FieldName, classes, handleChange, fields }) => {
         </Grid>
       </Grid>
       <Grid item xs={9}>
-        <ProjectImageUpload />
+        <ProjectImageUpload projectImageInput={projectImageInput} />
       </Grid>
     </Paper>
   );
