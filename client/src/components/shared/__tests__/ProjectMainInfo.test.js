@@ -118,6 +118,16 @@ describe('ProjectMainInfo', () => {
         const signUpButton = baseDetailsCard.find(Button);
         expect(signUpButton.props().href).toEqual('https://someurl.com');
       });
+
+      it('should not render the volunteer signup url button if not specified', () => {
+        project = buildProject(ProjectType.EVENT, { volunteerSignupUrl: undefined });
+        component = shallowRender(project);
+
+        baseDetailsCard = component.find(Card);
+        const signUpButton = baseDetailsCard.find(Button);
+        expect(signUpButton.exists()).toBeFalsy();
+
+      });
     });
 
     describe('volunteer details', () => {
