@@ -21,6 +21,7 @@ import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappin
 import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
+import { ProjectType } from 'components/shared/enums/ProjectType';
 
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
@@ -30,28 +31,33 @@ const renderRow = (label, value) => (
 );
 
 const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
-  <Table className={classes.table}>
-    <TableHead>
-      <TableRow>
-        <TableCell>Volunteer Roles</TableCell>
-        <TableCell numeric>No. of Volunteers</TableCell>
-        <TableCell numeric>Commitment Level</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {volunteerRequirements.map(requirement => {
-        return (
-          <TableRow key={requirement._id}>
-            <TableCell component="th" scope="row">
-              {VolunteerRequirementTypeDisplayMapping[requirement.type]}
-            </TableCell>
-            <TableCell numeric>{requirement.number} volunteers</TableCell>
-            <TableCell numeric>{requirement.commitmentLevel}</TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
+  <React.Fragment>
+    <Typography variant="body2" data-test-id="volunteerRequirementHeadline">
+      We need the following volunteers:
+    </Typography>
+    <Table className={classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell>Volunteer Roles</TableCell>
+          <TableCell numeric>No. of Volunteers</TableCell>
+          <TableCell numeric>Commitment Level</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {volunteerRequirements.map(requirement => {
+          return (
+            <TableRow key={requirement._id}>
+              <TableCell component="th" scope="row">
+                {VolunteerRequirementTypeDisplayMapping[requirement.type]}
+              </TableCell>
+              <TableCell numeric>{requirement.number} volunteers</TableCell>
+              <TableCell numeric>{requirement.commitmentLevel}</TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  </React.Fragment>
 );
 
 const renderAllVolunteerRequirements = (
@@ -60,11 +66,11 @@ const renderAllVolunteerRequirements = (
   classes
 ) => (
   <React.Fragment>
-    {volunteerRequirements
+    {volunteerRequirements && volunteerRequirements.length !== 0
       ? renderVolunteerDetailsTable(volunteerRequirements, classes)
       : ''}
     {volunteerRequirementsDescription ? (
-      <Typography variant="body1">
+      <Typography variant="body1" data-test-id="volunteerRequirementDescription">
         {volunteerRequirementsDescription}
       </Typography>
     ) : (
@@ -76,7 +82,7 @@ const renderAllVolunteerRequirements = (
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
 
-  if (issuesAddressed) {
+  if (issuesAddressed && issuesAddressed.length !== 0) {
     return (
       <React.Fragment>
         <br />
@@ -148,8 +154,9 @@ const renderVolunteerDetails = (classes, project) => {
     volunteerBenefitsDescription,
   } = project;
 
-  const isVolunteerRequirementsEmpty = !(
-    volunteerRequirements && volunteerRequirementsDescription
+  const isVolunteerRequirementsAndDescriptionEmpty = (
+    (!volunteerRequirements || volunteerRequirements.length === 0)
+    && !volunteerRequirementsDescription
   );
 
   return (
@@ -157,9 +164,8 @@ const renderVolunteerDetails = (classes, project) => {
       <Typography variant="headline" gutterBottom className={classes.headline}>
         Volunteer Details
       </Typography>
-      <Typography variant="body2">We need the following volunteers:</Typography>
       <div className={classes.tableWrapper}>
-        {isVolunteerRequirementsEmpty
+        {isVolunteerRequirementsAndDescriptionEmpty
           ? '-'
           : renderAllVolunteerRequirements(
             volunteerRequirements,
@@ -187,27 +193,29 @@ const renderProjectDetails = (classes, project) => {
     frequency,
   } = project;
 
+  // console.log(project);
+
   return (
     <Paper className={classes.paper} square>
       <Typography variant="headline" gutterBottom className={classes.headline}>
         Project Details
       </Typography>
-      {renderRow(
+      {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
+      {projectType === ProjectType.EVENT && renderRow(
         'Start date',
         moment(startDate)
           .utc()
           .format('dddd, Do MMMM YYYY')
       )}
-      {renderRow(
+      {projectType === ProjectType.EVENT && renderRow(
         'End date',
         moment(endDate)
           .utc()
           .format('dddd, Do MMMM YYYY')
       )}
-      {renderRow('Time', moment(time, 'HH:mm').format('h:mm A'))}
+      {projectType === ProjectType.RECURRING && renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
+      {renderRow('Time', time ? moment(time, 'HH:mm').format('h:mm A') : undefined)}
       {renderRow('Location', ProjectLocationDisplayMapping[location])}
-      {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
-      {renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
   );
@@ -271,3 +279,7 @@ const styles = theme => ({
 });
 
 export const ProjectMainInfo = withStyles(styles)(_ProjectMainInfo);
+
+export const _testExports = {
+  ProjectMainInfo: _ProjectMainInfo,
+};
