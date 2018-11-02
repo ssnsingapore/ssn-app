@@ -1,11 +1,10 @@
-import React from 'react';
-
-import { _testExports } from '../ProjectOwnerDetails';
-import { defaultAppContext } from '../../main/AppContext';
-import { AccountType } from 'components/shared/enums/AccountType';
 import { CardMedia } from '@material-ui/core';
-import { createShallow } from '@material-ui/core/test-utils';
 import { AccountTypeDisplayMapping } from 'components/shared/display_mappings/AccountTypeDisplayMapping';
+import { AccountType } from 'components/shared/enums/AccountType';
+import React from 'react';
+import { defaultAppContext } from '../../main/AppContext';
+import { _testExports } from '../ProjectOwnerDetails';
+
 
 const ProjectOwnerDetails = _testExports.ProjectOwnerDetails;
 describe('ProjectOwnerDetails', () => {
@@ -13,8 +12,6 @@ describe('ProjectOwnerDetails', () => {
   let mockContext;
   let organisationProjectOwner;
   let individualProjectOwner;
-
-  const shallow = createShallow();
 
   beforeEach(async (done) => {
     organisationProjectOwner = {
