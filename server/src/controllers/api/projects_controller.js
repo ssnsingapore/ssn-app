@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 
 import { asyncWrap } from 'util/async_wrapper';
 import { Project, ProjectState } from 'models/Project';
@@ -6,7 +7,12 @@ import { Project, ProjectState } from 'models/Project';
 import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
 import { UnprocessableEntityErrorView } from 'util/errors';
-import { ProjectOwnerAllowedTransitions, AdminAllowedTransitions } from 'config/stateChangePermissions';
+import {
+  ProjectOwnerAllowedTransitions,
+  AdminAllowedTransitions,
+} from 'config/stateChangePermissions';
+import { s3 } from 'config/aws';
+import { config } from 'config/environment';
 import { authMiddleware } from 'util/auth';
 
 export const projectRouter = express.Router();
@@ -87,21 +93,47 @@ async function getProjectCountsForProjectOwner(req, res) {
   return res.status(200).json({ counts });
 }
 
-projectRouter.post('/project_owner/projects/new',
+const upload = multer();
+
+projectRouter.post(
+  '/project_owner/projects/new',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
-  asyncWrap(postProject));
+  upload.single('projectImage'),
+  asyncWrap(postProject)
+);
+
 async function postProject(req, res) {
+  const { file, body } = req;
   const project = new Project({
-    ...req.body.project,
+    ...body,
     state: ProjectState.PENDING_APPROVAL,
   });
+
+  const uploadProjectImageAndSetUrl = async () => {
+    if (file) {
+      const response = await s3
+        .upload({
+          Body: file.buffer,
+          Key: `${new Date().getTime()}-${project.id}-${project.title}`,
+          ACL: 'public-read',
+          Bucket: `${config.AWS_BUCKET_NAME}/project_cover_images`,
+        })
+        .promise();
+      project.set({ coverImageUrl: response.Location });
+      await project.save();
+    }
+  };
+
   await project.save();
-  return res.status(201).json({ project: project.toJSON() });
+  await uploadProjectImageAndSetUrl();
+  return res.status(201).json({ project });
 }
 
-projectRouter.put('/project_owner/projects/:id',
+projectRouter.put(
+  '/project_owner/projects/:id',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
-  asyncWrap(projectOwnerChangeProjectState));
+  asyncWrap(projectOwnerChangeProjectState)
+);
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
