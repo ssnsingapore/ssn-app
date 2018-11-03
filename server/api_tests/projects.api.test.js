@@ -4,7 +4,7 @@ import app from 'app';
 
 import { config } from 'config/environment';
 import { Project, ProjectState } from 'models/Project';
-import { createProjectOwner, createProject } from '../test/testHelper';
+import { createProjectOwner, createProject } from 'util/testHelper';
 
 beforeAll(async () => {
   await mongoose.connect(global.mongoUri);
