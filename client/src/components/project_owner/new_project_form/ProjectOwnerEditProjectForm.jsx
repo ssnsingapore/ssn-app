@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { Spinner } from 'components/shared/Spinner';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 import { withForm } from 'util/form';
@@ -17,50 +18,45 @@ class _ProjectOwnerEditProjectForm extends Component {
     this.state = {
       volunteerRequirementRefs: [],
       isSubmitting: false,
-      isProjectLoading: true,
+      isLoadingProject: true,
       shouldRedirect: false,
       preview: false,
       projectToRender: {},
-      isProjectSame: false,
     };
-
   }
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get(`/api/v1/projects/${this.props.match.params.id}`);
-    
+
     if (response.isSuccessful) {
       const { project } = await response.json();
       this.setState({ projectToRender: project });
 
-      const { projectToRender } = this.state;
-      Object.keys(projectToRender)
-        .filter(key => key !== 'state' || key !== 'volunteerRequirements')
-        .forEach(key => this.props.setField(FieldName[key], projectToRender[key]));
+      Object.values(FieldName).forEach(key => this.props.setField(key, project[key]));
 
-      const { volunteerRequirements } = projectToRender;
-      Object.keys(volunteerRequirements).forEach( row => 
-      {
-        // add volunteer requirement ref
+      const { volunteerRequirements } = project;
+      volunteerRequirements.forEach((_row, index) => {
         this.handleAddVolunteerRequirement();
-        // set state on volunteer requirement ref details
-        Object.keys(volunteerRequirements[row]).forEach(detail =>
-          this.state.volunteerRequirementRefs[row].current.setField(
-            VolunteerRequirementFieldName[detail], volunteerRequirements[row][detail]
-          )
-        );
-      }
-      );
+        this.setSubFormFields(volunteerRequirements, index);
+      });
     }
-  
+
     if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
       showAlert('getProjectFailure', AlertType.ERROR, formatErrors(errors));
     }
-  
+
     this.setState({ isLoadingProject: false });
+  }
+
+  setSubFormFields = (volunteerRequirements, index) => {
+    Object.keys(volunteerRequirements[index]).forEach(detail =>
+      this.state.volunteerRequirementRefs[index].current.setField(
+        VolunteerRequirementFieldName[detail], volunteerRequirements[index][detail]
+      )
+    );
   }
 
   _isProjectRejected = (project) => project.state === ProjectState.REJECTED;
@@ -77,7 +73,7 @@ class _ProjectOwnerEditProjectForm extends Component {
   handleDeleteVolunteerRequirement = i => {
     const newVolunteerRequirementRefs = [...this.state.volunteerRequirementRefs];
     newVolunteerRequirementRefs.splice(i, 1);
-    this.setState({volunteerRequirementRefs: newVolunteerRequirementRefs});
+    this.setState({ volunteerRequirementRefs: newVolunteerRequirementRefs });
   };
 
   validateAllSubFormFields = () => {
@@ -104,16 +100,13 @@ class _ProjectOwnerEditProjectForm extends Component {
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
-    const { authenticator } = this.props.context.utils;
 
-    const currentUser = authenticator.getCurrentUser();
-
-    const { projectToRender } = this.state; 
-    const PROJECT_EDITED_SUCCESS_MESSAGE = 
-    this._isProjectRejected(projectToRender) ? 
-      `${projectToRender.title} details have been successfully updated! It will now be pending admin approval.`
-      :
-      `${projectToRender.title} details have been successfully updated!` ;
+    const { projectToRender } = this.state;
+    const PROJECT_EDITED_SUCCESS_MESSAGE =
+      this._isProjectRejected(projectToRender) ?
+        `${projectToRender.title} details have been successfully updated! It will now be pending admin approval.`
+        :
+        `${projectToRender.title} details have been successfully updated!`;
 
     const volunteerRequirements = this.valuesForAllSubFormFields();
     let updatedProject = {
@@ -125,7 +118,7 @@ class _ProjectOwnerEditProjectForm extends Component {
       updatedProject = {
         ...updatedProject,
         state: ProjectState.PENDING_APPROVAL,
-      }; 
+      };
     }
 
     this.setState({ isSubmitting: true });
@@ -148,8 +141,11 @@ class _ProjectOwnerEditProjectForm extends Component {
   };
 
   render() {
-    return <ProjectOwnerProjectForm 
-      formType='edit' 
+    if (this.props.isLoadingProject) {
+      return <Spinner />;
+    };
+
+    return <ProjectOwnerProjectForm
       handleSubmit={this.handleSubmit}
       handleChange={this.props.handleChange}
       fields={this.props.fields}
@@ -157,15 +153,13 @@ class _ProjectOwnerEditProjectForm extends Component {
       handleAddVolunteerRequirement={this.handleAddVolunteerRequirement}
       handleDeleteVolunteerRequirement={this.handleDeleteVolunteerRequirement}
       resetField={this.props.resetField}
-      isLoadingProject={this.state.isLoadingProject}
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
-      isProjectSame={this.state.isProjectSame}
     />;
   }
 }
 
-export const ProjectOwnerEditProjectForm = 
-withForm(FieldName, constraints)(
-  withContext(AppContext)(_ProjectOwnerEditProjectForm)
-);
+export const ProjectOwnerEditProjectForm =
+  withForm(FieldName, constraints)(
+    withContext(AppContext)(_ProjectOwnerEditProjectForm)
+  );

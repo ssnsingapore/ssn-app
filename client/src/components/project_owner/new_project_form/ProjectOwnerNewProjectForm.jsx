@@ -19,7 +19,6 @@ export class _ProjectOwnerNewProjectForm extends Component {
     this.state = {
       volunteerRequirementRefs: [React.createRef()],
       isSubmitting: false,
-      isProjectLoading: true,
       shouldRedirect: false,
       preview: false,
       projectToRender: {},
@@ -108,7 +107,6 @@ export class _ProjectOwnerNewProjectForm extends Component {
 
   render() {
     return <ProjectOwnerProjectForm 
-      formType='new' 
       handleSubmit={this.handleSubmit}
       handleChange={this.props.handleChange}
       fields={this.props.fields}
@@ -116,7 +114,6 @@ export class _ProjectOwnerNewProjectForm extends Component {
       handleAddVolunteerRequirement={this.handleAddVolunteerRequirement}
       handleDeleteVolunteerRequirement={this.handleDeleteVolunteerRequirement}
       resetField={this.props.resetField}
-      isLoadingProject={this.state.isLoadingProject}
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
     />;

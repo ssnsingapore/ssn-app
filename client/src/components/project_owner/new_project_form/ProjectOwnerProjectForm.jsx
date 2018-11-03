@@ -6,7 +6,6 @@ import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
-import { Spinner } from 'components/shared/Spinner';
 
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
@@ -66,7 +65,7 @@ class _ProjectOwnerProjectForm extends Component {
             variant="contained"
             color="secondary"
             className={classes.button}
-            disable={this.props.isSubmitting || this.props.isProjectSame}
+            disable={this.props.isSubmitting}
           >
             Submit
           </Button>
@@ -95,10 +94,6 @@ class _ProjectOwnerProjectForm extends Component {
   render() {
     const { classes } = this.props;
     const { preview } = this.state;
-
-    if (this.props.isLoadingProject) {
-      return <Spinner/>;
-    };
 
     if (this.props.shouldRedirect) {
       return (
