@@ -177,7 +177,7 @@ async function adminChangeProjectState(req, res) {
   const allowedTransitions = AdminAllowedTransitions[existingProject.state];
 
   if (updatedProject.state && allowedTransitions.includes(updatedProject.state)) {
-    if (existingProject.state === ProjectState.PENDING_APPROVAL && !updatedProject.rejectionReason) {
+    if (updatedProject.state === ProjectState.REJECTED && !updatedProject.rejectionReason) {
       return res
         .status(422)
         .json({
