@@ -193,8 +193,6 @@ const renderProjectDetails = (classes, project) => {
     frequency,
   } = project;
 
-  // console.log(project);
-
   return (
     <Paper className={classes.paper} square>
       <Typography variant="headline" gutterBottom className={classes.headline}>

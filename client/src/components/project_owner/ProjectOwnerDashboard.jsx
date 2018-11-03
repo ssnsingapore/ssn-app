@@ -84,25 +84,16 @@ class _ProjectOwnerDashboard extends Component {
     );
   }
 
-  renderContent = (value, message, state) => {
-    const { tabValue, counts } = this.state;
-    const { theme } = this.props;
+  renderContent = (value, state) => {
+    const { tabValue } = this.state;
 
     return (
-      tabValue === value &&
-      (counts === 0 ? (
-        <Typography
-          variant="subheading"
-          style={{ color: theme.palette.grey[500] }}
-        >
-          You have no projects that {message}.
-        </Typography>
-      ) : (
+      tabValue === value && (
         <ProjectListing
           projectState={state}
           dashboardRole={Role.PROJECT_OWNER}
         />
-      ))
+      )
     );
   };
 
@@ -111,14 +102,10 @@ class _ProjectOwnerDashboard extends Component {
 
     return (
       <Paper square className={classes.projectListing}>
-        {this.renderContent(
-          0,
-          'are pending approval',
-          ProjectState.PENDING_APPROVAL
-        )}
-        {this.renderContent(1, 'are active', ProjectState.APPROVED_ACTIVE)}
-        {this.renderContent(2, 'are inactive', ProjectState.APPROVED_INACTIVE)}
-        {this.renderContent(3, 'have been rejected', ProjectState.REJECTED)}
+        {this.renderContent(0, ProjectState.PENDING_APPROVAL)}
+        {this.renderContent(1, ProjectState.APPROVED_ACTIVE)}
+        {this.renderContent(2, ProjectState.APPROVED_INACTIVE)}
+        {this.renderContent(3, ProjectState.REJECTED)}
       </Paper>
     );
   }

@@ -52,25 +52,16 @@ export class _AdminDashboard extends Component {
     })`;
   };
 
-  renderContent = (value, message, projectState) => {
-    const { tabValue, counts } = this.state;
-    const { theme } = this.props;
+  renderContent = (value, projectState) => {
+    const { tabValue } = this.state;
 
     return (
-      tabValue === value &&
-      (counts === 0 ? (
-        <Typography
-          variant="subheading"
-          style={{ color: theme.palette.grey[500] }}
-        >
-          There are no {message} at the moment.
-        </Typography>
-      ) : (
+      tabValue === value && (
         <ProjectListing
           projectState={projectState}
           dashboardRole={Role.ADMIN}
         />
-      ))
+      )
     );
   };
 
@@ -101,22 +92,10 @@ export class _AdminDashboard extends Component {
           </Tabs>
         </Paper>
         <div className={classes.tabContainer}>
-          {this.renderContent(
-            0,
-            'projects pending approval',
-            ProjectState.PENDING_APPROVAL
-          )}
-          {this.renderContent(
-            1,
-            'active projects',
-            ProjectState.APPROVED_ACTIVE
-          )}
-          {this.renderContent(
-            2,
-            'inactive projects',
-            ProjectState.APPROVED_INACTIVE
-          )}
-          {this.renderContent(3, 'rejected projects', ProjectState.REJECTED)}
+          {this.renderContent(0, ProjectState.PENDING_APPROVAL)}
+          {this.renderContent(1, ProjectState.APPROVED_ACTIVE)}
+          {this.renderContent(2, ProjectState.APPROVED_INACTIVE)}
+          {this.renderContent(3, ProjectState.REJECTED)}
         </div>
       </Paper>
     );

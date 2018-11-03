@@ -65,23 +65,12 @@ class _Projects extends Component {
   };
 
   renderContent = (value, projectState) => {
-    const { tabValue, counts } = this.state;
-    const { theme } = this.props;
-    const state = ProjectStateDisplayMapping[projectState].toLowerCase();
+    const { tabValue } = this.state;
 
     return (
       tabValue === value && (
         <TabContainer>
-          {counts === 0 ? (
-            <Typography
-              variant="subheading"
-              style={{ color: theme.palette.grey[500] }}
-            >
-              There are no {state} projects at the moment.
-            </Typography>
-          ) : (
-            <ProjectListing projectState={projectState} />
-          )}
+          <ProjectListing projectState={projectState} />
         </TabContainer>
       )
     );

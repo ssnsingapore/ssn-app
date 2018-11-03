@@ -83,7 +83,7 @@ class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-              Back to form
+                Back to form
             </Button>
           )}
         </div>
@@ -106,8 +106,8 @@ class _ProjectOwnerProjectForm extends Component {
     }
 
     return (
-      <form 
-        onSubmit={this.props.handleSubmit} 
+      <form
+        onSubmit={this.props.handleSubmit}
         className={classes.root}
       >
         <div className={classes.form}>
@@ -119,6 +119,7 @@ class _ProjectOwnerProjectForm extends Component {
                   <ProjectBaseDetails
                     fields={this.props.fields}
                     handleChange={this.props.handleChange}
+                    projectImageInput={this.props.projectImageInput}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -213,7 +214,7 @@ const styles = theme => ({
   },
 });
 
-export const ProjectOwnerProjectForm = 
+export const ProjectOwnerProjectForm =
   withContext(AppContext)(
     withTheme()(withStyles(styles)(_ProjectOwnerProjectForm))
   );
