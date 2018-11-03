@@ -105,14 +105,14 @@ projectRouter.put('/project_owner/projects/:id',
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
-  const { projectOwner } = req.body;
+  const { user } = req;
 
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
 
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
   const { _id } = existingProject.projectOwner;
-  const isCorrectProjectOwner = projectOwner === _id.toString();
+  const isCorrectProjectOwner = user.id.toString() === _id.toString();
 
   if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     existingProject.set(updatedProject);
@@ -120,7 +120,7 @@ async function projectOwnerChangeProjectState(req, res) {
 
     return res
       .status(200)
-      .json({ existingProject });
+      .json({ project: existingProject });
   }
   return res
     .status(422)
@@ -157,7 +157,7 @@ async function adminChangeProjectState(req, res) {
     await existingProject.save();
     return res
       .status(200)
-      .json({ existingProject });
+      .json({ project: existingProject });
   }
   return res
     .status(422)

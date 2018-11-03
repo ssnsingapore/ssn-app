@@ -130,7 +130,7 @@ class _ProjectOwnerEditProjectForm extends Component {
 
     this.setState({ isSubmitting: true });
     const submitEndpoint = `/api/v1/project_owner/projects/${this.props.match.params.id}`;
-    const postContent = { project: updatedProject, projectOwner: currentUser.id };
+    const postContent = { project: updatedProject };
     const response = await requestWithAlert.put(submitEndpoint, postContent, { authenticated: true });
     this.setState({ isSubmitting: false });
 
