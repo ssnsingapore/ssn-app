@@ -10,7 +10,12 @@ import {
 } from 'models/Project';
 import { Role } from 'models/Role';
 
-export const createProjectOwner = () => {
+export const constructQueryString = params => Object.keys(params)
+  .map(key => (key ? `${key}=${params[key]}` : ''))
+  .filter(queryString => !!queryString)
+  .join('&');
+
+export const createProjectOwner = (overrideAttributes = {}) => {
   const projectOwner = new ProjectOwner();
   projectOwner.setPassword('test123');
 
@@ -27,13 +32,16 @@ export const createProjectOwner = () => {
     role: Role.PROJECT_OWNER,
     hashedPassword: projectOwner.hashedPassword,
     confirmedAt: new Date(),
+    ...overrideAttributes,
   });
 };
 
-export const createProject = projectOwner => new Project({
+export const saveProjectOwner = async (overrideAttributes = {}) => createProjectOwner(overrideAttributes).save();
+
+export const createProject = (projectOwner, overrideAttributes = {}) => new Project({
   title: 'Cat Adoption Drive',
   coverImageUrl:
-      'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Singapore-Cat-Festival-2018.jpg',
+    'https://s3-ap-southeast-1.amazonaws.com/ssn-app-maryana/Singapore-Cat-Festival-2018.jpg',
   description: 'Save the earth description',
   volunteerSignupUrl: '',
   volunteerRequirements: [
@@ -54,4 +62,7 @@ export const createProject = projectOwner => new Project({
   startDate: new Date(2018, 10, 1),
   endDate: new Date(2018, 10, 1),
   frequency: ProjectFrequency.ONCE_A_WEEK,
+  ...overrideAttributes,
 });
+
+export const saveProject = async (projectOwner, overrideAttributes = {}) => createProject(projectOwner, overrideAttributes).save();
