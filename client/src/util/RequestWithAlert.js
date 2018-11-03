@@ -80,12 +80,14 @@ export class RequestWithAlert {
     );
   }
 
-  uploadForm = async (url, formData) => {
+  uploadForm = async (url, formData, options = {}) => {
     // Do not include any content-type headers to
     // ensure that browser correctly sets a boundary
     // for the multipart request.
     // See https://stackoverflow.com/questions/39280438/fetch-missing-boundary-in-multipart-form-data-post
     const headers = this.constructHeaders();
+    const { authenticated } = options;
+
     delete headers['Content-Type'];
 
     return this.execute(
@@ -94,6 +96,7 @@ export class RequestWithAlert {
         method: 'post',
         headers,
         body: formData,
+        credentials: this.setCredentials(authenticated),
       },
     );
   }

@@ -255,16 +255,18 @@ class _ProjectOwnerNewProjectForm extends Component {
       projectOwner: currentUser.id,
     };
     Object.keys(newProject)
-      .filter(key => newProject[key] !== undefined)
+      .filter(
+        key => newProject[key] !== undefined && newProject[key].length !== 0
+      )
       .forEach(key => formData.append(key, newProject[key]));
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.post(
+    const response = await requestWithAlert.uploadForm(
       '/api/v1/project_owner/projects/new',
-      { project: newProject },
+      formData,
       { authenticated: true }
     );
     this.setState({ isSubmitting: false });

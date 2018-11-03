@@ -14,7 +14,7 @@ export class SignUpService {
   execute = async () => {
     const errorsObject = await this._saveUser();
     if (!errorsObject) {
-      this._uploadProfilePhotoAndSetUrl();
+      await this._uploadProfilePhotoAndSetUrl();
       await this._sendConfirmationEmail();
     }
 
