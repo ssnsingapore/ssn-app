@@ -125,6 +125,9 @@ export const _SearchBar = ({ FieldName, classes, fields, handleChange, resetAllF
         <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
               Reset
         </Button>
+        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
+              Filter
+        </Button>
       </div>
     </Paper>
   );

@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { AppContext } from 'components/main/AppContext';
 import { SearchBar } from 'components/shared/SearchBar';
 import { Spinner } from 'components/shared/Spinner';
-import { ProjectListing } from 'components/shared/ProjectListing';
+import { PublicProjectListing } from 'components/shared/PublicProjectListing';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
@@ -47,6 +47,11 @@ function TabContainer(props) {
   );
 }
 
+const tabValueMapping = {
+  0: ProjectState.APPROVED_ACTIVE,
+  1: ProjectState.APPROVED_INACTIVE,
+};
+
 class _Projects extends Component {
   constructor(props) {
     super(props);
@@ -55,21 +60,23 @@ class _Projects extends Component {
       isLoading: true,
       tabValue: 0,
       counts: {},
+      activeProjects: [],
+      inactiveProjects: [],
     };
   }
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert.get('/api/v1/project_counts');
+    const countResponse = await requestWithAlert.get('/api/v1/project_counts');
 
-    if (response.isSuccessful) {
-      const counts = (await response.json()).counts;
+    if (countResponse.isSuccessful) {
+      const counts = (await countResponse.json()).counts;
       this.setState({ counts });
     }
 
-    if (response.hasError) {
+    if (countResponse.hasError) {
       const { showAlert } = this.props.context.updaters;
-      const errors = await extractErrors(response);
+      const errors = await extractErrors(countResponse);
       showAlert(
         'getProjectCountsFailure',
         AlertType.ERROR,
@@ -77,10 +84,42 @@ class _Projects extends Component {
       );
     }
 
+    this.fetchProjectsFromBackEnd(ProjectState.APPROVED_ACTIVE);
+
     this.setState({ isLoading: false });
   }
 
+  fetchProjectsFromBackEnd = async projectState => {
+    const { requestWithAlert } = this.props.context.utils;
+
+    const { pageSize = 10 } = this.props;
+
+    const endpoint = '/api/v1/projects';
+    const queryParams =
+      '?pageSize=' + pageSize + '&projectState=' + projectState;
+
+    const response = await requestWithAlert.get(endpoint + queryParams, {
+      authenticated: true,
+    });
+
+    if (response.isSuccessful) {
+      const projects = (await response.json()).projects;
+      const projectsParam =
+        projectState === ProjectState.APPROVED_ACTIVE
+          ? { activeProjects: projects }
+          : { inactiveProjects: projects };
+      this.setState(projectsParam);
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const error = await extractErrors(response);
+      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(error));
+    }
+  };
+
   handleTabValueChange = (_event, value) => {
+    this.fetchProjectsFromBackEnd(tabValueMapping[value]);
     this.setState({ tabValue: value });
   };
 
@@ -91,13 +130,28 @@ class _Projects extends Component {
       : ProjectStateDisplayMapping[projectState];
   };
 
-  renderContent = (value, projectState) => {
-    const { tabValue } = this.state;
+  renderContent = (value, projectState, projects) => {
+    const { tabValue, counts } = this.state;
+    const { theme } = this.props;
+    const state = ProjectStateDisplayMapping[projectState].toLowerCase();
 
     return (
       tabValue === value && (
         <TabContainer>
-          <ProjectListing projectState={projectState} />
+          {counts === 0 ? (
+            <Typography
+              variant="subheading"
+              style={{ color: theme.palette.grey[500] }}
+            >
+              There are no {state} projects at the moment.
+            </Typography>
+          ) : (
+            <PublicProjectListing
+              projects={projects}
+              isLoading={this.state.isLoading}
+              projectState={projectState}
+            />
+          )}
         </TabContainer>
       )
     );
@@ -128,8 +182,16 @@ class _Projects extends Component {
           </Tabs>
         </Paper>
         <Paper className={classes.innerbox}>
-          {this.renderContent(0, ProjectState.APPROVED_ACTIVE)}
-          {this.renderContent(1, ProjectState.APPROVED_INACTIVE)}
+          {this.renderContent(
+            0,
+            ProjectState.APPROVED_ACTIVE,
+            this.state.activeProjects
+          )}
+          {this.renderContent(
+            1,
+            ProjectState.APPROVED_INACTIVE,
+            this.state.inactiveProjects
+          )}
         </Paper>
       </Paper>
     );
@@ -138,7 +200,8 @@ class _Projects extends Component {
   render() {
     return (
       <div>
-        <SearchBar FieldName={FieldName}
+        <SearchBar
+          FieldName={FieldName}
           classes={this.props.classes}
           fields={this.props.fields}
           handleChange={this.props.handleChange}
@@ -166,14 +229,8 @@ const styles = {
   },
 };
 
-export const Projects = 
-withForm(FieldName, constraints)(
-  withContext(AppContext)(
-    (withStyles(styles)(
-      (_Projects)
-    )
-    )
-  )
+export const Projects = withForm(FieldName, constraints)(
+  withContext(AppContext)(withStyles(styles)(_Projects))
 );
 
 export const _testExports = {
