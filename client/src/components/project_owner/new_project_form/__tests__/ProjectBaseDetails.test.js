@@ -1,8 +1,20 @@
 import React from 'react';
-import { TextField, Typography, CardMedia } from '@material-ui/core';
+import {
+  TextField,
+  Typography,
+} from '@material-ui/core';
 
-import { ProjectBaseDetails } from '../ProjectBaseDetails';
-import { getFieldNameObject } from 'util/form';
+import {
+  ProjectBaseDetails,
+} from '../ProjectBaseDetails';
+
+import {
+  ProjectImageUpload,
+} from 'components/project_owner/new_project_form/ProjectImageUpload';
+
+import {
+  getFieldNameObject,
+} from 'util/form';
 
 const FieldName = getFieldNameObject([
   'title',
@@ -26,18 +38,23 @@ const fields = {
 };
 
 const shallowRender = () => {
-  return shallow(
-    <ProjectBaseDetails
-      FieldName={FieldName}
-      fields={fields}
-      handleChange={jest.fn()}
-    />
+  return shallow( <
+    ProjectBaseDetails FieldName = {
+      FieldName
+    }
+    fields = {
+      fields
+    }
+    handleChange = {
+      jest.fn()
+    }
+  />
   ).dive();
 };
 
 describe('ProjectBaseDetails', () => {
-  it('should have the new project headline, appropriate fields and cover image', () => {
-    const component = shallowRender(<ProjectBaseDetails />);
+  it('should have the new project headline, appropriate fields and image upload', () => {
+    const component = shallowRender( < ProjectBaseDetails / > );
 
     expect(component.find(Typography).html()).toEqual(
       expect.stringContaining('Add a New Project')
@@ -45,6 +62,6 @@ describe('ProjectBaseDetails', () => {
     expect(component.find(TextField).at(0).prop('name')).toEqual('title');
     expect(component.find(TextField).at(1).prop('name')).toEqual('description');
     expect(component.find(TextField).at(2).prop('name')).toEqual('volunteerSignupUrl');
-    // expect(component.find(CardMedia).exists()).toBeTruthy();
+    expect(component.find(ProjectImageUpload).exists()).toBeTruthy();
   });
 });
