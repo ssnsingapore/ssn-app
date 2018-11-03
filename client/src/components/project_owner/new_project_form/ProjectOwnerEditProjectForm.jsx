@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 import { Spinner } from 'components/shared/Spinner';
 import { AppContext } from 'components/main/AppContext';
@@ -33,7 +34,13 @@ class _ProjectOwnerEditProjectForm extends Component {
       const { project } = await response.json();
       this.setState({ projectToRender: project });
 
-      Object.values(FieldName).forEach(key => this.props.setField(key, project[key]));
+      const dateFields = ['startDate', 'endDate'];
+      Object.values(FieldName)
+        .filter(key => !dateFields.includes(key))
+        .forEach(key => this.props.setField(key, project[key]));
+      dateFields
+        .forEach(key =>
+          this.props.setField(FieldName[key], moment(project[key]).utc().format('YYYY-MM-DD')));
 
       const { volunteerRequirements } = project;
       volunteerRequirements.forEach((_row, index) => {
