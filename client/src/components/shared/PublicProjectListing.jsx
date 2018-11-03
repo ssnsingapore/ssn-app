@@ -21,7 +21,7 @@ import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectStateDisplayMapping } from './display_mappings/ProjectStateDisplayMapping';
 
-const renderIssuesAddressed = ( project, classes ) => {
+const renderIssuesAddressed = (project, classes) => {
   return (
     <React.Fragment>
       <Typography variant="body1">Issues addressed:</Typography>
@@ -39,7 +39,7 @@ const renderIssuesAddressed = ( project, classes ) => {
   );
 };
 
-const renderVolunteerRequirements = ( project, classes ) => {
+const renderVolunteerRequirements = (project, classes) => {
   return (
     <React.Fragment>
       <Typography variant="body1">We need:</Typography>
@@ -56,7 +56,7 @@ const renderVolunteerRequirements = ( project, classes ) => {
   );
 };
 
-const renderProjectListingCardContent = ( project, classes ) => {
+const renderProjectListingCardContent = (project, classes) => {
   const cardContentSize = 12;
 
   return (
@@ -109,44 +109,36 @@ const renderProjectListingCardContent = ( project, classes ) => {
   );
 };
 
-const _getLinkEndpoint = ( project ) => {
+const _getLinkEndpoint = project => {
   return `/projects/${project._id}`;
 };
 
-const renderProjects = ( classes, projects, projectState ) => {
+const renderProjects = (classes, projects, projectState) => {
   if (projects.length === 0) {
     // TODO: Sabrina - remove logic in Projects, AdminDashboard and ProjectOwnerDashboard
     // for rendering this and fix the casing/display message below
 
-    return  ( <Typography
-      variant="subheading"
-      // style={{ color: theme.palette.grey[500] }}
-    >
-      There are no {ProjectStateDisplayMapping[projectState]} projects at the moment.
-    </Typography>);
+    return (
+      <Typography
+        variant="subheading"
+        // style={{ color: theme.palette.grey[500] }}
+      >
+        There are no {ProjectStateDisplayMapping[projectState]} projects at the
+        moment.
+      </Typography>
+    );
   }
 
   return projects.map(project => {
     const linkEndpoint = _getLinkEndpoint(project);
 
-    const contentGridSize = 9;
-    const rightColumnGridSize =
-      contentGridSize === 12 ? false : 12 - contentGridSize;
-
     return (
       <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
         <Grid container>
-          <Grid item xs={12} md={contentGridSize}>
+          <Grid item xs={12} md={12}>
             <Link to={linkEndpoint} className={classes.link}>
               {renderProjectListingCardContent(project, classes)}
             </Link>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={rightColumnGridSize}
-            style={{ margin: 'auto' }}
-          >
           </Grid>
         </Grid>
       </Grid>
@@ -154,7 +146,13 @@ const renderProjects = ( classes, projects, projectState ) => {
   });
 };
 
-export const _PublicProjectListing = ({ classes, theme, projects, isLoading, projectState }) => {
+export const _PublicProjectListing = ({
+  classes,
+  theme,
+  projects,
+  isLoading,
+  projectState,
+}) => {
   if (isLoading) {
     return <Spinner />;
   }

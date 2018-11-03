@@ -11,7 +11,7 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { withContext } from 'util/context';
-import { getFieldNameObject, withForm } from 'util/form';
+import { getFieldNameObject, withForm, fieldValue } from 'util/form';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
 import { Month } from 'components/shared/enums/Month';
@@ -84,23 +84,31 @@ class _Projects extends Component {
       );
     }
 
-    this.fetchProjectsFromBackEnd(ProjectState.APPROVED_ACTIVE);
+    this.fetchProjectsFromBackEnd(ProjectState.APPROVED_ACTIVE, false);
 
     this.setState({ isLoading: false });
   }
 
-  fetchProjectsFromBackEnd = async projectState => {
+  fetchProjectsFromBackEnd = async (projectState, filterIssueAddressed) => {
     const { requestWithAlert } = this.props.context.utils;
-
+    const { fields } = this.props;
     const { pageSize = 10 } = this.props;
 
     const endpoint = '/api/v1/projects';
     const queryParams =
       '?pageSize=' + pageSize + '&projectState=' + projectState;
+    const queryParamsWithFilter = filterIssueAddressed
+      ? queryParams +
+        '&issueAddressed=' +
+        fieldValue(fields, FieldName.issueAddressed)
+      : queryParams;
 
-    const response = await requestWithAlert.get(endpoint + queryParams, {
-      authenticated: true,
-    });
+    const response = await requestWithAlert.get(
+      endpoint + queryParamsWithFilter,
+      {
+        authenticated: true,
+      }
+    );
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
@@ -121,6 +129,10 @@ class _Projects extends Component {
   handleTabValueChange = (_event, value) => {
     this.fetchProjectsFromBackEnd(tabValueMapping[value]);
     this.setState({ tabValue: value });
+  };
+
+  filterProject = () => {
+    this.fetchProjectsFromBackEnd(tabValueMapping[this.state.tabValue], true);
   };
 
   getTabLabel = projectState => {
@@ -206,6 +218,7 @@ class _Projects extends Component {
           fields={this.props.fields}
           handleChange={this.props.handleChange}
           resetAllFields={this.props.resetAllFields}
+          filterProject={this.filterProject}
         />
         {this.renderProjectListings()}
       </div>
