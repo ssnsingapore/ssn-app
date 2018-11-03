@@ -6,7 +6,7 @@ import { VolunteerRequirementForm } from '../VolunteerRequirementForm';
 
 describe('ProjectVolunteerDetails', () => {
   let component, FieldName, fields;
-  
+
   beforeEach(() => {
     FieldName = {
       volunteerRequirementsDescription: 'volunteerRequirementsDescription',
@@ -20,7 +20,7 @@ describe('ProjectVolunteerDetails', () => {
       },
       [FieldName.volunteerBenefitsDescription]: {
         value: 'description for volunteer benefits',
-        errors: [], 
+        errors: [],
       },
     };
 
