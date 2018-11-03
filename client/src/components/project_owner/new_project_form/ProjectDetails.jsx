@@ -11,10 +11,11 @@ import { ProjectLocationDisplayMapping } from 'components/shared/display_mapping
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
+import { FieldName } from './ProjectFormFields';
 
 const isSelectedBefore = (issuesAddressed = [], data) => !!issuesAddressed.find(issue => issue === data);
 
-const renderFrequency = (FieldName, classes, handleChange, fields) => {
+const renderFrequency = (handleChange, fields) => {
   return fields[FieldName.projectType].value === ProjectType.RECURRING &&
   <TextField
     required
@@ -39,7 +40,7 @@ const renderFrequency = (FieldName, classes, handleChange, fields) => {
   </TextField>;
 };
 
-const renderStartEndDate = (FieldName, classes, handleChange, fields) => {
+const renderStartEndDate = (classes, handleChange, fields) => {
   return fields[FieldName.projectType].value === ProjectType.EVENT &&
   <div className={classes.sharedRow}>
     <TextField
@@ -82,7 +83,7 @@ const handleProjectTypeChange = ( event, handleChange, resetField, FieldName ) =
   handleChange(event);
 };
 
-export const _ProjectDetails = ({ FieldName, classes, fields, handleChange, resetField }) => {
+export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) => {
 
   return (
     <React.Fragment>
@@ -110,9 +111,9 @@ export const _ProjectDetails = ({ FieldName, classes, fields, handleChange, rese
                 {ProjectTypeDisplayMapping[ProjectType.RECURRING]}
               </MenuItem>
             </TextField>
-            {renderFrequency(FieldName, classes, handleChange, fields)}
+            {renderFrequency(handleChange, fields)}
           </div>
-          {renderStartEndDate(FieldName, classes, handleChange, fields)}
+          {renderStartEndDate(classes, handleChange, fields)}
           <TextField
             type="time"
             name={FieldName.time}

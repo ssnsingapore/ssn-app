@@ -137,18 +137,22 @@ projectRouter.put(
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
-  const project = await Project.findById(id).exec();
-  const allowedTransitions = ProjectOwnerAllowedTransitions[project.state];
+  const { user } = req;
+
+  const existingProject = await Project.findById(id).exec();
+  const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
 
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
+  const { _id } = existingProject.projectOwner;
+  const isCorrectProjectOwner = user.id.toString() === _id.toString();
 
-  if (isUpdatedStateAllowed || !updatedProject.state) {
-    project.set(updatedProject);
-    await project.save();
+  if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
+    existingProject.set(updatedProject);
+    await existingProject.save();
 
     return res
       .status(200)
-      .json({ project });
+      .json({ project: existingProject });
   }
   return res
     .status(422)
@@ -168,15 +172,24 @@ projectRouter.put('/admin/projects/:id',
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
-  const project = await Project.findById(id).exec();
-  const allowedTransitions = AdminAllowedTransitions[project.state];
 
-  if (allowedTransitions.includes(updatedProject.state)) {
-    project.set(updatedProject);
-    await project.save();
+  const existingProject = await Project.findById(id).exec();
+  const allowedTransitions = AdminAllowedTransitions[existingProject.state];
+
+  if (updatedProject.state && allowedTransitions.includes(updatedProject.state)) {
+    if (existingProject.state === ProjectState.PENDING_APPROVAL && !updatedProject.rejectionReason) {
+      return res
+        .status(422)
+        .json({
+          errors: [new UnprocessableEntityErrorView('Invalid state change.',
+            'This change is not allowed.')],
+        });
+    }
+    existingProject.set(updatedProject);
+    await existingProject.save();
     return res
       .status(200)
-      .json({ project });
+      .json({ project: existingProject });
   }
   return res
     .status(422)

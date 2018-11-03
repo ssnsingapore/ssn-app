@@ -10,12 +10,12 @@ import { TextField } from '@material-ui/core';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 
-const VolunteerRequirementFieldName = getFieldNameObject([
+export const VolunteerRequirementFieldName = getFieldNameObject([
   'type',
   'commitmentLevel',
   'number']);
 
-const volunteerRequirementConstraints = {
+export const volunteerRequirementConstraints = {
   [VolunteerRequirementFieldName.type]: {
     inclusion: Object.values(VolunteerRequirementType),
   },

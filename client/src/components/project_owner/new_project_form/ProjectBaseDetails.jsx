@@ -2,11 +2,11 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid, Paper, TextField, Typography } from '@material-ui/core';
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
+import { FieldName } from './ProjectFormFields';
 
 import { ProjectImageUpload } from 'components/project_owner/new_project_form/ProjectImageUpload';
 
 const _ProjectBaseDetails = ({
-  FieldName,
   classes,
   handleChange,
   fields,

@@ -45,6 +45,6 @@ describe('ProjectBaseDetails', () => {
     expect(component.find(TextField).at(0).prop('name')).toEqual('title');
     expect(component.find(TextField).at(1).prop('name')).toEqual('description');
     expect(component.find(TextField).at(2).prop('name')).toEqual('volunteerSignupUrl');
-    expect(component.find(CardMedia).exists()).toBeTruthy();
+    // expect(component.find(CardMedia).exists()).toBeTruthy();
   });
 });
