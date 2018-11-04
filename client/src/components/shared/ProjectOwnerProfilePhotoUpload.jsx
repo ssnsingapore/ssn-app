@@ -58,15 +58,15 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
         </label>
 
       ) : (
-        <Button
-          color="default"
-          variant="contained"
-          className={classes.button}
-          onClick={this.handleCancel}
-        >
+          <Button
+            color="default"
+            variant="contained"
+            className={classes.button}
+            onClick={this.handleCancel}
+          >
             Cancel
         </Button>
-      )
+        )
     );
 
   }
@@ -84,7 +84,7 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
     return (
       <React.Fragment>
 
-        {(profilePhotoUrl.value || imageSrc) &&
+        {(profilePhotoUrl || imageSrc) &&
           <img
             alt="New profile"
             src={imageSrc ? imageSrc : profilePhotoUrl.value}
