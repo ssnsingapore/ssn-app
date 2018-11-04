@@ -49,7 +49,7 @@ if (indexFilePath) {
 if (!isTest && config.CRON_SCHEDULE) {
   cron.schedule(config.CRON_SCHEDULE, () => {
     new CheckForInactiveProjectsService().run();
-  });
+  }, { timezone: 'Asia/Singapore' });
 }
 
 if (!isProduction) {
