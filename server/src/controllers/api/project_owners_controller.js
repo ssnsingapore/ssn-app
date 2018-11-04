@@ -87,7 +87,8 @@ async function updateProjectOwner(req, res) {
 
   const updatedProjectOwner = await ProjectOwner.findById(id).exec();
 
-  updatedProjectOwner.set({ ...projectOwner })
+  updatedProjectOwner.set(projectOwner)
+  updatedProjectOwner.save();
 
   if (profilePhotoImage) {
     const response = await s3.upload({
