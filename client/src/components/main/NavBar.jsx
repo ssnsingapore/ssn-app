@@ -129,9 +129,11 @@ class _NavBar extends Component {
           }}
           getContentAnchorEl={null}
         >
-          <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>
-            Edit Profile
-          </MenuItem>
+          {currentUser.role === Role.PROJECT_OWNER &&
+            <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>
+              Edit Profile
+            </MenuItem>
+          }
           <MenuItem button onClick={() => this.handleLogout(currentUser)}>
             Logout
           </MenuItem>
