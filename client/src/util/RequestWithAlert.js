@@ -24,7 +24,7 @@ export class RequestWithAlert {
 
   setCredentials = (authenticated) => {
     // Set to 'include' to allow CORS
-    return authenticated? 'same-origin' : 'omit';
+    return authenticated ? 'same-origin' : 'omit';
   }
 
   get = async (url, options = {}) => {
@@ -101,6 +101,27 @@ export class RequestWithAlert {
     );
   }
 
+  updateForm = async (url, formData, options = {}) => {
+    // Do not include any content-type headers to
+    // ensure that browser correctly sets a boundary
+    // for the multipart request.
+    // See https://stackoverflow.com/questions/39280438/fetch-missing-boundary-in-multipart-form-data-post
+    const headers = this.constructHeaders();
+    const { authenticated } = options;
+
+    delete headers['Content-Type'];
+
+    return this.execute(
+      url,
+      {
+        method: 'put',
+        headers,
+        body: formData,
+        credentials: this.setCredentials(authenticated),
+      },
+    );
+  }
+
   execute = async (url, options) => {
     try {
       const response = await fetch(url, options);
@@ -112,7 +133,7 @@ export class RequestWithAlert {
       }
 
       return response;
-    } catch(err) {
+    } catch (err) {
       if (this.networkErrorHandler) {
         this.networkErrorHandler();
       }
