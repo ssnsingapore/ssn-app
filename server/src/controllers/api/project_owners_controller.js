@@ -57,7 +57,6 @@ async function login(req, res) {
     .json({ errors: [new BadRequestErrorView(message)] });
 }
 
-
 projectOwnersRouter.delete(
   '/project_owners/logout',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
@@ -76,18 +75,19 @@ async function logout(req, res) {
 }
 
 const upload = multer();
+
 projectOwnersRouter.put('/project_owners/:id',
   upload.single('profilePhoto'),
   asyncWrap(updateProjectOwner));
-async function updateProjectOwner(req, res) {
 
+async function updateProjectOwner(req, res) {
   const { id } = req.params;
   const projectOwner = req.body;
   const profilePhotoImage = req.file;
 
   const updatedProjectOwner = await ProjectOwner.findById(id).exec();
 
-  updatedProjectOwner.set(projectOwner)
+  updatedProjectOwner.set(projectOwner);
   updatedProjectOwner.save();
 
   if (profilePhotoImage) {
