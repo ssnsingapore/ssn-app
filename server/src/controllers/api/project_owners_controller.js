@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import { createError } from 'http-errors';
 import multer from 'multer';
+import { s3 } from 'config/aws';
 
 import { config, isProduction } from 'config/environment';
 import { asyncWrap } from 'util/async_wrapper';
@@ -74,17 +75,38 @@ async function logout(req, res) {
   return res.status(204).end();
 }
 
-projectOwnersRouter.put('/project_owners/:id', asyncWrap(updateProjectOwner));
+const upload = multer();
+projectOwnersRouter.put('/project_owners/:id',
+  upload.single('profilePhoto'),
+  asyncWrap(updateProjectOwner));
 async function updateProjectOwner(req, res) {
+
   const { id } = req.params;
-  const { projectOwner } = req.body;
-  const updatedProjectOwner = await ProjectOwner.findByIdAndUpdate(id, projectOwner, { new: true });
+  const projectOwner = req.body;
+  const profilePhotoImage = req.file;
+
+  const updatedProjectOwner = await ProjectOwner.findById(id).exec();
+
+  updatedProjectOwner.set({ ...projectOwner })
+
+  if (profilePhotoImage) {
+    const response = await s3.upload({
+      Body: profilePhotoImage.buffer,
+      Key: `${new Date().getTime()}-${updatedProjectOwner.id}-${updatedProjectOwner.name}`,
+      ACL: 'public-read',
+      Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
+    }).promise();
+
+    updatedProjectOwner.set({ profilePhotoUrl: response.Location });
+    await updatedProjectOwner.save();
+  }
+
   return res.status(200).json({ projectOwner: updatedProjectOwner });
 }
+
 // =============================================================================
 // Sign Up and Account Confirmation
 // =============================================================================
-const upload = multer();
 projectOwnersRouter.post('/project_owners',
   upload.single('profilePhoto'),
   asyncWrap(registerNewProjectOwner));
