@@ -36,12 +36,13 @@ class _NavBar extends Component {
     };
   }
 
+
   handleClick = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
-    this.setState({anchorEl: null });
+    this.setState({ anchorEl: null });
   };
 
   renderNavbarText = () => {
@@ -67,7 +68,7 @@ class _NavBar extends Component {
 
     if (!isAuthenticated || !currentUser)
       return '/';
-  
+
     if (currentUser.role === Role.ADMIN)
       return '/admin/dashboard';
 
@@ -128,8 +129,12 @@ class _NavBar extends Component {
           }}
           getContentAnchorEl={null}
         >
-          <MenuItem button onClick={() => this.handleLogout(currentUser)}>Logout</MenuItem>
-          <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>Edit Profile</MenuItem>
+          <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>
+            Edit Profile
+          </MenuItem>
+          <MenuItem button onClick={() => this.handleLogout(currentUser)}>
+            Logout
+          </MenuItem>
         </Menu>
       </React.Fragment>
     );
