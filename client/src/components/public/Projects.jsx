@@ -47,10 +47,11 @@ function TabContainer(props) {
   );
 }
 
-const tabValueMapping = {
-  0: ProjectState.APPROVED_ACTIVE,
-  1: ProjectState.APPROVED_INACTIVE,
+const publicProjectState = {
+  APPROVED_ACTIVE: 'APPROVED_ACTIVE',
+  APPROVED_INACTIVE: 'APPROVED_INACTIVE',
 };
+const publicProjectStates = Object.keys(publicProjectState); //An array
 
 class _Projects extends Component {
   constructor(props) {
@@ -66,8 +67,24 @@ class _Projects extends Component {
   }
 
   async componentDidMount() {
+    await this.fetchCountsFromBackEnd(false);
+    for (let i = 0; i < publicProjectStates.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.fetchProjectsFromBackEnd(publicProjectStates[i], false);
+    }
+
+    this.setState({ isLoading: false });
+  }
+
+  fetchCountsFromBackEnd = async filterIssueAddressed => {
     const { requestWithAlert } = this.props.context.utils;
-    const countResponse = await requestWithAlert.get('/api/v1/project_counts');
+    const { fields } = this.props;
+    const endPoint = '/api/v1/project_counts';
+    const queryParams = filterIssueAddressed
+      ? '?issueAddressed=' + fieldValue(fields, FieldName.issueAddressed)
+      : '';
+
+    const countResponse = await requestWithAlert.get(endPoint + queryParams);
 
     if (countResponse.isSuccessful) {
       const counts = (await countResponse.json()).counts;
@@ -83,11 +100,7 @@ class _Projects extends Component {
         formatErrors(errors)
       );
     }
-
-    this.fetchProjectsFromBackEnd(ProjectState.APPROVED_ACTIVE, false);
-
-    this.setState({ isLoading: false });
-  }
+  };
 
   fetchProjectsFromBackEnd = async (projectState, filterIssueAddressed) => {
     const { requestWithAlert } = this.props.context.utils;
@@ -127,12 +140,42 @@ class _Projects extends Component {
   };
 
   handleTabValueChange = (_event, value) => {
-    this.fetchProjectsFromBackEnd(tabValueMapping[value]);
     this.setState({ tabValue: value });
   };
 
-  filterProject = () => {
-    this.fetchProjectsFromBackEnd(tabValueMapping[this.state.tabValue], true);
+  filterProject = async () => {
+    const { fields } = this.props;
+
+    //at the begining field value is undefined:
+    if (!fieldValue(fields, FieldName.issueAddressed)) {
+      return;
+    }
+
+    //if user select 'all categories' fetch all the unfiltered and return
+    if (fieldValue(fields, FieldName.issueAddressed) === 'all categories') {
+      await this.fetchCountsFromBackEnd(false);
+      for (let i = 0; i < publicProjectStates.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.fetchProjectsFromBackEnd(publicProjectStates[i], false);
+      }
+      return;
+    }
+
+    //if user select other issueAddressed / other key, fetch all filtered based on selection
+    await this.fetchCountsFromBackEnd(true);
+    for (let i = 0; i < publicProjectStates.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.fetchProjectsFromBackEnd(publicProjectStates[i], true);
+    }
+  };
+
+  resetAllFieldsAndRefetch = async () => {
+    this.props.resetAllFields();
+    await this.fetchCountsFromBackEnd(false);
+    for (let i = 0; i < publicProjectStates.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.fetchProjectsFromBackEnd(publicProjectStates[i], false);
+    }
   };
 
   getTabLabel = projectState => {
@@ -217,7 +260,7 @@ class _Projects extends Component {
           classes={this.props.classes}
           fields={this.props.fields}
           handleChange={this.props.handleChange}
-          resetAllFields={this.props.resetAllFields}
+          resetAllFieldsAndRefetch={this.resetAllFieldsAndRefetch}
           filterProject={this.filterProject}
         />
         {this.renderProjectListings()}

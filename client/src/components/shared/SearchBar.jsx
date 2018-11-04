@@ -161,7 +161,7 @@ export const _SearchBar = ({
   classes,
   fields,
   handleChange,
-  resetAllFields,
+  resetAllFieldsAndRefetch,
   filterProject,
 }) => {
   return (
@@ -222,7 +222,7 @@ export const _SearchBar = ({
           variant="contained"
           className={classes.resetButton}
           size="small"
-          onClick={resetAllFields}
+          onClick={resetAllFieldsAndRefetch}
         >
           Reset
         </Button>
