@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 import ssnLogo from 'assets/ssn-logo.png';
-import adminAvatar from 'assets/placeholder-avatar.jpg';
+import defaultAvatar from 'assets/placeholder-avatar.jpg';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
 import { Role } from 'components/shared/enums/Role';
@@ -101,6 +101,8 @@ class _NavBar extends Component {
       return null;
     }
 
+    const avatarSrc = currentUser.profilePhotoUrl ? currentUser.profilePhotoUrl : defaultAvatar;
+
     return currentUser && (
       <React.Fragment>
         <Button
@@ -110,7 +112,7 @@ class _NavBar extends Component {
           color="inherit"
           className={classes.logout}
         >
-          <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar} />
+          <Avatar alt="Admin photo" src={avatarSrc} className={classes.avatar} />
           {currentUser.email}
           <ArrowDropDownIcon />
         </Button>
