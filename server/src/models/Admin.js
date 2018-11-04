@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -29,6 +30,8 @@ const AdminSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+AdminSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
 AdminSchema.methods.setPassword = async function (password) {
   const saltRounds = 10;
