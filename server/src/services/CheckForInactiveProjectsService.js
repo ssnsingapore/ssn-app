@@ -9,7 +9,6 @@ const getProjectsWithPastEndDates = () => Project.find({
 });
 
 const writeToLog = (results) => {
-  console.log('Inactive Project Service: Job has completed');
   results.forEach((result) => {
     if (result instanceof Error) {
       console.log(result);
@@ -21,6 +20,7 @@ const writeToLog = (results) => {
       );
     }
   });
+  console.log('Inactive Project Service: Job has completed');
 };
 
 export class CheckForInactiveProjectsService {
