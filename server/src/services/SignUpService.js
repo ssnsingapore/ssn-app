@@ -35,7 +35,7 @@ export class SignUpService {
 
   _checkForDuplicateEmail = (err) => {
     if (err.name === 'ValidationError' && err.errors && err.errors.email
-      && err.errors.email.message === 'should be unique') {
+      && err.errors.email.message === 'is already taken.') {
       return {
         errors: [
           new UnprocessableEntityErrorView(
