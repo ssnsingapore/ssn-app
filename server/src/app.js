@@ -7,13 +7,13 @@ import errorhandler from 'errorhandler';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import findConfig from 'find-config';
-import cron from 'node-cron';
 
 import { isProduction, isTest, config } from 'config/environment';
 import { configurePassport } from 'config/passport';
 import { router } from 'controllers';
 import { handleError } from 'util/errors';
 import { CheckForInactiveProjectsService } from 'services/CheckForInactiveProjectsService';
+import { scheduleCronJob } from 'config/cron';
 
 if (!isTest) {
   const options = config.MONGO_USERNAME
@@ -47,9 +47,7 @@ if (indexFilePath) {
 }
 
 if (!isTest && config.CRON_SCHEDULE) {
-  cron.schedule(config.CRON_SCHEDULE, () => {
-    new CheckForInactiveProjectsService().run();
-  }, { timezone: 'Asia/Singapore' });
+  scheduleCronJob(new CheckForInactiveProjectsService());
 }
 
 if (!isProduction) {
