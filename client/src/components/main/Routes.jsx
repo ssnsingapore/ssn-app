@@ -34,7 +34,7 @@ import { Login } from 'components/old/OldLogin';
 import { SignUp } from 'components/old/OldSignUp';
 import { ImageUpload } from 'components/old/ImageUpload';
 import { PasswordResetForm } from 'components/public/PasswordResetForm';
-import { ProjectOwnerEditProfileForm } from 'components/public/ProjectOwnerEditProfileForm';
+import { ProjectOwnerEditProfileForm } from 'components/project_owner/ProjectOwnerEditProfileForm';
 
 class _Routes extends Component {
   render() {

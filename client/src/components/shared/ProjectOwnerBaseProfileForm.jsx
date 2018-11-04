@@ -170,7 +170,10 @@ const _ProjectOwnerBaseProfileForm = ({
         />
         {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
         {renderPassword(classes, FieldName, fields, handleChange)}
-        <ProjectOwnerProfilePhotoUpload profilePhotoInput={profilePhotoInput} />
+        <ProjectOwnerProfilePhotoUpload
+          profilePhotoInput={profilePhotoInput}
+          profilePhotoUrl={fields.profilePhotoUrl}
+        />
         <Button
           type="submit"
           size="medium"
