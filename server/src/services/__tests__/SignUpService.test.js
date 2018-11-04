@@ -5,7 +5,6 @@ import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
 import mongoose from 'mongoose';
 import { UnprocessableEntityErrorView } from 'util/errors';
-import { Admin } from 'models/Admin';
 import { SignUpService } from '../SignUpService';
 
 jest.mock('config/mailer');
