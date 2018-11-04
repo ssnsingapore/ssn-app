@@ -7,6 +7,7 @@ const getProjectsWithPastEndDates = () => Project.find({
 });
 
 const writeToLog = (results) => {
+  console.log('Inactive Project Service: Job has completed');
   results.forEach((result) => {
     if (result instanceof Error) {
       console.log(result);
@@ -22,6 +23,9 @@ const writeToLog = (results) => {
 
 export class CheckForInactiveProjectsService {
   run = async () => {
+    console.log(
+      'Inactive Project Service: Running job to check for inactive projects'
+    );
     const projectsToUpdate = await getProjectsWithPastEndDates();
 
     const projects = projectsToUpdate.map(
