@@ -1,6 +1,7 @@
-import { Project, ProjectState } from 'models/Project';
+import { Project, ProjectState, ProjectType } from 'models/Project';
 
 const getProjectsWithPastEndDates = () => Project.find({
+  projectType: ProjectType.EVENT,
   state: ProjectState.APPROVED_ACTIVE,
   endDate: { $lt: new Date() },
 });

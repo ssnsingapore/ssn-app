@@ -114,7 +114,7 @@ describe('CheckForInactiveProjectsService', () => {
         projectType: ProjectType.RECURRING,
         frequency: ProjectFrequency.EVERY_DAY,
         state: ProjectState.APPROVED_ACTIVE,
-        endDate: undefined,
+        endDate: yesterday,
       });
 
       await project.save();
