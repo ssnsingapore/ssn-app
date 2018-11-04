@@ -18,6 +18,8 @@ import { AppContext } from 'components/main/AppContext';
 import { Role } from 'components/shared/enums/Role';
 import { AlertType } from 'components/shared/Alert';
 import { Link } from 'react-router-dom';
+import EditIcon from '@material-ui/icons/Edit';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const NavBarDisplayMapping = {
   [Role.ADMIN]: 'SSN ADMIN',
@@ -133,11 +135,11 @@ class _NavBar extends Component {
         >
           {currentUser.role === Role.PROJECT_OWNER &&
             <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>
-              Edit Profile
+              <EditIcon style={{ paddingRight: 10 }} /> Edit Profile
             </MenuItem>
           }
           <MenuItem button onClick={() => this.handleLogout(currentUser)}>
-            Logout
+            <ExitToAppIcon style={{ paddingRight: 10 }} /> Logout
           </MenuItem>
         </Menu>
       </React.Fragment>
