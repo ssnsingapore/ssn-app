@@ -63,6 +63,8 @@ const config = {
   PASSWORD_RESET_CSRF_COOKIE_NAME: 'ssn_password_reset_csrf_token',
 
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+
+  CRON_SCHEDULE: process.env.CRON_SCHEDULE,
 };
 
 export {

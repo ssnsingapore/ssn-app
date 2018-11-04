@@ -45,6 +45,8 @@ For the `AWS_BUCKET_NAME`, you have to create an AWS account and create a new S3
 
 For the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, you have to create an AWS Identity and Access Management (IAM) user with programmatic access. When creating this user add it to a group with an AmazonS3FullAccess policy.
 
+For the `CRON_SCHEDULE`, this configuration runs the cron job that checks active projects which have become inactive (projects past their event end date). The job tags active projects as inactive. This follows standard cron syntax (e.g. '30 2 * * *' runs the job daily at 2:30am)
+
 ---
 
 Start the server

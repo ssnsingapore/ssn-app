@@ -72,6 +72,7 @@ async function getProjectsForProjectOwner(req, res) {
   const projects = await Project.find({ state: projectState, projectOwner: user.id })
     .limit(pageSize)
     .populate('projectOwner')
+    .sort({ updatedAt: 'descending' })
     .exec();
 
   return res.status(200).json({ projects });
