@@ -59,7 +59,7 @@ const constraints = {
     },
   },
   [FieldName.organisationName]: (value, attributes) => {
-    if (attributes.accountType ===  AccountType.INDIVIDUAL) return null;
+    if (attributes.accountType === AccountType.INDIVIDUAL) return null;
 
     return {
       presence: { allowEmpty: false },
@@ -157,7 +157,9 @@ class _ProjectOwnerSignUpForm extends Component {
     const projectOwner = { ...this.props.valuesForAllFields() };
     Object.keys(projectOwner)
       .filter(key => projectOwner[key] !== undefined)
-      .forEach (key => formData.append(key, projectOwner[key]));
+      .forEach(key => formData.append(key, projectOwner[key]));
+
+    console.log(formData);
 
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
@@ -180,7 +182,7 @@ class _ProjectOwnerSignUpForm extends Component {
     }
   }
 
-  render () {
+  render() {
     if (this.state.createdUser) {
       return <Redirect to={{
         pathname: '/signup/confirmation',
@@ -189,12 +191,14 @@ class _ProjectOwnerSignUpForm extends Component {
     }
     return (
       <ProjectOwnerBaseProfileForm
+        resetField={this.props.resetField}
         profilePhotoInput={this.profilePhotoInput}
         FieldName={FieldName}
         fields={this.props.fields}
         handleChange={this.props.handleChange}
         handleSubmit={this.handleSubmit}
-        isSubmitting={this.state.isSubmitting}/>
+        isSubmitting={this.state.isSubmitting}
+      />
     );
   }
 }
