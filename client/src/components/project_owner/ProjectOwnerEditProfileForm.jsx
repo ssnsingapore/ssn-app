@@ -75,7 +75,7 @@ class _ProjectOwnerEditProfileForm extends Component {
       { authenticated: true });
 
     if (response.isSuccessful) {
-      const projectOwner = (await response.json()).projectOwner;
+      const { projectOwner } = await response.json();
       Object.keys(projectOwner).map(data => this.props.setField(data, projectOwner[data]));
     }
 
@@ -102,28 +102,23 @@ class _ProjectOwnerEditProfileForm extends Component {
     }
 
     const projectOwner = { ...this.props.valuesForAllFields() };
+
     Object.keys(projectOwner)
       .filter(key => projectOwner[key] !== undefined)
       .forEach(key => formData.append(key, projectOwner[key]));
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert, authenticator } = this.props.context.utils;
-
-    const projectOwner = { ...this.props.valuesForAllFields() };
+    const currentUser = authenticator.getCurrentUser();
 
     this.setState({ isSubmitting: true });
-
-    const currentUser = authenticator.getCurrentUser();
-    const data = { projectOwner };
-
     const response = await requestWithAlert
-      .put(`/api/v1/project_owners/${currentUser.id}`, data, { authenticated: true });
-
+      .updateForm(`/api/v1/project_owners/${currentUser.id}`, formData, { authenticated: true });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      const newUser = (await response.json()).projectOwner;
-      authenticator.setCurrentUser(newUser);
+      const { projectOwner } = await response.json();
+      authenticator.setCurrentUser(projectOwner);
       showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
       window.location.reload();
     }
@@ -134,6 +129,14 @@ class _ProjectOwnerEditProfileForm extends Component {
     }
 
   }
+
+  getImageDimensions = image => {
+    return new Promise(resolve => {
+      image.addEventListener('load', () => {
+        resolve({ width: image.width, height: image.height });
+      });
+    });
+  };
 
   resizeImage = async () => {
     const image = new Image();
@@ -186,6 +189,7 @@ class _ProjectOwnerEditProfileForm extends Component {
         profilePhotoInput={this.profilePhotoInput}
         FieldName={FieldName}
         fields={this.props.fields}
+        resetField={this.props.resetField}
         handleChange={this.props.handleChange}
         handleSubmit={this.handleSubmit}
         isSubmitting={this.state.isSubmitting}
