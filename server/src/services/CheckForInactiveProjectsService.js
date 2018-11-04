@@ -1,9 +1,11 @@
 import { Project, ProjectState, ProjectType } from 'models/Project';
 
+const getDateToday = () => new Date(new Date().setHours(0, 0, 0, 0));
+
 const getProjectsWithPastEndDates = () => Project.find({
   projectType: ProjectType.EVENT,
   state: ProjectState.APPROVED_ACTIVE,
-  endDate: { $lt: new Date() },
+  endDate: { $lt: getDateToday() },
 });
 
 const writeToLog = (results) => {

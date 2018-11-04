@@ -2,7 +2,12 @@ import mongoose from 'mongoose';
 
 import { createProjectOwner, createProject } from 'util/testHelper';
 import { ProjectOwner } from 'models/ProjectOwner';
-import { Project, ProjectState, ProjectType, ProjectFrequency } from 'models/Project';
+import {
+  Project,
+  ProjectState,
+  ProjectType,
+  ProjectFrequency,
+} from 'models/Project';
 import { CheckForInactiveProjectsService } from '../CheckForInactiveProjectsService';
 
 beforeAll(async () => {
@@ -35,6 +40,7 @@ describe('CheckForInactiveProjectsService', () => {
       yesterday.setDate(yesterday.getDate() - 1);
 
       project.set({
+        projectType: ProjectType.EVENT,
         state: ProjectState.APPROVED_ACTIVE,
         startDate: new Date(2000, 1, 1),
         endDate: yesterday,
@@ -54,6 +60,7 @@ describe('CheckForInactiveProjectsService', () => {
       tomorrow.setDate(tomorrow.getDate() + 1);
 
       project.set({
+        projectType: ProjectType.EVENT,
         state: ProjectState.APPROVED_ACTIVE,
         startDate: new Date(2000, 1, 1),
         endDate: tomorrow,
@@ -73,6 +80,7 @@ describe('CheckForInactiveProjectsService', () => {
       yesterday.setDate(yesterday.getDate() - 1);
 
       project.set({
+        projectType: ProjectType.EVENT,
         state: ProjectState.PENDING_APPROVAL,
         startDate: new Date(2000, 1, 1),
         endDate: yesterday,
@@ -92,6 +100,7 @@ describe('CheckForInactiveProjectsService', () => {
       yesterday.setDate(yesterday.getDate() - 1);
 
       project.set({
+        projectType: ProjectType.EVENT,
         state: ProjectState.REJECTED,
         startDate: new Date(2000, 1, 1),
         endDate: yesterday,
@@ -115,6 +124,25 @@ describe('CheckForInactiveProjectsService', () => {
         frequency: ProjectFrequency.EVERY_DAY,
         state: ProjectState.APPROVED_ACTIVE,
         endDate: yesterday,
+      });
+
+      await project.save();
+
+      await new CheckForInactiveProjectsService().run();
+
+      const updatedProject = await Project.findById(project.id);
+
+      expect(updatedProject.state).toEqual(ProjectState.APPROVED_ACTIVE);
+    });
+
+    it('does not set an active project which end date is today to inactive', async () => {
+      const today = new Date();
+
+      project.set({
+        projectType: ProjectType.EVENT,
+        state: ProjectState.APPROVED_ACTIVE,
+        startDate: today,
+        endDate: today,
       });
 
       await project.save();
