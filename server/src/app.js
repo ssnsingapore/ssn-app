@@ -7,11 +7,13 @@ import errorhandler from 'errorhandler';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import findConfig from 'find-config';
+import cron from 'node-cron';
 
 import { isProduction, isTest, config } from 'config/environment';
 import { configurePassport } from 'config/passport';
 import { router } from 'controllers';
 import { handleError } from 'util/errors';
+import { CheckForInactiveProjectsService } from 'services/CheckForInactiveProjectsService';
 
 if (!isTest) {
   const options = config.MONGO_USERNAME
@@ -42,6 +44,12 @@ app.use(passport.initialize());
 const indexFilePath = findConfig('index.html', { dir: 'client/build' });
 if (indexFilePath) {
   app.use(express.static(path.dirname(indexFilePath)));
+}
+
+if (!isTest && config.CRON_SCHEDULE) {
+  cron.schedule(config.CRON_SCHEDULE, () => {
+    new CheckForInactiveProjectsService().run();
+  });
 }
 
 if (!isProduction) {
