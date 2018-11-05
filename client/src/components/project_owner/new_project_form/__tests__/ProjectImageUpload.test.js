@@ -62,10 +62,12 @@ describe('ProjectImageUpload', () => {
   it('should remove current value when click cancel', () => {
     const cancelButton = wrapper.find(IconButton);
     expect(component.prop('projectImageInput').current.value).not.toEqual('');
+    expect(wrapper.state().imageSrc).not.toEqual('');
 
     cancelButton.simulate('click');
 
     expect(component.prop('projectImageInput').current.value).toEqual('');
+    expect(wrapper.state().imageSrc).toEqual('');
   });
 
 });
