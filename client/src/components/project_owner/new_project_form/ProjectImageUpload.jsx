@@ -106,7 +106,7 @@ export class _ProjectImageUpload extends Component {
           className={classes.iconButton}
           onClick={this.handleCancel}
         >
-          <HighlightOffIcon />
+          <HighlightOffIcon style={{ fontSize: '32px' }} />
         </IconButton>
         {isImageResolutionTooLow && this.renderDialog()}
       </Grid>
@@ -160,6 +160,9 @@ const styles = theme => ({
   },
   uploadInput: {
     display: 'none',
+  },
+  iconButton: {
+    margin: theme.spacing.unit,
   },
 });
 
