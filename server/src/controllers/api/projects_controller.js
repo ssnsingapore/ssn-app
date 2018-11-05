@@ -23,15 +23,21 @@ async function getProjects(req, res) {
   const {
     projectState = ProjectState.APPROVED_ACTIVE,
     issueAddressed,
+    projectLocation,
   } = req.query;
 
   const sortParams =    projectState === ProjectState.PENDING_APPROVAL
       ? { createdAt: 'ascending' }
       : { updatedAt: 'descending' };
 
-  const filterParams = !issueAddressed
-    ? {}
-    : { issuesAddressed: issueAddressed };
+  const issueAddressedObj = issueAddressed
+    ? { issuesAddressed: issueAddressed }
+    : {};
+  const projectLocationObj = projectLocation
+    ? { location: projectLocation }
+    : {};
+
+  const filterParams = { ...issueAddressedObj, ...projectLocationObj };
 
   // Queries to mongodb
   const projects = await Project.find({
@@ -48,13 +54,17 @@ async function getProjects(req, res) {
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
 async function getProjectCounts(req, res) {
-  const { issueAddressed } = req.query;
+  const { issueAddressed, projectLocation } = req.query;
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
-  const filterParams = !issueAddressed
-    ? {}
-    : { issuesAddressed: issueAddressed };
+  const issueAddressedObj = issueAddressed
+    ? { issuesAddressed: issueAddressed }
+    : {};
+  const projectLocationObj = projectLocation
+    ? { location: projectLocation }
+    : {};
+  const filterParams = { ...issueAddressedObj, ...projectLocationObj };
 
   for (let i = 0; i < projectStates.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop

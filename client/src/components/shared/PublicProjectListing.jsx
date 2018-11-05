@@ -113,18 +113,23 @@ const _getLinkEndpoint = project => {
   return `/projects/${project._id}`;
 };
 
-const renderProjects = (classes, projects, projectState) => {
+const renderProjects = (classes, projects, projectState, theme) => {
+  //If project length is zero is taken from Sabrina.
   if (projects.length === 0) {
-    // TODO: Sabrina - remove logic in Projects, AdminDashboard and ProjectOwnerDashboard
-    // for rendering this and fix the casing/display message below
-
     return (
       <Typography
         variant="subheading"
-        // style={{ color: theme.palette.grey[500] }}
+        style={{ color: theme.palette.grey[500] }}
       >
-        There are no {ProjectStateDisplayMapping[projectState]} projects at the
-        moment.
+        There are no
+        {projectState === 'PENDING_APPROVAL'
+          ? ` projects ${ProjectStateDisplayMapping[
+            projectState
+          ].toLowerCase()} `
+          : ` ${ProjectStateDisplayMapping[
+            projectState
+          ].toLowerCase()} projects `}
+        at the moment.
       </Typography>
     );
   }
@@ -159,7 +164,7 @@ export const _PublicProjectListing = ({
 
   return (
     <Grid container spacing={theme.spacing.unit}>
-      {renderProjects(classes, projects, projectState)}
+      {renderProjects(classes, projects, projectState, theme)}
     </Grid>
   );
 };

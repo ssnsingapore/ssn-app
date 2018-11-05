@@ -167,9 +167,7 @@ export const _SearchBar = ({
   return (
     <Paper className={classes.searchBox}>
       <div style={{ width: '80vw', margin: '0 auto' }}>
-        <Typography variant="title">
-          FIND THE PERFECT SUSTAINABILITY PROJECT TO VOLUNTEER FOR!
-        </Typography>
+        <Typography variant="title">Filter Projects</Typography>
         <Typography variant="headline">
           I am looking for projects about{' '}
           {createIssueAddressedMenu(

@@ -39,6 +39,13 @@ const constraints = {
   },
 };
 
+const firstLabel = {
+  [FieldName.issueAddressed]: 'all categories',
+  [FieldName.projectLocation]: 'all areas',
+  [FieldName.month]: 'all months',
+  [FieldName.volunteerRequirementType]: 'all roles',
+};
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -47,11 +54,10 @@ function TabContainer(props) {
   );
 }
 
-const publicProjectState = {
-  APPROVED_ACTIVE: 'APPROVED_ACTIVE',
-  APPROVED_INACTIVE: 'APPROVED_INACTIVE',
-};
-const publicProjectStates = Object.keys(publicProjectState); //An array
+const publicProjectStates = [
+  ProjectState.APPROVED_ACTIVE,
+  ProjectState.APPROVED_INACTIVE,
+];
 
 class _Projects extends Component {
   constructor(props) {
@@ -67,24 +73,35 @@ class _Projects extends Component {
   }
 
   async componentDidMount() {
-    await this.fetchCountsFromBackEnd(false);
+    await this.fetchProjectCounts([]);
     for (let i = 0; i < publicProjectStates.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjectsFromBackEnd(publicProjectStates[i], false);
+      await this.fetchProjects(publicProjectStates[i], []);
     }
 
     this.setState({ isLoading: false });
   }
 
-  fetchCountsFromBackEnd = async filterIssueAddressed => {
+  isNotUndefinedNotAll = name => {
+    const { fields } = this.props;
+
+    return (
+      fieldValue(fields, name) !== undefined &&
+      fieldValue(fields, name) !== firstLabel[name]
+    );
+  };
+
+  fetchProjectCounts = async keysToFilter => {
     const { requestWithAlert } = this.props.context.utils;
     const { fields } = this.props;
-    const endPoint = '/api/v1/project_counts';
-    const queryParams = filterIssueAddressed
-      ? '?issueAddressed=' + fieldValue(fields, FieldName.issueAddressed)
-      : '';
 
-    const countResponse = await requestWithAlert.get(endPoint + queryParams);
+    const endPoint = '/api/v1/project_counts';
+    const filterQueryParams = keysToFilter
+      .map(k => k + '=' + fieldValue(fields, k))
+      .join('&');
+    const countResponse = await requestWithAlert.get(
+      endPoint + '?' + filterQueryParams
+    );
 
     if (countResponse.isSuccessful) {
       const counts = (await countResponse.json()).counts;
@@ -102,7 +119,7 @@ class _Projects extends Component {
     }
   };
 
-  fetchProjectsFromBackEnd = async (projectState, filterIssueAddressed) => {
+  fetchProjects = async (projectState, keysToFilter) => {
     const { requestWithAlert } = this.props.context.utils;
     const { fields } = this.props;
     const { pageSize = 10 } = this.props;
@@ -110,14 +127,11 @@ class _Projects extends Component {
     const endpoint = '/api/v1/projects';
     const queryParams =
       '?pageSize=' + pageSize + '&projectState=' + projectState;
-    const queryParamsWithFilter = filterIssueAddressed
-      ? queryParams +
-        '&issueAddressed=' +
-        fieldValue(fields, FieldName.issueAddressed)
-      : queryParams;
-
+    const filterQueryParams = keysToFilter
+      .map(k => k + '=' + fieldValue(fields, k))
+      .join('&');
     const response = await requestWithAlert.get(
-      endpoint + queryParamsWithFilter,
+      endpoint + queryParams + '&' + filterQueryParams,
       {
         authenticated: true,
       }
@@ -144,37 +158,23 @@ class _Projects extends Component {
   };
 
   filterProject = async () => {
-    const { fields } = this.props;
+    const keysToFilter = Object.keys(FieldName).filter(key =>
+      this.isNotUndefinedNotAll(FieldName[key])
+    );
 
-    //at the begining field value is undefined:
-    if (!fieldValue(fields, FieldName.issueAddressed)) {
-      return;
-    }
-
-    //if user select 'all categories' fetch all the unfiltered and return
-    if (fieldValue(fields, FieldName.issueAddressed) === 'all categories') {
-      await this.fetchCountsFromBackEnd(false);
-      for (let i = 0; i < publicProjectStates.length; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        await this.fetchProjectsFromBackEnd(publicProjectStates[i], false);
-      }
-      return;
-    }
-
-    //if user select other issueAddressed / other key, fetch all filtered based on selection
-    await this.fetchCountsFromBackEnd(true);
+    await this.fetchProjectCounts(keysToFilter);
     for (let i = 0; i < publicProjectStates.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjectsFromBackEnd(publicProjectStates[i], true);
+      await this.fetchProjects(publicProjectStates[i], keysToFilter);
     }
   };
 
   resetAllFieldsAndRefetch = async () => {
     this.props.resetAllFields();
-    await this.fetchCountsFromBackEnd(false);
+    await this.fetchProjectCounts([]);
     for (let i = 0; i < publicProjectStates.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjectsFromBackEnd(publicProjectStates[i], false);
+      await this.fetchProjects(publicProjectStates[i], []);
     }
   };
 
