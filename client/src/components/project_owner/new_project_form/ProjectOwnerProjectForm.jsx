@@ -65,7 +65,7 @@ class _ProjectOwnerProjectForm extends Component {
             variant="contained"
             color="secondary"
             className={classes.button}
-            disable={this.props.isSubmitting}
+            disabled={this.props.isSubmitting}
           >
             Submit
           </Button>

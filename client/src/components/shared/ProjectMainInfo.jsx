@@ -121,13 +121,15 @@ const renderProjectBaseDetails = (classes, project) => {
         >
           {title}
         </Typography>
-        <Typography
-          variant="body1"
-          gutterBottom
-          style={{ marginBottom: '60px' }}
-        >
-          {description}
-        </Typography>
+        <div style={{ marginBottom: '60px' }}>
+          {description.split('\n').map((i, key) => {
+            return (
+              <Typography key={key} variant="body1" gutterBottom paragraph>
+                {i}
+              </Typography>
+            );
+          })}
+        </div>
         {volunteerSignupUrl ? (
           <Button
             variant="contained"
