@@ -164,7 +164,7 @@ class _ProjectOwnerLoginForm extends React.Component {
             margin="normal"
             fullWidth
             name={FieldName.password}
-            value={fieldValue(fields, FieldName.password)}
+            value={fieldValue(fields, FieldName.password) || ''}
             error={fieldHasError(fields, FieldName.password)}
             helperText={fieldErrorText(fields, FieldName.password)}
             onChange={handleChange}
