@@ -65,19 +65,22 @@ const renderAllVolunteerRequirements = (
   volunteerRequirementsDescription,
   classes
 ) => (
-    <React.Fragment>
-      {volunteerRequirements && volunteerRequirements.length !== 0
-        ? renderVolunteerDetailsTable(volunteerRequirements, classes)
-        : ''}
-      {volunteerRequirementsDescription ? (
-        <Typography variant="body1" data-test-id="volunteerRequirementDescription">
-          {volunteerRequirementsDescription}
-        </Typography>
-      ) : (
-          ''
-        )}
-    </React.Fragment>
-  );
+  <React.Fragment>
+    {volunteerRequirements && volunteerRequirements.length !== 0
+      ? renderVolunteerDetailsTable(volunteerRequirements, classes)
+      : ''}
+    {volunteerRequirementsDescription ? (
+      <Typography
+        variant="body1"
+        data-test-id="volunteerRequirementDescription"
+      >
+        {volunteerRequirementsDescription}
+      </Typography>
+    ) : (
+      ''
+    )}
+  </React.Fragment>
+);
 
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
@@ -114,21 +117,38 @@ const renderProjectBaseDetails = (classes, project) => {
   return (
     <Card className={classes.card} square>
       <CardContent className={classes.content}>
-        <Typography
-          variant="headline"
-          gutterBottom
-          className={classes.headline}
-        >
-          {title}
-        </Typography>
+        {title ? (
+          <Typography
+            variant="headline"
+            gutterBottom
+            className={classes.headline}
+          >
+            {title}
+          </Typography>
+        ) : (
+          <Typography
+            variant="headline"
+            color="error"
+            gutterBottom
+            className={classes.headline}
+          >
+            Project Title (Required)
+          </Typography>
+        )}
         <div style={{ marginBottom: '60px' }}>
-          {description.split('\n').map((i, key) => {
-            return (
-              <Typography key={key} variant="body1" gutterBottom paragraph>
-                {i}
-              </Typography>
-            );
-          })}
+          {description ? (
+            description.split('\n').map((i, key) => {
+              return (
+                <Typography key={key} variant="body1" gutterBottom paragraph>
+                  {i}
+                </Typography>
+              );
+            })
+          ) : (
+            <Typography color="error" gutterBottom>
+              Project description (required)
+            </Typography>
+          )}
         </div>
         {volunteerSignupUrl ? (
           <Button
@@ -141,8 +161,8 @@ const renderProjectBaseDetails = (classes, project) => {
             Sign up as a volunteer!
           </Button>
         ) : (
-            ''
-          )}
+          ''
+        )}
       </CardContent>
       <CardMedia className={classes.cover} image={coverImageUrl} />
     </Card>
@@ -156,10 +176,9 @@ const renderVolunteerDetails = (classes, project) => {
     volunteerBenefitsDescription,
   } = project;
 
-  const isVolunteerRequirementsAndDescriptionEmpty = (
-    (!volunteerRequirements || volunteerRequirements.length === 0)
-    && !volunteerRequirementsDescription
-  );
+  const isVolunteerRequirementsAndDescriptionEmpty =
+    (!volunteerRequirements || volunteerRequirements.length === 0) &&
+    !volunteerRequirementsDescription;
 
   return (
     <Paper className={classes.paper} square>
@@ -179,8 +198,8 @@ const renderVolunteerDetails = (classes, project) => {
       {volunteerBenefitsDescription ? (
         <Typography variant="body1">{volunteerBenefitsDescription}</Typography>
       ) : (
-          '-'
-        )}
+        '-'
+      )}
     </Paper>
   );
 };
@@ -201,18 +220,26 @@ const renderProjectDetails = (classes, project) => {
         Project Details
       </Typography>
       {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
-      {projectType === ProjectType.EVENT && renderRow(
-        'Start date',
-        moment(startDate)
-          .format('dddd, Do MMMM YYYY')
+      {projectType === ProjectType.EVENT &&
+        renderRow(
+          'Start date',
+          moment(startDate)
+            .utc()
+            .format('dddd, Do MMMM YYYY')
+        )}
+      {projectType === ProjectType.EVENT &&
+        renderRow(
+          'End date',
+          moment(endDate)
+            .utc()
+            .format('dddd, Do MMMM YYYY')
+        )}
+      {projectType === ProjectType.RECURRING &&
+        renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
+      {renderRow(
+        'Time',
+        time ? moment(time, 'HH:mm').format('h:mm A') : undefined
       )}
-      {projectType === ProjectType.EVENT && renderRow(
-        'End date',
-        moment(endDate)
-          .format('dddd, Do MMMM YYYY')
-      )}
-      {projectType === ProjectType.RECURRING && renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
-      {renderRow('Time', time ? moment(time, 'HH:mm').format('h:mm A') : undefined)}
       {renderRow('Location', ProjectLocationDisplayMapping[location])}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
