@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import capitalizeTitle from 'capitalize-title';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Grid,
@@ -123,7 +124,7 @@ const renderProjectBaseDetails = (classes, project) => {
             gutterBottom
             className={classes.headline}
           >
-            {title}
+            {capitalizeTitle(title)}
           </Typography>
         ) : (
           <Typography
