@@ -164,8 +164,8 @@ class _AdminProjectDetails extends Component {
           pathname: '/admin/dashboard' }}/>
       );
     }
-    return(
-      <Grid container className={classes.root}>
+    return (
+      <div className={classes.root}>
         <AdminProjectApprovalConfirmationDialog
           open={this.state.approveConfirmationDialogBoxOpen}
           handleClose={this.handleApproveConfirmationDialogBoxClose}
@@ -176,28 +176,26 @@ class _AdminProjectDetails extends Component {
           handleClose={this.handleRejectionConfirmationDialogBoxClose}
           projectId={id}
         />
-        <Grid item xs={12} className={classes.projectDetails}>
-          <Grid container spacing={16}>
-            <Grid item xs={12}>
-              <ProjectMainInfo project={this.state.project} />
-            </Grid>
-            <Grid item xs={12}>
-              <ProjectOwnerDetails projectOwner={this.state.project.projectOwner} />
-            </Grid>
+        <Grid container spacing={16} className={classes.projectDetails}>
+          <Grid item xs={12}>
+            <ProjectMainInfo project={this.state.project} />
+          </Grid>
+          <Grid item xs={12}>
+            <ProjectOwnerDetails
+              projectOwner={this.state.project.projectOwner}
+            />
           </Grid>
         </Grid>
         {this.renderNavBar()}
-      </Grid>
+      </div>
     );
   }
-
 }
 
 const styles = theme => ({
-
   root: {
+    display: 'flex',
     flexDirection: 'column',
-    minHeight: '45vw',
   },
   projectDetails: {
     flexGrow: 1,
@@ -208,7 +206,7 @@ const styles = theme => ({
   bottomNavBar: {
     display: 'flex',
     position: 'sticky',
-    bottom: '0',
+    bottom: 0,
     backgroundColor: theme.palette.grey[200],
     justifyContent: 'flex-end',
   },

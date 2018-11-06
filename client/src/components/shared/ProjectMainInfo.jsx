@@ -221,24 +221,21 @@ const renderProjectDetails = (classes, project) => {
 
 const _ProjectMainInfo = ({ classes, project }) => {
   return (
-    <div className={classes.root}>
-      <Grid container spacing={16}>
-        <Grid item xs={12}>
-          {renderProjectBaseDetails(classes, project)}
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          {renderVolunteerDetails(classes, project)}
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          {renderProjectDetails(classes, project)}
-        </Grid>
+    <Grid container spacing={16}>
+      <Grid item xs={12}>
+        {renderProjectBaseDetails(classes, project)}
       </Grid>
-    </div>
+      <Grid item xs={12} sm={6}>
+        {renderVolunteerDetails(classes, project)}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {renderProjectDetails(classes, project)}
+      </Grid>
+    </Grid>
   );
 };
 
 const styles = theme => ({
-  root: {},
   paper: {
     padding: theme.spacing.unit * 3,
     height: '100%',
