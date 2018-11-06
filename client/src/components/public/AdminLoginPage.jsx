@@ -98,7 +98,7 @@ export class _AdminLoginPage extends Component {
               label="Username"
               required={true}
               onChange={handleChange}
-              value={fieldValue(fields, FieldName.email)}
+              value={fieldValue(fields, FieldName.email) || ''}
               fullWidth />
             <TextField
               name={FieldName.hashedPassword}
@@ -108,7 +108,7 @@ export class _AdminLoginPage extends Component {
               type="password"
               required={true}
               onChange={handleChange}
-              value={fieldValue(fields, FieldName.hashedPassword)}
+              value={fieldValue(fields, FieldName.hashedPassword) || ''}
               fullWidth />
             <Button
               type="submit"
