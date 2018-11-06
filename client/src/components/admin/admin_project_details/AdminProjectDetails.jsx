@@ -165,29 +165,31 @@ class _AdminProjectDetails extends Component {
       );
     }
     return (
-      <div className={classes.root}>
-        <AdminProjectApprovalConfirmationDialog
-          open={this.state.approveConfirmationDialogBoxOpen}
-          handleClose={this.handleApproveConfirmationDialogBoxClose}
-          handleApprove={this.handleApprove}
-        />
-        <AdminProjectRejectionConfirmationDialog
-          open={this.state.rejectionConfirmationDialogBoxOpen}
-          handleClose={this.handleRejectionConfirmationDialogBoxClose}
-          projectId={id}
-        />
-        <Grid container spacing={16} className={classes.projectDetails}>
-          <Grid item xs={12}>
-            <ProjectMainInfo project={this.state.project} />
+      <React.Fragment>
+        <div className={classes.root}>
+          <AdminProjectApprovalConfirmationDialog
+            open={this.state.approveConfirmationDialogBoxOpen}
+            handleClose={this.handleApproveConfirmationDialogBoxClose}
+            handleApprove={this.handleApprove}
+          />
+          <AdminProjectRejectionConfirmationDialog
+            open={this.state.rejectionConfirmationDialogBoxOpen}
+            handleClose={this.handleRejectionConfirmationDialogBoxClose}
+            projectId={id}
+          />
+          <Grid container spacing={16} className={classes.projectDetails}>
+            <Grid item xs={12}>
+              <ProjectMainInfo project={this.state.project} />
+            </Grid>
+            <Grid item xs={12}>
+              <ProjectOwnerDetails
+                projectOwner={this.state.project.projectOwner}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <ProjectOwnerDetails
-              projectOwner={this.state.project.projectOwner}
-            />
-          </Grid>
-        </Grid>
+        </div>
         {this.renderNavBar()}
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -196,9 +198,9 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
   },
   projectDetails: {
-    flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
     padding: '60px 0',
