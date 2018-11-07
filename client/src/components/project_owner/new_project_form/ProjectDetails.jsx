@@ -200,11 +200,11 @@ const styles = theme => ({
   },
   sharedRow: {
     display: 'flex',
-    marginTop: '20px',
-    marginBottom: '20px',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
   },
   columnInRow: {
-    marginRight: '6px',
+    marginRight: theme.spacing.unit,
   },
   chips: {
     display: 'flex',

@@ -96,13 +96,13 @@ const styles = theme => ({
     marginTop: '0px',
     marginBottom: '0px',
     width: '33%',
-    marginRight: '4px',
+    marginRight: theme.spacing.unit,
   },
   textfield: {
     marginTop: '0px',
     marginBottom: '0px',
     width: '32%',
-    marginRight: '4px',
+    marginRight: theme.spacing.unit,
   },
 });
 
