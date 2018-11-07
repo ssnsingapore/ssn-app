@@ -145,7 +145,11 @@ async function projectOwnerChangeProjectState(req, res) {
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
-  const isCorrectProjectOwner = user._id.toString() === existingProject.projectOwner._id.toString();
+  const { _id } = existingProject.projectOwner;
+  const isCorrectProjectOwner = user.id.toString() === _id.toString();
+
+  console.log(isCorrectProjectOwner);
+
 
   if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     existingProject.set(updatedProject);
