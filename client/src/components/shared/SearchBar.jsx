@@ -15,34 +15,36 @@ import { Month } from 'components/shared/enums/Month';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 import { IssueAddressedDisplayMapping } from './display_mappings/IssueAddressedDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
-import { ProjectLocationDisplayMapping } from './display_mappings/ProjectLocationDisplayMapping';
+import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
+import { MonthDisplayMapping } from 'components/shared/display_mappings/MonthDisplayMapping';
+
 /* Using form control */
-const createIssueAddressedMenu = (
+const createMenu = (enumeration, displayMapping) => (
   field,
   firstLabel,
   classes,
   fields,
   handleChange,
-  FieldName
+  FieldName,
 ) => {
   return (
     <FormControl className={classes.formControl}>
       <InputLabel htmlFor={field} />
       <Select
-        value={fieldValue(fields, field) || firstLabel}
+        value={fieldValue(fields, field) || ''}
         name={FieldName[field]}
         onChange={handleChange}
       >
-        <MenuItem key={firstLabel} value={firstLabel}>
+        <MenuItem key={firstLabel} value="">
           <Typography variant="body2" className={classes.menuText}>
             {firstLabel}
           </Typography>
         </MenuItem>
-        {Object.values(IssueAddressed).map(option => {
+        {Object.values(enumeration).map(option => {
           return (
             <MenuItem key={option} value={option}>
               <Typography variant="body2" className={classes.menuText}>
-                {IssueAddressedDisplayMapping[option]}
+                {displayMapping[option]}
               </Typography>
             </MenuItem>
           );
@@ -53,108 +55,10 @@ const createIssueAddressedMenu = (
   );
 };
 
-const createMonthMenu = (
-  field,
-  firstLabel,
-  classes,
-  fields,
-  handleChange,
-  FieldName
-) => {
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field} />
-      <Select
-        value={fieldValue(fields, field) || firstLabel}
-        name={FieldName[field]}
-        onChange={handleChange}
-      >
-        {Object.values({ firstLabel: firstLabel, ...Month }).map(option => {
-          return (
-            <MenuItem key={option} value={option}>
-              <Typography variant="body2" className={classes.menuText}>
-                {option}
-              </Typography>
-            </MenuItem>
-          );
-        })}
-        ;
-      </Select>
-    </FormControl>
-  );
-};
-
-const createVolunteerRequirementTypeMenu = (
-  field,
-  firstLabel,
-  classes,
-  fields,
-  handleChange,
-  FieldName
-) => {
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field} />
-      <Select
-        value={fieldValue(fields, field) || firstLabel}
-        name={FieldName[field]}
-        onChange={handleChange}
-      >
-        <MenuItem key={firstLabel} value={firstLabel}>
-          <Typography variant="body2" className={classes.menuText}>
-            {firstLabel}
-          </Typography>
-        </MenuItem>
-        {Object.values(VolunteerRequirementType).map(option => {
-          return (
-            <MenuItem key={option} value={option}>
-              <Typography variant="body2" className={classes.menuText}>
-                {VolunteerRequirementTypeDisplayMapping[option]}
-              </Typography>
-            </MenuItem>
-          );
-        })}
-        ;
-      </Select>
-    </FormControl>
-  );
-};
-
-const createProjectLocationMenu = (
-  field,
-  firstLabel,
-  classes,
-  fields,
-  handleChange,
-  FieldName
-) => {
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field} />
-      <Select
-        value={fieldValue(fields, field) || firstLabel}
-        name={FieldName[field]}
-        onChange={handleChange}
-      >
-        <MenuItem key={firstLabel} value={firstLabel}>
-          <Typography variant="body2" className={classes.menuText}>
-            {firstLabel}
-          </Typography>
-        </MenuItem>
-        {Object.values(ProjectLocation).map(option => {
-          return (
-            <MenuItem key={option} value={option}>
-              <Typography variant="body2" className={classes.menuText}>
-                {ProjectLocationDisplayMapping[option]}
-              </Typography>
-            </MenuItem>
-          );
-        })}
-        ;
-      </Select>
-    </FormControl>
-  );
-};
+const createIssueAddressedMenu = createMenu(IssueAddressed, IssueAddressedDisplayMapping);
+const createVolunteerRequirementTypeMenu = createMenu(VolunteerRequirementType, VolunteerRequirementTypeDisplayMapping);
+const createProjectLocationMenu = createMenu(ProjectLocation, ProjectLocationDisplayMapping);
+const createMonthMenu = createMenu(Month, MonthDisplayMapping);
 
 export const _SearchBar = ({
   FieldName,
@@ -162,7 +66,8 @@ export const _SearchBar = ({
   fields,
   handleChange,
   resetAllFieldsAndRefetch,
-  filterProject,
+  filterProjects,
+  isLoading,
 }) => {
   return (
     <Paper className={classes.searchBox}>
@@ -212,7 +117,8 @@ export const _SearchBar = ({
           color="secondary"
           className={classes.resetButton}
           size="small"
-          onClick={filterProject}
+          onClick={filterProjects}
+          disabled={isLoading}
         >
           Filter
         </Button>
@@ -221,6 +127,7 @@ export const _SearchBar = ({
           className={classes.resetButton}
           size="small"
           onClick={resetAllFieldsAndRefetch}
+          disabled={isLoading}
         >
           Reset
         </Button>

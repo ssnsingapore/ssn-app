@@ -1,21 +1,23 @@
-import React, { Component } from 'react';
-import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
+import { Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-
 import { AppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
+import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+import { Month } from 'components/shared/enums/Month';
+import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { ProjectState } from 'components/shared/enums/ProjectState';
+import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+import { PublicProjectListing } from 'components/shared/PublicProjectListing';
 import { SearchBar } from 'components/shared/SearchBar';
 import { Spinner } from 'components/shared/Spinner';
-import { PublicProjectListing } from 'components/shared/PublicProjectListing';
-import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
-import { extractErrors, formatErrors } from 'util/errors';
-import { AlertType } from 'components/shared/Alert';
-import { ProjectState } from 'components/shared/enums/ProjectState';
+import qs from 'qs';
+import React, { Component } from 'react';
 import { withContext } from 'util/context';
-import { getFieldNameObject, withForm, fieldValue } from 'util/form';
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
-import { Month } from 'components/shared/enums/Month';
-import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+import { extractErrors, formatErrors } from 'util/errors';
+import { getFieldNameObject, withForm } from 'util/form';
+
+// import { PROJECT_KEYS_TO_FILTER } from 'util/storage_keys';
 
 const FieldName = getFieldNameObject([
   'issueAddressed',
@@ -37,13 +39,6 @@ const constraints = {
   [FieldName.volunteerRequirementType]: {
     inclusion: Object.values(VolunteerRequirementType),
   },
-};
-
-const firstLabel = {
-  [FieldName.issueAddressed]: 'all categories',
-  [FieldName.projectLocation]: 'all areas',
-  [FieldName.month]: 'all months',
-  [FieldName.volunteerRequirementType]: 'all roles',
 };
 
 function TabContainer(props) {
@@ -73,34 +68,23 @@ class _Projects extends Component {
   }
 
   async componentDidMount() {
-    await this.fetchProjectCounts([]);
+    await this.fetchProjectCounts();
     for (let i = 0; i < publicProjectStates.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjects(publicProjectStates[i], []);
+      await this.fetchProjects(publicProjectStates[i]);
     }
 
     this.setState({ isLoading: false });
   }
 
-  isNotUndefinedNotAll = name => {
-    const { fields } = this.props;
-
-    return (
-      fieldValue(fields, name) !== undefined &&
-      fieldValue(fields, name) !== firstLabel[name]
-    );
-  };
-
-  fetchProjectCounts = async keysToFilter => {
+  fetchProjectCounts = async () => {
     const { requestWithAlert } = this.props.context.utils;
-    const { fields } = this.props;
 
     const endPoint = '/api/v1/project_counts';
-    const filterQueryParams = keysToFilter
-      .map(k => k + '=' + fieldValue(fields, k))
-      .join('&');
+    const filterQueryParams = qs.stringify(this.props.valuesForAllFields());
+
     const countResponse = await requestWithAlert.get(
-      endPoint + '?' + filterQueryParams
+      `${endPoint}?${filterQueryParams}`
     );
 
     if (countResponse.isSuccessful) {
@@ -119,19 +103,16 @@ class _Projects extends Component {
     }
   };
 
-  fetchProjects = async (projectState, keysToFilter) => {
+  fetchProjects = async (projectState) => {
     const { requestWithAlert } = this.props.context.utils;
-    const { fields } = this.props;
     const { pageSize = 10 } = this.props;
 
     const endpoint = '/api/v1/projects';
-    const queryParams =
-      '?pageSize=' + pageSize + '&projectState=' + projectState;
-    const filterQueryParams = keysToFilter
-      .map(k => k + '=' + fieldValue(fields, k))
-      .join('&');
+    const queryObj = { pageSize, projectState, ...this.props.valuesForAllFields() };
+    const queryParams = qs.stringify(queryObj);
+
     const response = await requestWithAlert.get(
-      endpoint + queryParams + '&' + filterQueryParams,
+      `${endpoint}?${queryParams}`,
       {
         authenticated: true,
       }
@@ -157,25 +138,33 @@ class _Projects extends Component {
     this.setState({ tabValue: value });
   };
 
-  filterProject = async () => {
-    const keysToFilter = Object.keys(FieldName).filter(key =>
-      this.isNotUndefinedNotAll(FieldName[key])
-    );
+  //setProjectKeysToFilter = (keysToFilter) => {
+  //  localStorage.setItem(PROJECT_KEYS_TO_FILTER, JSON.stringify(keysToFilter));
+  //}
 
-    await this.fetchProjectCounts(keysToFilter);
+  filterProjects = async () => {
+    this.setState({ isLoading: true });
+
+    await this.fetchProjectCounts();
     for (let i = 0; i < publicProjectStates.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjects(publicProjectStates[i], keysToFilter);
+      await this.fetchProjects(publicProjectStates[i]);
     }
+
+    this.setState({ isLoading: false });
   };
 
   resetAllFieldsAndRefetch = async () => {
+    this.setState({ isLoading: true });
+
     this.props.resetAllFields();
-    await this.fetchProjectCounts([]);
+    await this.fetchProjectCounts();
     for (let i = 0; i < publicProjectStates.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjects(publicProjectStates[i], []);
+      await this.fetchProjects(publicProjectStates[i]);
     }
+
+    this.setState({ isLoading: false });
   };
 
   getTabLabel = projectState => {
@@ -261,7 +250,8 @@ class _Projects extends Component {
           fields={this.props.fields}
           handleChange={this.props.handleChange}
           resetAllFieldsAndRefetch={this.resetAllFieldsAndRefetch}
-          filterProject={this.filterProject}
+          filterProjects={this.filterProjects}
+          isLoading={this.state.isLoading}
         />
         {this.renderProjectListings()}
       </div>
