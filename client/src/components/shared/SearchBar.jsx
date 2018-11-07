@@ -15,118 +15,121 @@ import { Month } from 'components/shared/enums/Month';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 import { IssueAddressedDisplayMapping } from './display_mappings/IssueAddressedDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
-import { ProjectLocationDisplayMapping } from './display_mappings/ProjectLocationDisplayMapping';
+import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
+import { MonthDisplayMapping } from 'components/shared/display_mappings/MonthDisplayMapping';
+
 /* Using form control */
-const createIssueAddressedMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
+const createMenu = (enumeration, displayMapping) => (
+  field,
+  firstLabel,
+  classes,
+  fields,
+  handleChange,
+  FieldName,
+) => {
   return (
     <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field}></InputLabel>
+      <InputLabel htmlFor={field} />
       <Select
-        value={fieldValue(fields, field) || firstLabel}
+        value={fieldValue(fields, field) || ''}
         name={FieldName[field]}
         onChange={handleChange}
       >
-        <MenuItem key={firstLabel} value={firstLabel}>
-          <Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography>
+        <MenuItem key={firstLabel} value="">
+          <Typography variant="body2" className={classes.menuText}>
+            {firstLabel}
+          </Typography>
         </MenuItem>
-        {Object.values(IssueAddressed).map(option => { 
+        {Object.values(enumeration).map(option => {
           return (
             <MenuItem key={option} value={option}>
-              <Typography variant='body2' className={classes.menuText}>{IssueAddressedDisplayMapping[option]}</Typography>
+              <Typography variant="body2" className={classes.menuText}>
+                {displayMapping[option]}
+              </Typography>
             </MenuItem>
           );
-        })};
+        })}
+        ;
       </Select>
     </FormControl>
   );
 };
 
-const createMonthMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field}></InputLabel>
-      <Select
-        value={fieldValue(fields, field) || firstLabel}
-        name={FieldName[field]}
-        onChange={handleChange}
-      >
-        {Object.values({firstLabel: firstLabel, ...Month}).map(option => { 
-          return (
-            <MenuItem key={option} value={option}>
-              <Typography variant='body2' className={classes.menuText}>{option}</Typography>
-            </MenuItem>
-          );
-        })};
-      </Select>
-    </FormControl>
-  );
-};
+const createIssueAddressedMenu = createMenu(IssueAddressed, IssueAddressedDisplayMapping);
+const createVolunteerRequirementTypeMenu = createMenu(VolunteerRequirementType, VolunteerRequirementTypeDisplayMapping);
+const createProjectLocationMenu = createMenu(ProjectLocation, ProjectLocationDisplayMapping);
+const createMonthMenu = createMenu(Month, MonthDisplayMapping);
 
-const createVolunteerRequirementTypeMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field}></InputLabel>
-      <Select
-        value={fieldValue(fields, field) || firstLabel}
-        name={FieldName[field]}
-        onChange={handleChange}
-      >
-        <MenuItem key={firstLabel} value={firstLabel}>
-          <Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography>
-        </MenuItem>
-        {Object.values(VolunteerRequirementType).map(option => { 
-          return (
-            <MenuItem key={option} value={option}>
-              <Typography variant='body2' className={classes.menuText}>{VolunteerRequirementTypeDisplayMapping[option]}</Typography>
-            </MenuItem>
-          );
-        })};
-      </Select>
-    </FormControl>
-  );
-};
-
-const createProjectLocationMenu = (field, firstLabel, classes, fields, handleChange, FieldName) => {
-  return (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor={field}></InputLabel>
-      <Select
-        value={fieldValue(fields, field) || firstLabel}
-        name={FieldName[field]}
-        onChange={handleChange}
-      >
-        <MenuItem key={firstLabel} value={firstLabel}>
-          <Typography variant='body2' className={classes.menuText}>{firstLabel}</Typography>
-        </MenuItem>
-        {Object.values(ProjectLocation).map(option => { 
-          return (
-            <MenuItem key={option} value={option}>
-              <Typography variant='body2' className={classes.menuText}>{ProjectLocationDisplayMapping[option]}</Typography>
-            </MenuItem>
-          );
-        })};
-      </Select>
-    </FormControl>
-  );
-};
-
-export const _SearchBar = ({ FieldName, classes, fields, handleChange, resetAllFields }) => {   
+export const _SearchBar = ({
+  FieldName,
+  classes,
+  fields,
+  handleChange,
+  resetAllFieldsAndRefetch,
+  filterProjects,
+  isLoading,
+}) => {
   return (
     <Paper className={classes.searchBox}>
-      <div style={{width: '80vw', margin:'0 auto'}}>
-        <Typography variant='title'>Filter projects</Typography>
-        <Typography variant='headline'>
-          I am looking for projects about {createIssueAddressedMenu(FieldName.issueAddressed, 'all categories', classes, fields, handleChange, FieldName)}
-          in the month of {createMonthMenu(FieldName.month, 'all months', classes, fields, handleChange, FieldName)}
-          that requires volunteers for {createVolunteerRequirementTypeMenu(FieldName.volunteerRequirementType, 'all roles', classes, fields, handleChange, FieldName)}
-          near the {createProjectLocationMenu(FieldName.projectLocation, 'all areas', classes, fields, handleChange, FieldName)}
+      <div style={{ width: '80vw', margin: '0 auto' }}>
+        <Typography variant="title">Filter Projects</Typography>
+        <Typography variant="headline">
+          I am looking for projects about{' '}
+          {createIssueAddressedMenu(
+            FieldName.issueAddressed,
+            'all categories',
+            classes,
+            fields,
+            handleChange,
+            FieldName
+          )}
+          in the month of{' '}
+          {createMonthMenu(
+            FieldName.month,
+            'all months',
+            classes,
+            fields,
+            handleChange,
+            FieldName
+          )}
+          that requires volunteers for{' '}
+          {createVolunteerRequirementTypeMenu(
+            FieldName.volunteerRequirementType,
+            'all roles',
+            classes,
+            fields,
+            handleChange,
+            FieldName
+          )}
+          near the{' '}
+          {createProjectLocationMenu(
+            FieldName.projectLocation,
+            'all areas',
+            classes,
+            fields,
+            handleChange,
+            FieldName
+          )}
           area.
         </Typography>
-        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
-              Reset
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.resetButton}
+          size="small"
+          onClick={filterProjects}
+          disabled={isLoading}
+        >
+          Filter
         </Button>
-        <Button variant="contained" color="secondary" className={classes.resetButton} size="small" onClick={resetAllFields}>
-              Filter
+        <Button
+          variant="contained"
+          className={classes.resetButton}
+          size="small"
+          onClick={resetAllFieldsAndRefetch}
+          disabled={isLoading}
+        >
+          Reset
         </Button>
       </div>
     </Paper>
@@ -147,18 +150,15 @@ const styles = theme => ({
   resetButton: {
     marginTop: 20,
     textTransform: 'uppercase',
+    marginRight: '30px',
   },
   menuText: {
     textTransform: 'capitalize',
   },
 });
 
-export const SearchBar =
-withContext(AppContext)(
-  withStyles(styles)(
-    (_SearchBar)
-  )
+export const SearchBar = withContext(AppContext)(
+  withStyles(styles)(_SearchBar)
 );
 
-export {_SearchBar as TestSearchBar};
-
+export { _SearchBar as TestSearchBar };
