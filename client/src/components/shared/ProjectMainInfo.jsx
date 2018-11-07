@@ -202,13 +202,11 @@ const renderProjectDetails = (classes, project) => {
       {projectType === ProjectType.EVENT && renderRow(
         'Start date',
         moment(startDate)
-          .local()
           .format('dddd, Do MMMM YYYY')
       )}
       {projectType === ProjectType.EVENT && renderRow(
         'End date',
         moment(endDate)
-          .local()
           .format('dddd, Do MMMM YYYY')
       )}
       {projectType === ProjectType.RECURRING && renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
