@@ -21,7 +21,6 @@ class _ProjectOwnerEditProjectForm extends Component {
       isSubmitting: false,
       isLoadingProject: true,
       shouldRedirect: false,
-      preview: false,
       projectToRender: {},
     };
   }
