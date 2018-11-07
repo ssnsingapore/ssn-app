@@ -133,23 +133,36 @@ async function postProject(req, res) {
 projectRouter.put(
   '/project_owner/projects/:id',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
+  upload.single('projectImage'),
   asyncWrap(projectOwnerChangeProjectState)
 );
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  const updatedProject = req.body.project;
+  const coverImage = req.file;
+  const updatedProject = req.body;
   const { user } = req;
 
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
-
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
-  const { _id } = existingProject.projectOwner;
-  const isCorrectProjectOwner = user.id.toString() === _id.toString();
+  const isCorrectProjectOwner = user._id.toString() === existingProject.projectOwner._id.toString();
 
   if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     existingProject.set(updatedProject);
     await existingProject.save();
+
+    if (coverImage) {
+      const response = await s3
+        .upload({
+          Body: coverImage.buffer,
+          Key: `${new Date().getTime()}-${existingProject.id}-${existingProject.title}`,
+          ACL: 'public-read',
+          Bucket: `${config.AWS_BUCKET_NAME}/project_cover_images`,
+        })
+        .promise();
+      existingProject.set({ coverImageUrl: response.Location });
+      await existingProject.save();
+    }
 
     return res
       .status(200)
