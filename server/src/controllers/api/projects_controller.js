@@ -26,18 +26,14 @@ async function getProjects(req, res) {
     projectLocation,
   } = req.query;
 
-  const sortParams =    projectState === ProjectState.PENDING_APPROVAL
-      ? { createdAt: 'ascending' }
-      : { updatedAt: 'descending' };
+  const sortParams = projectState === ProjectState.PENDING_APPROVAL
+    ? { createdAt: 'ascending' }
+    : { updatedAt: 'descending' };
 
-  const issueAddressedObj = issueAddressed
-    ? { issuesAddressed: issueAddressed }
-    : {};
-  const projectLocationObj = projectLocation
-    ? { location: projectLocation }
-    : {};
-
-  const filterParams = { ...issueAddressedObj, ...projectLocationObj };
+  const filterParams = {
+    ...(issueAddressed && { issuesAddressed: issueAddressed }),
+    ...(projectLocation && { location: projectLocation }),
+  };
 
   // Queries to mongodb
   const projects = await Project.find({
@@ -58,13 +54,10 @@ async function getProjectCounts(req, res) {
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
-  const issueAddressedObj = issueAddressed
-    ? { issuesAddressed: issueAddressed }
-    : {};
-  const projectLocationObj = projectLocation
-    ? { location: projectLocation }
-    : {};
-  const filterParams = { ...issueAddressedObj, ...projectLocationObj };
+  const filterParams = {
+    ...(issueAddressed && { issuesAddressed: issueAddressed }),
+    ...(projectLocation && { location: projectLocation }),
+  };
 
   for (let i = 0; i < projectStates.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -179,9 +172,9 @@ async function projectOwnerChangeProjectState(req, res) {
   const { user } = req;
 
   const existingProject = await Project.findById(id).exec();
-  const allowedTransitions =    ProjectOwnerAllowedTransitions[existingProject.state];
+  const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
 
-  const isUpdatedStateAllowed =    updatedProject.state && allowedTransitions.includes(updatedProject.state);
+  const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
   const { _id } = existingProject.projectOwner;
   const isCorrectProjectOwner = user.id.toString() === _id.toString();
 
