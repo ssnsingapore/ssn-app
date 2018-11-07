@@ -17,7 +17,7 @@ import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
 
-// import { PROJECT_KEYS_TO_FILTER } from 'util/storage_keys';
+import { SEARCH_BAR_FIELD_VALUES } from 'util/storage_keys';
 
 const FieldName = getFieldNameObject([
   'issueAddressed',
@@ -68,11 +68,14 @@ class _Projects extends Component {
   }
 
   async componentDidMount() {
-    await this.fetchProjectCounts();
-    for (let i = 0; i < publicProjectStates.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjects(publicProjectStates[i]);
+    const cachedFields = this.getFieldValues();
+    if (cachedFields) {
+      const promiseArray = Object.keys(cachedFields).map(key => this.props.setField(key, cachedFields[key]));
+      await Promise.all(promiseArray);
     }
+
+    await this.fetchProjectCounts();
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
 
     this.setState({ isLoading: false });
   }
@@ -138,18 +141,21 @@ class _Projects extends Component {
     this.setState({ tabValue: value });
   };
 
-  //setProjectKeysToFilter = (keysToFilter) => {
-  //  localStorage.setItem(PROJECT_KEYS_TO_FILTER, JSON.stringify(keysToFilter));
-  //}
+  setFieldValues = () => {
+    localStorage.setItem(SEARCH_BAR_FIELD_VALUES, JSON.stringify(this.props.valuesForAllFields()));
+  }
+
+  getFieldValues = () => {
+    return JSON.parse(localStorage.getItem(SEARCH_BAR_FIELD_VALUES));
+  }
 
   filterProjects = async () => {
+    this.setFieldValues();
+
     this.setState({ isLoading: true });
 
     await this.fetchProjectCounts();
-    for (let i = 0; i < publicProjectStates.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjects(publicProjectStates[i]);
-    }
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
 
     this.setState({ isLoading: false });
   };
@@ -157,12 +163,9 @@ class _Projects extends Component {
   resetAllFieldsAndRefetch = async () => {
     this.setState({ isLoading: true });
 
-    this.props.resetAllFields();
+    await this.props.resetAllFields();
     await this.fetchProjectCounts();
-    for (let i = 0; i < publicProjectStates.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      await this.fetchProjects(publicProjectStates[i]);
-    }
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
 
     this.setState({ isLoading: false });
   };

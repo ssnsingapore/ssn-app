@@ -95,10 +95,12 @@ validate.validators.isUrl = (value, options) => {
 
   if (value === '') return null;
 
-  return validate.single(value, { format: {
-    // eslint-disable-next-line no-useless-escape
-    pattern: /[-a-zA-Z0-9@:%_\+.~#?&\/\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)?/i,
-  }});
+  return validate.single(value, {
+    format: {
+      // eslint-disable-next-line no-useless-escape
+      pattern: /[-a-zA-Z0-9@:%_\+.~#?&\/\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)?/i,
+    },
+  });
 };
 
 validate.extend(validate.validators.datetime, {
@@ -145,7 +147,7 @@ function validateField(fieldName, value, values, constraints) {
 //   },
 // }
 
-export const withForm = (fieldNames, constraints, validateGroupsMap)  => (FormComponent) => {
+export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormComponent) => {
   return class Form extends Component {
     constructor(props) {
       super(props);
@@ -189,10 +191,12 @@ export const withForm = (fieldNames, constraints, validateGroupsMap)  => (FormCo
     }
 
     setField = (name, value) => {
-      this.setState((state) => {
-        const values = this.valuesForAllFields(state);
-        const errors = validateField(name, value, values, constraints);
-        return updateFormField(state, name, value, errors);
+      return new Promise(resolve => {
+        this.setState((state) => {
+          const values = this.valuesForAllFields(state);
+          const errors = validateField(name, value, values, constraints);
+          return updateFormField(state, name, value, errors);
+        }, () => resolve());
       });
     }
 
@@ -215,13 +219,15 @@ export const withForm = (fieldNames, constraints, validateGroupsMap)  => (FormCo
       );
     }
 
-    resetAllFields = () => {
+    resetAllFields = async () => {
       const updatedFields = Object.keys(fieldNames).reduce((fields, name) => {
         return updateFormField(fields, name, undefined, []);
       }, this.state);
 
-      this.setState({
-        ...updatedFields,
+      return new Promise(resolve => {
+        this.setState({
+          ...updatedFields,
+        }, () => resolve());
       });
     }
 
