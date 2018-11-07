@@ -120,6 +120,7 @@ class _ProjectOwnerProjectForm extends Component {
                     fields={this.props.fields}
                     handleChange={this.props.handleChange}
                     projectImageInput={this.props.projectImageInput}
+                    coverImageUrl={this.props.coverImageUrl}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>

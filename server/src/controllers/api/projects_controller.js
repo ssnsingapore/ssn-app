@@ -125,6 +125,8 @@ async function getProjectCountsForProjectOwner(req, res) {
   return res.status(200).json({ counts });
 }
 
+
+const fieldsToParseJson = ['volunteerRequirements', 'issuesAddressed'];
 const upload = multer();
 
 projectRouter.post(
@@ -136,6 +138,13 @@ projectRouter.post(
 
 async function postProject(req, res) {
   const { file, body } = req;
+
+  Object.keys(body)
+    .filter(key => fieldsToParseJson.includes(key))
+    .forEach((key) => {
+      body[key] = JSON.parse(body[key]);
+    });
+
   const project = new Project({
     ...body,
     state: ProjectState.PENDING_APPROVAL,
@@ -164,28 +173,47 @@ async function postProject(req, res) {
 projectRouter.put(
   '/project_owner/projects/:id',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
+  upload.single('projectImage'),
   asyncWrap(projectOwnerChangeProjectState)
 );
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  const updatedProject = req.body.project;
+  const coverImage = req.file;
+  const updatedProject = req.body;
   const { user } = req;
+
+  Object.keys(updatedProject)
+    .filter(key => fieldsToParseJson.includes(key))
+    .forEach((key) => {
+      updatedProject[key] = JSON.parse(updatedProject[key]);
+    });
 
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
-
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
   const { _id } = existingProject.projectOwner;
   const isCorrectProjectOwner = user.id.toString() === _id.toString();
 
-  if (
-    (isUpdatedStateAllowed || !updatedProject.state)
-    && isCorrectProjectOwner
-  ) {
+  if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     existingProject.set(updatedProject);
     await existingProject.save();
 
-    return res.status(200).json({ project: existingProject });
+    if (coverImage) {
+      const response = await s3
+        .upload({
+          Body: coverImage.buffer,
+          Key: `${new Date().getTime()}-${existingProject.id}-${existingProject.title}`,
+          ACL: 'public-read',
+          Bucket: `${config.AWS_BUCKET_NAME}/project_cover_images`,
+        })
+        .promise();
+      existingProject.set({ coverImageUrl: response.Location });
+      await existingProject.save();
+    }
+
+    return res
+      .status(200)
+      .json({ project: existingProject });
   }
   return res.status(422).json({
     errors: [
