@@ -125,6 +125,8 @@ async function getProjectCountsForProjectOwner(req, res) {
   return res.status(200).json({ counts });
 }
 
+
+const fieldsToParseJson = ['volunteerRequirements', 'issuesAddressed'];
 const upload = multer();
 
 projectRouter.post(
@@ -136,6 +138,13 @@ projectRouter.post(
 
 async function postProject(req, res) {
   const { file, body } = req;
+
+  Object.keys(body)
+    .filter(key => fieldsToParseJson.includes(key))
+    .forEach((key) => {
+      body[key] = JSON.parse(body[key]);
+    });
+
   const project = new Project({
     ...body,
     state: ProjectState.PENDING_APPROVAL,
@@ -173,14 +182,17 @@ async function projectOwnerChangeProjectState(req, res) {
   const updatedProject = req.body;
   const { user } = req;
 
+  Object.keys(updatedProject)
+    .filter(key => fieldsToParseJson.includes(key))
+    .forEach((key) => {
+      updatedProject[key] = JSON.parse(updatedProject[key]);
+    });
+
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];
   const isUpdatedStateAllowed = updatedProject.state && allowedTransitions.includes(updatedProject.state);
   const { _id } = existingProject.projectOwner;
   const isCorrectProjectOwner = user.id.toString() === _id.toString();
-
-  console.log(isCorrectProjectOwner);
-
 
   if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
     existingProject.set(updatedProject);
