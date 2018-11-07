@@ -12,9 +12,17 @@ import { AlertType } from 'components/shared/Alert';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { VolunteerRequirementFieldName } from './VolunteerRequirementForm';
 
+export const PROJECT_IMAGE_DISPLAY_WIDTH = 480;
+export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
+
+const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
+const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
+
 class _ProjectOwnerEditProjectForm extends Component {
   constructor(props) {
     super(props);
+
+    this.projectImageInput = React.createRef();
 
     this.state = {
       volunteerRequirementRefs: [],
@@ -22,6 +30,7 @@ class _ProjectOwnerEditProjectForm extends Component {
       isLoadingProject: true,
       shouldRedirect: false,
       projectToRender: {},
+      isImageResolutionTooLow: false,
     };
   }
 
@@ -97,11 +106,69 @@ class _ProjectOwnerEditProjectForm extends Component {
     return volunteerRequirementRefs.map(ref => ref.current.valuesForAllFields());
   };
 
+  resizeImage = async () => {
+    const image = new Image();
+
+    const projectImage = this.projectImageInput.current.files[0];
+    const projectImageSrc = window.URL.createObjectURL(projectImage);
+
+    image.src = projectImageSrc;
+
+    const { width, height } = await this.getImageDimensions(image);
+
+    if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
+      this.setState({ isImageResolutionTooLow: true });
+    } else {
+      this.setState({ isImageResolutionTooLow: false });
+    }
+
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width < height && width > DISPLAY_WIDTH) {
+      finalWidth = DISPLAY_WIDTH;
+      finalHeight = (height / width) * DISPLAY_WIDTH;
+    }
+
+    if (height < width && height > DISPLAY_HEIGHT) {
+      finalHeight = DISPLAY_HEIGHT;
+      finalWidth = (width / height) * DISPLAY_HEIGHT;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, finalWidth, finalHeight);
+    return new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.6);
+    });
+  };
+
+  getImageDimensions = image => {
+    return new Promise(resolve => {
+      image.addEventListener('load', () => {
+        resolve({ width: image.width, height: image.height });
+      });
+    });
+  };
+
   handleSubmit = async event => {
     event.preventDefault();
 
-    if (!this.props.validateAllFields() || !this.validateAllSubFormFields()) {
+    if (
+      !this.props.validateAllFields() ||
+      !this.validateAllSubFormFields() ||
+      this.state.isImageResolutionTooLow
+    ) {
       return;
+    }
+
+    const formData = new FormData();
+    if (this.projectImageInput.current.files[0]) {
+      const resizedProjectImage = await this.resizeImage();
+      formData.append('projectImage', resizedProjectImage);
     }
 
     const { showAlert } = this.props.context.updaters;
@@ -127,10 +194,13 @@ class _ProjectOwnerEditProjectForm extends Component {
       };
     }
 
+    Object.keys(updatedProject)
+      .filter(key => updatedProject[key] !== undefined && updatedProject[key].length !== 0)
+      .forEach(key => formData.append(key, updatedProject[key]));
+
     this.setState({ isSubmitting: true });
     const submitEndpoint = `/api/v1/project_owner/projects/${this.props.match.params.id}`;
-    const postContent = { project: updatedProject };
-    const response = await requestWithAlert.put(submitEndpoint, postContent, { authenticated: true });
+    const response = await requestWithAlert.updateForm(submitEndpoint, formData, { authenticated: true });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
@@ -147,6 +217,7 @@ class _ProjectOwnerEditProjectForm extends Component {
   };
 
   render() {
+
     if (this.props.isLoadingProject) {
       return <Spinner />;
     };
@@ -161,6 +232,8 @@ class _ProjectOwnerEditProjectForm extends Component {
       resetField={this.props.resetField}
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
+      coverImageUrl={this.state.projectToRender.coverImageUrl}
+      projectImageInput={this.projectImageInput}
     />;
   }
 }

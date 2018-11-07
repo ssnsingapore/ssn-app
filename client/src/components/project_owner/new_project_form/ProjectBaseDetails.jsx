@@ -11,6 +11,7 @@ const _ProjectBaseDetails = ({
   handleChange,
   fields,
   projectImageInput,
+  coverImageUrl,
 }) => {
   return (
     <Paper className={classes.paper} square>
@@ -71,7 +72,10 @@ const _ProjectBaseDetails = ({
         </Grid>
       </Grid>
       <Grid item xs={9}>
-        <ProjectImageUpload projectImageInput={projectImageInput} />
+        <ProjectImageUpload
+          projectImageInput={projectImageInput}
+          coverImageUrl={coverImageUrl}
+        />
       </Grid>
     </Paper>
   );
