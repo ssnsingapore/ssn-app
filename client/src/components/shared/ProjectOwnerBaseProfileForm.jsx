@@ -89,6 +89,16 @@ const renderPassword = (classes, FieldName, fields, handleChange) => {
   );
 };
 
+const handleAccountTypeChange = (event, handleChange, resetField, FieldName) => {
+  if (event.target.value === AccountType.ORGANISATION) {
+    resetField(FieldName.personalBio);
+  } else if (event.target.value === AccountType.INDIVIDUAL) {
+    resetField(FieldName.organisationName);
+    resetField(FieldName.description);
+  }
+  handleChange(event);
+};
+
 const _ProjectOwnerBaseProfileForm = ({
   FieldName,
   classes,
@@ -97,7 +107,8 @@ const _ProjectOwnerBaseProfileForm = ({
   handleSubmit,
   isSubmitting,
   isEditProfileForm,
-  profilePhotoInput }) => {
+  profilePhotoInput,
+  resetField }) => {
   return (
     <Paper elevation={2} className={classes.root} square={true}>
       <Typography variant="headline">Project Owner Details</Typography>
@@ -131,7 +142,7 @@ const _ProjectOwnerBaseProfileForm = ({
         <RadioGroup
           name={FieldName.accountType}
           value={fieldValue(fields, FieldName.accountType) || ''}
-          onChange={handleChange}
+          onChange={event => handleAccountTypeChange(event, handleChange, resetField, FieldName)}
           className={classes.radioGroup}
         >
           <FormControlLabel
@@ -170,7 +181,10 @@ const _ProjectOwnerBaseProfileForm = ({
         />
         {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
         {renderPassword(classes, FieldName, fields, handleChange)}
-        <ProjectOwnerProfilePhotoUpload profilePhotoInput={profilePhotoInput} />
+        <ProjectOwnerProfilePhotoUpload
+          profilePhotoInput={profilePhotoInput}
+          profilePhotoUrl={fields.profilePhotoUrl}
+        />
         <Button
           type="submit"
           size="medium"

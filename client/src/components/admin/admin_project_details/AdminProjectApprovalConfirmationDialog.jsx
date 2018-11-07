@@ -24,7 +24,7 @@ export class AdminProjectApprovalConfirmationDialog extends Component {
   }
 
   render() {
-    const { open, handleClose, handleApprove } = this.props;
+    const { open, handleClose, handleApprove, isSubmitting, isLoading } = this.props;
 
     return (
       <Dialog
@@ -35,10 +35,17 @@ export class AdminProjectApprovalConfirmationDialog extends Component {
         <DialogTitle id="form-dialog-title">Approve project</DialogTitle>
         {this.renderDialogContent()}
         <DialogActions>
-          <Button onClick={handleClose} color="default">
+          <Button
+            onClick={handleClose}
+            disabled={isSubmitting || isLoading}
+            color="default">
             No
           </Button>
-          <Button onClick={handleApprove} color="primary" disabled={this.state.isLoading}>
+          <Button
+            onClick={handleApprove}
+            color="primary"
+            disabled={isSubmitting || isLoading}
+          >
             Yes
           </Button>
         </DialogActions>

@@ -1,6 +1,5 @@
 import { withTheme } from '@material-ui/core/styles';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
@@ -9,8 +8,8 @@ import { AccountType } from 'components/shared/enums/AccountType';
 import { AlertType } from 'components/shared/Alert';
 import { AppContext } from 'components/main/AppContext';
 import { ProjectOwnerBaseProfileForm } from 'components/shared/ProjectOwnerBaseProfileForm';
+import { Spinner } from 'components/shared/Spinner';
 
-const SIGNUP_SUCCESS_MESSAGE = 'You\'ve successfully created a new account!';
 
 export const PROJECT_OWNER_PROFILE_DISPLAY_WIDTH = 200;
 export const PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT = 200;
@@ -18,6 +17,7 @@ export const PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT = 200;
 const DISPLAY_WIDTH = PROJECT_OWNER_PROFILE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT;
 
+const EDIT_PROFILE_SUCCESS = 'You\'ve successfully updated your profile!';
 const FieldName = getFieldNameObject([
   'email',
   'name',
@@ -27,8 +27,6 @@ const FieldName = getFieldNameObject([
   'socialMediaLink',
   'description',
   'personalBio',
-  'password',
-  'passwordConfirmation',
 ]);
 
 const constraints = {
@@ -46,18 +44,6 @@ const constraints = {
   [FieldName.websiteUrl]: {
     isUrl: { allowEmpty: true },
   },
-  [FieldName.password]: {
-    presence: { allowEmpty: false },
-    length: {
-      minimum: 6,
-    },
-  },
-  [FieldName.passwordConfirmation]: {
-    presence: { allowEmpty: false },
-    sameValueAs: {
-      other: FieldName.password,
-    },
-  },
   [FieldName.organisationName]: (value, attributes) => {
     if (attributes.accountType === AccountType.INDIVIDUAL) return null;
 
@@ -67,38 +53,90 @@ const constraints = {
   },
 };
 
-const validateGroupsMap = {
-  fields: {
-    [FieldName.password]: 'password',
-    [FieldName.passwordConfirmation]: 'password',
-  },
-  validateGroups: {
-    password: [FieldName.password, FieldName.passwordConfirmation],
-  },
-};
-
-class _ProjectOwnerSignUpForm extends Component {
+class _ProjectOwnerEditProfileForm extends Component {
   constructor(props) {
     super(props);
 
     this.profilePhotoInput = React.createRef();
 
     this.state = {
-      isImageTooLowResolution: false,
       isSubmitting: false,
-      createdUser: null,
+      isLoading: true,
     };
-
-    props.setField(FieldName.accountType, AccountType.ORGANISATION);
   }
 
-  getImageDimensions = (image) => {
-    return new Promise((resolve) => {
+  async componentDidMount() {
+    const { requestWithAlert } = this.props.context.utils;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    const endPoint = `/api/v1/project_owners/${currentUser.id}`;
+    const response = await requestWithAlert.get(endPoint,
+      { authenticated: true });
+
+    if (response.isSuccessful) {
+      const { projectOwner } = await response.json();
+      Object.keys(projectOwner).map(data => this.props.setField(data, projectOwner[data]));
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectOwnerFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
+  }
+
+  handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    if (this.profilePhotoInput.current.files[0]) {
+      const resizedProfilePhoto = await this.resizeImage();
+      formData.append('profilePhoto', resizedProfilePhoto);
+    }
+
+    if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
+      return;
+    }
+
+    const projectOwner = { ...this.props.valuesForAllFields() };
+
+    Object.keys(projectOwner)
+      .filter(key => projectOwner[key] !== undefined)
+      .forEach(key => formData.append(key, projectOwner[key]));
+
+    const { showAlert } = this.props.context.updaters;
+    const { requestWithAlert, authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    this.setState({ isSubmitting: true });
+    const response = await requestWithAlert
+      .updateForm(`/api/v1/project_owners/${currentUser.id}`, formData, { authenticated: true });
+    this.setState({ isSubmitting: false });
+
+    if (response.isSuccessful) {
+      const { projectOwner } = await response.json();
+      authenticator.setCurrentUser(projectOwner);
+      showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
+      window.location.reload();
+    }
+
+    if (response.hasError) {
+      const errors = await extractErrors(response);
+      showAlert('editProfileFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+  }
+
+  getImageDimensions = image => {
+    return new Promise(resolve => {
       image.addEventListener('load', () => {
         resolve({ width: image.width, height: image.height });
       });
     });
-  }
+  };
 
   resizeImage = async () => {
     const image = new Image();
@@ -141,81 +179,36 @@ class _ProjectOwnerSignUpForm extends Component {
     });
   }
 
-  handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData();
-    if (this.profilePhotoInput.current.files[0]) {
-      const resizedProfilePhoto = await this.resizeImage();
-      formData.append('profilePhoto', resizedProfilePhoto);
-    }
-
-    if (this.state.isImageTooLowResolution || !this.props.validateAllFields()) {
-      return;
-    }
-
-    const projectOwner = { ...this.props.valuesForAllFields() };
-    Object.keys(projectOwner)
-      .filter(key => projectOwner[key] !== undefined)
-      .forEach(key => formData.append(key, projectOwner[key]));
-
-    console.log(formData);
-
-    const { authenticator } = this.props.context.utils;
-    const { showAlert } = this.props.context.updaters;
-
-    this.setState({ isSubmitting: true });
-    const response = await authenticator.signUpProjectOwner(formData);
-    this.setState({ isSubmitting: false });
-
-    if (response.isSuccessful) {
-      const createdUser = (await response.json()).projectOwner;
-      this.setState({
-        createdUser,
-      });
-      showAlert('signupSuccess', AlertType.SUCCESS, SIGNUP_SUCCESS_MESSAGE);
-    }
-
-    if (response.hasError) {
-      const errors = await extractErrors(response);
-      showAlert('signupFailure', AlertType.ERROR, formatErrors(errors));
-    }
-  }
-
   render() {
-    if (this.state.createdUser) {
-      return <Redirect to={{
-        pathname: '/signup/confirmation',
-        state: { projectOwner: this.state.createdUser },
-      }} />;
+    if (this.state.isLoading) {
+      return <Spinner />;
     }
+
     return (
       <ProjectOwnerBaseProfileForm
-        resetField={this.props.resetField}
         profilePhotoInput={this.profilePhotoInput}
         FieldName={FieldName}
         fields={this.props.fields}
+        resetField={this.props.resetField}
         handleChange={this.props.handleChange}
         handleSubmit={this.handleSubmit}
         isSubmitting={this.state.isSubmitting}
-      />
+        isEditProfileForm={true} />
     );
   }
 }
 
-export const ProjectOwnerSignUpForm =
+export const ProjectOwnerEditProfileForm =
   withTheme()(
     withContext(AppContext)(
       withForm(
         FieldName,
         constraints,
-        validateGroupsMap,
-      )(_ProjectOwnerSignUpForm)
+      )(_ProjectOwnerEditProfileForm)
     ),
   );
 
-export const TestProjectOwnerSignUpForm = withForm(
+export const TestProjectOwnerEditProfileForm = withForm(
   FieldName,
   constraints,
-  validateGroupsMap,
-)(_ProjectOwnerSignUpForm);
+)(_ProjectOwnerEditProfileForm);

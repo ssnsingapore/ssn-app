@@ -65,19 +65,19 @@ const renderAllVolunteerRequirements = (
   volunteerRequirementsDescription,
   classes
 ) => (
-  <React.Fragment>
-    {volunteerRequirements && volunteerRequirements.length !== 0
-      ? renderVolunteerDetailsTable(volunteerRequirements, classes)
-      : ''}
-    {volunteerRequirementsDescription ? (
-      <Typography variant="body1" data-test-id="volunteerRequirementDescription">
-        {volunteerRequirementsDescription}
-      </Typography>
-    ) : (
-      ''
-    )}
-  </React.Fragment>
-);
+    <React.Fragment>
+      {volunteerRequirements && volunteerRequirements.length !== 0
+        ? renderVolunteerDetailsTable(volunteerRequirements, classes)
+        : ''}
+      {volunteerRequirementsDescription ? (
+        <Typography variant="body1" data-test-id="volunteerRequirementDescription">
+          {volunteerRequirementsDescription}
+        </Typography>
+      ) : (
+          ''
+        )}
+    </React.Fragment>
+  );
 
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
@@ -139,8 +139,8 @@ const renderProjectBaseDetails = (classes, project) => {
             Sign up as a volunteer!
           </Button>
         ) : (
-          ''
-        )}
+            ''
+          )}
       </CardContent>
       <CardMedia className={classes.cover} image={coverImageUrl} />
     </Card>
@@ -177,8 +177,8 @@ const renderVolunteerDetails = (classes, project) => {
       {volunteerBenefitsDescription ? (
         <Typography variant="body1">{volunteerBenefitsDescription}</Typography>
       ) : (
-        '-'
-      )}
+          '-'
+        )}
     </Paper>
   );
 };
@@ -202,13 +202,11 @@ const renderProjectDetails = (classes, project) => {
       {projectType === ProjectType.EVENT && renderRow(
         'Start date',
         moment(startDate)
-          .utc()
           .format('dddd, Do MMMM YYYY')
       )}
       {projectType === ProjectType.EVENT && renderRow(
         'End date',
         moment(endDate)
-          .utc()
           .format('dddd, Do MMMM YYYY')
       )}
       {projectType === ProjectType.RECURRING && renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}

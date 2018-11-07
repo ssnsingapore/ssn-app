@@ -30,7 +30,7 @@ class _AdminProjectDetails extends Component {
   }
 
   async componentDidMount() {
-  
+
     const { id } = this.props.match.params;
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get(`/api/v1/projects/${id}`);
@@ -49,7 +49,7 @@ class _AdminProjectDetails extends Component {
     this.setState({ isLoading: false });
 
   }
-  
+
   handleApprove = async (event) => {
 
     event.preventDefault();
@@ -57,9 +57,11 @@ class _AdminProjectDetails extends Component {
     const { id } = this.props.match.params;
     const endpoint = `/api/v1/admin/projects/${id}`;
 
-    const updatedProject = { project: {
-      state: ProjectState.APPROVED_ACTIVE,
-    } };
+    const updatedProject = {
+      project: {
+        state: ProjectState.APPROVED_ACTIVE,
+      }
+    };
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
@@ -70,7 +72,7 @@ class _AdminProjectDetails extends Component {
 
     if (response.isSuccessful) {
       showAlert('projectApprovalSuccess', AlertType.SUCCESS, PROJECT_APPROVED_SUCCESS_MESSAGE);
-      this.setState({ shouldRedirect: true});
+      this.setState({ shouldRedirect: true });
     }
 
     if (response.hasError) {
@@ -103,7 +105,7 @@ class _AdminProjectDetails extends Component {
     if (state !== ProjectState.PENDING_APPROVAL) {
       return null;
     }
-    return(
+    return (
       <React.Fragment>
         <Button
           type="submit"
@@ -112,7 +114,7 @@ class _AdminProjectDetails extends Component {
           className={classes.button}
           onClick={this.handleApproveConfirmationDialogBoxOpen}
         >
-                Approve
+          Approve
         </Button>
 
         <Button
@@ -121,7 +123,7 @@ class _AdminProjectDetails extends Component {
           className={classes.buttonGrey}
           onClick={this.handleRejectionConfirmationDialogBoxOpen}
         >
-              Reject
+          Reject
         </Button>
 
       </React.Fragment>
@@ -142,7 +144,7 @@ class _AdminProjectDetails extends Component {
           component={Link}
           to="/admin/dashboard"
         >
-      Back to Dashboard
+          Back to Dashboard
         </Button>
         {this.renderApproveRejectButtons(project.state)}
       </div>
@@ -154,14 +156,16 @@ class _AdminProjectDetails extends Component {
   render() {
     const { classes } = this.props;
     const { id } = this.props.match.params;
+    const { isSubmitting, isLoading } = this.state;
 
     if (this.state.isLoading) {
       return <Spinner />;
     }
     if (this.state.shouldRedirect) {
-      return(
+      return (
         <Redirect to={{
-          pathname: '/admin/dashboard' }}/>
+          pathname: '/admin/dashboard'
+        }} />
       );
     }
     return (
@@ -171,11 +175,15 @@ class _AdminProjectDetails extends Component {
             open={this.state.approveConfirmationDialogBoxOpen}
             handleClose={this.handleApproveConfirmationDialogBoxClose}
             handleApprove={this.handleApprove}
+            isSubmitting={isSubmitting}
+            isLoading={isLoading}
           />
           <AdminProjectRejectionConfirmationDialog
             open={this.state.rejectionConfirmationDialogBoxOpen}
             handleClose={this.handleRejectionConfirmationDialogBoxClose}
             projectId={id}
+            isSubmitting={isSubmitting}
+            isLoading={isLoading}
           />
           <Grid container spacing={16} className={classes.projectDetails}>
             <Grid item xs={12}>
@@ -224,6 +232,6 @@ const styles = theme => ({
 
 });
 
-export const AdminProjectDetails = 
+export const AdminProjectDetails =
   withContext(AppContext)(
     withStyles(styles)(_AdminProjectDetails));

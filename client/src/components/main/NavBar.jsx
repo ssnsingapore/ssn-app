@@ -12,12 +12,14 @@ import { withStyles } from '@material-ui/core/styles';
 import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 import ssnLogo from 'assets/ssn-logo.png';
-import adminAvatar from 'assets/placeholder-avatar.jpg';
+import defaultAvatar from 'assets/placeholder-avatar.jpg';
 import { withContext } from 'util/context';
 import { AppContext } from 'components/main/AppContext';
 import { Role } from 'components/shared/enums/Role';
 import { AlertType } from 'components/shared/Alert';
 import { Link } from 'react-router-dom';
+import EditIcon from '@material-ui/icons/Edit';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const NavBarDisplayMapping = {
   [Role.ADMIN]: 'SSN ADMIN',
@@ -36,12 +38,13 @@ class _NavBar extends Component {
     };
   }
 
+
   handleClick = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
-    this.setState({anchorEl: null });
+    this.setState({ anchorEl: null });
   };
 
   renderNavbarText = () => {
@@ -67,7 +70,7 @@ class _NavBar extends Component {
 
     if (!isAuthenticated || !currentUser)
       return '/';
-  
+
     if (currentUser.role === Role.ADMIN)
       return '/admin/dashboard';
 
@@ -100,6 +103,8 @@ class _NavBar extends Component {
       return null;
     }
 
+    const avatarSrc = currentUser.profilePhotoUrl ? currentUser.profilePhotoUrl : defaultAvatar;
+
     return currentUser && (
       <React.Fragment>
         <Button
@@ -109,7 +114,7 @@ class _NavBar extends Component {
           color="inherit"
           className={classes.logout}
         >
-          <Avatar alt="Admin photo" src={adminAvatar} className={classes.avatar} />
+          <Avatar alt="Admin photo" src={avatarSrc} className={classes.avatar} />
           {currentUser.email}
           <ArrowDropDownIcon />
         </Button>
@@ -128,8 +133,14 @@ class _NavBar extends Component {
           }}
           getContentAnchorEl={null}
         >
-          <MenuItem button onClick={() => this.handleLogout(currentUser)}>Logout</MenuItem>
-          <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>Edit Profile</MenuItem>
+          {currentUser.role === Role.PROJECT_OWNER &&
+            <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>
+              <EditIcon style={{ paddingRight: 10 }} /> Edit Profile
+            </MenuItem>
+          }
+          <MenuItem button onClick={() => this.handleLogout(currentUser)}>
+            <ExitToAppIcon style={{ paddingRight: 10 }} /> Logout
+          </MenuItem>
         </Menu>
       </React.Fragment>
     );

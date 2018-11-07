@@ -21,7 +21,8 @@ import {
   getFieldNameObject,
   fieldValue,
   fieldErrorText,
-  fieldHasError } from 'util/form';
+  fieldHasError
+} from 'util/form';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 
 const PROJECT_REJECTED_SUCCESS_MESSAGE = 'The project has been successfully rejected.';
@@ -69,7 +70,7 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
 
     if (response.isSuccessful) {
       showAlert('projectRejectSuccess', AlertType.SUCCESS, PROJECT_REJECTED_SUCCESS_MESSAGE);
-      this.setState({ shouldRedirect: true});
+      this.setState({ shouldRedirect: true });
     }
 
     if (response.hasError) {
@@ -105,11 +106,12 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
   }
 
   render() {
-    const { open, handleClose } = this.props;
+    const { open, handleClose, isSubmitting, isLoading } = this.props;
     if (this.state.shouldRedirect) {
-      return(
+      return (
         <Redirect to={{
-          pathname: '/admin/dashboard' }}/>
+          pathname: '/admin/dashboard'
+        }} />
       );
     }
 
@@ -123,14 +125,18 @@ export class _AdminProjectRejectionConfirmationDialog extends Component {
           <DialogTitle id="form-dialog-title">Reject project</DialogTitle>
           {this.renderDialogContent()}
           <DialogActions>
-            <Button onClick={handleClose} color="default">
-            No
+            <Button
+              onClick={handleClose}
+              disabled={isSubmitting || isLoading}
+              color="default">
+              No
             </Button>
             <Button
               type="submit"
               color="primary"
-              disabled={this.state.isSubmitting}>
-            Yes
+              disabled={isSubmitting || isLoading}
+            >
+              Yes
             </Button>
           </DialogActions>
         </form>

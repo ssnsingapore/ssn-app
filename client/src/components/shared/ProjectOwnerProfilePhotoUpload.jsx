@@ -49,7 +49,7 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
             className={classes.button}
             component="span"
           >
-          Upload profile photo
+            Upload profile photo
             <CloudUploadIcon className={classes.rightIcon} />
           </Button>
           <p style={{ fontSize: '0.75rem' }}>
@@ -58,39 +58,44 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
         </label>
 
       ) : (
-        <Button
-          color="default"
-          variant="contained"
-          className={classes.button}
-          onClick={this.handleCancel}
-        >
-          Cancel
+          <Button
+            color="default"
+            variant="contained"
+            className={classes.button}
+            onClick={this.handleCancel}
+          >
+            Cancel
         </Button>
-      )
+        )
     );
 
   }
 
   render() {
+
     const { classes } = this.props;
     const { imageSrc, isImageTooLowResolution } = this.state;
+
+    const { profilePhotoUrl } = this.props;
 
     const imageClass = isImageTooLowResolution ?
       classnames(classes.image, classes.imageWithError) : classes.image;
 
     return (
       <React.Fragment>
-        {imageSrc &&
+
+        {(profilePhotoUrl || imageSrc) &&
           <img
-            alt="Profile"
-            src={imageSrc}
+            alt="New profile"
+            src={imageSrc ? imageSrc : profilePhotoUrl.value}
             className={imageClass}
           />
         }
         {isImageTooLowResolution &&
-        <p className={classes.errorText}>
-          The image you have uploaded is smaller than the display resolution of 200 x 200 pixels.
-        </p>}
+          <p className={classes.errorText}>
+            The image you have uploaded is smaller than the display resolution of 200 x 200 pixels.
+          </p>
+        }
         <input
           type="file"
           accept="image/*"
@@ -116,6 +121,7 @@ const styles = theme => ({
     height: '200px',
     objectFit: 'cover',
     display: 'block',
+    paddingTop: '20px',
   },
   imageWithError: {
     border: `1px solid ${theme.palette.error.main}`,
