@@ -69,7 +69,7 @@ class _Projects extends Component {
 
   async componentDidMount() {
     const cachedFields = this.getFieldValues();
-    if (cachedFields) {
+    if (cachedFields && this.props.history.action === 'POP') {
       const promiseArray = Object.keys(cachedFields).map(key => this.props.setField(key, cachedFields[key]));
       await Promise.all(promiseArray);
     }
