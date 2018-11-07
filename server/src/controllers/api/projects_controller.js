@@ -20,12 +20,26 @@ export const projectRouter = express.Router();
 projectRouter.get('/projects', asyncWrap(getProjects));
 async function getProjects(req, res) {
   const pageSize = Number(req.query.pageSize) || 10;
-  const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
-  const sortParams = (projectState === ProjectState.PENDING_APPROVAL)
-    ? { createdAt: 'ascending' } : { updatedAt: 'descending' };
+  const {
+    projectState = ProjectState.APPROVED_ACTIVE,
+    issueAddressed,
+    projectLocation,
+  } = req.query;
+
+  const sortParams = projectState === ProjectState.PENDING_APPROVAL
+    ? { createdAt: 'ascending' }
+    : { updatedAt: 'descending' };
+
+  const filterParams = {
+    ...(issueAddressed && { issuesAddressed: issueAddressed }),
+    ...(projectLocation && { location: projectLocation }),
+  };
 
   // Queries to mongodb
-  const projects = await Project.find({ state: projectState })
+  const projects = await Project.find({
+    state: projectState,
+    ...filterParams,
+  })
     .limit(pageSize)
     .populate('projectOwner')
     .sort(sortParams)
@@ -35,17 +49,27 @@ async function getProjects(req, res) {
 }
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
-async function getProjectCounts(_req, res) {
+async function getProjectCounts(req, res) {
+  const { issueAddressed, projectLocation } = req.query;
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
+  const filterParams = {
+    ...(issueAddressed && { issuesAddressed: issueAddressed }),
+    ...(projectLocation && { location: projectLocation }),
+  };
+
   for (let i = 0; i < projectStates.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    counts[projectStates[i]] = await Project.count({ state: projectStates[i] });
+    counts[projectStates[i]] = await Project.count({
+      state: projectStates[i],
+      ...filterParams,
+    });
   }
 
   return res.status(200).json({ counts });
 }
+
 projectRouter.get('/projects/:id', asyncWrap(getProject));
 async function getProject(req, res) {
   const { id } = req.params;
@@ -69,7 +93,10 @@ async function getProjectsForProjectOwner(req, res) {
   const { user } = req;
   const pageSize = Number(req.query.pageSize) || 10;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
-  const projects = await Project.find({ state: projectState, projectOwner: user.id })
+  const projects = await Project.find({
+    state: projectState,
+    projectOwner: user.id,
+  })
     .limit(pageSize)
     .populate('projectOwner')
     .sort({ updatedAt: 'descending' })
@@ -78,17 +105,21 @@ async function getProjectsForProjectOwner(req, res) {
   return res.status(200).json({ projects });
 }
 
-
-projectRouter.get('/project_owner/project_counts',
+projectRouter.get(
+  '/project_owner/project_counts',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
-  asyncWrap(getProjectCountsForProjectOwner));
+  asyncWrap(getProjectCountsForProjectOwner)
+);
 async function getProjectCountsForProjectOwner(req, res) {
   const counts = {};
   const projectStates = Object.keys(ProjectState);
   const { user } = req;
   for (let i = 0; i < projectStates.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    counts[projectStates[i]] = await Project.count({ state: projectStates[i], projectOwner: user.id });
+    counts[projectStates[i]] = await Project.count({
+      state: projectStates[i],
+      projectOwner: user.id,
+    });
   }
 
   return res.status(200).json({ counts });
@@ -147,29 +178,34 @@ async function projectOwnerChangeProjectState(req, res) {
   const { _id } = existingProject.projectOwner;
   const isCorrectProjectOwner = user.id.toString() === _id.toString();
 
-  if ((isUpdatedStateAllowed || !updatedProject.state) && isCorrectProjectOwner) {
+  if (
+    (isUpdatedStateAllowed || !updatedProject.state)
+    && isCorrectProjectOwner
+  ) {
     existingProject.set(updatedProject);
     await existingProject.save();
 
-    return res
-      .status(200)
-      .json({ project: existingProject });
+    return res.status(200).json({ project: existingProject });
   }
-  return res
-    .status(422)
-    .json({
-      errors: [new UnprocessableEntityErrorView('Invalid state change.',
-        'This change is not allowed.')],
-    });
+  return res.status(422).json({
+    errors: [
+      new UnprocessableEntityErrorView(
+        'Invalid state change.',
+        'This change is not allowed.'
+      ),
+    ],
+  });
 }
 
 // =============================================================================
 // Admin Routes
 // =============================================================================
 
-projectRouter.put('/admin/projects/:id',
+projectRouter.put(
+  '/admin/projects/:id',
   ...authMiddleware({ authorize: Role.ADMIN }),
-  asyncWrap(adminChangeProjectState));
+  asyncWrap(adminChangeProjectState)
+);
 async function adminChangeProjectState(req, res) {
   const { id } = req.params;
   const updatedProject = req.body.project;
@@ -177,25 +213,33 @@ async function adminChangeProjectState(req, res) {
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = AdminAllowedTransitions[existingProject.state];
 
-  if (updatedProject.state && allowedTransitions.includes(updatedProject.state)) {
-    if (updatedProject.state === ProjectState.REJECTED && !updatedProject.rejectionReason) {
-      return res
-        .status(422)
-        .json({
-          errors: [new UnprocessableEntityErrorView('Invalid state change.',
-            'This change is not allowed.')],
-        });
+  if (
+    updatedProject.state
+    && allowedTransitions.includes(updatedProject.state)
+  ) {
+    if (
+      updatedProject.state === ProjectState.REJECTED
+      && !updatedProject.rejectionReason
+    ) {
+      return res.status(422).json({
+        errors: [
+          new UnprocessableEntityErrorView(
+            'Invalid state change.',
+            'This change is not allowed.'
+          ),
+        ],
+      });
     }
     existingProject.set(updatedProject);
     await existingProject.save();
-    return res
-      .status(200)
-      .json({ project: existingProject });
+    return res.status(200).json({ project: existingProject });
   }
-  return res
-    .status(422)
-    .json({
-      errors: [new UnprocessableEntityErrorView('Invalid state change.',
-        'This change is not allowed.')],
-    });
+  return res.status(422).json({
+    errors: [
+      new UnprocessableEntityErrorView(
+        'Invalid state change.',
+        'This change is not allowed.'
+      ),
+    ],
+  });
 }

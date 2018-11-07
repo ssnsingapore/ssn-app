@@ -1,21 +1,23 @@
-import React, { Component } from 'react';
-import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
+import { Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-
 import { AppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
+import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+import { Month } from 'components/shared/enums/Month';
+import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { ProjectState } from 'components/shared/enums/ProjectState';
+import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+import { PublicProjectListing } from 'components/shared/PublicProjectListing';
 import { SearchBar } from 'components/shared/SearchBar';
 import { Spinner } from 'components/shared/Spinner';
-import { PublicProjectListing } from 'components/shared/PublicProjectListing';
-import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
-import { extractErrors, formatErrors } from 'util/errors';
-import { AlertType } from 'components/shared/Alert';
-import { ProjectState } from 'components/shared/enums/ProjectState';
+import qs from 'qs';
+import React, { Component } from 'react';
 import { withContext } from 'util/context';
+import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
-import { Month } from 'components/shared/enums/Month';
-import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+
+import { SEARCH_BAR_FIELD_VALUES } from 'util/storage_keys';
 
 const FieldName = getFieldNameObject([
   'issueAddressed',
@@ -47,10 +49,10 @@ function TabContainer(props) {
   );
 }
 
-const tabValueMapping = {
-  0: ProjectState.APPROVED_ACTIVE,
-  1: ProjectState.APPROVED_INACTIVE,
-};
+const publicProjectStates = [
+  ProjectState.APPROVED_ACTIVE,
+  ProjectState.APPROVED_INACTIVE,
+];
 
 class _Projects extends Component {
   constructor(props) {
@@ -66,8 +68,27 @@ class _Projects extends Component {
   }
 
   async componentDidMount() {
+    const cachedFields = this.getFieldValues();
+    if (cachedFields && this.props.history.action === 'POP') {
+      const promiseArray = Object.keys(cachedFields).map(key => this.props.setField(key, cachedFields[key]));
+      await Promise.all(promiseArray);
+    }
+
+    await this.fetchProjectCounts();
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
+
+    this.setState({ isLoading: false });
+  }
+
+  fetchProjectCounts = async () => {
     const { requestWithAlert } = this.props.context.utils;
-    const countResponse = await requestWithAlert.get('/api/v1/project_counts');
+
+    const endPoint = '/api/v1/project_counts';
+    const filterQueryParams = qs.stringify(this.props.valuesForAllFields());
+
+    const countResponse = await requestWithAlert.get(
+      `${endPoint}?${filterQueryParams}`
+    );
 
     if (countResponse.isSuccessful) {
       const counts = (await countResponse.json()).counts;
@@ -83,24 +104,22 @@ class _Projects extends Component {
         formatErrors(errors)
       );
     }
+  };
 
-    this.fetchProjectsFromBackEnd(ProjectState.APPROVED_ACTIVE);
-
-    this.setState({ isLoading: false });
-  }
-
-  fetchProjectsFromBackEnd = async projectState => {
+  fetchProjects = async (projectState) => {
     const { requestWithAlert } = this.props.context.utils;
-
     const { pageSize = 10 } = this.props;
 
     const endpoint = '/api/v1/projects';
-    const queryParams =
-      '?pageSize=' + pageSize + '&projectState=' + projectState;
+    const queryObj = { pageSize, projectState, ...this.props.valuesForAllFields() };
+    const queryParams = qs.stringify(queryObj);
 
-    const response = await requestWithAlert.get(endpoint + queryParams, {
-      authenticated: true,
-    });
+    const response = await requestWithAlert.get(
+      `${endpoint}?${queryParams}`,
+      {
+        authenticated: true,
+      }
+    );
 
     if (response.isSuccessful) {
       const projects = (await response.json()).projects;
@@ -119,8 +138,36 @@ class _Projects extends Component {
   };
 
   handleTabValueChange = (_event, value) => {
-    this.fetchProjectsFromBackEnd(tabValueMapping[value]);
     this.setState({ tabValue: value });
+  };
+
+  setFieldValues = () => {
+    localStorage.setItem(SEARCH_BAR_FIELD_VALUES, JSON.stringify(this.props.valuesForAllFields()));
+  }
+
+  getFieldValues = () => {
+    return JSON.parse(localStorage.getItem(SEARCH_BAR_FIELD_VALUES));
+  }
+
+  filterProjects = async () => {
+    this.setFieldValues();
+
+    this.setState({ isLoading: true });
+
+    await this.fetchProjectCounts();
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
+
+    this.setState({ isLoading: false });
+  };
+
+  resetAllFieldsAndRefetch = async () => {
+    this.setState({ isLoading: true });
+
+    await this.props.resetAllFields();
+    await this.fetchProjectCounts();
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
+
+    this.setState({ isLoading: false });
   };
 
   getTabLabel = projectState => {
@@ -205,7 +252,9 @@ class _Projects extends Component {
           classes={this.props.classes}
           fields={this.props.fields}
           handleChange={this.props.handleChange}
-          resetAllFields={this.props.resetAllFields}
+          resetAllFieldsAndRefetch={this.resetAllFieldsAndRefetch}
+          filterProjects={this.filterProjects}
+          isLoading={this.state.isLoading}
         />
         {this.renderProjectListings()}
       </div>
