@@ -211,6 +211,7 @@ class _ProjectOwnerNewProjectForm extends Component {
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
       projectImageInput={this.projectImageInput}
+      formType='new'
     />;
   }
 }

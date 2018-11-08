@@ -12,13 +12,14 @@ const _ProjectBaseDetails = ({
   fields,
   projectImageInput,
   coverImageUrl,
+  formType,
 }) => {
   return (
     <Paper className={classes.paper} square>
       <Grid item xs={7}>
         <Grid className={classes.content}>
           <Typography variant="headline" gutterBottom>
-            Add a New Project
+            {formType === 'edit' ? 'Edit Project' : 'Add a New Project'}
           </Typography>
           <TextField
             required

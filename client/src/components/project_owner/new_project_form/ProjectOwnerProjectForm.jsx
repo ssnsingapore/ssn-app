@@ -121,6 +121,7 @@ class _ProjectOwnerProjectForm extends Component {
                     handleChange={this.props.handleChange}
                     projectImageInput={this.props.projectImageInput}
                     coverImageUrl={this.props.coverImageUrl}
+                    formType={this.props.formType}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>

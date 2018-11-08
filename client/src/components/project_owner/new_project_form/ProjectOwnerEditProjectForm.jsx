@@ -243,6 +243,7 @@ class _ProjectOwnerEditProjectForm extends Component {
       isSubmitting={this.state.isSubmitting}
       coverImageUrl={this.state.projectToRender.coverImageUrl}
       projectImageInput={this.projectImageInput}
+      formType='edit'
     />;
   }
 }
