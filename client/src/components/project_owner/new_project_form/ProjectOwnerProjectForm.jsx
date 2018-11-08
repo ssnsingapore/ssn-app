@@ -15,14 +15,13 @@ import { ProjectBaseDetails } from './ProjectBaseDetails';
 import { FieldName } from './ProjectFormFields';
 
 class _ProjectOwnerProjectForm extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
       preview: false,
+      project: {},
     };
-
   }
 
   togglePreviewOn = () => {
@@ -32,6 +31,10 @@ class _ProjectOwnerProjectForm extends Component {
     for (const [key, valueObject] of Object.entries(fields)) {
       project[key] = valueObject.value;
     }
+
+    project.volunteerRequirements = this.props.volunteerRequirementRefs.map(
+      ref => ref.current.valuesForAllFields()
+    );
 
     this.setState({ preview: true, project });
   };
@@ -83,7 +86,7 @@ class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-                Back to form
+              Back to form
             </Button>
           )}
         </div>
@@ -110,7 +113,16 @@ class _ProjectOwnerProjectForm extends Component {
         <div className={classes.form}>
           <form onSubmit={this.props.handleSubmit}>
             <Grid container spacing={16}>
-              {!preview ? (
+              {preview ? (
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    {this.renderPreviewNotice()}
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ProjectMainInfo project={this.state.project} />
+                  </Grid>
+                </React.Fragment>
+              ) : (
                 <React.Fragment>
                   <Grid item xs={12} style={{ paddingTop: '56px' }} />
                   <Grid item xs={12}>
@@ -124,12 +136,18 @@ class _ProjectOwnerProjectForm extends Component {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <ProjectVolunteerDetails
-                      volunteerRequirementRefs={this.props.volunteerRequirementRefs}
+                      volunteerRequirementRefs={
+                        this.props.volunteerRequirementRefs
+                      }
                       FieldName={FieldName}
                       fields={this.props.fields}
                       handleChange={this.props.handleChange}
-                      handleDeleteVolunteerRequirement={this.props.handleDeleteVolunteerRequirement}
-                      handleAddVolunteerRequirement={this.props.handleAddVolunteerRequirement}
+                      handleDeleteVolunteerRequirement={
+                        this.props.handleDeleteVolunteerRequirement
+                      }
+                      handleAddVolunteerRequirement={
+                        this.props.handleAddVolunteerRequirement
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -139,15 +157,6 @@ class _ProjectOwnerProjectForm extends Component {
                       handleChange={this.props.handleChange}
                       resetField={this.props.resetField}
                     />
-                  </Grid>
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <Grid item xs={12}>
-                    {this.renderPreviewNotice()}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <ProjectMainInfo project={this.state.project} />
                   </Grid>
                 </React.Fragment>
               )}
@@ -196,7 +205,6 @@ const styles = theme => ({
   },
 });
 
-export const ProjectOwnerProjectForm =
-  withContext(AppContext)(
-    withTheme()(withStyles(styles)(_ProjectOwnerProjectForm))
-  );
+export const ProjectOwnerProjectForm = withContext(AppContext)(
+  withTheme()(withStyles(styles)(_ProjectOwnerProjectForm))
+);
