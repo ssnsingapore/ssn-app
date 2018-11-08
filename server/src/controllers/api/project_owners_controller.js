@@ -142,6 +142,8 @@ async function confirmProjectOwner(req, res) {
       sameSite: true,
     }
   );
+  res.set('cache-control', 'no-store');
+
   if (!projectOwner || projectOwner.confirmationToken !== confirmationToken) {
     const message = 'There was an error confirming your account. Please try again!';
     return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=ERROR&message=${encodeURIComponent(message)}`);
@@ -191,6 +193,7 @@ async function redirectToPasswordResetForm(req, res) {
     res.cookie(...cookieArgs[type]);
   });
 
+  res.set('cache-control', 'no-store');
   return res.redirect(redirectUrl);
 }
 
