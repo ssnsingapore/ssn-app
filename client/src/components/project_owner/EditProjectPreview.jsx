@@ -3,8 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
-import { Grid, Button, Paper } from '@material-ui/core';
-import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import { Grid, Button } from '@material-ui/core';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
@@ -65,19 +64,6 @@ class _EditProjectPreview extends Component {
     );
   };
 
-  renderPreviewNotice = () => {
-    const { classes } = this.props;
-
-    return (
-      <Paper square className={classes.previewNotice}>
-        <Button disabled fullWidth>
-          <RemoveRedEyeIcon className={classes.leftIcon} />
-          This is a preview
-        </Button>
-      </Paper>
-    );
-  };
-
   render() {
     const { classes } = this.props;
 
@@ -87,7 +73,6 @@ class _EditProjectPreview extends Component {
     return (
       <Grid container className={classes.root}>
         <Grid item xs={12} className={classes.projectDetails}>
-          {this.renderPreviewNotice()}
           <Grid container spacing={16}>
             <Grid item xs={12} />
             <Grid item xs={12}>
