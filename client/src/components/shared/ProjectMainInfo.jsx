@@ -158,6 +158,7 @@ const renderProjectBaseDetails = (classes, project) => {
             fullWidth
             color="secondary"
             size="large"
+            style={{textAlign: 'center'}}
           >
             Sign up as a volunteer!
           </Button>

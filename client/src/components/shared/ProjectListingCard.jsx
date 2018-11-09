@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import {
   Grid,
   Typography,
@@ -10,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Paper,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -60,12 +62,8 @@ const renderIssuesAddressed = (project, classes) => {
   );
 };
 
-const _isRejected = project => {
-  return project.state === ProjectState.REJECTED;
-};
-
 const renderRejectionMessage = (project, classes, rejectionMessageSize) => {
-  if (!_isRejected(project)) {
+  if (!(project.state === ProjectState.REJECTED)) {
     return null;
   }
   return (
@@ -77,7 +75,7 @@ const renderRejectionMessage = (project, classes, rejectionMessageSize) => {
 };
 
 const _ProjectListingCard = ({ project, classes }) => {
-  const cardContentSize = _isRejected(project) ? 8 : 12;
+  const cardContentSize = project.state === ProjectState.REJECTED ? 8 : 12;
   const rejectionMessageSize =
     cardContentSize === 12 ? false : 12 - cardContentSize;
 
@@ -85,7 +83,7 @@ const _ProjectListingCard = ({ project, classes }) => {
     <Grid container key={`${project.title}-main`}>
       <Grid item xs={cardContentSize}>
         <Grid container>
-          <Card className={classes.card} square>
+          <Card className={classes.card}>
             <Grid container key={`${project.title}-cardContent`}>
               <Grid item xs={3}>
                 <CardMedia
@@ -95,32 +93,74 @@ const _ProjectListingCard = ({ project, classes }) => {
               </Grid>
               <Grid item xs={9}>
                 <CardContent className={classes.content}>
-                  <Typography variant="headline" gutterBottom>
-                    {project.title}
-                  </Typography>
-                  <Typography
-                    variant="subheading"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    <List className={classes.removePadding}>
-                      <ListItem className={classes.removePadding}>
-                        <Avatar
-                          alt="Profile Photo"
-                          src={project.projectOwner.profilePhotoUrl}
-                          className={classes.smallAvatar}
-                        />
-                        <ListItemText
-                          className={classes.removePadding}
-                          primary={project.projectOwner.name}
-                        />
-                      </ListItem>
-                    </List>
-                  </Typography>
-                  <div className={classes.tagsContainer}>
-                    {renderVolunteerRequirements(project, classes)}
-                    {renderIssuesAddressed(project, classes)}
-                  </div>
+                  <Grid container>
+                    <Grid item xs={11}>
+                      <Typography variant="caption">
+                        {project.startDate === project.endDate
+                          ? moment(project.startDate)
+                            .utc()
+                            .format('dddd, Do MMMM YYYY')
+                          : moment(project.startDate)
+                            .utc()
+                            .format('dddd, Do MMMM YYYY') +
+                            ' - ' +
+                            moment(project.endDate)
+                              .utc()
+                              .format('dddd, Do MMMM YYYY')}
+                      </Typography>
+                      <Typography variant="headline" gutterBottom>
+                        {project.title}
+                      </Typography>
+                      <Typography
+                        variant="subheading"
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        <List className={classes.removePadding}>
+                          <ListItem className={classes.removePadding}>
+                            <Avatar
+                              alt="Profile Photo"
+                              src={project.projectOwner.profilePhotoUrl}
+                              className={classes.smallAvatar}
+                            />
+                            <ListItemText
+                              className={classes.removePadding}
+                              primary={project.projectOwner.name}
+                            />
+                          </ListItem>
+                        </List>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Paper elevation={0} className={classes.dateBadge}>
+                        <Typography variant="caption">
+                          {moment(project.startDate)
+                            .utc()
+                            .format('MMM')}
+                        </Typography>
+                        <Typography variant="title" color="secondary">
+                          <strong>
+                            {moment(project.startDate)
+                              .utc()
+                              .format('DD')}
+                          </strong>
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                  <Grid container className={classes.subContentContainer}>
+                    <Grid item xs={8} className={classes.projectDescription}>
+                      <Typography variant="caption">
+                        {project.description.length <= 320
+                          ? project.description
+                          : project.description.slice(0, 320) + '...'}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      {renderVolunteerRequirements(project, classes)}
+                      {renderIssuesAddressed(project, classes)}
+                    </Grid>
+                  </Grid>
                 </CardContent>
               </Grid>
             </Grid>
@@ -147,8 +187,8 @@ const styles = theme => ({
     minHeight: '200px',
     backgroundSize: 'cover',
   },
-  tagsContainer: {
-    marginTop: '30px',
+  subContentContainer: {
+    marginTop: theme.spacing.unit * 4,
   },
   chip: {
     margin: theme.spacing.unit / 2,
@@ -168,6 +208,17 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     textAlign: 'justify',
     wordWrap: 'break-word',
+  },
+  projectDescription: {
+    paddingRight: theme.spacing.unit * 4,
+    wordWrap: 'break-word',
+  },
+  dateBadge: {
+    backgroundColor: theme.palette.grey[200],
+    border: '1px solid lightgrey',
+    textAlign: 'center',
+    width: theme.spacing.unit * 6,
+    height: theme.spacing.unit * 6,
   },
 });
 
