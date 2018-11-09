@@ -73,40 +73,48 @@ class _ProjectListing extends Component {
     this.setState({ isLoading: false });
   }
 
-  renderIssuesAddressed = project => {
-    const { classes } = this.props;
-    return (
-      <React.Fragment>
-        <Typography variant="body1">Issues addressed:</Typography>
-        {project.issuesAddressed.map(issueAddressed => {
-          return (
-            <Chip
-              key={issueAddressed}
-              label={IssueAddressedDisplayMapping[issueAddressed]}
-              className={classes.chip}
-              color="primary"
-            />
-          );
-        })}
-      </React.Fragment>
-    );
-  };
-
   renderVolunteerRequirements = project => {
     const { classes } = this.props;
 
     return (
       <React.Fragment>
         <Typography variant="body1">We need:</Typography>
-        {project.volunteerRequirements.map(requirement => {
-          return (
-            <Chip
-              key={requirement.type}
-              label={VolunteerRequirementTypeDisplayMapping[requirement.type]}
-              className={classes.chip}
-            />
-          );
-        })}
+        {project.volunteerRequirements.length !== 0 ? (
+          project.volunteerRequirements.map(requirement => {
+            return (
+              <Chip
+                key={requirement.type}
+                label={VolunteerRequirementTypeDisplayMapping[requirement.type]}
+                className={classes.chip}
+              />
+            );
+          })
+        ) : (
+          <Typography variant="body1">-</Typography>
+        )}
+      </React.Fragment>
+    );
+  };
+
+  renderIssuesAddressed = project => {
+    const { classes } = this.props;
+    return (
+      <React.Fragment>
+        <Typography variant="body1">Issues addressed:</Typography>
+        {project.issuesAddressed.length !== 0 ? (
+          project.issuesAddressed.map(issueAddressed => {
+            return (
+              <Chip
+                key={issueAddressed}
+                label={IssueAddressedDisplayMapping[issueAddressed]}
+                className={classes.chip}
+                color="primary"
+              />
+            );
+          })
+        ) : (
+          <Typography variant="body1">-</Typography>
+        )}
       </React.Fragment>
     );
   };
