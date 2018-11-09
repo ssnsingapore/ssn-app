@@ -179,7 +179,7 @@ projectRouter.put(
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const coverImage = req.file;
-  const updatedProject = req.body;
+  const updatedProject = req.body.project;
   const { user } = req;
 
   Object.keys(updatedProject)
