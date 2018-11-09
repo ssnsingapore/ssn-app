@@ -140,7 +140,7 @@ class _NavBar extends Component {
               <EditIcon style={{ paddingRight: 10 }} /> Edit Profile
             </MenuItem>
           }
-          <MenuItem button onClick={() => this.handleLogout(currentUser)}>
+          <MenuItem onClick={() => this.handleLogout(currentUser)}>
             <ExitToAppIcon style={{ paddingRight: 10 }} /> Logout
           </MenuItem>
         </Menu>

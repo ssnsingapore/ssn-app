@@ -45,7 +45,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/someroute'}}
+            location={{ pathname: '/project_owner'}}
             context={mockContext}
           />
         ).dive();
@@ -62,20 +62,22 @@ describe('Navbar', () => {
       });
 
       describe('avatar dropdown', () => {
-        it('should render avatar with dropdown and logout button', () => {
+        it('should render avatar with dropdown', () => {
           expect(component.find(Avatar).exists()).toBeTruthy();
           expect(component.find(Button).at(1).html()).toEqual(
             expect.stringContaining('projectowner@email.com')
           );
+        });
 
-          expect(component.find(MenuItem).at(0).html()).toEqual(
+        it('renders logout button', () => {
+          expect(component.find(MenuItem).at(1).html()).toEqual(
             expect.stringContaining('Logout')
           );
         });
 
         it('should render a button that navigates to edit profile project owner page', () => {
-          expect(component.find(MenuItem).get(1).props.children).toEqual('Edit Profile');
-          expect(component.find(MenuItem).get(1).props.to).toEqual('/project_owner/edit_profile');
+          expect(component.find(MenuItem).get(0).props.children).toContain(' Edit Profile');
+          expect(component.find(MenuItem).get(0).props.to).toEqual('/project_owner/edit_profile');
         });
       });
     });
@@ -91,7 +93,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/someroute'}}
+            location={{ pathname: '/admin/dashboard'}}
             context={mockContext}
           />
         ).dive();
@@ -162,14 +164,14 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/someroute'}}
+            location={{ pathname: '/project_owner'}}
             context={mockContext}
           />
         ).dive();
       });
 
       it('should log out project owner when logout button is clicked', async () => {
-        await component.find(MenuItem).at(0).simulate('click');
+        await component.find(MenuItem).at(1).simulate('click');
 
         expect(mockContext.utils.authenticator.logoutProjectOwner).toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).not.toHaveBeenCalled();
