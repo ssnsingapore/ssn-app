@@ -47,7 +47,7 @@ class _NavBar extends Component {
     this.setState({ anchorEl: null });
   };
 
-  renderNavbarText = () => {
+  renderNavbarText = (pathname) => {
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
@@ -56,7 +56,9 @@ class _NavBar extends Component {
       return null;
     }
 
-    return (
+    const userMatchPathname = (currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner')) ||
+      (currentUser.role === Role.ADMIN && pathname.includes('/admin'));
+    return userMatchPathname && (
       <Typography variant="body2" color="inherit" className={this.props.classes.barTitle}>
         {NavBarDisplayMapping[currentUser.role]} DASHBOARD
       </Typography>
@@ -158,7 +160,7 @@ class _NavBar extends Component {
           >
             <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
           </Button>
-          {this.renderNavbarText()}
+          {this.renderNavbarText(this.props.location.pathname)}
           {this.renderAvatar()}
         </Toolbar>
       </AppBar>
