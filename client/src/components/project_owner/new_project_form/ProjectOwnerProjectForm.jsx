@@ -106,60 +106,59 @@ class _ProjectOwnerProjectForm extends Component {
     }
 
     return (
-      <form
-        onSubmit={this.props.handleSubmit}
-        className={classes.root}
-      >
+      <div className={classes.root}>
         <div className={classes.form}>
-          <Grid container spacing={16}>
-            {!preview ? (
-              <React.Fragment>
-                <Grid item xs={12} style={{ paddingTop: '56px' }} />
-                <Grid item xs={12}>
-                  <ProjectBaseDetails
-                    fields={this.props.fields}
-                    handleChange={this.props.handleChange}
-                    projectImageInput={this.props.projectImageInput}
-                    coverImageUrl={this.props.coverImageUrl}
-                    formType={this.props.formType}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <ProjectVolunteerDetails
-                    volunteerRequirementRefs={this.props.volunteerRequirementRefs}
-                    FieldName={FieldName}
-                    fields={this.props.fields}
-                    handleChange={this.props.handleChange}
-                    handleDeleteVolunteerRequirement={this.props.handleDeleteVolunteerRequirement}
-                    handleAddVolunteerRequirement={this.props.handleAddVolunteerRequirement}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <ProjectDetails
-                    fields={this.props.fields}
-                    FieldName={FieldName}
-                    handleChange={this.props.handleChange}
-                    resetField={this.props.resetField}
-                  />
-                </Grid>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Grid item xs={12}>
-                  {this.renderPreviewNotice()}
-                </Grid>
-                <Grid item xs={12}>
-                  <ProjectMainInfo project={this.state.project} />
-                </Grid>
-              </React.Fragment>
-            )}
-            <Grid item xs={12}>
-              <ProjectOwnerDetails />
+          <form onSubmit={this.props.handleSubmit}>
+            <Grid container spacing={16}>
+              {!preview ? (
+                <React.Fragment>
+                  <Grid item xs={12} style={{ paddingTop: '56px' }} />
+                  <Grid item xs={12}>
+                    <ProjectBaseDetails
+                      fields={this.props.fields}
+                      handleChange={this.props.handleChange}
+                      projectImageInput={this.props.projectImageInput}
+                      coverImageUrl={this.props.coverImageUrl}
+                      formType={this.props.formType}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <ProjectVolunteerDetails
+                      volunteerRequirementRefs={this.props.volunteerRequirementRefs}
+                      FieldName={FieldName}
+                      fields={this.props.fields}
+                      handleChange={this.props.handleChange}
+                      handleDeleteVolunteerRequirement={this.props.handleDeleteVolunteerRequirement}
+                      handleAddVolunteerRequirement={this.props.handleAddVolunteerRequirement}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <ProjectDetails
+                      fields={this.props.fields}
+                      FieldName={FieldName}
+                      handleChange={this.props.handleChange}
+                      resetField={this.props.resetField}
+                    />
+                  </Grid>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    {this.renderPreviewNotice()}
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ProjectMainInfo project={this.state.project} />
+                  </Grid>
+                </React.Fragment>
+              )}
+              <Grid item xs={12}>
+                <ProjectOwnerDetails />
+              </Grid>
             </Grid>
-          </Grid>
+          </form>
         </div>
         {this.renderActionBar()}
-      </form>
+      </div>
     );
   }
 }
@@ -168,6 +167,7 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    minHeight: '95vh',
   },
   form: {
     flexGrow: 1,
@@ -178,26 +178,6 @@ const styles = theme => ({
   previewNotice: {
     padding: theme.spacing.unit / 2,
     backgroundColor: theme.palette.grey[200],
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    height: '100%',
-  },
-  textFieldGroup: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-  },
-  formControl: {
-    marginTop: theme.spacing.unit * 3,
-    marginBottom: theme.spacing.unit * 3,
-    minWidth: 120,
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: theme.spacing.unit / 4,
   },
   buttonGroup: {
     width: '90vw',
