@@ -5,12 +5,96 @@ import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { ProjectListing } from 'components/shared/ProjectListing';
 import { ProjectOwnerLoginForm } from './ProjectOwnerLoginForm';
+import { AppContext } from 'components/main/AppContext';
+import { withContext } from 'util/context';
+import { AlertType } from 'components/shared/Alert';
+import { Role } from 'components/shared/enums/Role';
 
 import landingImage from 'assets/bg.jpg';
 
+const LOGOUT_SUCCESS_MESSAGE = 'You\'ve successfully logged out!';
+const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error logging you out. Please try again!';
+
 class _HomePage extends Component {
+
+  renderLoginForm() {
+
+    const { classes } = this.props;
+
+    return (
+      <React.Fragment>
+        <Typography variant="headline" component="h3" gutterBottom>
+          Have a project in mind?
+        </Typography>
+        <Typography
+          component="p"
+          gutterBottom
+          className={classes.marginBottom3}
+        >
+          Sign up as a project owner to post a project, or login if you
+          already have an account.
+        </Typography>
+        <ProjectOwnerLoginForm />
+      </React.Fragment>
+    );
+  }
+
+  handleLogout = async (currentUser) => {
+
+    const { authenticator } = this.props.context.utils;
+    const { showAlert } = this.props.context.updaters;
+
+    this.setState({ isLoading: true });
+
+    const response = currentUser.role === Role.PROJECT_OWNER ?
+      await authenticator.logoutProjectOwner() : await authenticator.logoutAdmin();
+    if (response.isSuccessful) {
+      showAlert('logoutSuccess', AlertType.SUCCESS, LOGOUT_SUCCESS_MESSAGE);
+    }
+
+    if (response.hasError) {
+      showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
+    }
+
+    this.setState({ isLoading: false });
+  }
+
+
+  renderLoggedIn() {
+    const { classes } = this.props;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    return (
+      <React.Fragment>
+        <Typography variant="headline2" gutterBottom>
+          You are logged in as {currentUser.email}.
+        </Typography>
+        <Button
+          variant="contained"
+          color="default"
+          onClick={() => this.handleLogout(currentUser)}
+          className={classes.button}
+        >
+          Logout
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to={currentUser.Role === Role.PROJECT_OWNER ? '/project_owner/dashboard' : '/admin/dashboard'}
+          className={classes.button}
+        >
+          Go to Dashboard
+        </Button>
+      </React.Fragment>
+    );
+
+  }
+
   render() {
     const { classes, theme } = this.props;
+    const { isAuthenticated } = this.props.context;
 
     return (
       <div>
@@ -42,7 +126,7 @@ class _HomePage extends Component {
           </Typography>
           <Grid container spacing={4 * theme.spacing.unit}>
             <Grid item md={9} xs={12}>
-              <ProjectListing pageSize={3} projectState={'APPROVED_ACTIVE'}/>
+              <ProjectListing pageSize={3} projectState={'APPROVED_ACTIVE'} />
               <Button
                 variant="contained"
                 color="primary"
@@ -56,18 +140,7 @@ class _HomePage extends Component {
               </Button>
             </Grid>
             <Grid item md={3} xs={12}>
-              <Typography variant="headline" component="h3" gutterBottom>
-                Have a project in mind?
-              </Typography>
-              <Typography
-                component="p"
-                gutterBottom
-                className={classes.marginBottom3}
-              >
-                Sign up as a project owner to post a project, or login if you
-                already have an account.
-              </Typography>
-              <ProjectOwnerLoginForm />
+              {!isAuthenticated ? this.renderLoginForm() : this.renderLoggedIn()}
             </Grid>
           </Grid>
         </Grid>
@@ -124,6 +197,10 @@ const styles = theme => ({
   menu: {
     width: 200,
   },
+  button: {
+    marginTop: '10px',
+    width: '200px',
+  },
 });
 
-export const HomePage = withTheme()(withStyles(styles)(_HomePage));
+export const HomePage = withTheme()(withStyles(styles)(withContext(AppContext)((_HomePage))));
