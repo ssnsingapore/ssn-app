@@ -382,9 +382,9 @@ describe('Project owner routes', () => {
     test('is an authenticated route', async () => {
       const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
         .send({
-          project: {
+          project: JSON.stringify({
             title: 'updated name',
-          },
+          }),
         });
 
       expect(response.status).toEqual(401);
@@ -395,9 +395,9 @@ describe('Project owner routes', () => {
       const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
         .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
         .send({
-          project: {
+          project: JSON.stringify({
             title: 'updated name',
-          },
+          }),
         });
 
       expect(response.status).toEqual(403);
@@ -408,9 +408,9 @@ describe('Project owner routes', () => {
       const newTitle = 'updated name';
 
       const response = await sendRequestWithBody({
-        project: {
+        project: JSON.stringify({
           title: newTitle,
-        },
+        }),
       });
 
       expect(response.status).toEqual(200);
@@ -431,9 +431,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to active', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.APPROVED_ACTIVE,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -443,9 +443,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to inactive', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.APPROVED_INACTIVE,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -455,9 +455,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to rejected', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.REJECTED,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -473,9 +473,9 @@ describe('Project owner routes', () => {
 
       test('returns 200 status code and updates project state to inactive', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.APPROVED_INACTIVE,
-          },
+          }),
         });
 
         expect(response.status).toEqual(200);
@@ -491,9 +491,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to pending approval', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.PENDING_APPROVAL,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -503,9 +503,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to rejected', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.REJECTED,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -521,9 +521,9 @@ describe('Project owner routes', () => {
 
       test('updates project state from inactive to active', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.APPROVED_ACTIVE,
-          },
+          }),
         });
 
         expect(response.status).toEqual(200);
@@ -539,9 +539,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to pending approval', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.PENDING_APPROVAL,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -551,9 +551,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to rejected', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.REJECTED,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -569,9 +569,9 @@ describe('Project owner routes', () => {
 
       test('returns 200 status code for change to pending approval', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.PENDING_APPROVAL,
-          },
+          }),
         });
 
         expect(response.status).toEqual(200);
@@ -587,9 +587,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to active', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.APPROVED_ACTIVE,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -599,9 +599,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to inactive', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.APPROVED_INACTIVE,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);
@@ -611,9 +611,9 @@ describe('Project owner routes', () => {
 
       test('returns 422 status code for change to rejected', async () => {
         const response = await sendRequestWithBody({
-          project: {
+          project: JSON.stringify({
             state: ProjectState.REJECTED,
-          },
+          }),
         });
 
         expect(response.status).toEqual(422);

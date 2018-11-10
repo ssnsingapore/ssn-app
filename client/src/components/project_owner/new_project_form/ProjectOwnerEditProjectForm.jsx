@@ -194,18 +194,7 @@ class _ProjectOwnerEditProjectForm extends Component {
       };
     }
 
-    const fieldsToStringify = ['volunteerRequirements', 'issuesAddressed'];
-    Object.keys(updatedProject)
-      .filter(key =>
-        updatedProject[key] !== undefined &&
-        updatedProject[key].length !== 0 &&
-        !fieldsToStringify.includes(key)
-      )
-      .forEach(key => formData.append(key, updatedProject[key]));
-
-    Object.keys(updatedProject)
-      .filter(key => fieldsToStringify.includes(key))
-      .forEach(key => formData.append(key, JSON.stringify(updatedProject[key])));
+    formData.append('project', JSON.stringify(updatedProject));
 
     this.setState({ isSubmitting: true });
     const submitEndpoint = `/api/v1/project_owner/projects/${this.props.match.params.id}`;

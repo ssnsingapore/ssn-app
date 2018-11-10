@@ -5,6 +5,7 @@ import {
 import {
   Button,
   IconButton,
+  Dialog,
 } from '@material-ui/core';
 
 describe('ProjectImageUpload', () => {
@@ -69,5 +70,28 @@ describe('ProjectImageUpload', () => {
     expect(component.prop('projectImageInput').current.value).toEqual('');
     expect(wrapper.state().imageSrc).toEqual('');
   });
+
+  describe('image resolution too low', () => {
+    beforeAll(() => {
+      wrapper.setState({
+        imageSrc: 'someFileSrc',
+        isImageResolutionTooLow: true,
+      });
+    });
+
+    it('should open dialog when image selected has low resolution', () => {
+
+      expect(wrapper.find(Dialog).exists()).toBeTruthy();
+    });
+
+    it('should reset state after closing dialog', () => {
+      const dialogComponent = wrapper.find(Dialog);
+      const okButton = dialogComponent.find(Button);
+      okButton.simulate('click');
+      expect(wrapper.state().imageSrc).toBe('');
+      expect(wrapper.state().isImageResolutionTooLow).toBe(false);
+    });
+  });
+
 
 });

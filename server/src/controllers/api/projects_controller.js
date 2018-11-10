@@ -16,6 +16,7 @@ import { config } from 'config/environment';
 import { authMiddleware } from 'util/auth';
 
 export const projectRouter = express.Router();
+const upload = multer();
 
 projectRouter.get('/projects', asyncWrap(getProjects));
 async function getProjects(req, res) {
@@ -125,10 +126,6 @@ async function getProjectCountsForProjectOwner(req, res) {
   return res.status(200).json({ counts });
 }
 
-
-const fieldsToParseJson = ['volunteerRequirements', 'issuesAddressed'];
-const upload = multer();
-
 projectRouter.post(
   '/project_owner/projects/new',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
@@ -137,16 +134,12 @@ projectRouter.post(
 );
 
 async function postProject(req, res) {
-  const { file, body } = req;
+  const { file } = req;
 
-  Object.keys(body)
-    .filter(key => fieldsToParseJson.includes(key))
-    .forEach((key) => {
-      body[key] = JSON.parse(body[key]);
-    });
+  const newProject = JSON.parse(req.body.project);
 
   const project = new Project({
-    ...body,
+    ...newProject,
     state: ProjectState.PENDING_APPROVAL,
   });
 
@@ -179,14 +172,8 @@ projectRouter.put(
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
   const coverImage = req.file;
-  const updatedProject = req.body.project;
+  const updatedProject = JSON.parse(req.body.project);
   const { user } = req;
-
-  Object.keys(updatedProject)
-    .filter(key => fieldsToParseJson.includes(key))
-    .forEach((key) => {
-      updatedProject[key] = JSON.parse(updatedProject[key]);
-    });
 
   const existingProject = await Project.findById(id).exec();
   const allowedTransitions = ProjectOwnerAllowedTransitions[existingProject.state];

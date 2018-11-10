@@ -149,18 +149,7 @@ class _ProjectOwnerNewProjectForm extends Component {
       projectOwner: currentUser.id,
     };
 
-    const fieldsToStringify = ['volunteerRequirements', 'issuesAddressed'];
-    Object.keys(newProject)
-      .filter(key =>
-        newProject[key] !== undefined &&
-        newProject[key].length !== 0 &&
-        !fieldsToStringify.includes(key)
-      )
-      .forEach(key => formData.append(key, newProject[key]));
-
-    Object.keys(newProject)
-      .filter(key => fieldsToStringify.includes(key))
-      .forEach(key => formData.append(key, JSON.stringify(newProject[key])));
+    formData.append('project', JSON.stringify(newProject));
 
     this.setState({ isSubmitting: true });
     const response = await requestWithAlert.uploadForm(

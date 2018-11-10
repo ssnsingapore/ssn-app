@@ -86,7 +86,7 @@ class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-              Back to form
+                Back to form
             </Button>
           )}
         </div>
@@ -110,68 +110,66 @@ class _ProjectOwnerProjectForm extends Component {
 
     return (
       <div className={classes.root}>
-        <div className={classes.form}>
-          <form onSubmit={this.props.handleSubmit}>
-            <Grid container spacing={16}>
-              {preview ? (
-                <React.Fragment>
-                  <Grid item xs={12}>
-                    {this.renderPreviewNotice()}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <ProjectMainInfo project={this.state.project} />
-                  </Grid>
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <Grid item xs={12} style={{ paddingTop: '56px' }} />
-                  <Grid item xs={12}>
-                    <ProjectBaseDetails
-                      fields={this.props.fields}
-                      handleChange={this.props.handleChange}
-                      projectImageInput={this.props.projectImageInput}
-                      coverImageUrl={this.props.coverImageUrl}
-                      formType={this.props.formType}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <ProjectVolunteerDetails
-                      volunteerRequirements={
-                        this.state.project
-                          ? this.state.project.volunteerRequirements
-                          : []
-                      }
-                      volunteerRequirementRefs={
-                        this.props.volunteerRequirementRefs
-                      }
-                      FieldName={FieldName}
-                      fields={this.props.fields}
-                      handleChange={this.props.handleChange}
-                      handleDeleteVolunteerRequirement={
-                        this.props.handleDeleteVolunteerRequirement
-                      }
-                      handleAddVolunteerRequirement={
-                        this.props.handleAddVolunteerRequirement
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <ProjectDetails
-                      fields={this.props.fields}
-                      FieldName={FieldName}
-                      handleChange={this.props.handleChange}
-                      resetField={this.props.resetField}
-                    />
-                  </Grid>
-                </React.Fragment>
-              )}
-              <Grid item xs={12}>
-                <ProjectOwnerDetails />
-              </Grid>
+        <form onSubmit={this.props.handleSubmit}>
+          <Grid container spacing={16} className={classes.form}>
+            {preview ? (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  {this.renderPreviewNotice()}
+                </Grid>
+                <Grid item xs={12}>
+                  <ProjectMainInfo project={this.state.project} />
+                </Grid>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Grid item xs={12} style={{ paddingTop: '56px' }} />
+                <Grid item xs={12}>
+                  <ProjectBaseDetails
+                    fields={this.props.fields}
+                    handleChange={this.props.handleChange}
+                    projectImageInput={this.props.projectImageInput}
+                    coverImageUrl={this.props.coverImageUrl}
+                    formType={this.props.formType}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <ProjectVolunteerDetails
+                    volunteerRequirements={
+                      this.state.project
+                        ? this.state.project.volunteerRequirements
+                        : []
+                    }
+                    volunteerRequirementRefs={
+                      this.props.volunteerRequirementRefs
+                    }
+                    FieldName={FieldName}
+                    fields={this.props.fields}
+                    handleChange={this.props.handleChange}
+                    handleDeleteVolunteerRequirement={
+                      this.props.handleDeleteVolunteerRequirement
+                    }
+                    handleAddVolunteerRequirement={
+                      this.props.handleAddVolunteerRequirement
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <ProjectDetails
+                    fields={this.props.fields}
+                    FieldName={FieldName}
+                    handleChange={this.props.handleChange}
+                    resetField={this.props.resetField}
+                  />
+                </Grid>
+              </React.Fragment>
+            )}
+            <Grid item xs={12}>
+              <ProjectOwnerDetails />
             </Grid>
-          </form>
-        </div>
-        {this.renderActionBar()}
+          </Grid>
+          {this.renderActionBar()}
+        </form>
       </div>
     );
   }
@@ -181,13 +179,13 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '95vh',
   },
   form: {
-    flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
     padding: '0 0 60px',
+    minHeight: '95vh',
+    alignContent: 'flex-start',
   },
   previewNotice: {
     padding: theme.spacing.unit / 2,
@@ -204,6 +202,7 @@ const styles = theme => ({
     float: 'right',
   },
   actionBar: {
+    display: 'flex',
     position: 'sticky',
     bottom: 0,
     backgroundColor: theme.palette.grey[200],
