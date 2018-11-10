@@ -2,7 +2,12 @@ import React from 'react';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import {
-  withForm, getFieldNameObject, fieldValue, fieldErrorText, fieldHasError } from 'util/form';
+  withForm,
+  getFieldNameObject,
+  fieldValue,
+  fieldErrorText,
+  fieldHasError,
+} from 'util/form';
 
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
@@ -13,7 +18,8 @@ import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/displa
 export const VolunteerRequirementFieldName = getFieldNameObject([
   'type',
   'commitmentLevel',
-  'number']);
+  'number',
+]);
 
 export const volunteerRequirementConstraints = {
   [VolunteerRequirementFieldName.type]: {
@@ -29,6 +35,17 @@ export const volunteerRequirementConstraints = {
 };
 
 class _VolunteerRequirementForm extends React.Component {
+  async componentDidMount() {
+    if (this.props.volunteerRequirement) {
+      Object.keys(VolunteerRequirementFieldName).forEach(key => {
+        const fieldName = VolunteerRequirementFieldName[key];
+        this.props.setField(
+          fieldName,
+          this.props.volunteerRequirement[fieldName]
+        );
+      });
+    }
+  }
 
   render() {
     const { fields, handleChange, classes } = this.props;
@@ -36,7 +53,7 @@ class _VolunteerRequirementForm extends React.Component {
       <React.Fragment>
         <FormControl className={classes.volTypeDropdown}>
           <InputLabel htmlFor={VolunteerRequirementFieldName.type} shrink>
-          Type of Volunteer
+            Type of Volunteer
           </InputLabel>
           <Select
             name={VolunteerRequirementFieldName.type}
@@ -46,41 +63,52 @@ class _VolunteerRequirementForm extends React.Component {
             error={fieldHasError(fields, VolunteerRequirementFieldName.type)}
             onChange={handleChange}
           >
-            {Object.values(VolunteerRequirementType).map(
-              (option) => {
-                return(
-                  <MenuItem key={option} value={option}>
-                    {VolunteerRequirementTypeDisplayMapping[option]}
-                  </MenuItem>
-                );
-              })}
+            {Object.values(VolunteerRequirementType).map(option => {
+              return (
+                <MenuItem key={option} value={option}>
+                  {VolunteerRequirementTypeDisplayMapping[option]}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
         <TextField
-          InputLabelProps={{ shrink: true}}
-          label='No. of Volunteers'
+          InputLabelProps={{ shrink: true }}
+          label="No. of Volunteers"
           type="number"
-          inputProps={{ min: '1'}}
-          margin='normal'
+          inputProps={{ min: '1' }}
+          margin="normal"
           name={VolunteerRequirementFieldName.number}
           id={VolunteerRequirementFieldName.number}
           key={VolunteerRequirementFieldName.number}
           value={fieldValue(fields, VolunteerRequirementFieldName.number) || ''}
           error={fieldHasError(fields, VolunteerRequirementFieldName.number)}
-          helperText={fieldErrorText(fields, VolunteerRequirementFieldName.number)}
+          helperText={fieldErrorText(
+            fields,
+            VolunteerRequirementFieldName.number
+          )}
           onChange={handleChange}
           className={classes.textfield}
         />
         <TextField
-          InputLabelProps={{ shrink: true}}
-          label='Commitment Level'
-          margin='normal'
+          InputLabelProps={{ shrink: true }}
+          label="Commitment Level"
+          margin="normal"
           name={VolunteerRequirementFieldName.commitmentLevel}
           id={VolunteerRequirementFieldName.commitmentLevel}
           key={VolunteerRequirementFieldName.commitmentLevel}
-          value={fieldValue(fields, VolunteerRequirementFieldName.commitmentLevel) || ''}
-          error={fieldHasError(fields, VolunteerRequirementFieldName.commitmentLevel)}
-          helperText={fieldErrorText(fields, VolunteerRequirementFieldName.commitmentLevel)}
+          value={
+            fieldValue(fields, VolunteerRequirementFieldName.commitmentLevel) ||
+            ''
+          }
+          error={fieldHasError(
+            fields,
+            VolunteerRequirementFieldName.commitmentLevel
+          )}
+          helperText={fieldErrorText(
+            fields,
+            VolunteerRequirementFieldName.commitmentLevel
+          )}
           onChange={handleChange}
           className={classes.textfield}
         />
@@ -88,8 +116,6 @@ class _VolunteerRequirementForm extends React.Component {
     );
   }
 }
-
-
 
 const styles = theme => ({
   volTypeDropdown: {
@@ -106,15 +132,7 @@ const styles = theme => ({
   },
 });
 
-
-export const VolunteerRequirementForm =
-withForm(
+export const VolunteerRequirementForm = withForm(
   VolunteerRequirementFieldName,
   volunteerRequirementConstraints
-)(
-  withStyles(styles)(
-    withTheme()(
-      (_VolunteerRequirementForm)
-    )
-  )
-);
+)(withStyles(styles)(withTheme()(_VolunteerRequirementForm)));

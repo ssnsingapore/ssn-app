@@ -20,7 +20,7 @@ class _ProjectOwnerProjectForm extends Component {
 
     this.state = {
       preview: false,
-      project: {},
+      project: null,
     };
   }
 
@@ -136,6 +136,11 @@ class _ProjectOwnerProjectForm extends Component {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <ProjectVolunteerDetails
+                      volunteerRequirements={
+                        this.state.project
+                          ? this.state.project.volunteerRequirements
+                          : []
+                      }
                       volunteerRequirementRefs={
                         this.props.volunteerRequirementRefs
                       }

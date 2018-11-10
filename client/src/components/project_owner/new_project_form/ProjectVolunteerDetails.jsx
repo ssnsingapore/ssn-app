@@ -7,14 +7,22 @@ import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 import { VolunteerRequirementForm } from './VolunteerRequirementForm';
 import { FieldName } from './ProjectFormFields';
 
-const renderVolunteerRequirements = (volunteerRequirementRefs, classes, handleDeleteVolunteerRequirement ) => {
-
+const renderVolunteerRequirements = (
+  volunteerRequirementRefs,
+  classes,
+  handleDeleteVolunteerRequirement,
+  volunteerRequirements
+) => {
   return volunteerRequirementRefs.map((volunteerRequirementRef, i) => {
     return (
       <div key={i} className={classes.volunteerRow}>
-        <VolunteerRequirementForm ref={volunteerRequirementRef} />
-        <IconButton 
-          onClick={() => handleDeleteVolunteerRequirement(i)} className={classes.button}
+        <VolunteerRequirementForm
+          ref={volunteerRequirementRef}
+          volunteerRequirement={volunteerRequirements[i]}
+        />
+        <IconButton
+          onClick={() => handleDeleteVolunteerRequirement(i)}
+          className={classes.button}
         >
           <RemoveCircleIcon />
         </IconButton>
@@ -29,7 +37,9 @@ const _ProjectVolunteerDetails = ({
   handleDeleteVolunteerRequirement,
   fields,
   handleChange,
-  handleAddVolunteerRequirement }) => {
+  handleAddVolunteerRequirement,
+  volunteerRequirements,
+}) => {
   return (
     <React.Fragment>
       <Paper square className={classes.paper}>
@@ -37,9 +47,9 @@ const _ProjectVolunteerDetails = ({
         <Grid item xs={12}>
           <TextField
             fullWidth
-            InputLabelProps={{ shrink: true}}
-            label='Description of Volunteers Needed'
-            margin='normal'
+            InputLabelProps={{ shrink: true }}
+            label="Description of Volunteers Needed"
+            margin="normal"
             name={FieldName.volunteerRequirementsDescription}
             id={FieldName.volunteerRequirementsDescription}
             key={FieldName.volunteerRequirementsDescription}
@@ -51,7 +61,12 @@ const _ProjectVolunteerDetails = ({
             className={classes.textField}
           />
 
-          {renderVolunteerRequirements(volunteerRequirementRefs, classes, handleDeleteVolunteerRequirement)}
+          {renderVolunteerRequirements(
+            volunteerRequirementRefs,
+            classes,
+            handleDeleteVolunteerRequirement,
+            volunteerRequirements
+          )}
 
           <IconButton
             onClick={handleAddVolunteerRequirement}
@@ -62,9 +77,9 @@ const _ProjectVolunteerDetails = ({
 
           <TextField
             fullWidth
-            InputLabelProps={{ shrink: true}}
-            label='Volunteer Benefits'
-            margin='normal'
+            InputLabelProps={{ shrink: true }}
+            label="Volunteer Benefits"
+            margin="normal"
             name={FieldName.volunteerBenefitsDescription}
             id={FieldName.volunteerBenefitsDescription}
             key={FieldName.volunteerBenefitsDescription}
