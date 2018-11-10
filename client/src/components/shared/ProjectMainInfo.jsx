@@ -49,10 +49,18 @@ const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
           return (
             <TableRow key={requirement._id}>
               <TableCell component="th" scope="row">
-                {VolunteerRequirementTypeDisplayMapping[requirement.type]}
+                {VolunteerRequirementTypeDisplayMapping[requirement.type] ? VolunteerRequirementTypeDisplayMapping[requirement.type] : '-'}
               </TableCell>
-              <TableCell numeric>{requirement.number} volunteers</TableCell>
-              <TableCell numeric>{requirement.commitmentLevel}</TableCell>
+              <TableCell numeric>
+                {requirement.number
+                  ? `${requirement.number} volunteers`
+                  : '-'}
+              </TableCell>
+              <TableCell numeric>
+                {requirement.commitmentLevel
+                  ? requirement.commitmentLevel
+                  : '-'}
+              </TableCell>
             </TableRow>
           );
         })}
@@ -133,7 +141,7 @@ const renderProjectBaseDetails = (classes, project) => {
             gutterBottom
             className={classes.headline}
           >
-            Project Title (Required)
+              Project Title (Required)
           </Typography>
         )}
         <div style={{ marginBottom: '60px' }}>
@@ -147,7 +155,7 @@ const renderProjectBaseDetails = (classes, project) => {
             })
           ) : (
             <Typography color="error" gutterBottom>
-              Project description (required)
+                Project description (required)
             </Typography>
           )}
         </div>
@@ -158,7 +166,7 @@ const renderProjectBaseDetails = (classes, project) => {
             fullWidth
             color="secondary"
             size="large"
-            style={{textAlign: 'center'}}
+            style={{ textAlign: 'center' }}
           >
             Sign up as a volunteer!
           </Button>
