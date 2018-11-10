@@ -107,9 +107,8 @@ class _ProjectOwnerProjectForm extends Component {
 
     return (
       <div className={classes.root}>
-        <div className={classes.form}>
           <form onSubmit={this.props.handleSubmit}>
-            <Grid container spacing={16}>
+            <Grid container spacing={16} className={classes.form}>
               {!preview ? (
                 <React.Fragment>
                   <Grid item xs={12} style={{ paddingTop: '56px' }} />
@@ -155,9 +154,8 @@ class _ProjectOwnerProjectForm extends Component {
                 <ProjectOwnerDetails />
               </Grid>
             </Grid>
+            {this.renderActionBar()}
           </form>
-        </div>
-        {this.renderActionBar()}
       </div>
     );
   }
@@ -167,13 +165,13 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '95vh',
   },
   form: {
-    flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
     padding: '0 0 60px',
+    minHeight: '95vh',
+    alignContent: 'flex-start',
   },
   previewNotice: {
     padding: theme.spacing.unit / 2,
@@ -190,6 +188,7 @@ const styles = theme => ({
     float: 'right',
   },
   actionBar: {
+    display: 'flex',
     position: 'sticky',
     bottom: 0,
     backgroundColor: theme.palette.grey[200],
