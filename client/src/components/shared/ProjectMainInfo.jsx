@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import capitalizeTitle from 'capitalize-title';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Grid,
@@ -23,6 +22,7 @@ import { ProjectLocationDisplayMapping } from 'components/shared/display_mapping
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectType } from 'components/shared/enums/ProjectType';
+import { capitalizeWords } from 'util/capitalizeWords';
 
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
@@ -132,7 +132,7 @@ const renderProjectBaseDetails = (classes, project) => {
             gutterBottom
             className={classes.headline}
           >
-            {capitalizeTitle(title)}
+            {capitalizeWords(title)}
           </Typography>
         ) : (
           <Typography
