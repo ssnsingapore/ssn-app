@@ -35,6 +35,7 @@ class _NavBar extends Component {
 
     this.state = {
       anchorEl: null,
+      isLoading: false,
     };
   }
 
@@ -84,6 +85,8 @@ class _NavBar extends Component {
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
+    this.setState({ isLoading: true });
+
     const response = currentUser.role === Role.PROJECT_OWNER ?
       await authenticator.logoutProjectOwner() : await authenticator.logoutAdmin();
     if (response.isSuccessful) {
@@ -93,6 +96,8 @@ class _NavBar extends Component {
     if (response.hasError) {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
+
+    this.setState({ isLoading: false });
   }
 
   renderAvatar = () => {
@@ -136,11 +141,12 @@ class _NavBar extends Component {
           getContentAnchorEl={null}
         >
           {currentUser.role === Role.PROJECT_OWNER &&
-            <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose}>
+            <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose} disabled={this.state.isLoading}>
               <EditIcon style={{ paddingRight: 10 }} /> Edit Profile
             </MenuItem>
           }
-          <MenuItem onClick={() => this.handleLogout(currentUser)}>
+
+          <MenuItem onClick={() => this.handleLogout(currentUser)} disabled={this.state.isLoading}>
             <ExitToAppIcon style={{ paddingRight: 10 }} /> Logout
           </MenuItem>
         </Menu>
@@ -157,6 +163,7 @@ class _NavBar extends Component {
           <Button
             component={Link}
             to={this.getLink()}
+            disabled={this.state.isLoading}
           >
             <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
           </Button>
