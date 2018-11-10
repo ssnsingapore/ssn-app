@@ -1,7 +1,13 @@
 import React from 'react';
 import validate from 'validate.js';
 
-import { getFieldNameObject, fieldValue, withForm} from '../form';
+import {
+  getFieldNameObject,
+  fieldValue,
+  withForm,
+  fieldHasError,
+  fieldErrorText,
+} from '../form';
 
 const DummyComponent = () => <div>Dummy Component</div>;
 
@@ -9,7 +15,7 @@ describe('getFieldNameObject', () => {
   it('returns fields used in the form that can be used like an enum', () => {
     const fieldNameEnum = getFieldNameObject(['name', 'email']);
 
-    expect(fieldNameEnum).toEqual({name: 'name', email: 'email'});
+    expect(fieldNameEnum).toEqual({ name: 'name', email: 'email' });
   });
 });
 
@@ -32,6 +38,37 @@ describe('fieldValue', () => {
   });
 });
 
+describe('fieldHasError', () => {
+  it('returns true if field has error', () => {
+    const name = {
+      value: 'Person',
+      errors: ['cannot be blank'],
+    };
+
+    expect(fieldHasError({ name }, 'name')).toBe(true);
+  });
+  it('returns false if field does not have error', () => {
+    const name = {
+      value: 'Person',
+      errors: [],
+    };
+
+    expect(fieldHasError({ name }, 'name')).toBe(false);
+  });
+});
+
+describe('fieldErrorText', () => {
+  fit('returns a string of errors', () => {
+    const fields = {
+      name: {
+        value: 'Person',
+        errors: ['err1', 'err2', 'err3'],
+      },
+    };
+    expect(fieldErrorText(fields, 'name')).toEqual('err1. err2. err3');
+  });
+});
+
 describe('withForm', () => {
   describe('valuesForAllFields', () => {
     let fieldNames, component;
@@ -42,7 +79,7 @@ describe('withForm', () => {
         email: 'email',
       };
       const FormComponent = withForm(fieldNames)(DummyComponent);
-      component = shallow(<FormComponent></FormComponent>);
+      component = shallow(<FormComponent />);
     });
 
     it('returns field values for all fields present on the form', () => {
@@ -90,7 +127,7 @@ describe('withForm', () => {
         },
       };
       const FormComponent = withForm(fieldNames, constraints)(DummyComponent);
-      component = shallow(<FormComponent></FormComponent>);
+      component = shallow(<FormComponent />);
     });
 
     it('returns false if there are validation errors', () => {
@@ -165,7 +202,7 @@ describe('withForm', () => {
         },
       };
       const FormComponent = withForm(fieldNames, constraints)(DummyComponent);
-      component = shallow(<FormComponent></FormComponent>);
+      component = shallow(<FormComponent />);
     });
 
     it('should setState with the latest state when called in sequence', () => {
@@ -214,7 +251,7 @@ describe('withForm', () => {
         email: 'email',
       };
       const FormComponent = withForm(fieldNames)(DummyComponent);
-      component = shallow(<FormComponent></FormComponent>);
+      component = shallow(<FormComponent />);
     });
 
     describe('when the value is non-empty', () => {
@@ -290,8 +327,12 @@ describe('withForm', () => {
             group: [fieldNames.smallest, fieldNames.middle, fieldNames.largest],
           },
         };
-        const FormComponent = withForm(fieldNames, constraints, validateGroupsMap)(DummyComponent);
-        component = shallow(<FormComponent></FormComponent>);
+        const FormComponent = withForm(
+          fieldNames,
+          constraints,
+          validateGroupsMap
+        )(DummyComponent);
+        component = shallow(<FormComponent />);
       });
 
       describe('when current field value changes to pass some cross-field validations', () => {
@@ -363,7 +404,7 @@ describe('withForm', () => {
         email: 'email',
       };
       const FormComponent = withForm(fieldNames)(DummyComponent);
-      component = shallow(<FormComponent></FormComponent>);
+      component = shallow(<FormComponent />);
     });
 
     it('resets field to undefined', () => {
@@ -414,7 +455,7 @@ describe('withForm', () => {
         email: 'email',
       };
       const FormComponent = withForm(fieldNames)(DummyComponent);
-      component = shallow(<FormComponent></FormComponent>);
+      component = shallow(<FormComponent />);
     });
 
     it('resets all fields to empty values', () => {
@@ -443,36 +484,35 @@ describe('withForm', () => {
       };
 
       it('returns undefined when input is empty', () => {
-        const input = {webUrl : ''};
+        const input = { webUrl: '' };
 
         expect(validate(input, constraints)).toBe(undefined);
       });
 
       it('returns undefined when input is a url', () => {
-        const validURLs = ['http://www.ssn-app.com',
+        const validURLs = [
+          'http://www.ssn-app.com',
           'https://www.ssn-app.com',
           'https://www.ssn-app.com',
           'www.ssn-app.com',
         ];
 
-        const validURLInputs = validURLs.map((url) => ({webUrl : url}));
+        const validURLInputs = validURLs.map(url => ({ webUrl: url }));
 
-        validURLInputs.forEach((input) => {
+        validURLInputs.forEach(input => {
           expect(validate(input, constraints)).toBe(undefined);
         });
       });
 
       it('returns error message when input is an invalid url', () => {
-        const invalidURLs = [
-          'www.ssn-app',
-          'random string',
-          'abc.ssn-app',
-        ];
+        const invalidURLs = ['www.ssn-app', 'random string', 'abc.ssn-app'];
 
-        const invalidURLInputs = invalidURLs.map((url) => ({webUrl : url}));
+        const invalidURLInputs = invalidURLs.map(url => ({ webUrl: url }));
 
-        invalidURLInputs.forEach((input) => {
-          expect(validate(input, constraints).webUrl).toEqual(['Web url is invalid']);
+        invalidURLInputs.forEach(input => {
+          expect(validate(input, constraints).webUrl).toEqual([
+            'Web url is invalid',
+          ]);
         });
       });
     });
@@ -485,36 +525,37 @@ describe('withForm', () => {
       };
 
       it('returns error message when input is empty', () => {
-        const input = {webUrl : ''};
+        const input = { webUrl: '' };
 
-        expect(validate(input, constraints).webUrl).toEqual(['Web url cannot be empty']);
+        expect(validate(input, constraints).webUrl).toEqual([
+          'Web url cannot be empty',
+        ]);
       });
 
       it('returns undefined when input is a url', () => {
-        const validURLs = ['http://www.ssn-app.com',
+        const validURLs = [
+          'http://www.ssn-app.com',
           'https://www.ssn-app.com',
           'https://www.ssn-app.com',
           'www.ssn-app.com',
         ];
 
-        const validURLInputs = validURLs.map((url) => ({webUrl : url}));
+        const validURLInputs = validURLs.map(url => ({ webUrl: url }));
 
-        validURLInputs.forEach((input) => {
+        validURLInputs.forEach(input => {
           expect(validate(input, constraints)).toBe(undefined);
         });
       });
 
       it('returns error message when input is an invalid url', () => {
-        const invalidURLs = [
-          'www.ssn-app',
-          'random string',
-          'abc.ssn-app',
-        ];
+        const invalidURLs = ['www.ssn-app', 'random string', 'abc.ssn-app'];
 
-        const invalidURLInputs = invalidURLs.map((url) => ({webUrl : url}));
+        const invalidURLInputs = invalidURLs.map(url => ({ webUrl: url }));
 
-        invalidURLInputs.forEach((input) => {
-          expect(validate(input, constraints).webUrl).toEqual(['Web url is invalid']);
+        invalidURLInputs.forEach(input => {
+          expect(validate(input, constraints).webUrl).toEqual([
+            'Web url is invalid',
+          ]);
         });
       });
     });
