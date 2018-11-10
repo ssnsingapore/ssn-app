@@ -6,6 +6,7 @@ import {
   Button,
   TextField,
   Paper,
+  Grid,
 } from '@material-ui/core';
 import Cookie from 'js-cookie';
 import qs from 'qs';
@@ -23,9 +24,13 @@ import {
   fieldErrorText,
   withForm,
 } from 'util/form';
+import { Role } from 'components/shared/enums/Role';
 
 const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
 const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
+
+const LOGOUT_SUCCESS_MESSAGE = 'You\'ve successfully logged out!';
+const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error logging you out. Please try again!';
 
 const FieldName = getFieldNameObject(['email', 'password']);
 const constraints = {
@@ -43,12 +48,15 @@ const constraints = {
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing.unit * 4,
   },
   standaloneRoot: {
     maxWidth: '400px',
+    padding: theme.spacing.unit * 2,
+    margin: `${theme.container.margin.vertical * 0.1}px auto`,
+  },
+  form: {
+    marginTop: '10px',
     padding: theme.spacing.unit * 4,
-    margin: `${theme.container.margin.vertical}px auto`,
   },
   loginButton: {
     marginTop: theme.spacing.unit * 6,
@@ -65,6 +73,14 @@ const styles = theme => ({
   margin3: {
     margin: theme.spacing.unit * 3,
   },
+  button: {
+    margin: '0 auto',
+    marginTop: '10px',
+    width: '100%',
+  },
+  marginBottom3: {
+    marginBottom: theme.spacing.unit * 1,
+  },
 });
 
 class _ProjectOwnerLoginForm extends React.Component {
@@ -74,7 +90,7 @@ class _ProjectOwnerLoginForm extends React.Component {
     shouldRedirect: false,
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.showAccountConfirmationMessage();
   }
 
@@ -96,15 +112,15 @@ class _ProjectOwnerLoginForm extends React.Component {
     const { showAlert } = this.props.context.updaters;
     const { authenticator } = this.props.context.utils;
 
-    this.setState( { isLoading: true } );
+    this.setState({ isLoading: true });
 
     const { email, password } = this.props.valuesForAllFields();
     const response = await authenticator.loginProjectOwner(email, password);
 
-    this.setState( { isLoading: false });
+    this.setState({ isLoading: false });
 
     if (response.isSuccessful) {
-      this.setState( { shouldRedirect: true } );
+      this.setState({ shouldRedirect: true });
       showAlert('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
     }
 
@@ -131,87 +147,169 @@ class _ProjectOwnerLoginForm extends React.Component {
     }
   }
 
-  render() {
-    if (this.state.shouldRedirect) {
-      return <Redirect to="/project_owner/dashboard"/>;
-    }
 
+  handleLogout = async (currentUser) => {
+
+    const { authenticator } = this.props.context.utils;
+    const { showAlert } = this.props.context.updaters;
+
+    this.setState({ isLoggingOut: true });
+
+    const response = currentUser.role === Role.PROJECT_OWNER ?
+      await authenticator.logoutProjectOwner() : await authenticator.logoutAdmin();
+
+    if (response.isSuccessful) {
+      showAlert('logoutSuccess', AlertType.SUCCESS, LOGOUT_SUCCESS_MESSAGE);
+    }
+    if (response.hasError) {
+      showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
+    }
+    this.setState({ isLoggingOut: false });
+  }
+
+
+  renderLoggedIn() {
+    const { classes } = this.props;
+    const { authenticator } = this.props.context.utils;
+    const currentUser = authenticator.getCurrentUser();
+
+    const rootStyle = this.props.location && this.props.location.pathname === '/login' ?
+      classes.standaloneRoot : classes.root;
+
+    return (
+      <div className={rootStyle}>
+        <Typography variant="headline2" gutterBottom>
+          You are logged in as {currentUser.email}.
+        </Typography>
+        <Button
+          variant="contained"
+          color="default"
+          onClick={() => this.handleLogout(currentUser)}
+          className={classes.button}
+        >
+          Logout
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to={currentUser.role === Role.PROJECT_OWNER ? '/project_owner/dashboard' : '/admin/dashboard'}
+          className={classes.button}
+        >
+          Go to Dashboard
+        </Button>
+      </div>
+    );
+
+  }
+
+  renderLoginForm() {
     const { classes, fields, handleChange } = this.props;
     const rootStyle = this.props.location && this.props.location.pathname === '/login' ?
       classes.standaloneRoot : classes.root;
 
     return (
-      <Paper className={rootStyle} square>
-        <PasswordResetDialog
-          open={this.state.passwordResetDialogOpen}
-          handleClose={this.handlePasswordResetDialogClose}
-        />
-        <form className={classes.container} onSubmit={this.handleSubmit}>
-          <TextField
-            InputLabelProps={{ shrink: true }}
-            placeholder="Email"
-            margin="normal"
-            name={FieldName.email}
-            value={fieldValue(fields, FieldName.email) || ''}
-            error={fieldHasError(fields, FieldName.email)}
-            helperText={fieldErrorText(fields, FieldName.email)}
-            onChange={handleChange}
-            fullWidth
-          />
-          <TextField
-            InputLabelProps={{ shrink: true }}
-            placeholder="Password"
-            margin="normal"
-            fullWidth
-            name={FieldName.password}
-            value={fieldValue(fields, FieldName.password) || ''}
-            error={fieldHasError(fields, FieldName.password)}
-            helperText={fieldErrorText(fields, FieldName.password)}
-            onChange={handleChange}
-            type="password"
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
-            size="large"
-            fullWidth
-            disabled={this.state.isLoading}
-            className={classes.loginButton}
-          >
-            Login
-          </Button>
-          <Button
-            size="small"
-            fullWidth
-            onClick={this.handlePasswordResetDialog}
-            className={classes.forgotPasswordButton}
-          >
-            Forgot password?
-          </Button>
-          <Typography
-            gutterBottom
-            align="center"
-            className={classes.margin3}
-          >
-            or
+      <Grid container className={rootStyle}>
+        <Grid item xs={12}>
+          <Typography variant="headline" component="h3" gutterBottom>
+            Have a project in mind?
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            fullWidth
-            className={classes.signupButton}
-            component={Link}
-            to="/signup"
+          <Typography
+            component="p"
+            gutterBottom
+            className={classes.marginBottom3}
           >
-            Sign Up
-          </Button>
-        </form>
-      </Paper>
+            Sign up as a project owner to post a project, or login if you
+            already have an account.
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper className={classes.form} square>
+            <PasswordResetDialog
+              open={this.state.passwordResetDialogOpen}
+              handleClose={this.handlePasswordResetDialogClose}
+            />
+            <form className={classes.container} onSubmit={this.handleSubmit}>
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                placeholder="Email"
+                margin="normal"
+                name={FieldName.email}
+                value={fieldValue(fields, FieldName.email) || ''}
+                error={fieldHasError(fields, FieldName.email)}
+                helperText={fieldErrorText(fields, FieldName.email)}
+                onChange={handleChange}
+                fullWidth
+              />
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                placeholder="Password"
+                margin="normal"
+                fullWidth
+                name={FieldName.password}
+                value={fieldValue(fields, FieldName.password) || ''}
+                error={fieldHasError(fields, FieldName.password)}
+                helperText={fieldErrorText(fields, FieldName.password)}
+                onChange={handleChange}
+                type="password"
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="secondary"
+                size="large"
+                fullWidth
+                disabled={this.state.isLoading}
+                className={classes.loginButton}
+              >
+                Login
+              </Button>
+              <Button
+                size="small"
+                fullWidth
+                onClick={this.handlePasswordResetDialog}
+                className={classes.forgotPasswordButton}
+              >
+                Forgot password?
+              </Button>
+              <Typography
+                gutterBottom
+                align="center"
+                className={classes.margin3}
+              >
+                or
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                className={classes.signupButton}
+                component={Link}
+                to="/signup"
+              >
+                Sign Up
+              </Button>
+            </form>
+          </Paper>
+        </Grid>
+      </Grid>
     );
   }
+
+  render() {
+    const { isAuthenticated } = this.props.context;
+
+    if (this.state.shouldRedirect) {
+      return <Redirect to="/project_owner/dashboard" />;
+    }
+
+    return isAuthenticated ? this.renderLoggedIn() : this.renderLoginForm();
+  }
+
 }
+
+
 
 export const ProjectOwnerLoginForm =
   withTheme()(
