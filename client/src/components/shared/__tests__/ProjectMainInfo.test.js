@@ -99,7 +99,7 @@ describe('ProjectMainInfo', () => {
         const descriptionComponent = baseDetailsCard.find(Typography).at(1);
         const signUpButton = baseDetailsCard.find(Button);
         expect(titleComponent.html()).toEqual(
-          expect.stringContaining('some title'),
+          expect.stringContaining('Some Title'),
         );
         expect(descriptionComponent.html()).toEqual(
           expect.stringContaining('some description'),

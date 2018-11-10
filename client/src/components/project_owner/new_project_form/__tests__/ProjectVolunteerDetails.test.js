@@ -28,6 +28,7 @@ describe('ProjectVolunteerDetails', () => {
       fields,
       FieldName,
       volunteerRequirementRefs: [React.createRef(), React.createRef()],
+      volunteerRequirements: [],
     };
 
     component = mount(<ProjectVolunteerDetails {...props} />);
