@@ -119,21 +119,6 @@ class _ProjectOwnerNewProjectForm extends Component {
     });
   };
 
-  togglePreviewOn = () => {
-    const { fields } = this.props;
-    const project = {};
-
-    for (const [key, valueObject] of Object.entries(fields)) {
-      project[key] = valueObject.value;
-    }
-
-    this.setState({ preview: true, project });
-  };
-
-  togglePreviewOff = () => {
-    this.setState({ preview: false });
-  };
-
   handleSubmit = async event => {
     event.preventDefault();
 

@@ -1,18 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Grid,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  Chip,
-  Avatar,
-  List,
-  ListItem,
-  ListItemText,
-  Button,
-} from '@material-ui/core';
+import { Grid, Typography, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
@@ -21,11 +9,10 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectDeactivateConfirmationDialog } from 'components/shared/ProjectDeactivateConfirmationDialog';
 import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActivateConfirmationDialog';
+import { ProjectListingCard } from 'components/shared/ProjectListingCard';
 
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
-import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectStateDisplayMapping } from './display_mappings/ProjectStateDisplayMapping';
 
 class _ProjectListing extends Component {
@@ -72,44 +59,6 @@ class _ProjectListing extends Component {
 
     this.setState({ isLoading: false });
   }
-
-  renderIssuesAddressed = project => {
-    const { classes } = this.props;
-    return (
-      <React.Fragment>
-        <Typography variant="body1">Issues addressed:</Typography>
-        {project.issuesAddressed.map(issueAddressed => {
-          return (
-            <Chip
-              key={issueAddressed}
-              label={IssueAddressedDisplayMapping[issueAddressed]}
-              className={classes.chip}
-              color="primary"
-            />
-          );
-        })}
-      </React.Fragment>
-    );
-  };
-
-  renderVolunteerRequirements = project => {
-    const { classes } = this.props;
-
-    return (
-      <React.Fragment>
-        <Typography variant="body1">We need:</Typography>
-        {project.volunteerRequirements.map(requirement => {
-          return (
-            <Chip
-              key={requirement.type}
-              label={VolunteerRequirementTypeDisplayMapping[requirement.type]}
-              className={classes.chip}
-            />
-          );
-        })}
-      </React.Fragment>
-    );
-  };
 
   handleProjectDeactivateConfirmationDialogOpen = (dashboardRole, project) => {
     this.setState({
@@ -213,77 +162,6 @@ class _ProjectListing extends Component {
     );
   }
 
-  renderRejectionMessage(project, rejectionMessageSize) {
-    const { classes } = this.props;
-    if (!this._isRejected(project)) {
-      return null;
-    }
-    return (
-      <Grid item xs={rejectionMessageSize} className={classes.rejectionMessage}>
-        <Typography variant="body2">Rejection comments:</Typography>
-        <Typography variant="body1">{project.rejectionReason}</Typography>
-      </Grid>
-    );
-  }
-
-  renderProjectListingCardContent(project) {
-    const { classes } = this.props;
-
-    const cardContentSize = this._isRejected(project) ? 8 : 12;
-    const rejectionMessageSize =
-      cardContentSize === 12 ? false : 12 - cardContentSize;
-
-    return (
-      <Grid container key={`${project.title}-main`}>
-        <Grid item xs={cardContentSize}>
-          <Grid container>
-            <Card className={classes.card} square>
-              <Grid container key={`${project.title}-cardContent`}>
-                <Grid item xs={3}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image={project.coverImageUrl}
-                  />
-                </Grid>
-                <Grid item xs={9}>
-                  <CardContent className={classes.content}>
-                    <Typography variant="headline" gutterBottom>
-                      {project.title}
-                    </Typography>
-                    <Typography
-                      variant="subheading"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      <List className={classes.removePadding}>
-                        <ListItem className={classes.removePadding}>
-                          <Avatar
-                            alt="Profile Photo"
-                            src={project.projectOwner.profilePhotoUrl}
-                            className={classes.smallAvatar}
-                          />
-                          <ListItemText
-                            className={classes.removePadding}
-                            primary={project.projectOwner.name}
-                          />
-                        </ListItem>
-                      </List>
-                    </Typography>
-                    <div className={classes.tagsContainer}>
-                      {this.renderVolunteerRequirements(project)}
-                      {this.renderIssuesAddressed(project)}
-                    </div>
-                  </CardContent>
-                </Grid>
-              </Grid>
-            </Card>
-          </Grid>
-        </Grid>
-        {this.renderRejectionMessage(project, rejectionMessageSize)}
-      </Grid>
-    );
-  }
-
   _getContentGridSize(dashboardRole, project) {
     let contentGridSize = 12;
     if (
@@ -353,7 +231,7 @@ class _ProjectListing extends Component {
           <Grid container>
             <Grid item xs={12} md={contentGridSize}>
               <Link to={linkEndpoint} className={classes.link}>
-                {this.renderProjectListingCardContent(project)}
+                <ProjectListingCard project={project} />
               </Link>
             </Grid>
             <Grid
@@ -400,36 +278,6 @@ class _ProjectListing extends Component {
 }
 
 const styles = theme => ({
-  card: {
-    display: 'flex',
-    marginBottom: theme.spacing.unit,
-    width: '100%',
-  },
-  content: {
-    flex: '1 0 auto',
-  },
-  cardMedia: {
-    width: '100%',
-    height: '100%',
-    minHeight: '200px',
-    backgroundSize: 'cover',
-  },
-  tagsContainer: {
-    marginTop: '30px',
-  },
-  chip: {
-    margin: theme.spacing.unit / 2,
-    fontSize: '12px',
-    height: '25px',
-  },
-  smallAvatar: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-  },
-  removePadding: {
-    padding: 0,
-  },
   link: {
     textDecoration: 'none',
   },
@@ -438,11 +286,6 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 1.5,
     marginRight: theme.spacing.unit * 0.5,
     minWidth: '80px',
-  },
-  rejectionMessage: {
-    padding: '15px',
-    textAlign: 'justify',
-    wordWrap: 'break-word',
   },
 });
 
