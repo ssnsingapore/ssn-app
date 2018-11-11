@@ -3,10 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { Redirect, Link } from 'react-router-dom';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
-import {
-  Grid,
-  Button,
-} from '@material-ui/core';
+import { Grid, Button, Typography } from '@material-ui/core';
+import { Warning } from '@material-ui/icons';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
@@ -36,7 +34,7 @@ class _AdminProjectDetails extends Component {
     const response = await requestWithAlert.get(`/api/v1/projects/${id}`);
 
     if (response.isSuccessful) {
-      const { project } = (await response.json());
+      const { project } = await response.json();
       this.setState({ project });
     }
 
@@ -47,7 +45,6 @@ class _AdminProjectDetails extends Component {
     }
 
     this.setState({ isLoading: false });
-
   }
 
   handleApprove = async (event) => {
@@ -60,7 +57,7 @@ class _AdminProjectDetails extends Component {
     const updatedProject = {
       project: {
         state: ProjectState.APPROVED_ACTIVE,
-      }
+      },
     };
 
     const { showAlert } = this.props.context.updaters;
@@ -90,7 +87,6 @@ class _AdminProjectDetails extends Component {
     this.setState({ approveConfirmationDialogBoxOpen: false });
   }
 
-
   handleRejectionConfirmationDialogBoxOpen = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: true });
   }
@@ -98,7 +94,6 @@ class _AdminProjectDetails extends Component {
   handleRejectionConfirmationDialogBoxClose = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: false });
   }
-
 
   renderApproveRejectButtons(state) {
     const { classes } = this.props;
@@ -152,20 +147,29 @@ class _AdminProjectDetails extends Component {
     );
   }
 
+  _isProjectRejected = () => this.state.project.state === ProjectState.REJECTED;
+
+  renderRejectionMessage() {
+    return (
+      <Grid item xs={12}>
+        <Typography variant="body1">
+          <Warning style={{ marginRight: '10px' }} /><b>Rejection reason:</b> {this.state.project.rejectionReason}
+        </Typography>
+      </Grid>
+    );
+  }
 
   render() {
     const { classes } = this.props;
     const { id } = this.props.match.params;
-    const { isSubmitting, isLoading } = this.state;
+    const { isSubmitting, isLoading, project } = this.state;
 
     if (this.state.isLoading) {
       return <Spinner />;
     }
     if (this.state.shouldRedirect) {
       return (
-        <Redirect to={{
-          pathname: '/admin/dashboard'
-        }} />
+        <Redirect to={{ pathname: '/admin/dashboard' }} />
       );
     }
     return (
@@ -186,13 +190,12 @@ class _AdminProjectDetails extends Component {
             isLoading={isLoading}
           />
           <Grid container spacing={16} className={classes.projectDetails}>
+            {this._isProjectRejected() && this.renderRejectionMessage()}
             <Grid item xs={12}>
-              <ProjectMainInfo project={this.state.project} />
+              <ProjectMainInfo project={project} />
             </Grid>
             <Grid item xs={12}>
-              <ProjectOwnerDetails
-                projectOwner={this.state.project.projectOwner}
-              />
+              <ProjectOwnerDetails projectOwner={project.projectOwner} />
             </Grid>
           </Grid>
         </div>
