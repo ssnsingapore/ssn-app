@@ -294,9 +294,15 @@ describe('ProjectMainInfo', () => {
             expect.stringContaining('East'),
           );
           expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
-            expect.stringContaining('Issues Addressed'),
+            expect.stringContaining('Address'),
           );
           expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
+            expect.stringContaining('-'),
+          );
+          expect(projectDetailsCard.find(Typography).at(7).html()).toEqual(
+            expect.stringContaining('Issues Addressed'),
+          );
+          expect(projectDetailsCard.find(Typography).at(7).html()).toEqual(
             expect.stringContaining('Other'),
           );
         });
@@ -344,9 +350,15 @@ describe('ProjectMainInfo', () => {
             expect.stringContaining('East'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
-            expect.stringContaining('Issues Addressed'),
+            expect.stringContaining('Address'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
+            expect.stringContaining('-'),
+          );
+          expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
+            expect.stringContaining('Issues Addressed'),
+          );
+          expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
             expect.stringContaining('Other'),
           );
         });
@@ -384,9 +396,17 @@ describe('ProjectMainInfo', () => {
           });
         });
 
-        describe('when no issues addressed are specified', () => {
+        describe('when no address is specified', () => {
           it('should render a dash', () => {
             expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
+              expect.stringContaining('<strong>Address: </strong>-'),
+            );
+          });
+        });
+
+        describe('when no issues addressed are specified', () => {
+          it('should render a dash', () => {
+            expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
               expect.stringContaining('<strong>Issues Addressed: </strong>-'),
             );
           });
