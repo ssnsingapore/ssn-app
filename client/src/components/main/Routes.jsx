@@ -70,13 +70,13 @@ class _Routes extends Component {
                 authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
-                path="/project_owner/projects/:id"
-                component={EditProjectPreview}
+                path="/project_owner/projects/:id/edit"
+                component={ProjectOwnerEditProjectForm}
                 authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
-                path="/project_owner/projects/:id/edit"
-                component={ProjectOwnerEditProjectForm}
+                path="/project_owner/projects/:id"
+                component={EditProjectPreview}
                 authorize={[Role.PROJECT_OWNER]}
               />
               <RouteAuthenticated
