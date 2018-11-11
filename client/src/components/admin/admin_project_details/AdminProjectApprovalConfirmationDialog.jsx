@@ -25,14 +25,13 @@ export class AdminProjectApprovalConfirmationDialog extends Component {
 
   render() {
     const { open, handleClose, handleApprove, isSubmitting, isLoading } = this.props;
-
     return (
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Approve project</DialogTitle>
+        <DialogTitle id="form-dialog-title">Approve Project</DialogTitle>
         {this.renderDialogContent()}
         <DialogActions>
           <Button
