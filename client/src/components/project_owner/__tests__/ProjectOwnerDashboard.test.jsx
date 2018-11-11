@@ -7,7 +7,7 @@ import { defaultAppContext } from 'components/main/AppContext';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { ProjectListing } from 'components/shared/ProjectListing';
+import { ProjectOwnerProjectListing } from 'components/project_owner/ProjectOwnerProjectListing';
 
 const ProjectOwnerDashboard = _testExports.ProjectOwnerDashboard;
 const mockSuccessfulResponse = (body) => {
@@ -65,7 +65,7 @@ describe('ProjectOwnerDashboard', () => {
     describe('when there is an error fetching project counts', () => {
       const errorsObject = {
         errors: [
-          {title: 'some error', detail: 'some error' },
+          { title: 'some error', detail: 'some error' },
         ],
       };
 
@@ -119,7 +119,7 @@ describe('ProjectOwnerDashboard', () => {
       expect(component.find(Button).props().to).toEqual('/project_owner/projects/new');
     });
 
-    describe('when loading', () =>{
+    describe('when loading', () => {
       it('should render a spinner instead of tabs', () => {
         component.setState({ isLoading: true });
         component.update();
@@ -146,7 +146,7 @@ describe('ProjectOwnerDashboard', () => {
           component.setState({ tabValue: 0 });
           component.update();
 
-          expect(component.find(ProjectListing).props().projectState).toEqual(ProjectState.PENDING_APPROVAL);
+          expect(component.find(ProjectOwnerProjectListing).props().projectState).toEqual(ProjectState.PENDING_APPROVAL);
         });
       });
 
@@ -155,7 +155,7 @@ describe('ProjectOwnerDashboard', () => {
           component.setState({ tabValue: 1 });
           component.update();
 
-          expect(component.find(ProjectListing).props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
+          expect(component.find(ProjectOwnerProjectListing).props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
         });
       });
 
@@ -164,7 +164,7 @@ describe('ProjectOwnerDashboard', () => {
           component.setState({ tabValue: 2 });
           component.update();
 
-          expect(component.find(ProjectListing).props().projectState).toEqual(ProjectState.APPROVED_INACTIVE);
+          expect(component.find(ProjectOwnerProjectListing).props().projectState).toEqual(ProjectState.APPROVED_INACTIVE);
         });
       });
 
@@ -173,7 +173,7 @@ describe('ProjectOwnerDashboard', () => {
           component.setState({ tabValue: 3 });
           component.update();
 
-          expect(component.find(ProjectListing).props().projectState).toEqual(ProjectState.REJECTED);
+          expect(component.find(ProjectOwnerProjectListing).props().projectState).toEqual(ProjectState.REJECTED);
         });
       });
     });
