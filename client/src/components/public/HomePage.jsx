@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Typography, Grid, Button } from '@material-ui/core';
+import { Typography, Grid } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
-import { ProjectListing } from 'components/shared/ProjectListing';
+import { HomepageProjectListing } from 'components/public/HomepageProjectListing';
 import { ProjectOwnerLoginForm } from './ProjectOwnerLoginForm';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
@@ -45,17 +44,8 @@ class _HomePage extends Component {
           </Typography>
           <Grid container spacing={4 * theme.spacing.unit}>
             <Grid item md={9} xs={12}>
-              <ProjectListing pageSize={3} projectState={'APPROVED_ACTIVE'} />
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                fullWidth
-                component={Link}
-                to="/projects"
-              >
-                View All Projects
-              </Button>
+              <HomepageProjectListing />
+
             </Grid>
             <Grid item md={3} xs={12}>
               <ProjectOwnerLoginForm />
