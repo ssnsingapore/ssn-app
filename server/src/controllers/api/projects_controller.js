@@ -4,7 +4,6 @@ import multer from 'multer';
 import { asyncWrap } from 'util/async_wrapper';
 import { Project, ProjectState } from 'models/Project';
 // eslint-disable-next-line no-unused-vars
-import { ProjectOwner } from 'models/ProjectOwner';
 import { Role } from 'models/Role';
 import { UnprocessableEntityErrorView } from 'util/errors';
 import {
@@ -24,7 +23,7 @@ async function getProjects(req, res) {
   const {
     projectState = ProjectState.APPROVED_ACTIVE,
     issueAddressed,
-    projectLocation,
+    projectRegion,
   } = req.query;
 
   const sortParams = projectState === ProjectState.PENDING_APPROVAL
@@ -33,7 +32,7 @@ async function getProjects(req, res) {
 
   const filterParams = {
     ...(issueAddressed && { issuesAddressed: issueAddressed }),
-    ...(projectLocation && { location: projectLocation }),
+    ...(projectRegion && { location: projectRegion }),
   };
 
   // Queries to mongodb
@@ -51,13 +50,13 @@ async function getProjects(req, res) {
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
 async function getProjectCounts(req, res) {
-  const { issueAddressed, projectLocation } = req.query;
+  const { issueAddressed, projectRegion } = req.query;
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
   const filterParams = {
     ...(issueAddressed && { issuesAddressed: issueAddressed }),
-    ...(projectLocation && { location: projectLocation }),
+    ...(projectRegion && { location: projectRegion }),
   };
 
   for (let i = 0; i < projectStates.length; i += 1) {

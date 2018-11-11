@@ -19,7 +19,7 @@ import {
 } from '@material-ui/core';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
-import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
+import { ProjectRegionDisplayMapping } from 'components/shared/display_mappings/ProjectRegionDisplayMapping';
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectType } from 'components/shared/enums/ProjectType';
@@ -219,7 +219,8 @@ const renderProjectDetails = (classes, project) => {
     startDate,
     endDate,
     time,
-    location,
+    region,
+    address,
     projectType,
     frequency,
   } = project;
@@ -250,7 +251,8 @@ const renderProjectDetails = (classes, project) => {
         'Time',
         time ? moment(time, 'HH:mm').format('h:mm A') : undefined
       )}
-      {renderRow('Location', ProjectLocationDisplayMapping[location])}
+      {renderRow('Region', ProjectRegionDisplayMapping[region])}
+      {renderRow('Address', address)}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
   );

@@ -50,7 +50,7 @@ class _HomepageProjectListing extends Component {
       return (
         <Typography
           variant="subheading"
-          style={{ color: theme.palette.grey[500] }}
+          style={{ color: theme.palette.grey[500], margin: '30px' }}
         >
           There are no projects at the moment.
         </Typography>

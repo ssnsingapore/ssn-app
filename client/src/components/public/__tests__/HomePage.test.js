@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@material-ui/core';
 
 import { HomePage } from '../HomePage';
-import { ProjectListing } from '../../shared/ProjectListing';
+import { HomepageProjectListing } from '../../public/HomepageProjectListing';
 import { ProjectOwnerLoginForm } from '../ProjectOwnerLoginForm';
 
 describe('Home page', () => {
@@ -17,7 +17,7 @@ describe('Home page', () => {
 
     expect(buttonProps.to).toEqual('/projects');
     expect(buttonProps.children).toEqual('View All Projects');
-    expect(component.find(ProjectListing).exists()).toBeTruthy();
+    expect(component.find(HomepageProjectListing).exists()).toBeTruthy();
     expect(component.find(ProjectOwnerLoginForm).exists()).toBeTruthy();
   });
 });

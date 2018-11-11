@@ -4,7 +4,7 @@ import {
   VolunteerRequirementType,
   ProjectType,
   IssueAddressed,
-  ProjectLocation,
+  ProjectRegion,
   ProjectFrequency,
   ProjectState,
 } from 'models/Project';
@@ -57,7 +57,7 @@ export const createProject = (projectOwner, overrideAttributes = {}) => new Proj
   volunteerBenefitsDescription: 'lunch',
   projectType: ProjectType.EVENT,
   time: '10 AM',
-  location: ProjectLocation.WEST,
+  location: ProjectRegion.WEST,
   state: ProjectState.PENDING_APPROVAL,
   startDate: new Date(2018, 10, 1),
   endDate: new Date(2018, 10, 1),

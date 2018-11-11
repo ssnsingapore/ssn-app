@@ -9,7 +9,7 @@ import { withContext } from 'util/context';
 
 import landingImage from 'assets/bg.jpg';
 
-class _HomePage extends Component {
+export class _HomePage extends Component {
 
   render() {
     const { classes, theme } = this.props;
