@@ -3,10 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Redirect, Link } from 'react-router-dom';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
-import {
-  Grid,
-  Button,
-} from '@material-ui/core';
+import { Grid, Button } from '@material-ui/core';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
@@ -17,7 +14,8 @@ import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AdminProjectApprovalConfirmationDialog } from './AdminProjectApprovalConfirmationDialog';
 import { AdminProjectRejectionConfirmationDialog } from './AdminProjectRejectionConfirmationDialog';
 
-const PROJECT_APPROVED_SUCCESS_MESSAGE = 'The project has been successfully approved.';
+const PROJECT_APPROVED_SUCCESS_MESSAGE =
+  'The project has been successfully approved.';
 class _AdminProjectDetails extends Component {
   constructor(props) {
     super(props);
@@ -30,13 +28,12 @@ class _AdminProjectDetails extends Component {
   }
 
   async componentDidMount() {
-
     const { id } = this.props.match.params;
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get(`/api/v1/projects/${id}`);
 
     if (response.isSuccessful) {
-      const { project } = (await response.json());
+      const { project } = await response.json();
       this.setState({ project });
     }
 
@@ -47,11 +44,9 @@ class _AdminProjectDetails extends Component {
     }
 
     this.setState({ isLoading: false });
-
   }
 
-  handleApprove = async (event) => {
-
+  handleApprove = async event => {
     event.preventDefault();
 
     const { id } = this.props.match.params;
@@ -60,45 +55,52 @@ class _AdminProjectDetails extends Component {
     const updatedProject = {
       project: {
         state: ProjectState.APPROVED_ACTIVE,
-      }
+      },
     };
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
     this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
+    const response = await requestWithAlert.put(endpoint, updatedProject, {
+      authenticated: true,
+    });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      showAlert('projectApprovalSuccess', AlertType.SUCCESS, PROJECT_APPROVED_SUCCESS_MESSAGE);
+      showAlert(
+        'projectApprovalSuccess',
+        AlertType.SUCCESS,
+        PROJECT_APPROVED_SUCCESS_MESSAGE
+      );
       this.setState({ shouldRedirect: true });
     }
 
     if (response.hasError) {
       const errors = await extractErrors(response);
-      showAlert('projectApprovalFailure', AlertType.ERROR, formatErrors(errors));
+      showAlert(
+        'projectApprovalFailure',
+        AlertType.ERROR,
+        formatErrors(errors)
+      );
     }
-
   };
 
   handleApproveConfirmationDialogBoxOpen = () => {
     this.setState({ approveConfirmationDialogBoxOpen: true });
-  }
+  };
 
   handleApproveConfirmationDialogBoxClose = () => {
     this.setState({ approveConfirmationDialogBoxOpen: false });
-  }
-
+  };
 
   handleRejectionConfirmationDialogBoxOpen = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: true });
-  }
+  };
 
   handleRejectionConfirmationDialogBoxClose = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: false });
-  }
-
+  };
 
   renderApproveRejectButtons(state) {
     const { classes } = this.props;
@@ -125,10 +127,8 @@ class _AdminProjectDetails extends Component {
         >
           Reject
         </Button>
-
       </React.Fragment>
     );
-
   }
 
   renderNavBar() {
@@ -148,10 +148,8 @@ class _AdminProjectDetails extends Component {
         </Button>
         {this.renderApproveRejectButtons(project.state)}
       </div>
-
     );
   }
-
 
   render() {
     const { classes } = this.props;
@@ -163,9 +161,11 @@ class _AdminProjectDetails extends Component {
     }
     if (this.state.shouldRedirect) {
       return (
-        <Redirect to={{
-          pathname: '/admin/dashboard'
-        }} />
+        <Redirect
+          to={{
+            pathname: '/admin/dashboard',
+          }}
+        />
       );
     }
     return (
@@ -229,9 +229,8 @@ const styles = theme => ({
     margin: theme.spacing.unit * 1.5,
     marginLeft: 0,
   },
-
 });
 
-export const AdminProjectDetails =
-  withContext(AppContext)(
-    withStyles(styles)(_AdminProjectDetails));
+export const AdminProjectDetails = withContext(AppContext)(
+  withStyles(styles)(_AdminProjectDetails)
+);

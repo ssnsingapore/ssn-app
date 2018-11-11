@@ -8,7 +8,9 @@ import {
 import {
   _testExports,
 } from 'components/admin/admin_project_details/AdminProjectDetails';
-
+import {
+  Button,
+} from '@material-ui/core';
 
 const AdminProjectDetails = _testExports.AdminProjectDetails;
 
@@ -55,5 +57,15 @@ describe('AdminProjectDetails', () => {
     expect(component.find(ProjectOwnerDetails).exists()).toBeTruthy();
   });
 
-  
+  it('should show approve and reject buttons', () => {
+    const approveButton = component.find(Button).filterWhere(button => button.html().includes('Approve'));
+    const rejectButton = component.find(Button).filterWhere(button => button.html().includes('Reject'));
+
+    console.log('approve', approveButton);
+    console.log('reject', rejectButton);
+
+    expect(approveButton).toBeTruthy();
+    expect(rejectButton).toBeTruthy();
+  });
+
 });
