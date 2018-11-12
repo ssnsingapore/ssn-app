@@ -249,6 +249,8 @@ class _ProjectOwnerEditProjectForm extends Component {
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
       coverImageUrl={this.state.projectToRender.coverImageUrl}
+      projectState={this.state.projectToRender.state}
+      rejectionReason={this.state.projectToRender.rejectionReason}
       projectImageInput={this.projectImageInput}
       formType='edit'
     />;
