@@ -6,11 +6,17 @@ import {
   ProjectOwnerDetails,
 } from '../../shared/ProjectOwnerDetails';
 import {
+  ProjectState,
+} from '../../shared/enums/ProjectState';
+import {
   _testExports,
 } from 'components/admin/admin_project_details/AdminProjectDetails';
 import {
   Button,
 } from '@material-ui/core';
+import {
+  AdminProjectApprovalConfirmationDialog,
+} from '../admin_project_details/AdminProjectApprovalConfirmationDialog';
 
 const AdminProjectDetails = _testExports.AdminProjectDetails;
 
@@ -57,15 +63,29 @@ describe('AdminProjectDetails', () => {
     expect(component.find(ProjectOwnerDetails).exists()).toBeTruthy();
   });
 
-  it('should show approve and reject buttons', () => {
-    const approveButton = component.find(Button).filterWhere(button => button.html().includes('Approve'));
-    const rejectButton = component.find(Button).filterWhere(button => button.html().includes('Reject'));
+  describe('approve projects', () => {
+    beforeAll(() => {
+      component.setState({
+        project: {
+          state: ProjectState.PENDING_APPROVAL,
+        },
+      });
+    });
 
-    console.log('approve', approveButton);
-    console.log('reject', rejectButton);
+    it('should show approve and reject buttons', () => {
 
-    expect(approveButton).toBeTruthy();
-    expect(rejectButton).toBeTruthy();
+      const approveButton = component.find(Button).filterWhere(button => button.props().children === 'Approve');
+      const rejectButton = component.find(Button).filterWhere(button => button.props().children === 'Reject');
+
+      expect(approveButton).toBeTruthy();
+      expect(rejectButton).toBeTruthy();
+    });
+
+    it('should open approve confirmation dialog when click on approve', () => {
+      const approveButton = component.find(Button).filterWhere(button => button.props().children === 'Approve');
+      approveButton.simulate('click');
+
+      expect(component.find(AdminProjectApprovalConfirmationDialog).exists()).toBeTruthy();
+    });
   });
-
 });

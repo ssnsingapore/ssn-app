@@ -234,3 +234,7 @@ const styles = theme => ({
 export const AdminProjectDetails = withContext(AppContext)(
   withStyles(styles)(_AdminProjectDetails)
 );
+
+export const _testExports = {
+  AdminProjectDetails: _AdminProjectDetails,
+};
