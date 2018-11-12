@@ -141,11 +141,9 @@ class _ProjectOwnerNewProjectForm extends Component {
     const { authenticator } = this.props.context.utils;
 
     const currentUser = authenticator.getCurrentUser();
-
-    const volunteerRequirements = this.valuesForAllSubFormFields();
     const newProject = {
       ...this.props.valuesForAllFields(),
-      volunteerRequirements,
+      volunteerRequirements: this.valuesForAllSubFormFields(),
       projectOwner: currentUser.id,
     };
 

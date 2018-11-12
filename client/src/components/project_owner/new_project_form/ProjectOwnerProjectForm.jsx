@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import { Grid, Button, Paper } from '@material-ui/core';
+import { Grid, Button, Paper, Typography } from '@material-ui/core';
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import Warning from '@material-ui/icons/Warning';
 
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
+import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 import { ProjectBaseDetails } from './ProjectBaseDetails';
@@ -94,18 +96,29 @@ class _ProjectOwnerProjectForm extends Component {
     );
   };
 
+
+  _isProjectRejected = () => this.props.projectState === ProjectState.REJECTED;
+
+  renderRejectionMessage() {
+    return (
+      <Grid item xs={12}>
+        <Typography variant="body2">
+          This project has been rejected. Please edit your project before it is pending approval and for admin review.
+        </Typography>
+        <Typography variant="body1">
+          <Warning style={{ marginRight: '10px' }} />
+          <strong>Rejection reason:</strong> {this.props.rejectionReason}
+        </Typography>
+      </Grid>
+    );
+  }
+
   render() {
     const { classes } = this.props;
     const { preview } = this.state;
 
     if (this.props.shouldRedirect) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/project_owner/dashboard',
-          }}
-        />
-      );
+      return <Redirect to={{ pathname: '/project_owner/dashboard' }} />;
     }
 
     return (
@@ -124,6 +137,7 @@ class _ProjectOwnerProjectForm extends Component {
             ) : (
               <React.Fragment>
                 <Grid item xs={12} style={{ paddingTop: '56px' }} />
+                {this._isProjectRejected() && this.renderRejectionMessage()}
                 <Grid item xs={12}>
                   <ProjectBaseDetails
                     fields={this.props.fields}

@@ -192,10 +192,9 @@ class _ProjectOwnerEditProjectForm extends Component {
     const { requestWithAlert } = this.props.context.utils;
 
     const { projectToRender } = this.state;
-    const volunteerRequirements = this.valuesForAllSubFormFields();
     let updatedProject = {
       ...this.props.valuesForAllFields(),
-      volunteerRequirements,
+      volunteerRequirements: this.valuesForAllSubFormFields(),
     };
 
     if (this._isProjectRejected(projectToRender)) {
@@ -249,6 +248,8 @@ class _ProjectOwnerEditProjectForm extends Component {
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
       coverImageUrl={this.state.projectToRender.coverImageUrl}
+      projectState={this.state.projectToRender.state}
+      rejectionReason={this.state.projectToRender.rejectionReason}
       projectImageInput={this.projectImageInput}
       formType='edit'
     />;
