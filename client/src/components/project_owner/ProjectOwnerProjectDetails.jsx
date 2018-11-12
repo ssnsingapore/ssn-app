@@ -72,8 +72,12 @@ class _ProjectOwnerProjectDetails extends Component {
   renderRejectionMessage() {
     return (
       <Grid item xs={12}>
+        <Typography variant="body2">
+          This project has been rejected. Please edit your project before it is pending approval and for admin review.
+        </Typography>
         <Typography variant="body1">
-          <Warning style={{ marginRight: '10px' }} /><b>Rejection reason:</b> {this.state.project.rejectionReason}
+          <Warning style={{ marginRight: '10px' }} />
+          <strong>Rejection reason:</strong> {this.state.project.rejectionReason}
         </Typography>
       </Grid>
     );
