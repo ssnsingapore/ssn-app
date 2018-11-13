@@ -25,11 +25,7 @@ export const volunteerRequirementConstraints = {
   [VolunteerRequirementFieldName.type]: {
     inclusion: Object.values(VolunteerRequirementType),
   },
-  [VolunteerRequirementFieldName.commitmentLevel]: {
-    presence: { allowEmpty: true },
-  },
   [VolunteerRequirementFieldName.number]: {
-    presence: { allowEmpty: true },
     numericality: true,
   },
 };
