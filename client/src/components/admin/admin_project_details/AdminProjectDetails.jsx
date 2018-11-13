@@ -93,11 +93,7 @@ class _AdminProjectDetails extends Component {
 
   handleApproveConfirmationDialogBoxClose = () => {
     this.setState({ approveConfirmationDialogBoxOpen: false });
-<<<<<<< HEAD
   }
-=======
-  };
->>>>>>> master
 
   handleRejectionConfirmationDialogBoxOpen = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: true });
@@ -105,11 +101,7 @@ class _AdminProjectDetails extends Component {
 
   handleRejectionConfirmationDialogBoxClose = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: false });
-<<<<<<< HEAD
   }
-=======
-  };
->>>>>>> master
 
   renderApproveRejectButtons(state) {
     const { classes } = this.props;
