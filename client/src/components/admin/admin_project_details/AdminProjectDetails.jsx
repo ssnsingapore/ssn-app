@@ -152,7 +152,6 @@ class _AdminProjectDetails extends Component {
     );
   }
 
-<<<<<<< HEAD
   _isProjectRejected = () => this.state.project.state === ProjectState.REJECTED;
 
   renderRejectionMessage() {
@@ -165,8 +164,6 @@ class _AdminProjectDetails extends Component {
     );
   }
 
-=======
->>>>>>> master
   render() {
     const { classes } = this.props;
     const { id } = this.props.match.params;
@@ -177,15 +174,7 @@ class _AdminProjectDetails extends Component {
     }
     if (this.state.shouldRedirect) {
       return (
-<<<<<<< HEAD
         <Redirect to={{ pathname: '/admin/dashboard' }} />
-=======
-        <Redirect
-          to={{
-            pathname: '/admin/dashboard',
-          }}
-        />
->>>>>>> master
       );
     }
     return (
