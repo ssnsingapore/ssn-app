@@ -93,6 +93,7 @@ const styles = theme => ({
 });
 
 class _ProjectOwnerLoginForm extends React.Component {
+
   state = {
     passwordResetDialogOpen: false,
     isLoading: false,
@@ -188,7 +189,7 @@ class _ProjectOwnerLoginForm extends React.Component {
     return (
       <Paper className={rootStyle} square>
         <Typography
-          variant="headline"
+          variant="body1"
           gutterBottom
           style={{ overflowWrap: 'break-word', marginBottom: '20px' }}>
           You are logged in as {currentUser.email}.
