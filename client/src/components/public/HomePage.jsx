@@ -1,15 +1,45 @@
-import React, { Component } from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { Grid, Typography, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-
-import { HomepageProjectListing } from 'components/public/HomepageProjectListing';
-import { ProjectOwnerLoginForm } from './ProjectOwnerLoginForm';
-import { AppContext } from 'components/main/AppContext';
-import { withContext } from 'util/context';
-
 import landingImage from 'assets/bg.jpg';
+import { AppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
+import { ProjectState } from 'components/shared/enums/ProjectState';
+import { PublicProjectListing } from 'components/shared/PublicProjectListing';
+import React, { Component } from 'react';
+import { withContext } from 'util/context';
+import { extractErrors, formatErrors } from 'util/errors';
+import { ProjectOwnerLoginForm } from './ProjectOwnerLoginForm';
 
-export class _HomePage extends Component {
+class _HomePage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      projects: [],
+      isLoading: true,
+    };
+  }
+
+  async componentDidMount() {
+    const { requestWithAlert } = this.props.context.utils;
+    const endpoint = '/api/v1/projects';
+    const queryParams = `?pageSize=3&projectState=${ProjectState.APPROVED_ACTIVE}`;
+    const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
+
+    if (response.isSuccessful) {
+      const { projects } = await response.json();
+      this.setState({ projects });
+    }
+
+    if (response.hasError) {
+      const { showAlert } = this.props.context.updaters;
+      const errors = await extractErrors(response);
+      showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+    }
+
+    this.setState({ isLoading: false });
+  }
 
   render() {
     const { classes, theme } = this.props;
@@ -44,8 +74,22 @@ export class _HomePage extends Component {
           </Typography>
           <Grid container spacing={4 * theme.spacing.unit}>
             <Grid item md={9} xs={12}>
-              <HomepageProjectListing />
-
+              <PublicProjectListing
+                classes={classes}
+                theme={theme}
+                projects={this.state.projects}
+                isLoading={this.state.isLoading}
+                projectState={ProjectState.APPROVED_ACTIVE} />
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                component={Link}
+                to="/projects"
+              >
+                View All Projects
+              </Button>
             </Grid>
             <Grid item md={3} xs={12}>
               <ProjectOwnerLoginForm />
