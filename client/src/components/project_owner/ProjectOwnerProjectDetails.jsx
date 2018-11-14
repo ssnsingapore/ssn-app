@@ -10,10 +10,14 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
+import { ProjectState } from 'components/shared/enums/ProjectState';
+import { Role } from 'components/shared/enums/Role';
+import { RejectionReason } from 'components/shared/RejectionReason';
 
-class _EditProjectPreview extends Component {
+class _ProjectOwnerProjectDetails extends Component {
   state = {
     isLoading: true,
+    project: {},
   };
 
   async componentDidMount() {
@@ -64,6 +68,8 @@ class _EditProjectPreview extends Component {
     );
   };
 
+  _isProjectRejected = () => this.state.project.state === ProjectState.REJECTED;
+
   render() {
     const { classes } = this.props;
 
@@ -74,7 +80,13 @@ class _EditProjectPreview extends Component {
       <Grid container className={classes.root}>
         <Grid item xs={12} className={classes.projectDetails}>
           <Grid container spacing={16}>
-            <Grid item xs={12} />
+            {
+              this._isProjectRejected() &&
+              <RejectionReason
+                rejectionReason={this.state.project.rejectionReason}
+                role={Role.PROJECT_OWNER}
+              />
+            }
             <Grid item xs={12}>
               <ProjectMainInfo project={this.state.project} />
             </Grid>
@@ -100,7 +112,7 @@ const styles = theme => ({
     flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
-    paddingBottom: 30,
+    padding: '60px 0',
   },
   previewNotice: {
     padding: theme.spacing.unit / 2,
@@ -126,6 +138,6 @@ const styles = theme => ({
   },
 });
 
-export const EditProjectPreview = withContext(AppContext)(
-  withStyles(styles)(_EditProjectPreview)
+export const ProjectOwnerProjectDetails = withContext(AppContext)(
+  withStyles(styles)(_ProjectOwnerProjectDetails)
 );

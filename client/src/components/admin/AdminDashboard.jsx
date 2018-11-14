@@ -3,7 +3,7 @@ import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
-import { ProjectListing } from 'components/shared/ProjectListing';
+import { AdminProjectListing } from 'components/admin/AdminProjectListing';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
@@ -11,7 +11,6 @@ import { ProjectState } from 'components/shared/enums/ProjectState';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { withContext } from 'util/context';
-import { Role } from 'components/shared/enums/Role';
 export class _AdminDashboard extends Component {
   constructor(props) {
     super(props);
@@ -57,9 +56,8 @@ export class _AdminDashboard extends Component {
 
     return (
       tabValue === value && (
-        <ProjectListing
+        <AdminProjectListing
           projectState={projectState}
-          dashboardRole={Role.ADMIN}
         />
       )
     );

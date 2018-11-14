@@ -154,6 +154,23 @@ class _ProjectOwnerEditProjectForm extends Component {
     });
   };
 
+  _isProjectInactiveAndEndDateNotPassed = (newProject, oldProject) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endDate = new Date(newProject.endDate);
+    return (oldProject.state === ProjectState.APPROVED_INACTIVE && endDate >= today);
+  };
+
+  _projectEditedSuccessMessageText = (newProject, oldProject) => {
+    if (this._isProjectRejected(oldProject)) {
+      return `${newProject.title} details have been successfully updated! It will now be pending admin approval.`;
+    } else if (this._isProjectInactiveAndEndDateNotPassed(newProject, oldProject))
+      return `${newProject.title} details have been successfully updated! It will now be active as event end date has not passed.`;
+    else {
+      return `${newProject.title} details have been successfully updated!`;
+    }
+  }
+
   handleSubmit = async event => {
     event.preventDefault();
 
@@ -175,16 +192,9 @@ class _ProjectOwnerEditProjectForm extends Component {
     const { requestWithAlert } = this.props.context.utils;
 
     const { projectToRender } = this.state;
-    const PROJECT_EDITED_SUCCESS_MESSAGE =
-      this._isProjectRejected(projectToRender) ?
-        `${projectToRender.title} details have been successfully updated! It will now be pending admin approval.`
-        :
-        `${projectToRender.title} details have been successfully updated!`;
-
-    const volunteerRequirements = this.valuesForAllSubFormFields();
     let updatedProject = {
       ...this.props.valuesForAllFields(),
-      volunteerRequirements,
+      volunteerRequirements: this.valuesForAllSubFormFields(),
     };
 
     if (this._isProjectRejected(projectToRender)) {
@@ -192,7 +202,14 @@ class _ProjectOwnerEditProjectForm extends Component {
         ...updatedProject,
         state: ProjectState.PENDING_APPROVAL,
       };
+    } else if (this._isProjectInactiveAndEndDateNotPassed(updatedProject, projectToRender)) {
+      updatedProject = {
+        ...updatedProject,
+        state: ProjectState.APPROVED_ACTIVE,
+      };
     }
+
+    const PROJECT_EDITED_SUCCESS_MESSAGE = this._projectEditedSuccessMessageText(updatedProject, projectToRender);
 
     formData.append('project', JSON.stringify(updatedProject));
 
@@ -231,6 +248,8 @@ class _ProjectOwnerEditProjectForm extends Component {
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
       coverImageUrl={this.state.projectToRender.coverImageUrl}
+      projectState={this.state.projectToRender.state}
+      rejectionReason={this.state.projectToRender.rejectionReason}
       projectImageInput={this.projectImageInput}
       formType='edit'
     />;

@@ -33,14 +33,9 @@ class _ProjectDeactivateConfirmationDialog extends Component {
     );
   }
 
-  handleDeactivateProject = async (event) => {
-    event.preventDefault();
-
-    const { dashboardRole, project, handleClose } = this.props;
-    const id = project._id;
-  
-    let endpoint = '';
-    switch(dashboardRole) {
+  _getEndpoint(dashboardRole, id) {
+    let endpoint;
+    switch (dashboardRole) {
     case Role.PROJECT_OWNER:
       endpoint = `/api/v1/project_owner/projects/${id}`;
       break;
@@ -50,15 +45,19 @@ class _ProjectDeactivateConfirmationDialog extends Component {
     default:
       endpoint = '';
     }
+    return endpoint;
+  }
 
+  handleDeactivateProject = async (event) => {
+    event.preventDefault();
+
+    const { dashboardRole, project, handleClose } = this.props;
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
-    const updatedProject = { 
-      project: {
-        state: ProjectState.APPROVED_INACTIVE,
-      }, 
-    };
+    const id = project._id;
+    const endpoint = this._getEndpoint(dashboardRole, id);
+    const updatedProject = { project: { state: ProjectState.APPROVED_INACTIVE } };
 
     this.setState({ isSubmitting: true });
     const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
@@ -67,7 +66,7 @@ class _ProjectDeactivateConfirmationDialog extends Component {
     if (response.isSuccessful) {
       showAlert('projectDeactivateSuccess', AlertType.SUCCESS, PROJECT_DEACTIVATE_SUCCESS_MESSAGE);
       handleClose();
-      this.setState({ shouldRefreshPage: true});
+      this.setState({ shouldRefreshPage: true });
     }
 
     if (response.hasError) {
@@ -75,7 +74,6 @@ class _ProjectDeactivateConfirmationDialog extends Component {
       showAlert('projectDeactivateFailure', AlertType.ERROR, formatErrors(errors));
       handleClose();
     }
-
   }
 
   render() {
@@ -90,17 +88,17 @@ class _ProjectDeactivateConfirmationDialog extends Component {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Deactivate project</DialogTitle>
+        <DialogTitle id="form-dialog-title">Deactivate Project</DialogTitle>
         {this.renderDialogContent()}
         <DialogActions>
-          <Button 
-            onClick={handleClose} 
+          <Button
+            onClick={handleClose}
             color="default">
             No
           </Button>
-          <Button 
-            onClick={this.handleDeactivateProject} 
-            color="primary" 
+          <Button
+            onClick={this.handleDeactivateProject}
+            color="primary"
             disabled={this.state.isSubmitting}>
             Yes
           </Button>

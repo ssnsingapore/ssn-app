@@ -42,11 +42,11 @@ xdescribe('SearchBar', () => {
 
   it('renders \'all areas\' for the project location drop down menu when there is no selected input', () => {
     const component = mount(<SearchBar />);
-    const projectLocationDropDown = component
+    const projectRegionDropDown = component
       .find(Select)
-      .filterWhere(n => n.props().name === 'projectLocation');
+      .filterWhere(n => n.props().name === 'projectRegion');
 
-    expect(projectLocationDropDown.props().value).toEqual('all areas');
+    expect(projectRegionDropDown.props().value).toEqual('all areas');
   });
 
   describe('renderOptions', () => {

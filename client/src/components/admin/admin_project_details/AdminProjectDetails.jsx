@@ -9,7 +9,9 @@ import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { Role } from 'components/shared/enums/Role';
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
+import { RejectionReason } from 'components/shared/RejectionReason';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AdminProjectApprovalConfirmationDialog } from './AdminProjectApprovalConfirmationDialog';
 import { AdminProjectRejectionConfirmationDialog } from './AdminProjectRejectionConfirmationDialog';
@@ -92,7 +94,7 @@ class _AdminProjectDetails extends Component {
 
   handleApproveConfirmationDialogBoxClose = () => {
     this.setState({ approveConfirmationDialogBoxOpen: false });
-  };
+  }
 
   handleRejectionConfirmationDialogBoxOpen = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: true });
@@ -100,7 +102,7 @@ class _AdminProjectDetails extends Component {
 
   handleRejectionConfirmationDialogBoxClose = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: false });
-  };
+  }
 
   renderApproveRejectButtons(state) {
     const { classes } = this.props;
@@ -151,21 +153,19 @@ class _AdminProjectDetails extends Component {
     );
   }
 
+  _isProjectRejected = () => this.state.project.state === ProjectState.REJECTED;
+
   render() {
     const { classes } = this.props;
     const { id } = this.props.match.params;
-    const { isSubmitting, isLoading } = this.state;
+    const { isSubmitting, isLoading, project } = this.state;
 
     if (this.state.isLoading) {
       return <Spinner />;
     }
     if (this.state.shouldRedirect) {
       return (
-        <Redirect
-          to={{
-            pathname: '/admin/dashboard',
-          }}
-        />
+        <Redirect to={{ pathname: '/admin/dashboard' }} />
       );
     }
     return (
@@ -186,13 +186,18 @@ class _AdminProjectDetails extends Component {
             isLoading={isLoading}
           />
           <Grid container spacing={16} className={classes.projectDetails}>
+            {
+              this._isProjectRejected() &&
+              <RejectionReason
+                rejectionReason={project.rejectionReason}
+                role={Role.ADMIN}
+              />
+            }
             <Grid item xs={12}>
-              <ProjectMainInfo project={this.state.project} />
+              <ProjectMainInfo project={project} />
             </Grid>
             <Grid item xs={12}>
-              <ProjectOwnerDetails
-                projectOwner={this.state.project.projectOwner}
-              />
+              <ProjectOwnerDetails projectOwner={project.projectOwner} />
             </Grid>
           </Grid>
         </div>

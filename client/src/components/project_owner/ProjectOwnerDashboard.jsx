@@ -7,15 +7,13 @@ import { withContext } from 'util/context';
 import { Paper, Typography, Grid, Tabs, Tab, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
-import { ProjectListing } from 'components/shared/ProjectListing';
+import { ProjectOwnerProjectListing } from 'components/project_owner/ProjectOwnerProjectListing';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { extractErrors, formatErrors } from 'util/errors';
-
-import { Role } from 'components/shared/enums/Role';
 
 class _ProjectOwnerDashboard extends Component {
   constructor(props) {
@@ -30,11 +28,7 @@ class _ProjectOwnerDashboard extends Component {
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-
-    const response = await requestWithAlert.get(
-      '/api/v1/project_owner/project_counts',
-      { authenticated: true }
-    );
+    const response = await requestWithAlert.get('/api/v1/project_owner/project_counts', { authenticated: true });
 
     if (response.isSuccessful) {
       const counts = (await response.json()).counts;
@@ -44,11 +38,7 @@ class _ProjectOwnerDashboard extends Component {
     if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
-      showAlert(
-        'getProjectCountsFailure',
-        AlertType.ERROR,
-        formatErrors(errors)
-      );
+      showAlert('getProjectCountsFailure', AlertType.ERROR, formatErrors(errors));
     }
 
     this.setState({ isLoading: false });
@@ -85,16 +75,7 @@ class _ProjectOwnerDashboard extends Component {
   }
 
   renderContent = (value, state) => {
-    const { tabValue } = this.state;
-
-    return (
-      tabValue === value && (
-        <ProjectListing
-          projectState={state}
-          dashboardRole={Role.PROJECT_OWNER}
-        />
-      )
-    );
+    return this.state.tabValue === value && <ProjectOwnerProjectListing projectState={state} />;
   };
 
   renderProjectListing() {
@@ -153,7 +134,7 @@ class _ProjectOwnerDashboard extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     width: '80vw',
     margin: '0 auto',

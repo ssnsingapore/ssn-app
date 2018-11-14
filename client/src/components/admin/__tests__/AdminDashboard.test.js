@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { Tab } from '@material-ui/core'; 
+import { Tab } from '@material-ui/core';
 
 import { _AdminDashboard } from '../AdminDashboard';
 import { Spinner } from 'components/shared/Spinner';
@@ -65,12 +65,12 @@ describe('AdminDashboard', () => {
 
   describe('render', () => {
     it('only renders spinner when page is loading', () => {
-      component.setState({ isLoading : true });
-  
+      component.setState({ isLoading: true });
+
       expect(component.find(Spinner)).toExist();
       expect(component.find(Paper)).not.toExist();
     });
-  
+
     it('displays tab labels with counts', () => {
       const pendingApprovalTab = component.find(Tab).get(0);
       expect(pendingApprovalTab.props.label).toEqual(`Pending Approval (${counts[ProjectState.PENDING_APPROVAL]})`);
@@ -83,35 +83,35 @@ describe('AdminDashboard', () => {
     });
 
     it('renders the project listing for pending approval projects on the first tab', () => {
-      component.setState({ 
-        tabValue: 0, 
+      component.setState({
+        tabValue: 0,
       });
 
-      expect(component.find('ProjectListing').props().projectState).toEqual(ProjectState.PENDING_APPROVAL);
+      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.PENDING_APPROVAL);
     });
 
     it('renders the project listing for approved projects on the second tab', () => {
-      component.setState({ 
-        tabValue: 1, 
+      component.setState({
+        tabValue: 1,
       });
 
-      expect(component.find('ProjectListing').props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
+      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
     });
 
     it('renders the project listing for inactive projects on the third tab', () => {
-      component.setState({ 
-        tabValue: 2, 
+      component.setState({
+        tabValue: 2,
       });
 
-      expect(component.find('ProjectListing').props().projectState).toEqual(ProjectState.APPROVED_INACTIVE);
+      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.APPROVED_INACTIVE);
     });
 
     it('renders the project listing for rejected projects on the fourth tab', () => {
-      component.setState({ 
-        tabValue: 3, 
+      component.setState({
+        tabValue: 3,
       });
 
-      expect(component.find('ProjectListing').props().projectState).toEqual(ProjectState.REJECTED);
+      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.REJECTED);
     });
   });
 });
