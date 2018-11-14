@@ -52,8 +52,17 @@ const styles = theme => ({
   standaloneRoot: {
     maxWidth: '400px',
     padding: theme.spacing.unit * 2,
-    margin: `${theme.container.margin.vertical * 0.1}px auto`,
+    margin: `${theme.container.margin.vertical * 0.5}px auto`,
   },
+  rootLoggedIn: {
+    padding: theme.spacing.unit * 4,
+  },
+  standaloneRootLoggedIn: {
+    maxWidth: '400px',
+    margin: `${theme.container.margin.vertical}px auto`,
+    padding: theme.spacing.unit * 4,
+  },
+
   form: {
     marginTop: '10px',
     padding: theme.spacing.unit * 4,
@@ -174,11 +183,14 @@ class _ProjectOwnerLoginForm extends React.Component {
     const currentUser = authenticator.getCurrentUser();
 
     const rootStyle = this.props.location && this.props.location.pathname === '/login' ?
-      classes.standaloneRoot : classes.root;
+      classes.standaloneRootLoggedIn : classes.rootLoggedIn;
 
     return (
-      <div className={rootStyle}>
-        <Typography variant="headline2" gutterBottom>
+      <Paper className={rootStyle} square>
+        <Typography
+          variant="headline2"
+          gutterBottom
+          style={{ overflowWrap: 'break-word', marginBottom: '20px' }}>
           You are logged in as {currentUser.email}.
         </Typography>
         <Button
@@ -198,7 +210,7 @@ class _ProjectOwnerLoginForm extends React.Component {
         >
           Go to Dashboard
         </Button>
-      </div>
+      </Paper>
     );
 
   }
