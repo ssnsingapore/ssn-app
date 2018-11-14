@@ -169,7 +169,9 @@ const ProjectSchema = new mongoose.Schema(
     },
     rejectionReason: {
       type: String,
-      // should not be blank when ProjectState is rejected. however, rejection message will remain when states change
+      required: [function () {
+        return (this.state === ProjectState.REJECTED);
+      }, 'cannot be blank'],
     },
     address: {
       type: String,
