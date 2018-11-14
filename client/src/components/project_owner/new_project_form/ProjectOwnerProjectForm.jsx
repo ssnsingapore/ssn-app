@@ -28,6 +28,15 @@ class _ProjectOwnerProjectForm extends Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.volunteerRequirementRefs.length !== this.props.volunteerRequirementRefs.length) {
+      const { volunteerRequirements } = this.props.projectToRender;
+      volunteerRequirements.forEach((_row, index) => {
+        this.props.setSubFormFields(volunteerRequirements, index);
+      });
+    }
+  }
+
   togglePreviewOn = () => {
     const { fields } = this.props;
     const project = {};
