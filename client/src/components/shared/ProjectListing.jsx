@@ -1,3 +1,5 @@
+// this component should eventually be deleted
+
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Typography, Button } from '@material-ui/core';
