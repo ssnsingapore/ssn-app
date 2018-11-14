@@ -188,7 +188,7 @@ class _ProjectOwnerLoginForm extends React.Component {
     return (
       <Paper className={rootStyle} square>
         <Typography
-          variant="headline2"
+          variant="headline"
           gutterBottom
           style={{ overflowWrap: 'break-word', marginBottom: '20px' }}>
           You are logged in as {currentUser.email}.
