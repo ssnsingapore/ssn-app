@@ -119,7 +119,7 @@ const renderProjects = (classes, projects, projectState, theme) => {
     return (
       <Typography
         variant="subheading"
-        style={{ color: theme.palette.grey[500] }}
+        style={{ color: theme.palette.grey[500], padding: '20px' }}
       >
         There are no
         {projectState === 'PENDING_APPROVAL'
