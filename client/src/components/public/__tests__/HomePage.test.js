@@ -12,9 +12,9 @@ describe('Home page', () => {
     component = shallow(<HomePage></HomePage>).dive().dive();
   });
 
-  fit('should have a list of projects, a button to view all projects, and a login form', () => {
-    console.log('DEBUG', component.debug());
-    console.log('DEBUG', component.find(Button).debug());
+  it('should have a list of projects, a button to view all projects, and a login form', () => {
+    // console.log('DEBUG', component.debug());
+    // console.log('DEBUG', component.find(Button).debug());
 
     const buttonProps = component.find(Button).props();
 

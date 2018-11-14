@@ -110,4 +110,4 @@ export const HomepageProjectListing = withContext(AppContext)(
 );
 
 //set displayName for tests to allow parent components to find component
-HomepageProjectListing.displayName = 'ProjectListing';
+HomepageProjectListing.displayName = 'HomepageProjectListing';
