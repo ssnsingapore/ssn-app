@@ -3,14 +3,15 @@ import { withStyles } from '@material-ui/core/styles';
 import { Redirect, Link } from 'react-router-dom';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
-import { Grid, Button, Typography } from '@material-ui/core';
-import { Warning } from '@material-ui/icons';
+import { Grid, Button } from '@material-ui/core';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { Role } from 'components/shared/enums/Role';
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
+import { RejectionReason } from 'components/shared/RejectionReason';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AdminProjectApprovalConfirmationDialog } from './AdminProjectApprovalConfirmationDialog';
 import { AdminProjectRejectionConfirmationDialog } from './AdminProjectRejectionConfirmationDialog';
@@ -154,16 +155,6 @@ class _AdminProjectDetails extends Component {
 
   _isProjectRejected = () => this.state.project.state === ProjectState.REJECTED;
 
-  renderRejectionMessage() {
-    return (
-      <Grid item xs={12}>
-        <Typography variant="body1">
-          <Warning style={{ marginRight: '10px' }} /><b>Rejection reason:</b> {this.state.project.rejectionReason}
-        </Typography>
-      </Grid>
-    );
-  }
-
   render() {
     const { classes } = this.props;
     const { id } = this.props.match.params;
@@ -195,7 +186,13 @@ class _AdminProjectDetails extends Component {
             isLoading={isLoading}
           />
           <Grid container spacing={16} className={classes.projectDetails}>
-            {this._isProjectRejected() && this.renderRejectionMessage()}
+            {
+              this._isProjectRejected() &&
+              <RejectionReason
+                rejectionReason={project.rejectionReason}
+                role={Role.ADMIN}
+              />
+            }
             <Grid item xs={12}>
               <ProjectMainInfo project={project} />
             </Grid>

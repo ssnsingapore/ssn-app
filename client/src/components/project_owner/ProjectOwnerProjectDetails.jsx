@@ -3,8 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
-import { Grid, Button, Typography } from '@material-ui/core';
-import { Warning } from '@material-ui/icons';
+import { Grid, Button } from '@material-ui/core';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { AlertType } from 'components/shared/Alert';
@@ -12,6 +11,8 @@ import { Spinner } from 'components/shared/Spinner';
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { Role } from 'components/shared/enums/Role';
+import { RejectionReason } from 'components/shared/RejectionReason';
 
 class _ProjectOwnerProjectDetails extends Component {
   state = {
@@ -69,20 +70,6 @@ class _ProjectOwnerProjectDetails extends Component {
 
   _isProjectRejected = () => this.state.project.state === ProjectState.REJECTED;
 
-  renderRejectionMessage() {
-    return (
-      <Grid item xs={12}>
-        <Typography variant="body2">
-          This project has been rejected. Please edit your project before it is pending approval and for admin review.
-        </Typography>
-        <Typography variant="body1">
-          <Warning style={{ marginRight: '10px' }} />
-          <strong>Rejection reason:</strong> {this.state.project.rejectionReason}
-        </Typography>
-      </Grid>
-    );
-  }
-
   render() {
     const { classes } = this.props;
 
@@ -93,7 +80,13 @@ class _ProjectOwnerProjectDetails extends Component {
       <Grid container className={classes.root}>
         <Grid item xs={12} className={classes.projectDetails}>
           <Grid container spacing={16}>
-            {this._isProjectRejected() && this.renderRejectionMessage()}
+            {
+              this._isProjectRejected() &&
+              <RejectionReason
+                rejectionReason={this.state.project.rejectionReason}
+                role={Role.PROJECT_OWNER}
+              />
+            }
             <Grid item xs={12}>
               <ProjectMainInfo project={this.state.project} />
             </Grid>

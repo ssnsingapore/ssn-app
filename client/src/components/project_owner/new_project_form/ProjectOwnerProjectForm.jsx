@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
-import { Grid, Button, Paper, Typography } from '@material-ui/core';
+import { Grid, Button, Paper } from '@material-ui/core';
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
-import Warning from '@material-ui/icons/Warning';
 
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
+import { RejectionReason } from 'components/shared/RejectionReason';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 import { ProjectBaseDetails } from './ProjectBaseDetails';
 import { FieldName } from './ProjectFormFields';
+import { Role } from 'components/shared/enums/Role';
+
 
 class _ProjectOwnerProjectForm extends Component {
   constructor(props) {
@@ -99,23 +101,9 @@ class _ProjectOwnerProjectForm extends Component {
 
   _isProjectRejected = () => this.props.projectState === ProjectState.REJECTED;
 
-  renderRejectionMessage() {
-    return (
-      <Grid item xs={12}>
-        <Typography variant="body2">
-          This project has been rejected. Please edit your project before it is pending approval and for admin review.
-        </Typography>
-        <Typography variant="body1">
-          <Warning style={{ marginRight: '10px' }} />
-          <strong>Rejection reason:</strong> {this.props.rejectionReason}
-        </Typography>
-      </Grid>
-    );
-  }
-
   render() {
     const { classes } = this.props;
-    const { preview } = this.state;
+    const { preview, project } = this.state;
 
     if (this.props.shouldRedirect) {
       return <Redirect to={{ pathname: '/project_owner/dashboard' }} />;
@@ -131,13 +119,19 @@ class _ProjectOwnerProjectForm extends Component {
                   {this.renderPreviewNotice()}
                 </Grid>
                 <Grid item xs={12}>
-                  <ProjectMainInfo project={this.state.project} />
+                  <ProjectMainInfo project={project} />
                 </Grid>
               </React.Fragment>
             ) : (
               <React.Fragment>
                 <Grid item xs={12} style={{ paddingTop: '56px' }} />
-                {this._isProjectRejected() && this.renderRejectionMessage()}
+                {
+                  this._isProjectRejected() &&
+                    <RejectionReason
+                      rejectionReason={this.props.rejectionReason}
+                      role={Role.PROJECT_OWNER}
+                    />
+                }
                 <Grid item xs={12}>
                   <ProjectBaseDetails
                     fields={this.props.fields}
