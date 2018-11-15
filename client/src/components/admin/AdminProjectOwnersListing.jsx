@@ -45,12 +45,22 @@ class _AdminProjectOwnersListing extends Component {
     const { projectOwners } = this.state;
     return (
       <Grid item xs={12}>
-        {this.renderProjectOwnerTotalsText()}
-        {
-          Object.keys(projectOwners).map(key =>
-            <div className={classes.card}><ProjectOwnerDetails projectOwner={projectOwners[key]} /></div>
-          )
-        }
+        <Grid container>
+          <Grid item xs={12}>
+            {this.renderProjectOwnerTotalsText()}
+          </Grid>
+          {
+            Object.keys(projectOwners).map(key =>
+              <Grid
+                item xs={12}
+                className={classes.card}>
+                <ProjectOwnerDetails
+                  projectOwner={projectOwners[key]}
+                  type='list' />
+              </Grid>
+            )
+          }
+        </Grid>
       </Grid>
     );
   }
@@ -63,7 +73,7 @@ class _AdminProjectOwnersListing extends Component {
       <React.Fragment>
         <Typography
           variant="subheading"
-          style={{ padding: '40px', paddingBottom: '0px' }}
+          style={{ padding: '40px', paddingBottom: '10px' }}
         >
           {projectOwnerTotalsText}
         </Typography>
@@ -130,8 +140,8 @@ const styles = {
   },
   card: {
     padding: '30px',
-    paddingTop: '15',
-    paddingBottom: '15px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
   },
   header: {
     display: 'flex',
