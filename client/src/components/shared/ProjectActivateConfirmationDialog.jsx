@@ -59,11 +59,20 @@ class _ProjectActivateConfirmationDialog extends Component {
 
     const id = project._id;
     const endpoint = this._getEndpoint(dashboardRole, id);
-    const updatedProject = { project: { state: ProjectState.APPROVED_ACTIVE } };
+    const updatedProject = { state: ProjectState.APPROVED_ACTIVE };
 
-    this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
-    this.setState({ isSubmitting: false });
+    let response;
+    if (dashboardRole === Role.PROJECT_OWNER) {
+      const formData = new FormData();
+      formData.append('project', JSON.stringify(updatedProject));
+      this.setState({ isSubmitting: true });
+      response = await requestWithAlert.updateForm(endpoint, formData, { authenticated: true });
+      this.setState({ isSubmitting: false });
+    } else {
+      this.setState({ isSubmitting: true });
+      response = await requestWithAlert.put(endpoint, { project: { ...updatedProject } }, { authenticated: true });
+      this.setState({ isSubmitting: false });
+    }
 
     if (response.isSuccessful) {
       showAlert('projectActivateSuccess', AlertType.SUCCESS, PROJECT_ACTIVATE_SUCCESS_MESSAGE);

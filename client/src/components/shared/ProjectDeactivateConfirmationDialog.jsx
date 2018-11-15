@@ -57,11 +57,22 @@ class _ProjectDeactivateConfirmationDialog extends Component {
 
     const id = project._id;
     const endpoint = this._getEndpoint(dashboardRole, id);
-    const updatedProject = { project: { state: ProjectState.APPROVED_INACTIVE } };
+    const updatedProject = { state: ProjectState.APPROVED_INACTIVE };
 
-    this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
-    this.setState({ isSubmitting: false });
+    let response;
+    if (dashboardRole === Role.PROJECT_OWNER) {
+      const formData = new FormData();
+      formData.append('project', JSON.stringify(updatedProject));
+      this.setState({ isSubmitting: true });
+      response = await requestWithAlert.updateForm(endpoint, formData, { authenticated: true });
+      this.setState({ isSubmitting: false });
+    } else {
+      this.setState({ isSubmitting: true });
+      response = await requestWithAlert.put(endpoint, { project: { ...updatedProject } }, { authenticated: true });
+      this.setState({ isSubmitting: false });
+    }
+
+
 
     if (response.isSuccessful) {
       showAlert('projectDeactivateSuccess', AlertType.SUCCESS, PROJECT_DEACTIVATE_SUCCESS_MESSAGE);
