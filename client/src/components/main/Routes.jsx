@@ -21,6 +21,7 @@ import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDash
 import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
 import { ProjectOwnerEditProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerEditProjectForm';
 import { ProjectOwnerProjectDetails } from 'components/project_owner/ProjectOwnerProjectDetails';
+import { AdminProjectOwnersListing } from 'components/admin/AdminProjectOwnersListing';
 
 import { AdminDashboard } from 'components/admin/AdminDashboard';
 import { AdminProjectDetails } from 'components/admin/admin_project_details/AdminProjectDetails';
@@ -98,6 +99,14 @@ class _Routes extends Component {
                 exact
                 path="/admin/projects/:id"
                 component={AdminProjectDetails}
+                authorize={[Role.ADMIN]}
+                redirectTo="/admin"
+              />
+
+              <RouteAuthenticated
+                exact
+                path="/admin/project_owners"
+                component={AdminProjectOwnersListing}
                 authorize={[Role.ADMIN]}
                 redirectTo="/admin"
               />

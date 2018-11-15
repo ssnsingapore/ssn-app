@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { Typography, Paper, Tabs, Tab, Button, Tooltip } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
@@ -8,6 +9,7 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import GroupIcon from '@material-ui/icons/Group';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { withContext } from 'util/context';
@@ -74,9 +76,22 @@ export class _AdminDashboard extends Component {
     return (
       <Paper className={classes.root} square>
         <Paper className={classes.tabHeader} square>
-          <Typography variant="headline" className={classes.headline}>
-            List of Projects
-          </Typography>
+          <div className={classes.header}>
+            <Typography variant="headline" className={classes.headline}>
+              List of Projects
+            </Typography>
+            <Tooltip title="Project Owners">
+              <Button
+                variant="fab"
+                color="secondary"
+                aria-label="Add"
+                component={Link}
+                to="/admin/project_owners"
+              >
+                <GroupIcon />
+              </Button>
+            </Tooltip>
+          </div>
           <Tabs
             value={tabValue}
             onChange={this.handleChange}
@@ -103,10 +118,10 @@ export class _AdminDashboard extends Component {
 const styles = {
   root: {
     width: '80vw',
-    margin: '10px auto',
+    margin: '30px auto',
   },
   headline: {
-    marginBottom: '35px',
+    marginBottom: '10px',
   },
   tabContainer: {
     marginTop: '35px',
@@ -115,6 +130,12 @@ const styles = {
   tabHeader: {
     padding: '30px',
     paddingBottom: '0px',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '20px',
+    alignItems: 'center',
   },
 };
 

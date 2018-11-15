@@ -57,8 +57,8 @@ class _NavBar extends Component {
       return null;
     }
 
-    const userMatchPathname = (currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner')) ||
-      (currentUser.role === Role.ADMIN && pathname.includes('/admin'));
+    const userMatchPathname = (currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner/dashboard')) ||
+      (currentUser.role === Role.ADMIN && pathname.includes('/admin/dashboard'));
     return userMatchPathname && (
       <Typography variant="body2" color="inherit" className={this.props.classes.barTitle}>
         {NavBarDisplayMapping[currentUser.role]} DASHBOARD
