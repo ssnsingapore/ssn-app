@@ -63,6 +63,7 @@ export const createProject = (projectOwner, overrideAttributes = {}) => new Proj
   endDate: new Date(2018, 10, 1),
   frequency: ProjectFrequency.ONCE_A_WEEK,
   ...overrideAttributes,
+  rejectionReason: 'rejected',
 });
 
 export const saveProject = async (projectOwner, overrideAttributes = {}) => createProject(projectOwner, overrideAttributes).save();
