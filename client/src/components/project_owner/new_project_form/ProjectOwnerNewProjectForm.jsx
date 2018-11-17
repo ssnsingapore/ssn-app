@@ -30,7 +30,6 @@ export class _ProjectOwnerNewProjectForm extends Component {
       volunteerRequirementRefs: [React.createRef()],
       isSubmitting: false,
       shouldRedirect: false,
-      projectToRender: {},
     };
 
     props.setField(FieldName.issuesAddressed, []);
