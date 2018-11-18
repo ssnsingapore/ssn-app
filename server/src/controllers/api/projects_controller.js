@@ -1,3 +1,4 @@
+import moment from 'moment';
 import express from 'express';
 import multer from 'multer';
 
@@ -136,9 +137,12 @@ async function postProject(req, res) {
   const { file } = req;
 
   const newProject = JSON.parse(req.body.project);
+  console.log('new', newProject);
 
   const project = new Project({
     ...newProject,
+    startDate: moment(newProject.startDate).toDate(),
+    endDate: moment(newProject.endDate).toDate(),
     state: ProjectState.PENDING_APPROVAL,
   });
 
