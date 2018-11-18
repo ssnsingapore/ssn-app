@@ -81,7 +81,7 @@ async function getProjects(req, res) {
         };
       case 'projectRegion':
         return {
-          location: req.query[param],
+          region: req.query[param],
         };
       case 'projectState':
         return {
@@ -133,7 +133,7 @@ async function getProjectCounts(req, res) {
 
   const filterParams = {
     ...(issueAddressed && { issuesAddressed: issueAddressed }),
-    ...(projectRegion && { location: projectRegion }),
+    ...(projectRegion && { region: projectRegion }),
   };
 
   for (let i = 0; i < projectStates.length; i += 1) {
