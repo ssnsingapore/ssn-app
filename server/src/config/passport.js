@@ -3,7 +3,6 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 
-import { User } from 'models/User';
 import { Role } from 'models/Role';
 import { Admin } from 'models/Admin';
 import { ProjectOwner } from 'models/ProjectOwner';
@@ -21,25 +20,6 @@ export const configurePassport = () => {
   // =============================================================================
   // PASSPORT CONFIGURATION
   // =============================================================================
-
-  passport.use(`${Role.USER}Local`, new LocalStrategy(
-    {
-      usernameField: 'user[email]',
-      passwordField: 'user[password]',
-    },
-    (async (email, password, done) => {
-      try {
-        const user = await User.findOne({ email });
-        if (!user || !(await user.isValidPassword(password))) {
-          return done(null, false);
-        }
-
-        return done(null, user);
-      } catch (err) {
-        return done(err);
-      }
-    }),
-  ));
 
   passport.use(`${Role.ADMIN}Local`, new LocalStrategy(
     {
@@ -105,15 +85,6 @@ export const configurePassport = () => {
   // user's hashed password and last logout time
   // Not the most ideal as we have to hit the DB twice
   // with passport-jwts current API
-
-  passport.use(`${Role.USER}Jwt`, new JwtStrategy(
-    {
-      jwtFromRequest: extractJwtFromCookie,
-      secretOrKeyProvider: secretOrKeyProvider(User),
-    },
-    getUserFromJwt(User)
-  ));
-
   passport.use(`${Role.PROJECT_OWNER}Jwt`, new JwtStrategy(
     {
       jwtFromRequest: extractJwtFromCookie,
