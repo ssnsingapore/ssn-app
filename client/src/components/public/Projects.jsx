@@ -145,6 +145,10 @@ class _Projects extends Component {
     localStorage.setItem(SEARCH_BAR_FIELD_VALUES, JSON.stringify(this.props.valuesForAllFields()));
   }
 
+  clearFieldValues = () => {
+    localStorage.removeItem(SEARCH_BAR_FIELD_VALUES);
+  }
+
   getFieldValues = () => {
     return JSON.parse(localStorage.getItem(SEARCH_BAR_FIELD_VALUES));
   }
@@ -162,7 +166,7 @@ class _Projects extends Component {
 
   resetAllFieldsAndRefetch = async () => {
     this.setState({ isLoading: true });
-
+    this.clearFieldValues();
     await this.props.resetAllFields();
     await this.fetchProjectCounts();
     await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
