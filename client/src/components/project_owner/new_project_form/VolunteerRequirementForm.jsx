@@ -21,16 +21,32 @@ export const VolunteerRequirementFieldName = getFieldNameObject([
   'number',
 ]);
 
+const isNotEmptyRow = attributes =>
+  Object.values(attributes).some(field => !!field);
+
 export const volunteerRequirementConstraints = {
-  [VolunteerRequirementFieldName.type]: {
-    inclusion: Object.values(VolunteerRequirementType),
+  [VolunteerRequirementFieldName.type]: (_value, attributes) => {
+    if (isNotEmptyRow(attributes)) {
+      return {
+        presence: true,
+        inclusion: Object.values(VolunteerRequirementType),
+      };
+    }
   },
-  [VolunteerRequirementFieldName.commitmentLevel]: {
-    presence: { allowEmpty: true },
+  [VolunteerRequirementFieldName.number]: (_value, attributes) => {
+    if (isNotEmptyRow(attributes)) {
+      return {
+        presence: true,
+        numericality: true,
+      };
+    }
   },
-  [VolunteerRequirementFieldName.number]: {
-    presence: { allowEmpty: true },
-    numericality: true,
+  [VolunteerRequirementFieldName.commitmentLevel]: (_value, attributes) => {
+    if (isNotEmptyRow(attributes)) {
+      return {
+        presence: true,
+      };
+    }
   },
 };
 

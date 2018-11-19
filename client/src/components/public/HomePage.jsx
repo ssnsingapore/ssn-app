@@ -11,7 +11,7 @@ import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { ProjectOwnerLoginForm } from './ProjectOwnerLoginForm';
 
-class _HomePage extends Component {
+export class _HomePage extends Component {
   constructor(props) {
     super(props);
 

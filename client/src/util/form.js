@@ -104,10 +104,10 @@ validate.validators.isUrl = (value, options) => {
 };
 
 validate.extend(validate.validators.datetime, {
-  parse: (value) => +moment.utc(value),
+  parse: (value) => +moment(value),
   format: (value, options) => {
     const format = options.dateOnly ? 'YYYY-MM-DD' : 'YYYY-MM-DD hh:mm:ss';
-    return moment.utc(value).format(format);
+    return moment(value).format(format);
   },
 });
 

@@ -98,15 +98,12 @@ const _ProjectListingCard = ({ project, classes }) => {
                       <Typography variant="caption">
                         {project.startDate === project.endDate
                           ? moment(project.startDate)
-                            .utc()
                             .format('dddd, Do MMMM YYYY')
                           : moment(project.startDate)
-                            .utc()
                             .format('dddd, Do MMMM YYYY') +
-                            ' - ' +
-                            moment(project.endDate)
-                              .utc()
-                              .format('dddd, Do MMMM YYYY')}
+                          ' - ' +
+                          moment(project.endDate)
+                            .format('dddd, Do MMMM YYYY')}
                       </Typography>
                       <Typography variant="headline" gutterBottom>
                         {project.title}
@@ -135,13 +132,11 @@ const _ProjectListingCard = ({ project, classes }) => {
                       <Paper elevation={0} className={classes.dateBadge}>
                         <Typography variant="caption">
                           {moment(project.startDate)
-                            .utc()
                             .format('MMM')}
                         </Typography>
                         <Typography variant="title" color="secondary">
                           <strong>
                             {moment(project.startDate)
-                              .utc()
                               .format('DD')}
                           </strong>
                         </Typography>
