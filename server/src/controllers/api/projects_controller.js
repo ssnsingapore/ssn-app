@@ -131,21 +131,84 @@ async function getProjects(req, res) {
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
 async function getProjectCounts(req, res) {
-  const { issueAddressed, projectRegion } = req.query;
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
-  const filterParams = {
-    ...(issueAddressed && { issuesAddressed: issueAddressed }),
-    ...(projectRegion && { region: projectRegion }),
+  const recurringWithinMonthObj = {
+    $and: [
+      { projectType: ProjectType.RECURRING },
+      {
+        frequency: {
+          $in: [ProjectFrequency.EVERY_DAY, ProjectFrequency.A_FEW_TIMES_A_WEEK, ProjectFrequency.ONCE_A_WEEK,
+            ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
+        },
+      },
+    ],
   };
 
+  const eventWithinMonthObj = month => ({
+    $and: [
+      { projectType: ProjectType.EVENT },
+      { month: MonthValue[month] },
+    ],
+  });
+
+  const filterParams = Object.keys(req.query).map((param) => {
+    switch (param) {
+      case 'month':
+        return {
+          $or: [
+            eventWithinMonthObj(req.query[param]),
+            recurringWithinMonthObj,
+          ],
+        };
+      case 'issueAddressed':
+        return {
+          issuesAddressed: req.query[param],
+        };
+      case 'projectRegion':
+        return {
+          region: req.query[param],
+        };
+      case 'pageSize':
+        return {};
+      case 'volunteerRequirementType':
+        return {
+          'volunteerRequirements.type': req.query[param],
+        };
+      default:
+        return { [param]: req.query[param] };
+    }
+  });
+
+  let constructProjectInclusionField = {};
+  Object.keys(Project.schema.paths).forEach((field) => { constructProjectInclusionField = { ...constructProjectInclusionField, [field]: 1 }; });
+
   for (let i = 0; i < projectStates.length; i += 1) {
+    const constructFilterParams = [{ state: projectStates[i] }];
+    filterParams.forEach(item => constructFilterParams.push(item));
+
     // eslint-disable-next-line no-await-in-loop
-    counts[projectStates[i]] = await Project.count({
-      state: projectStates[i],
-      ...filterParams,
-    });
+    const aggrCountProjects = await Project.aggregate([
+      {
+        $project: {
+          ...constructProjectInclusionField,
+          month: { $month: '$startDate' },
+        },
+      },
+      {
+        $match:
+        {
+          $and: constructFilterParams,
+        },
+      },
+      {
+        $count: 'count',
+      },
+    ])
+      .exec();
+    console.log(aggrCountProjects);
+    counts[projectStates[i]] = aggrCountProjects.length !== 0 ? aggrCountProjects[0].count : 0;
   }
 
   return res.status(200).json({ counts });
