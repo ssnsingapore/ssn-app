@@ -66,7 +66,7 @@ async function getProjects(req, res) {
     ],
   });
 
-  const constructFilterParams = Object.keys(req.query).map((param) => {
+  const filterParams = Object.keys(req.query).map((param) => {
     switch (param) {
       case 'month':
         return {
@@ -97,6 +97,10 @@ async function getProjects(req, res) {
         return { [param]: req.query[param] };
     }
   });
+  const approvedActiveFilterParams = [{ state: ProjectState.APPROVED_ACTIVE }];
+  filterParams.forEach(item => approvedActiveFilterParams.push(item));
+
+  const constructFilterParams = Object.keys(req.query).includes('projectState') ? filterParams : approvedActiveFilterParams;
 
   let constructProjectInclusionField = {};
   Object.keys(Project.schema.paths).forEach((field) => { constructProjectInclusionField = { ...constructProjectInclusionField, [field]: 1 }; });
@@ -110,9 +114,9 @@ async function getProjects(req, res) {
     },
     {
       $match:
-      {
-        $and: constructFilterParams,
-      },
+        (Object.keys(req.query).length !== 0) ? {
+          $and: constructFilterParams,
+        } : { state: ProjectState.APPROVED_ACTIVE },
     },
     {
       $limit: pageSize,
