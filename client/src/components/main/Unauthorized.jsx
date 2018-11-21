@@ -23,11 +23,11 @@ export const Unauthorized = withStyles(styles)(({ classes }) => (
   <div className={classes.root}>
     <Avatar
       alt="Screaming cat"
-      src="https://i.kym-cdn.com/photos/images/newsfeed/001/384/545/7b9.jpg"
+      src="https://s3-ap-southeast-1.amazonaws.com/ssn-app-test/Waste.jpg"
       className={classes.avatar}
     />
     <Typography variant="display1" align="center">
-      You're not authorized to access this page!
+      Are you sure you're supposed to be poking around this page? Did you forget to log in?
     </Typography>
   </div>
 ));
