@@ -210,7 +210,7 @@ const styles = theme => ({
       justifyContent: 'flex-start',
     },
 
-    width: '100vw',
+    width: '100%',
     height: '600px',
 
     backgroundImage: `url(${landingImage})`,
