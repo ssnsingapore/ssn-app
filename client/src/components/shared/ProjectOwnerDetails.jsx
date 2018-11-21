@@ -5,6 +5,7 @@ import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { AccountType } from 'components/shared/enums/AccountType';
+import { convertToAbsoluteUrl } from 'util/url';
 import { AccountTypeDisplayMapping } from 'components/shared/display_mappings/AccountTypeDisplayMapping';
 
 class _ProjectOwnerDetails extends Component {
@@ -45,21 +46,17 @@ class _ProjectOwnerDetails extends Component {
     );
   };
 
-  _getCorrectUrl = (url) => {
-    return url.includes('//') ? url : `//${url}`;
-  }
-
   _getWebsiteUrl = () => {
     const { projectOwner } = this.state;
     if (projectOwner.websiteUrl) {
-      return this._getCorrectUrl(projectOwner.websiteUrl);
+      return convertToAbsoluteUrl(projectOwner.websiteUrl);
     }
   }
 
   _getSocialMediaUrl = () => {
     const { projectOwner } = this.state;
     if (projectOwner.socialMediaLink) {
-      return this._getCorrectUrl(projectOwner.socialMediaLink);
+      return convertToAbsoluteUrl(projectOwner.socialMediaLink);
     }
   }
 
@@ -122,20 +119,22 @@ class _ProjectOwnerDetails extends Component {
             )}
             <Typography>
               <strong>Web URL: </strong>
-              {projectOwner.websiteUrl ?
-                <a target='_blank' href={websiteUrl} className={classes.links}>
-                  {projectOwner.websiteUrl}
-                </a> :
-                '-'
+              {
+                projectOwner.websiteUrl ?
+                  <a target='_blank' href={websiteUrl} className={classes.links}>
+                    {projectOwner.websiteUrl}
+                  </a> :
+                  '-'
               }
             </Typography>
             <Typography>
               <strong>Social Media Link: </strong>
-              {projectOwner.socialMediaLink ?
-                <a target='_blank' href={socialMediaLink} className={classes.links}>
-                  {projectOwner.socialMediaLink}
-                </a> :
-                '-'
+              {
+                projectOwner.socialMediaLink ?
+                  <a target='_blank' href={socialMediaLink} className={classes.links}>
+                    {projectOwner.socialMediaLink}
+                  </a> :
+                  '-'
               }
             </Typography>
             {this.renderDescriptionOrPersonalBio()}

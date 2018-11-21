@@ -23,6 +23,8 @@ import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/Pr
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import { capitalizeWords } from 'util/capitalizeWords';
+import { convertToAbsoluteUrl } from 'util/url';
+
 
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
@@ -74,22 +76,22 @@ const renderAllVolunteerRequirements = (
   volunteerRequirementsDescription,
   classes
 ) => (
-    <React.Fragment>
-      {volunteerRequirements && volunteerRequirements.length !== 0
-        ? renderVolunteerDetailsTable(volunteerRequirements, classes)
-        : ''}
-      {volunteerRequirementsDescription ? (
-        <Typography
-          variant="body1"
-          data-test-id="volunteerRequirementDescription"
-        >
-          {volunteerRequirementsDescription}
-        </Typography>
-      ) : (
-          ''
-        )}
-    </React.Fragment>
-  );
+  <React.Fragment>
+    {volunteerRequirements && volunteerRequirements.length !== 0
+      ? renderVolunteerDetailsTable(volunteerRequirements, classes)
+      : ''}
+    {volunteerRequirementsDescription ? (
+      <Typography
+        variant="body1"
+        data-test-id="volunteerRequirementDescription"
+      >
+        {volunteerRequirementsDescription}
+      </Typography>
+    ) : (
+      ''
+    )}
+  </React.Fragment>
+);
 
 const renderIssuesAddressed = (classes, project) => {
   const { issuesAddressed } = project;
@@ -115,13 +117,7 @@ const renderIssuesAddressed = (classes, project) => {
 
 const renderProjectBaseDetails = (classes, project) => {
   const { title, description, volunteerSignupUrl, coverImageUrl } = project;
-
-  const httpPatternRegex = /^http(s?):\/\//;
-
-  let inputUrl = volunteerSignupUrl;
-  if (!httpPatternRegex.test(volunteerSignupUrl)) {
-    inputUrl = 'http://' + volunteerSignupUrl;
-  }
+  const inputUrl = convertToAbsoluteUrl(volunteerSignupUrl);
 
   return (
     <Card className={classes.card} square>
@@ -135,15 +131,15 @@ const renderProjectBaseDetails = (classes, project) => {
             {capitalizeWords(title)}
           </Typography>
         ) : (
-            <Typography
-              variant="headline"
-              color="error"
-              gutterBottom
-              className={classes.headline}
-            >
+          <Typography
+            variant="headline"
+            color="error"
+            gutterBottom
+            className={classes.headline}
+          >
               Project Title (Required)
           </Typography>
-          )}
+        )}
         <div style={{ marginBottom: '60px' }}>
           {description ? (
             description.split('\n').map((i, key) => {
@@ -154,10 +150,10 @@ const renderProjectBaseDetails = (classes, project) => {
               );
             })
           ) : (
-              <Typography color="error" gutterBottom>
+            <Typography color="error" gutterBottom>
                 Project description (required)
             </Typography>
-            )}
+          )}
         </div>
         {volunteerSignupUrl ? (
           <Button
@@ -171,8 +167,8 @@ const renderProjectBaseDetails = (classes, project) => {
             Sign up as a volunteer!
           </Button>
         ) : (
-            ''
-          )}
+          ''
+        )}
       </CardContent>
       <CardMedia className={classes.cover} image={coverImageUrl} />
     </Card>
@@ -208,8 +204,8 @@ const renderVolunteerDetails = (classes, project) => {
       {volunteerBenefitsDescription ? (
         <Typography variant="body1">{volunteerBenefitsDescription}</Typography>
       ) : (
-          '-'
-        )}
+        '-'
+      )}
     </Paper>
   );
 };
