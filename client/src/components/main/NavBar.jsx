@@ -100,7 +100,7 @@ class _NavBar extends Component {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
 
-    this.setState({ isLoading: false });
+    this.setState({ isLoading: false, anchorEl: null });
   }
 
   renderAvatar = () => {
