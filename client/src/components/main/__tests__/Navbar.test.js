@@ -45,7 +45,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/project_owner'}}
+            location={{ pathname: '/project_owner/dashboard' }}
             context={mockContext}
           />
         ).dive();
@@ -93,7 +93,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/admin/dashboard'}}
+            location={{ pathname: '/admin/dashboard' }}
             context={mockContext}
           />
         ).dive();
@@ -132,7 +132,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/someroute'}}
+            location={{ pathname: '/someroute' }}
             context={mockContext}
           />
         ).dive();
@@ -164,7 +164,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/project_owner'}}
+            location={{ pathname: '/project_owner' }}
             context={mockContext}
           />
         ).dive();
@@ -191,7 +191,7 @@ describe('Navbar', () => {
         };
         component = shallow(
           <NavBar
-            location={{ pathname: '/someroute'}}
+            location={{ pathname: '/someroute' }}
             context={mockContext}
           />
         ).dive();

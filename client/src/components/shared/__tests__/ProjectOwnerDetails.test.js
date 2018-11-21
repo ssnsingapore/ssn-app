@@ -57,13 +57,16 @@ describe('ProjectOwnerDetails', () => {
 
       it('should render the name', () => {
         expect(component.html()).toEqual(
-          expect.stringContaining(`<strong>Name: </strong>${organisationProjectOwner.name}`)
+          expect.stringContaining(organisationProjectOwner.name)
         );
       });
 
       it('should render the email', () => {
         expect(component.html()).toEqual(
-          expect.stringContaining(`<strong>Email: </strong>${organisationProjectOwner.email}`)
+          expect.stringContaining('<strong>Email: </strong>')
+        );
+        expect(component.html()).toEqual(
+          expect.stringContaining(organisationProjectOwner.email)
         );
       });
 
@@ -78,13 +81,19 @@ describe('ProjectOwnerDetails', () => {
       describe('when present', () => {
         it('should render the web url', () => {
           expect(component.html()).toEqual(
-            expect.stringContaining(`<strong>Web URL: </strong>${organisationProjectOwner.websiteUrl}`)
+            expect.stringContaining('<strong>Web URL: </strong>')
+          );
+          expect(component.html()).toEqual(
+            expect.stringContaining(organisationProjectOwner.websiteUrl)
           );
         });
 
         it('should render the social media link', () => {
           expect(component.html()).toEqual(
-            expect.stringContaining(`<strong>Social Media Link: </strong>${organisationProjectOwner.socialMediaLink}`)
+            expect.stringContaining('<strong>Social Media Link: </strong>')
+          );
+          expect(component.html()).toEqual(
+            expect.stringContaining(organisationProjectOwner.socialMediaLink)
           );
         });
       });

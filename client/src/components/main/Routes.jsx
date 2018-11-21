@@ -21,6 +21,7 @@ import { ProjectOwnerDashboard } from 'components/project_owner/ProjectOwnerDash
 import { ProjectOwnerNewProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
 import { ProjectOwnerEditProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerEditProjectForm';
 import { ProjectOwnerProjectDetails } from 'components/project_owner/ProjectOwnerProjectDetails';
+import { AdminProjectOwnersListing } from 'components/admin/AdminProjectOwnersListing';
 import { PasswordResetForm } from 'components/public/PasswordResetForm';
 
 import { AdminDashboard } from 'components/admin/AdminDashboard';
@@ -94,6 +95,13 @@ class _Routes extends Component {
                 redirectTo="/admin"
               />
 
+              <RouteAuthenticated
+                exact
+                path="/admin/project_owners"
+                component={AdminProjectOwnersListing}
+                authorize={[Role.ADMIN]}
+                redirectTo="/admin"
+              />
               <Route component={NotFound} />
             </Switch>
           </div>

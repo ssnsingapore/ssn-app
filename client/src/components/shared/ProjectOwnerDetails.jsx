@@ -5,6 +5,7 @@ import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { AccountType } from 'components/shared/enums/AccountType';
+import { convertToAbsoluteUrl } from 'util/url';
 import { AccountTypeDisplayMapping } from 'components/shared/display_mappings/AccountTypeDisplayMapping';
 
 class _ProjectOwnerDetails extends Component {
@@ -45,9 +46,51 @@ class _ProjectOwnerDetails extends Component {
     );
   };
 
+  _getWebsiteUrl = () => {
+    const { projectOwner } = this.state;
+    if (projectOwner.websiteUrl) {
+      return convertToAbsoluteUrl(projectOwner.websiteUrl);
+    }
+  }
+
+  _getSocialMediaUrl = () => {
+    const { projectOwner } = this.state;
+    if (projectOwner.socialMediaLink) {
+      return convertToAbsoluteUrl(projectOwner.socialMediaLink);
+    }
+  }
+
+  renderTitleAndName = () => {
+    const { projectOwner } = this.state;
+    const { type } = this.props;
+
+    return (
+      <React.Fragment>
+        {type !== 'list' &&
+          <Typography variant="headline" gutterBottom>
+            Project Owner Details
+          </Typography>
+        }
+
+        {type !== 'list' ?
+          <Typography>
+            <strong>Name: </strong>
+            {projectOwner.name}
+          </Typography> :
+          <Typography variant='headline' gutterBottom>
+            {projectOwner.name}
+          </Typography>
+        }
+      </React.Fragment>
+    );
+  }
+
   render = () => {
+
     const { classes } = this.props;
     const { projectOwner } = this.state;
+    const websiteUrl = this._getWebsiteUrl();
+    const socialMediaLink = this._getSocialMediaUrl();
 
     return (
       <Card className={classes.card} square>
@@ -57,16 +100,12 @@ class _ProjectOwnerDetails extends Component {
         />
         <div className={classes.details}>
           <CardContent className={classes.content}>
-            <Typography variant="headline" gutterBottom>
-              Project Owner Details
-            </Typography>
-            <Typography>
-              <strong>Name: </strong>
-              {projectOwner.name}
-            </Typography>
+            {this.renderTitleAndName()}
             <Typography>
               <strong>Email: </strong>
-              {projectOwner.email}
+              <a href={`mailto:${projectOwner.email}`} className={classes.links}>
+                {projectOwner.email}
+              </a>
             </Typography>
             <Typography>
               <strong>Account Type: </strong>
@@ -80,21 +119,33 @@ class _ProjectOwnerDetails extends Component {
             )}
             <Typography>
               <strong>Web URL: </strong>
-              {projectOwner.websiteUrl || '-'}
+              {
+                projectOwner.websiteUrl ?
+                  <a target='_blank' href={websiteUrl} className={classes.links}>
+                    {projectOwner.websiteUrl}
+                  </a> :
+                  '-'
+              }
             </Typography>
             <Typography>
               <strong>Social Media Link: </strong>
-              {projectOwner.socialMediaLink || '-'}
+              {
+                projectOwner.socialMediaLink ?
+                  <a target='_blank' href={socialMediaLink} className={classes.links}>
+                    {projectOwner.socialMediaLink}
+                  </a> :
+                  '-'
+              }
             </Typography>
             {this.renderDescriptionOrPersonalBio()}
           </CardContent>
         </div>
-      </Card>
+      </Card >
     );
   };
 }
 
-const styles = theme => ({
+const styles = () => ({
   card: {
     display: 'flex',
   },
@@ -109,6 +160,9 @@ const styles = theme => ({
     minWidth: '200px',
     minHeight: '200px',
     objectFit: 'cover',
+  },
+  links: {
+    textDecoration: 'none',
   },
 });
 

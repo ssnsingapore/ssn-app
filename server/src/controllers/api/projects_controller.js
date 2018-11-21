@@ -280,7 +280,6 @@ async function postProject(req, res) {
   const { file } = req;
 
   const newProject = JSON.parse(req.body.project);
-  console.log('new', newProject);
 
   const project = new Project({
     ...newProject,
