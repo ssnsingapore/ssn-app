@@ -117,9 +117,8 @@ describe('Navbar', () => {
             expect.stringContaining('admin@email.com')
           );
 
-          expect(component.find(MenuItem).at(0).html()).toEqual(
-            expect.stringContaining('Logout')
-          );
+          expect(component.find(MenuItem).get(0).props.children).toContain(' View Project Owners');
+          expect(component.find(MenuItem).get(1).props.children).toContain(' Logout');
         });
       });
     });
@@ -198,7 +197,7 @@ describe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
-        await component.find(MenuItem).at(0).simulate('click');
+        await component.find(MenuItem).at(1).simulate('click');
 
         expect(mockContext.utils.authenticator.logoutProjectOwner).not.toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).toHaveBeenCalled();
