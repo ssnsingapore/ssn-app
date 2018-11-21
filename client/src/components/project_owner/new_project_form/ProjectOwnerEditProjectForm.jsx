@@ -47,7 +47,7 @@ class _ProjectOwnerEditProjectForm extends Component {
         .forEach(key => this.props.setField(key, project[key]));
       dateFields
         .forEach(key =>
-          this.props.setField(FieldName[key], moment.utc(project[key]).local().format('YYYY-MM-DD')));
+          this.props.setField(FieldName[key], moment(project[key]).format('YYYY-MM-DD')));
 
       const { volunteerRequirements } = project;
       volunteerRequirements.forEach(() => this.handleAddVolunteerRequirement());
