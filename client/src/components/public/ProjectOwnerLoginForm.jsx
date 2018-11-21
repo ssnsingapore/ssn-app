@@ -311,7 +311,7 @@ class _ProjectOwnerLoginForm extends React.Component {
   }
 
   getRedirectReferrer = () => {
-    const locationState = this.props.location.state;
+    const locationState = this.props.location ? this.props.location.state : undefined;
     if (locationState && locationState.referrerPath) {
       return locationState.referrerPath;
     }
