@@ -3,7 +3,10 @@ import express from 'express';
 import multer from 'multer';
 
 import { asyncWrap } from 'util/async_wrapper';
-import { Project, ProjectState } from 'models/Project';
+import {
+  Project, ProjectState, ProjectType, ProjectFrequency,
+} from 'models/Project';
+import { ProjectOwner } from 'models/ProjectOwner';
 // eslint-disable-next-line no-unused-vars
 import { Role } from 'models/Role';
 import { UnprocessableEntityErrorView } from 'util/errors';
@@ -15,6 +18,21 @@ import { s3 } from 'config/aws';
 import { config } from 'config/environment';
 import { authMiddleware } from 'util/auth';
 
+const MonthValue = {
+  JANUARY: 1,
+  FEBRUARY: 2,
+  MARCH: 3,
+  APRIL: 4,
+  MAY: 5,
+  JUNE: 6,
+  JULY: 7,
+  AUGUST: 8,
+  SEPTEMBER: 9,
+  OCTOBER: 10,
+  NOVEMBER: 11,
+  DECEMBER: 12,
+};
+
 export const projectRouter = express.Router();
 const upload = multer();
 
@@ -23,49 +41,174 @@ async function getProjects(req, res) {
   const pageSize = Number(req.query.pageSize) || 10;
   const {
     projectState = ProjectState.APPROVED_ACTIVE,
-    issueAddressed,
-    projectRegion,
   } = req.query;
 
   const sortParams = projectState === ProjectState.PENDING_APPROVAL
     ? { createdAt: 'ascending' }
     : { updatedAt: 'descending' };
 
-  const filterParams = {
-    ...(issueAddressed && { issuesAddressed: issueAddressed }),
-    ...(projectRegion && { location: projectRegion }),
+  const recurringWithinMonthObj = {
+    $and: [
+      { projectType: ProjectType.RECURRING },
+      {
+        frequency: {
+          $in: [ProjectFrequency.EVERY_DAY, ProjectFrequency.A_FEW_TIMES_A_WEEK, ProjectFrequency.ONCE_A_WEEK,
+            ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
+        },
+      },
+    ],
   };
 
-  // Queries to mongodb
-  const projects = await Project.find({
-    state: projectState,
-    ...filterParams,
-  })
-    .limit(pageSize)
-    .populate('projectOwner')
+  const eventWithinMonthObj = month => ({
+    $and: [
+      { projectType: ProjectType.EVENT },
+      { month: MonthValue[month] },
+    ],
+  });
+
+  const filterParams = Object.keys(req.query).map((param) => {
+    switch (param) {
+      case 'month':
+        return {
+          $or: [
+            eventWithinMonthObj(req.query[param]),
+            recurringWithinMonthObj,
+          ],
+        };
+      case 'issueAddressed':
+        return {
+          issuesAddressed: req.query[param],
+        };
+      case 'projectRegion':
+        return {
+          region: req.query[param],
+        };
+      case 'projectState':
+        return {
+          state: req.query[param],
+        };
+      case 'pageSize':
+        return {};
+      case 'volunteerRequirementType':
+        return {
+          'volunteerRequirements.type': req.query[param],
+        };
+      default:
+        return { [param]: req.query[param] };
+    }
+  });
+  const approvedActiveFilterParams = [{ state: ProjectState.APPROVED_ACTIVE }];
+  filterParams.forEach(item => approvedActiveFilterParams.push(item));
+
+  const constructFilterParams = Object.keys(req.query).includes('projectState') ? filterParams : approvedActiveFilterParams;
+
+  let constructProjectInclusionField = {};
+  Object.keys(Project.schema.paths).forEach((field) => { constructProjectInclusionField = { ...constructProjectInclusionField, [field]: 1 }; });
+
+  const aggrProjects = await Project.aggregate([
+    {
+      $project: {
+        ...constructProjectInclusionField,
+        month: { $month: '$startDate' },
+      },
+    },
+    {
+      $match:
+        (Object.keys(req.query).length !== 0) ? {
+          $and: constructFilterParams,
+        } : { state: ProjectState.APPROVED_ACTIVE },
+    },
+    {
+      $limit: pageSize,
+    },
+  ])
     .sort(sortParams)
     .exec();
+  const projects = await ProjectOwner.populate(aggrProjects, { path: 'projectOwner' });
 
   return res.status(200).json({ projects });
 }
 
 projectRouter.get('/project_counts', asyncWrap(getProjectCounts));
 async function getProjectCounts(req, res) {
-  const { issueAddressed, projectRegion } = req.query;
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
-  const filterParams = {
-    ...(issueAddressed && { issuesAddressed: issueAddressed }),
-    ...(projectRegion && { location: projectRegion }),
+  const recurringWithinMonthObj = {
+    $and: [
+      { projectType: ProjectType.RECURRING },
+      {
+        frequency: {
+          $in: [ProjectFrequency.EVERY_DAY, ProjectFrequency.A_FEW_TIMES_A_WEEK, ProjectFrequency.ONCE_A_WEEK,
+            ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
+        },
+      },
+    ],
   };
 
+  const eventWithinMonthObj = month => ({
+    $and: [
+      { projectType: ProjectType.EVENT },
+      { month: MonthValue[month] },
+    ],
+  });
+
+  const filterParams = Object.keys(req.query).map((param) => {
+    switch (param) {
+      case 'month':
+        return {
+          $or: [
+            eventWithinMonthObj(req.query[param]),
+            recurringWithinMonthObj,
+          ],
+        };
+      case 'issueAddressed':
+        return {
+          issuesAddressed: req.query[param],
+        };
+      case 'projectRegion':
+        return {
+          region: req.query[param],
+        };
+      case 'pageSize':
+        return {};
+      case 'volunteerRequirementType':
+        return {
+          'volunteerRequirements.type': req.query[param],
+        };
+      default:
+        return { [param]: req.query[param] };
+    }
+  });
+
+  let constructProjectInclusionField = {};
+  Object.keys(Project.schema.paths).forEach((field) => { constructProjectInclusionField = { ...constructProjectInclusionField, [field]: 1 }; });
+
   for (let i = 0; i < projectStates.length; i += 1) {
+    const constructFilterParams = [{ state: projectStates[i] }];
+    filterParams.forEach(item => constructFilterParams.push(item));
+
     // eslint-disable-next-line no-await-in-loop
-    counts[projectStates[i]] = await Project.count({
-      state: projectStates[i],
-      ...filterParams,
-    });
+    const aggrCountProjects = await Project.aggregate([
+      {
+        $project: {
+          ...constructProjectInclusionField,
+          month: { $month: '$startDate' },
+        },
+      },
+      {
+        $match:
+        {
+          $and: constructFilterParams,
+        },
+      },
+      {
+        $count: 'count',
+      },
+    ])
+      .exec();
+    console.log(aggrCountProjects);
+    counts[projectStates[i]] = aggrCountProjects.length !== 0 ? aggrCountProjects[0].count : 0;
   }
 
   return res.status(200).json({ counts });
