@@ -19,7 +19,10 @@ const _RouteAuthenticated = ({
   const { authenticator } = context.utils;
 
   if (!isAuthenticated) {
-    return <Redirect to={redirectTo || '/login'} />;
+    return <Redirect to={{
+      pathname: redirectTo || '/login',
+      state: { referrerPath: window.location.pathname },
+    }} />;
   }
 
   if (authorize.includes(Role.ALL)) {

@@ -310,11 +310,19 @@ class _ProjectOwnerLoginForm extends React.Component {
     );
   }
 
+  getRedirectReferrer = () => {
+    const locationState = this.props.location.state;
+    if (locationState && locationState.referrerPath) {
+      return locationState.referrerPath;
+    }
+    return '/project_owner/dashboard';
+  }
+
   render() {
     const { isAuthenticated } = this.props.context;
 
     if (this.state.shouldRedirect) {
-      return <Redirect to="/project_owner/dashboard" />;
+      return <Redirect to={this.getRedirectReferrer()} />;
     }
 
     return isAuthenticated ? this.renderLoggedIn() : this.renderLoginForm();

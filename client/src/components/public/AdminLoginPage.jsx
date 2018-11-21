@@ -70,11 +70,19 @@ export class _AdminLoginPage extends Component {
     }
   }
 
+  getRedirectReferrer = () => {
+    const locationState = this.props.location.state;
+    if (locationState && locationState.referrerPath) {
+      return locationState.referrerPath;
+    }
+    return '/admin/dashboard';
+  }
+
   render() {
     const { classes, fields, handleChange } = this.props;
 
     if (this.state.shouldRedirect) {
-      return <Redirect to="/admin/dashboard" />;
+      return <Redirect to={this.getRedirectReferrer()} />;
     }
 
     return (
