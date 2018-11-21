@@ -18,10 +18,9 @@ class _ProjectOwnerDetails extends Component {
   }
 
   async componentDidMount() {
-    const { authenticator } = this.props.context.utils;
     const projectOwner = this.props.projectOwner
       ? this.props.projectOwner
-      : authenticator.getCurrentUser();
+      : this.props.context.utils.authenticator.getCurrentUser();
 
     this.setState({ projectOwner });
   }
@@ -45,20 +44,6 @@ class _ProjectOwnerDetails extends Component {
       </Typography>
     );
   };
-
-  _getWebsiteUrl = () => {
-    const { projectOwner } = this.state;
-    if (projectOwner.websiteUrl) {
-      return convertToAbsoluteUrl(projectOwner.websiteUrl);
-    }
-  }
-
-  _getSocialMediaUrl = () => {
-    const { projectOwner } = this.state;
-    if (projectOwner.socialMediaLink) {
-      return convertToAbsoluteUrl(projectOwner.socialMediaLink);
-    }
-  }
 
   renderTitleAndName = () => {
     const { projectOwner } = this.state;
@@ -89,8 +74,6 @@ class _ProjectOwnerDetails extends Component {
 
     const { classes } = this.props;
     const { projectOwner } = this.state;
-    const websiteUrl = this._getWebsiteUrl();
-    const socialMediaLink = this._getSocialMediaUrl();
 
     return (
       <Card className={classes.card} square>
@@ -119,23 +102,23 @@ class _ProjectOwnerDetails extends Component {
             )}
             <Typography>
               <strong>Web URL: </strong>
-              {
-                projectOwner.websiteUrl ?
-                  <a target='_blank' href={websiteUrl} className={classes.links}>
-                    {projectOwner.websiteUrl}
-                  </a> :
-                  '-'
-              }
+              {projectOwner.websiteUrl ?
+                <a
+                  target='_blank'
+                  href={convertToAbsoluteUrl(projectOwner.websiteUrl)}
+                  className={classes.links}>
+                  {projectOwner.websiteUrl}
+                </a> : '-'}
             </Typography>
             <Typography>
               <strong>Social Media Link: </strong>
-              {
-                projectOwner.socialMediaLink ?
-                  <a target='_blank' href={socialMediaLink} className={classes.links}>
-                    {projectOwner.socialMediaLink}
-                  </a> :
-                  '-'
-              }
+              {projectOwner.socialMediaLink ?
+                <a
+                  target='_blank'
+                  href={convertToAbsoluteUrl(projectOwner.socialMediaLink)}
+                  className={classes.links}>
+                  {projectOwner.socialMediaLink}
+                </a> : '-'}
             </Typography>
             {this.renderDescriptionOrPersonalBio()}
           </CardContent>
