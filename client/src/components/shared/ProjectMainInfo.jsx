@@ -160,6 +160,7 @@ const renderProjectBaseDetails = (classes, project) => {
             variant="contained"
             href={inputUrl}
             fullWidth
+            target="_blank"
             color="secondary"
             size="large"
             style={{ textAlign: 'center' }}
