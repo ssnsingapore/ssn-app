@@ -5,10 +5,10 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { defaultAppContext } from 'components/main/AppContext';
 import { AlertType } from 'components/shared/Alert';
-import { _AdminLoginPage } from '../AdminLoginPage';
+import { _AdminLoginForm } from '../AdminLoginForm';
 import { withForm } from 'util/form';
 
-describe('AdminLoginPage', () => {
+describe('AdminLoginForm', () => {
   let component;
 
   describe('render', () => {
@@ -17,41 +17,41 @@ describe('AdminLoginPage', () => {
         landingImage: '',
         landingHeader: '',
       };
-  
+
       const FieldName = {
         email: 'email',
         hashedPassword: 'hashedPassword',
       };
-  
-      const AdminLoginPage = withForm(FieldName)(
-        withStyles(mockStyles)(_AdminLoginPage)
+
+      const AdminLoginForm = withForm(FieldName)(
+        withStyles(mockStyles)(_AdminLoginForm)
       );
-  
-      component = shallow(<AdminLoginPage />).dive().dive();
+
+      component = shallow(<AdminLoginForm />).dive().dive();
     });
-  
+
     it('contains fields username and password for login', () => {
       const usernameTextField = component.find(TextField).filterWhere(field => field.props().label === 'Username');
       const passwordTextField = component.find(TextField).filterWhere(field => field.props().label === 'Password');
-  
+
       expect(usernameTextField).toExist();
       expect(passwordTextField).toExist();
     });
-  
+
     it('has a submit button that is disabled when page is loading', () => {
       component.setState({
         isLoading: true,
       });
-  
+
       expect(component.find(Button).props().type).toBe('submit');
       expect(component.find(Button).props().disabled).toBe(true);
     });
-  
+
     it('redirects to admin dashboard when shouldRedirect is true', () => {
       component.setState({
         shouldRedirect: true,
       });
-  
+
       expect(component.find(Redirect).props().to).toEqual('/admin/dashboard');
     });
   });
@@ -88,11 +88,11 @@ describe('AdminLoginPage', () => {
         preventDefault: jest.fn(),
       };
 
-      const AdminLoginPage = withForm(FieldName, constraints)(
-        withStyles(mockStyles)(_AdminLoginPage)
+      const AdminLoginForm = withForm(FieldName, constraints)(
+        withStyles(mockStyles)(_AdminLoginForm)
       );
 
-      component = shallow(<AdminLoginPage context={mockContext} />);
+      component = shallow(<AdminLoginForm context={mockContext} />);
     });
 
 
@@ -104,7 +104,7 @@ describe('AdminLoginPage', () => {
 
       it('prevents default submission of form and does login admin when validation fails', () => {
         component.dive().dive().instance().handleSubmit(event);
-  
+
         expect(event.preventDefault).toHaveBeenCalled();
         expect(component.props().context.utils.authenticator.loginAdmin).not.toHaveBeenCalled();
       });
@@ -123,7 +123,7 @@ describe('AdminLoginPage', () => {
         });
 
         adminLoginComponent = formComponent.dive();
-        
+
         adminLoginComponent.instance().handleSubmit(event);
       });
 
@@ -142,24 +142,24 @@ describe('AdminLoginPage', () => {
 
     describe('when login is not successful', () => {
       let adminLoginComponent;
-  
+
       beforeEach(() => {
         component.props().context.utils.authenticator.loginAdmin.mockImplementation(() => {
-          return new Promise(resolve => resolve({ 
+          return new Promise(resolve => resolve({
             hasError: true,
-            status: 401, 
+            status: 401,
           }));
         });
-  
+
         adminLoginComponent = component.dive().dive();
 
         adminLoginComponent.setProps({
           validateAllFields: jest.fn().mockImplementation(() => true),
         });
-  
+
         adminLoginComponent.instance().handleSubmit(event);
       });
-  
+
       it('displays login failure message', () => {
         expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginFailure', AlertType.ERROR, 'Looks like you\'ve keyed in the wrong credentials. Try again!');
       });

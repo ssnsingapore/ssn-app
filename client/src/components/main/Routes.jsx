@@ -13,7 +13,7 @@ import { Projects } from 'components/public/Projects';
 import { Project } from 'components/public/Project';
 import { ProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { ProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
-import { AdminLoginPage } from 'components/public/AdminLoginPage';
+import { AdminLoginForm } from 'components/public/AdminLoginForm';
 import { AwaitingAccountConfirmation } from 'components/public/AwaitingAccountConfirmation';
 
 import { ProjectOwnerEditProfileForm } from 'components/project_owner/ProjectOwnerEditProfileForm';
@@ -78,7 +78,7 @@ class _Routes extends Component {
                 authorize={[Role.PROJECT_OWNER]}
               />
 
-              <Route exact path="/admin" component={AdminLoginPage} />
+              <Route exact path="/admin" component={AdminLoginForm} />
               <RouteAuthenticated
                 exact
                 path="/admin/dashboard"

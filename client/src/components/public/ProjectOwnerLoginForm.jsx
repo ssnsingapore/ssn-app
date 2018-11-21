@@ -159,24 +159,21 @@ class _ProjectOwnerLoginForm extends React.Component {
 
 
   handleLogout = async (currentUser) => {
-
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     this.setState({ isLoggingOut: true });
-
     const response = currentUser.role === Role.PROJECT_OWNER ?
       await authenticator.logoutProjectOwner() : await authenticator.logoutAdmin();
 
     if (response.isSuccessful) {
       showAlert('logoutSuccess', AlertType.SUCCESS, LOGOUT_SUCCESS_MESSAGE);
-    }
-    if (response.hasError) {
+    } else if (response.hasError) {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
+
     this.setState({ isLoggingOut: false });
   }
-
 
   renderLoggedIn() {
     const { classes } = this.props;
@@ -312,7 +309,7 @@ class _ProjectOwnerLoginForm extends React.Component {
 
   getRedirectReferrer = () => {
     const locationState = this.props.location ? this.props.location.state : undefined;
-    if (locationState && locationState.referrerPath) {
+    if (locationState && locationState.referrerPath && locationState.referrerPath !== '/login') {
       return locationState.referrerPath;
     }
     return '/project_owner/dashboard';
