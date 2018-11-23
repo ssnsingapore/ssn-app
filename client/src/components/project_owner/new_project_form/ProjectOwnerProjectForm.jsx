@@ -27,26 +27,20 @@ class _ProjectOwnerProjectForm extends Component {
     };
   }
 
-  togglePreviewOn = () => {
+  getProject = () => {
     const { fields } = this.props;
     const project = {};
-
-    const current = this.props.projectImageInput.current;
-
-    const coverImageSrc = this.getCoverImageSrc(current);
 
     for (const [key, valueObject] of Object.entries(fields)) {
       project[key] = valueObject.value;
     }
+    return project;
+  };
 
-    project.projectImageInput = {
-      current: {
-        files:
-          current && current.files.length > 0
-            ? [current.files[0]]
-            : [this.getPreviewDefaultImageUrl()],
-      },
-    };
+  togglePreviewOn = () => {
+    const project = this.getProject();
+    const current = this.props.projectImageInput.current;
+    const coverImageSrc = this.getCoverImageSrc(current);
 
     project.coverImageUrl = coverImageSrc;
 
@@ -57,34 +51,40 @@ class _ProjectOwnerProjectForm extends Component {
     this.setState({ preview: true, project });
   };
 
-  getPreviewDefaultImageUrl() {
-    const defaultUrl =
-      this.state.project && this.state.project.issuesAddressed
-        ? DefaultCoverImageUrl[this.state.project.issuesAddressed[0]]
-        : null;
+  getDefaultUrl = project => {
+    return project && project.issuesAddressed
+      ? DefaultCoverImageUrl[project.issuesAddressed[0]]
+      : null;
+  };
+
+  getPreviewDefaultImageUrl = () => {
+    const project = this.getProject();
+    let defaultUrl;
+
+    if (this.state.project === null) {
+      defaultUrl = this.getDefaultUrl(project);
+    } else {
+      defaultUrl = this.getDefaultUrl(this.state.project);
+    }
 
     this.setState({ isDefaultCoverImage: true });
     return defaultUrl || DefaultCoverImageUrl[IssueAddressed.OTHER];
-  }
+  };
 
-  getCoverImageSrc(current) {
+  getCoverImageSrc = current => {
     if (current && current.files.length > 0) {
       return window.URL.createObjectURL(current.files[0]);
     }
-    if (this.state.project && this.state.project.coverImageUrl) {
-      return this.state.project.coverImageUrl;
-    }
 
     return this.getPreviewDefaultImageUrl();
-  }
+  };
 
   togglePreviewOff = () => {
     const currentProject = this.state.project;
     if (this.state.isDefaultCoverImage) {
-      currentProject.projectImageInput.current = '';
       currentProject.coverImageUrl = '';
     }
-    this.setState({ preview: false, currentProject });
+    this.setState({ preview: false, project: currentProject });
   };
 
   renderPreviewNotice = () => {
@@ -172,11 +172,7 @@ class _ProjectOwnerProjectForm extends Component {
                   <ProjectBaseDetails
                     fields={this.props.fields}
                     handleChange={this.props.handleChange}
-                    projectImageInput={
-                      this.state.project
-                        ? this.state.project.projectImageInput
-                        : this.props.projectImageInput
-                    }
+                    projectImageInput={this.props.projectImageInput}
                     coverImageUrl={
                       this.state.project
                         ? this.state.project.coverImageUrl
