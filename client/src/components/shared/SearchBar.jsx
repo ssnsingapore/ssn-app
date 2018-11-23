@@ -139,7 +139,7 @@ export const _SearchBar = ({
 const styles = theme => ({
   searchBox: {
     padding: '30px 0',
-    width: '100vw',
+    width: '100%',
     backgroundColor: theme.palette.grey[100],
   },
   formControl: {
