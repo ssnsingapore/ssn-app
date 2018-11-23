@@ -1,13 +1,11 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
-import { TextField, Button, Typography } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
-
+import { Button, TextField, Typography } from '@material-ui/core';
 import { defaultAppContext } from 'components/main/AppContext';
 import { AlertType } from 'components/shared/Alert';
-import { _testExports } from '../AdminLoginForm';
-import { withForm } from 'util/form';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { Role } from '../../../../../server/src/models/Role';
+import { _testExports } from '../AdminLoginForm';
+
 
 const AdminLoginForm = _testExports.AdminLoginForm;
 describe('AdminLoginForm', () => {
