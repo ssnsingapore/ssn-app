@@ -1,100 +1,122 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import { defaultAppContext } from 'components/main/AppContext';
 import { AlertType } from 'components/shared/Alert';
-import { _AdminLoginForm } from '../AdminLoginForm';
+import { _testExports } from '../AdminLoginForm';
 import { withForm } from 'util/form';
+import { Role } from '../../../../../server/src/models/Role';
 
+const AdminLoginForm = _testExports.AdminLoginForm;
 describe('AdminLoginForm', () => {
   let component;
 
   describe('render', () => {
-    beforeEach(() => {
-      const mockStyles = {
-        landingImage: '',
-        landingHeader: '',
-      };
+    describe('when admin is not logged in', () => {
+      beforeEach(() => {
+        const mockContext = {
+          ...defaultAppContext,
+          isAuthenticated: false,
+        };
+        mockContext.utils.authenticator = {
+          isAuthenticated: () => false,
+          getCurrentUser: jest.fn(() => null),
+        };
 
-      const FieldName = {
-        email: 'email',
-        hashedPassword: 'hashedPassword',
-      };
-
-      const AdminLoginForm = withForm(FieldName)(
-        withStyles(mockStyles)(_AdminLoginForm)
-      );
-
-      component = shallow(<AdminLoginForm />).dive().dive();
-    });
-
-    it('contains fields username and password for login', () => {
-      const usernameTextField = component.find(TextField).filterWhere(field => field.props().label === 'Username');
-      const passwordTextField = component.find(TextField).filterWhere(field => field.props().label === 'Password');
-
-      expect(usernameTextField).toExist();
-      expect(passwordTextField).toExist();
-    });
-
-    it('has a submit button that is disabled when page is loading', () => {
-      component.setState({
-        isLoading: true,
+        component = shallow(<AdminLoginForm context={mockContext} />).dive().dive();
       });
 
-      expect(component.find(Button).props().type).toBe('submit');
-      expect(component.find(Button).props().disabled).toBe(true);
-    });
+      it('contains fields username and password for login', () => {
+        const usernameTextField = component.find(TextField).filterWhere(field => field.props().label === 'Username');
+        const passwordTextField = component.find(TextField).filterWhere(field => field.props().label === 'Password');
 
-    it('redirects to admin dashboard when shouldRedirect is true', () => {
-      component.setState({
-        shouldRedirect: true,
+        expect(usernameTextField).toExist();
+        expect(passwordTextField).toExist();
       });
 
-      expect(component.find(Redirect).props().to).toEqual('/admin/dashboard');
+      it('has a submit button that is disabled when page is loading', () => {
+        component.setState({
+          isLoading: true,
+        });
+
+        expect(component.find(Button).props().type).toBe('submit');
+        expect(component.find(Button).props().disabled).toBe(true);
+      });
+
+      it('redirects to admin dashboard when shouldRedirect is true', () => {
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/admin/dashboard');
+      });
+
+    });
+
+    describe('when admin is logged in', () => {
+      beforeEach(() => {
+        const mockContext = {
+          ...defaultAppContext,
+          isAuthenticated: true,
+        };
+        mockContext.utils.authenticator = {
+          isAuthenticated: () => true,
+          getCurrentUser: jest.fn(() => ({
+            role: Role.ADMIN,
+            email: 'admin@email.com',
+          })),
+        };
+
+        component = shallow(<AdminLoginForm context={mockContext} />).dive().dive();
+      });
+
+      it('has text telling the user that they are already logged', () => {
+        expect(component.find(Typography).at(1).html()).toEqual(
+          expect.stringContaining('You are logged in as admin@email.com')
+        );
+      });
+
+      it('has a button to logout and another to go to the admin dashboard', () => {
+        expect(component.find(Button).at(0).html()).toEqual(
+          expect.stringContaining('Logout')
+        );
+
+        const dashboardButton = component.find(Button).get(1);
+        expect(dashboardButton.props.children).toContain('Go to Dashboard');
+        expect(dashboardButton.props.to).toEqual('/admin/dashboard');
+      });
+
+      it('redirects to admin dashboard when shouldRedirect is true', () => {
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/admin/dashboard');
+      });
     });
   });
 
-  describe('handleSubmit', () => {
+  describe('logging in', () => {
     let event;
 
     beforeEach(() => {
-      const mockStyles = {
-        landingImage: '',
-        landingHeader: '',
-      };
-
       const mockContext = {
         ...defaultAppContext,
       };
       mockContext.utils.authenticator = {
+        getCurrentUser: () => null,
         loginAdmin: jest.fn(),
       };
       mockContext.updaters.showAlert = jest.fn();
-
-      const FieldName = {
-        email: 'email',
-        hashedPassword: 'hashedPassword',
-      };
-
-      const constraints = {
-        [FieldName.email]: {
-          presence: { allowEmpty: false },
-        },
-      };
 
       event = {
         preventDefault: jest.fn(),
       };
 
-      const AdminLoginForm = withForm(FieldName, constraints)(
-        withStyles(mockStyles)(_AdminLoginForm)
-      );
-
       component = shallow(<AdminLoginForm context={mockContext} />);
     });
-
 
     describe('when there are validation errors', () => {
       beforeEach(() => {
@@ -164,5 +186,48 @@ describe('AdminLoginForm', () => {
         expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginFailure', AlertType.ERROR, 'Looks like you\'ve keyed in the wrong credentials. Try again!');
       });
     });
+  });
+
+  describe('logging out', () => {
+    beforeEach(() => {
+      const mockContext = {
+        ...defaultAppContext,
+        isAuthenticated: true,
+      };
+      mockContext.utils.authenticator = {
+        getCurrentUser: () => ({
+          role: Role.ADMIN,
+          email: 'admin@email.com',
+        }),
+        logoutAdmin: jest.fn(),
+      };
+      mockContext.updaters.showAlert = jest.fn();
+
+      component = shallow(<AdminLoginForm context={mockContext} />);
+    });
+
+    describe('when logout is successul', () => {
+      beforeEach(() => {
+        component.props().context.utils.authenticator.logoutAdmin.mockImplementation(() => {
+          return new Promise(resolve => resolve({ isSuccessful: true }));
+        });
+      });
+
+      it('should call authenticator to logout, set loading state, and show alert', async () => {
+        const baseComponent = component.dive().dive();
+
+        await baseComponent.find(Button).at(0).simulate('click');
+
+        expect(baseComponent.state().isLoading).toEqual(false);
+        expect(component.props().context.utils.authenticator.logoutAdmin).toHaveBeenCalled();
+        expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith(
+          'logoutSuccess', AlertType.SUCCESS, 'You\'ve successfully logged out!',
+        );
+      });
+
+
+    });
+
+
   });
 });

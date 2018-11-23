@@ -32,7 +32,7 @@ const constraints = {
   },
 };
 
-export class _AdminLoginForm extends Component {
+class _AdminLoginForm extends Component {
   constructor(props) {
     super(props);
 
@@ -79,7 +79,7 @@ export class _AdminLoginForm extends Component {
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
-    this.setState({ isLoggingOut: true });
+    this.setState({ isLoading: true });
     const response = await authenticator.logoutAdmin();
 
     if (response.isSuccessful) {
@@ -88,7 +88,7 @@ export class _AdminLoginForm extends Component {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
 
-    this.setState({ isLoggingOut: false });
+    this.setState({ isLoading: false });
   }
 
   getRedirectReferrer = () => {
@@ -181,6 +181,7 @@ export class _AdminLoginForm extends Component {
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
+
     if (this.state.shouldRedirect) {
       return <Redirect to={this.getRedirectReferrer()} />;
     }
@@ -257,3 +258,9 @@ export const AdminLoginForm = withStyles(styles)(
     ),
   ),
 );
+
+export const _testExports = {
+  AdminLoginForm: withForm(FieldName, constraints)(
+    withStyles({})(_AdminLoginForm)
+  ),
+};
