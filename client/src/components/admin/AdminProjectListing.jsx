@@ -24,16 +24,13 @@ class _AdminProjectListing extends Component {
       isLoading: true,
       projectDeactivateConfirmationDialogOpen: false,
       projectActivateConfirmationDialogOpen: false,
-      project: {},
+      project: null,
     };
   }
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const {
-      pageSize = 10,
-      projectState = ProjectState.APPROVED_ACTIVE,
-    } = this.props;
+    const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
 
     const endpoint = '/api/v1/projects';
     const queryParams = `?pageSize=${pageSize}&projectState=${projectState}`;
@@ -54,10 +51,7 @@ class _AdminProjectListing extends Component {
   }
 
   handleProjectDeactivateConfirmationDialogOpen = (project) => {
-    this.setState({
-      projectDeactivateConfirmationDialogOpen: true,
-      project,
-    });
+    this.setState({ projectDeactivateConfirmationDialogOpen: true, project });
   };
 
   handleProjectDeactivateConfirmationDialogClose = () => {
@@ -65,31 +59,17 @@ class _AdminProjectListing extends Component {
   };
 
   handleProjectActivateConfirmationDialogOpen = (project) => {
-    this.setState({
-      projectActivateConfirmationDialogOpen: true,
-      project,
-    });
+    this.setState({ projectActivateConfirmationDialogOpen: true, project });
   };
 
   handleProjectActivateConfirmationDialogClose = () => {
     this.setState({ projectActivateConfirmationDialogOpen: false });
   };
 
-  _isApprovedActive(project) {
-    return project.state === ProjectState.APPROVED_ACTIVE;
-  }
-
-  _isApprovedInactive(project) {
-    return project.state === ProjectState.APPROVED_INACTIVE;
-  }
-
-  _isPendingApproval(project) {
-    return project.state === ProjectState.PENDING_APPROVAL;
-  }
-
-  _isRejected(project) {
-    return project.state === ProjectState.REJECTED;
-  }
+  _isApprovedActive = (project) => project.state === ProjectState.APPROVED_ACTIVE;
+  _isApprovedInactive = (project) => project.state === ProjectState.APPROVED_INACTIVE;
+  _isPendingApproval = (project) => project.state === ProjectState.PENDING_APPROVAL;
+  _isRejected = (project) => project.state === ProjectState.REJECTED;
 
   renderButtons(project) {
     const { classes } = this.props;
@@ -118,32 +98,30 @@ class _AdminProjectListing extends Component {
     );
   }
 
-  _getContentGridSize(project) {
-    const contentGridSize =
-      (this._isApprovedActive(project) || this._isApprovedInactive(project)) ? 10 : 12;
-    return contentGridSize;
-  }
+  _getContentGridSize = (project) =>
+    (this._isApprovedActive(project) || this._isApprovedInactive(project)) ? 10 : 12;
+
+  _getProjectStateString = () => {
+    const { projectState } = this.props;
+    return (
+      projectState === 'PENDING_APPROVAL' ?
+        ` projects ${ProjectStateDisplayMapping[projectState].toLowerCase()} ` :
+        ` ${ProjectStateDisplayMapping[projectState].toLowerCase()} projects `
+    );
+  };
 
   renderProjects = () => {
     const { classes, theme } = this.props;
 
     if (this.state.projects.length === 0) {
       return (
-        <Typography
-          variant="subheading"
-          style={{ color: theme.palette.grey[500] }}
-        >
-          There are no
-          {this.props.projectState === 'PENDING_APPROVAL'
-            ? ` projects ${ProjectStateDisplayMapping[this.props.projectState].toLowerCase()} `
-            : ` ${ProjectStateDisplayMapping[this.props.projectState].toLowerCase()} projects `}
-          at the moment.
+        <Typography variant="subheading" style={{ color: theme.palette.grey[500] }} >
+          There are no {this._getProjectStateString()} at the moment.
         </Typography>
       );
     }
 
     return this.state.projects.map(project => {
-      const linkEndpoint = `/admin/projects/${project._id}`;
       const contentGridSize = this._getContentGridSize(project);
       const rightColumnGridSize = contentGridSize === 12 ? false : 12 - contentGridSize;
 
@@ -151,16 +129,11 @@ class _AdminProjectListing extends Component {
         <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
           <Grid container>
             <Grid item xs={12} md={contentGridSize}>
-              <Link to={linkEndpoint} className={classes.link}>
+              <Link to={`/admin/projects/${project._id}`} className={classes.link}>
                 <ProjectListingCard project={project} />
               </Link>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              md={rightColumnGridSize}
-              style={{ margin: 'auto' }}
-            >
+            <Grid item xs={12} md={rightColumnGridSize} style={{ margin: 'auto' }} >
               {this.renderButtons(project)}
             </Grid>
           </Grid>
