@@ -15,8 +15,9 @@ import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 import { ProjectBaseDetails } from './ProjectBaseDetails';
 import { FieldName } from './ProjectFormFields';
+import { DefaultCoverImageUrl } from 'components/shared/enums/DefaultCoverImageUrl';
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { Role } from 'components/shared/enums/Role';
-
 
 class _ProjectOwnerProjectForm extends Component {
   constructor(props) {
@@ -25,11 +26,16 @@ class _ProjectOwnerProjectForm extends Component {
     this.state = {
       preview: false,
       project: null,
+      isDefaultCoverImage: false,
     };
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.projectToRender && prevProps.volunteerRequirementRefs.length !== this.props.volunteerRequirementRefs.length) {
+    if (
+      this.props.projectToRender &&
+      prevProps.volunteerRequirementRefs.length !==
+        this.props.volunteerRequirementRefs.length
+    ) {
       const { volunteerRequirements } = this.props.projectToRender;
       volunteerRequirements.forEach((_row, index) => {
         this.props.setSubFormFields(volunteerRequirements, index);
@@ -37,13 +43,22 @@ class _ProjectOwnerProjectForm extends Component {
     }
   }
 
-  togglePreviewOn = () => {
+  getProject = () => {
     const { fields } = this.props;
     const project = {};
 
     for (const [key, valueObject] of Object.entries(fields)) {
       project[key] = valueObject.value;
     }
+    return project;
+  };
+
+  togglePreviewOn = () => {
+    const project = this.getProject();
+    const current = this.props.projectImageInput.current;
+    const coverImageSrc = this.getCoverImageSrc(current);
+
+    project.coverImageUrl = coverImageSrc;
 
     project.volunteerRequirements = this.props.volunteerRequirementRefs.map(
       ref => ref.current.valuesForAllFields()
@@ -52,8 +67,40 @@ class _ProjectOwnerProjectForm extends Component {
     this.setState({ preview: true, project });
   };
 
+  getDefaultUrl = project => {
+    return project && project.issuesAddressed
+      ? DefaultCoverImageUrl[project.issuesAddressed[0]]
+      : null;
+  };
+
+  getPreviewDefaultImageUrl = () => {
+    const project = this.getProject();
+    let defaultUrl;
+
+    if (this.state.project === null) {
+      defaultUrl = this.getDefaultUrl(project);
+    } else {
+      defaultUrl = this.getDefaultUrl(this.state.project);
+    }
+
+    this.setState({ isDefaultCoverImage: true });
+    return defaultUrl || DefaultCoverImageUrl[IssueAddressed.OTHER];
+  };
+
+  getCoverImageSrc = current => {
+    if (current && current.files.length > 0) {
+      return window.URL.createObjectURL(current.files[0]);
+    }
+
+    return this.getPreviewDefaultImageUrl();
+  };
+
   togglePreviewOff = () => {
-    this.setState({ preview: false });
+    const currentProject = this.state.project;
+    if (this.state.isDefaultCoverImage) {
+      currentProject.coverImageUrl = '';
+    }
+    this.setState({ preview: false, project: currentProject });
   };
 
   renderPreviewNotice = () => {
@@ -99,14 +146,13 @@ class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-                Back to form
+              Back to form
             </Button>
           )}
         </div>
       </div>
     );
   };
-
 
   _isProjectRejected = () => this.props.projectState === ProjectState.REJECTED;
 
@@ -118,11 +164,13 @@ class _ProjectOwnerProjectForm extends Component {
       return <Redirect to={{ pathname: '/project_owner/dashboard' }} />;
     }
 
+    const formPreviewStyle = preview ? { display: 'none' } : {};
+
     return (
       <div className={classes.root}>
         <form onSubmit={this.props.handleSubmit}>
-          <Grid container spacing={16} className={classes.form}>
-            {preview ? (
+          {preview ? (
+            <Grid container spacing={16} className={classes.form}>
               <React.Fragment>
                 <Grid item xs={12}>
                   {this.renderPreviewNotice()}
@@ -131,56 +179,63 @@ class _ProjectOwnerProjectForm extends Component {
                   <ProjectMainInfo project={project} />
                 </Grid>
               </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Grid item xs={12} style={{ paddingTop: '56px' }} />
-                {
-                  this._isProjectRejected() &&
-                    <RejectionReason
-                      rejectionReason={this.props.rejectionReason}
-                      role={Role.PROJECT_OWNER}
-                    />
-                }
-                <Grid item xs={12}>
-                  <ProjectBaseDetails
-                    fields={this.props.fields}
-                    handleChange={this.props.handleChange}
-                    projectImageInput={this.props.projectImageInput}
-                    coverImageUrl={this.props.coverImageUrl}
-                    formType={this.props.formType}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <ProjectVolunteerDetails
-                    volunteerRequirements={
-                      this.state.project
-                        ? this.state.project.volunteerRequirements
-                        : []
-                    }
-                    volunteerRequirementRefs={
-                      this.props.volunteerRequirementRefs
-                    }
-                    FieldName={FieldName}
-                    fields={this.props.fields}
-                    handleChange={this.props.handleChange}
-                    handleDeleteVolunteerRequirement={
-                      this.props.handleDeleteVolunteerRequirement
-                    }
-                    handleAddVolunteerRequirement={
-                      this.props.handleAddVolunteerRequirement
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <ProjectDetails
-                    fields={this.props.fields}
-                    FieldName={FieldName}
-                    handleChange={this.props.handleChange}
-                    resetField={this.props.resetField}
-                  />
-                </Grid>
-              </React.Fragment>
+            </Grid>
+          ) : (
+            ''
+          )}
+          <Grid
+            container
+            spacing={16}
+            className={classes.form}
+            style={formPreviewStyle}
+          >
+            <Grid item xs={12} style={{ paddingTop: '56px' }} />
+            {this._isProjectRejected() && (
+              <RejectionReason
+                rejectionReason={this.props.rejectionReason}
+                role={Role.PROJECT_OWNER}
+              />
             )}
+            <Grid item xs={12}>
+              <ProjectBaseDetails
+                fields={this.props.fields}
+                handleChange={this.props.handleChange}
+                projectImageInput={this.props.projectImageInput}
+                coverImageUrl={
+                  this.state.project
+                    ? this.state.project.coverImageUrl
+                    : this.props.coverImageUrl
+                }
+                formType={this.props.formType}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <ProjectVolunteerDetails
+                volunteerRequirements={
+                  this.state.project
+                    ? this.state.project.volunteerRequirements
+                    : []
+                }
+                volunteerRequirementRefs={this.props.volunteerRequirementRefs}
+                FieldName={FieldName}
+                fields={this.props.fields}
+                handleChange={this.props.handleChange}
+                handleDeleteVolunteerRequirement={
+                  this.props.handleDeleteVolunteerRequirement
+                }
+                handleAddVolunteerRequirement={
+                  this.props.handleAddVolunteerRequirement
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <ProjectDetails
+                fields={this.props.fields}
+                FieldName={FieldName}
+                handleChange={this.props.handleChange}
+                resetField={this.props.resetField}
+              />
+            </Grid>
             <Grid item xs={12}>
               <ProjectOwnerDetails />
             </Grid>

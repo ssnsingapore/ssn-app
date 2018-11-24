@@ -20,15 +20,13 @@ import {
 } from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
 
 class _ProjectImageUpload extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       imageSrc: '',
       isImageResolutionTooLow: false,
-      shouldCoverImageUse: true,
+      shouldUseCoverImage: true,
     };
-
   }
 
   handleChange = () => {
@@ -51,7 +49,11 @@ class _ProjectImageUpload extends Component {
 
   handleCancel = () => {
     this.props.projectImageInput.current.value = '';
-    this.setState({ imageSrc: '', isImageResolutionTooLow: false, shouldCoverImageUse: false });
+    this.setState({
+      imageSrc: '',
+      isImageResolutionTooLow: false,
+      shouldUseCoverImage: false,
+    });
   };
 
   renderDialog() {
@@ -84,8 +86,14 @@ class _ProjectImageUpload extends Component {
 
   renderButton = () => {
     const { classes } = this.props;
-    const { imageSrc, isImageResolutionTooLow, shouldCoverImageUse } = this.state;
-    const coverImageRender = shouldCoverImageUse ? this.props.coverImageUrl : '';
+    const {
+      imageSrc,
+      isImageResolutionTooLow,
+      shouldUseCoverImage,
+    } = this.state;
+    const coverImageRender = shouldUseCoverImage
+      ? this.props.coverImageUrl
+      : '';
 
     return !(imageSrc || coverImageRender) ? (
       <Grid className={classes.defaultImage}>
@@ -104,7 +112,9 @@ class _ProjectImageUpload extends Component {
     ) : (
       <Grid
         className={classes.projectImage}
-        style={{ backgroundImage: `url(${imageSrc ? imageSrc : coverImageRender})` }}
+        style={{
+          backgroundImage: `url(${imageSrc ? imageSrc : coverImageRender})`,
+        }}
       >
         <IconButton
           color="secondary"
