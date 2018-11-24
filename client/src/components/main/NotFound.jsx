@@ -23,11 +23,11 @@ export const NotFound = withStyles(styles)(({ classes }) => (
   <div className={classes.root}>
     <Avatar
       alt="Crying kitten"
-      src="http://i0.kym-cdn.com/photos/images/original/001/384/532/161.jpg"
+      src="https://s3-ap-southeast-1.amazonaws.com/ssn-app-test/Other.jpg"
       className={classes.avatar}
     />
     <Typography variant="display1" align="center">
-      I am sad because I couldn't find what you're looking for
+      Oops. We couldn't find the page you're looking for!
     </Typography>
   </div>
 ));

@@ -9,12 +9,16 @@ import { withContext } from 'util/context';
 
 import { ProjectMainInfo } from 'components/shared/ProjectMainInfo';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
+import { RejectionReason } from 'components/shared/RejectionReason';
+import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 import { ProjectBaseDetails } from './ProjectBaseDetails';
 import { FieldName } from './ProjectFormFields';
 import { DefaultCoverImageUrl } from 'components/shared/enums/DefaultCoverImageUrl';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+import { Role } from 'components/shared/enums/Role';
+
 class _ProjectOwnerProjectForm extends Component {
   constructor(props) {
     super(props);
@@ -24,6 +28,19 @@ class _ProjectOwnerProjectForm extends Component {
       project: null,
       isDefaultCoverImage: false,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.projectToRender &&
+      prevProps.volunteerRequirementRefs.length !==
+        this.props.volunteerRequirementRefs.length
+    ) {
+      const { volunteerRequirements } = this.props.projectToRender;
+      volunteerRequirements.forEach((_row, index) => {
+        this.props.setSubFormFields(volunteerRequirements, index);
+      });
+    }
   }
 
   getProject = () => {
@@ -129,7 +146,7 @@ class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-                Back to form
+              Back to form
             </Button>
           )}
         </div>
@@ -137,18 +154,14 @@ class _ProjectOwnerProjectForm extends Component {
     );
   };
 
+  _isProjectRejected = () => this.props.projectState === ProjectState.REJECTED;
+
   render() {
     const { classes } = this.props;
-    const { preview } = this.state;
+    const { preview, project } = this.state;
 
     if (this.props.shouldRedirect) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/project_owner/dashboard',
-          }}
-        />
-      );
+      return <Redirect to={{ pathname: '/project_owner/dashboard' }} />;
     }
 
     const formPreviewStyle = preview ? { display: 'none' } : {};
@@ -163,13 +176,26 @@ class _ProjectOwnerProjectForm extends Component {
                   {this.renderPreviewNotice()}
                 </Grid>
                 <Grid item xs={12}>
-                  <ProjectMainInfo project={this.state.project} />
+                  <ProjectMainInfo project={project} />
                 </Grid>
               </React.Fragment>
             </Grid>
-          ) : ''}
-          <Grid container spacing={16} className={classes.form} style={formPreviewStyle}>
+          ) : (
+            ''
+          )}
+          <Grid
+            container
+            spacing={16}
+            className={classes.form}
+            style={formPreviewStyle}
+          >
             <Grid item xs={12} style={{ paddingTop: '56px' }} />
+            {this._isProjectRejected() && (
+              <RejectionReason
+                rejectionReason={this.props.rejectionReason}
+                role={Role.PROJECT_OWNER}
+              />
+            )}
             <Grid item xs={12}>
               <ProjectBaseDetails
                 fields={this.props.fields}
@@ -190,9 +216,7 @@ class _ProjectOwnerProjectForm extends Component {
                     ? this.state.project.volunteerRequirements
                     : []
                 }
-                volunteerRequirementRefs={
-                  this.props.volunteerRequirementRefs
-                }
+                volunteerRequirementRefs={this.props.volunteerRequirementRefs}
                 FieldName={FieldName}
                 fields={this.props.fields}
                 handleChange={this.props.handleChange}
@@ -218,7 +242,7 @@ class _ProjectOwnerProjectForm extends Component {
           </Grid>
           {this.renderActionBar()}
         </form>
-      </div >
+      </div>
     );
   }
 }

@@ -9,7 +9,10 @@ import {
   Avatar,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
+import {
+  ArrowDropDown as ArrowDropDownIcon,
+  Group as GroupIcon,
+} from '@material-ui/icons';
 
 import ssnLogo from 'assets/ssn-logo.png';
 import defaultAvatar from 'assets/placeholder-avatar.jpg';
@@ -57,8 +60,8 @@ class _NavBar extends Component {
       return null;
     }
 
-    const userMatchPathname = (currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner')) ||
-      (currentUser.role === Role.ADMIN && pathname.includes('/admin'));
+    const userMatchPathname = (currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner/dashboard')) ||
+      (currentUser.role === Role.ADMIN && pathname.includes('/admin/dashboard'));
     return userMatchPathname && (
       <Typography variant="body2" color="inherit" className={this.props.classes.barTitle}>
         {NavBarDisplayMapping[currentUser.role]} DASHBOARD
@@ -97,7 +100,7 @@ class _NavBar extends Component {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
 
-    this.setState({ isLoading: false });
+    this.setState({ isLoading: false, anchorEl: null });
   }
 
   renderAvatar = () => {
@@ -143,6 +146,12 @@ class _NavBar extends Component {
           {currentUser.role === Role.PROJECT_OWNER &&
             <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose} disabled={this.state.isLoading}>
               <EditIcon style={{ paddingRight: 10 }} /> Edit Profile
+            </MenuItem>
+          }
+
+          {currentUser.role === Role.ADMIN &&
+            <MenuItem component={Link} to={'/admin/project_owners'} onClick={this.handleClose} disabled={this.state.isLoading}>
+              <GroupIcon style={{ paddingRight: 10 }} /> View Project Owners
             </MenuItem>
           }
 

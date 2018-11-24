@@ -1,10 +1,11 @@
+import moment from 'moment';
 import { ProjectOwner } from 'models/ProjectOwner';
 import {
   Project,
   VolunteerRequirementType,
   ProjectType,
   IssueAddressed,
-  ProjectLocation,
+  ProjectRegion,
   ProjectFrequency,
   ProjectState,
 } from 'models/Project';
@@ -57,12 +58,13 @@ export const createProject = (projectOwner, overrideAttributes = {}) => new Proj
   volunteerBenefitsDescription: 'lunch',
   projectType: ProjectType.EVENT,
   time: '10 AM',
-  location: ProjectLocation.WEST,
+  location: ProjectRegion.WEST,
   state: ProjectState.PENDING_APPROVAL,
-  startDate: new Date(2018, 10, 1),
-  endDate: new Date(2018, 10, 1),
+  startDate: moment('2018-10-1').toDate(),
+  endDate: moment('2018-10-1').toDate(),
   frequency: ProjectFrequency.ONCE_A_WEEK,
   ...overrideAttributes,
+  rejectionReason: 'rejected',
 });
 
 export const saveProject = async (projectOwner, overrideAttributes = {}) => createProject(projectOwner, overrideAttributes).save();

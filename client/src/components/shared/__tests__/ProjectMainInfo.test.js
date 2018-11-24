@@ -1,6 +1,6 @@
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { ProjectRegion } from 'components/shared/enums/ProjectRegion';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import React from 'react';
@@ -46,7 +46,7 @@ const buildProject = (projectType, overrideAttributes = {}) => {
     volunteerRequirementsDescription: 'some volunteer requirement description',
     volunteerBenefitsDescription: 'some volunteer benefits description',
     time: '9 AM',
-    location: ProjectLocation.EAST,
+    region: ProjectRegion.EAST,
     state: ProjectState.PENDING_APPROVAL,
     rejectionReason: 'some rejection reason',
   };
@@ -259,7 +259,7 @@ describe('ProjectMainInfo', () => {
           projectDetailsCard = component.find(Paper).at(1);
         });
 
-        it('should render the projectType, startDate, endDate, time, location and issuesAddressed', () => {
+        it('should render the projectType, startDate, endDate, time, region and issuesAddressed', () => {
           expect(projectDetailsCard.find(Typography).at(0).html()).toEqual(
             expect.stringContaining('Project Details'),
           );
@@ -288,15 +288,21 @@ describe('ProjectMainInfo', () => {
             expect.stringContaining('9:00 AM'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
-            expect.stringContaining('Location'),
+            expect.stringContaining('Region'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
             expect.stringContaining('East'),
           );
           expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
-            expect.stringContaining('Issues Addressed'),
+            expect.stringContaining('Address'),
           );
           expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
+            expect.stringContaining('-'),
+          );
+          expect(projectDetailsCard.find(Typography).at(7).html()).toEqual(
+            expect.stringContaining('Issues Addressed'),
+          );
+          expect(projectDetailsCard.find(Typography).at(7).html()).toEqual(
             expect.stringContaining('Other'),
           );
         });
@@ -315,7 +321,7 @@ describe('ProjectMainInfo', () => {
           projectDetailsCard = component.find(Paper).at(1);
         });
 
-        it('should render the projectType, frequency, time, location and issuesAddressed', () => {
+        it('should render the projectType, frequency, time, region and issuesAddressed', () => {
           expect(projectDetailsCard.find(Typography).at(0).html()).toEqual(
             expect.stringContaining('Project Details'),
           );
@@ -338,15 +344,21 @@ describe('ProjectMainInfo', () => {
             expect.stringContaining('9:00 AM'),
           );
           expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
-            expect.stringContaining('Location'),
+            expect.stringContaining('Region'),
           );
           expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
             expect.stringContaining('East'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
-            expect.stringContaining('Issues Addressed'),
+            expect.stringContaining('Address'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
+            expect.stringContaining('-'),
+          );
+          expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
+            expect.stringContaining('Issues Addressed'),
+          );
+          expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
             expect.stringContaining('Other'),
           );
         });
@@ -361,7 +373,7 @@ describe('ProjectMainInfo', () => {
         beforeEach(() => {
           project = buildProject(ProjectType.RECURRING, {
             time: undefined,
-            location: undefined,
+            region: undefined,
             issuesAddressed: [],
           });
           component = shallowRender(project);
@@ -376,17 +388,25 @@ describe('ProjectMainInfo', () => {
           });
         });
 
-        describe('when no location is specified', () => {
+        describe('when no region is specified', () => {
           it('should render a dash', () => {
             expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
-              expect.stringContaining('<strong>Location: </strong>-'),
+              expect.stringContaining('<strong>Region: </strong>-'),
+            );
+          });
+        });
+
+        describe('when no address is specified', () => {
+          it('should render a dash', () => {
+            expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
+              expect.stringContaining('<strong>Address: </strong>-'),
             );
           });
         });
 
         describe('when no issues addressed are specified', () => {
           it('should render a dash', () => {
-            expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
+            expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
               expect.stringContaining('<strong>Issues Addressed: </strong>-'),
             );
           });

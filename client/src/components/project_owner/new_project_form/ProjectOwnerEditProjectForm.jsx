@@ -27,9 +27,8 @@ class _ProjectOwnerEditProjectForm extends Component {
     this.state = {
       volunteerRequirementRefs: [],
       isSubmitting: false,
-      isLoadingProject: true,
       shouldRedirect: false,
-      projectToRender: {},
+      projectToRender: null,
       isImageResolutionTooLow: false,
     };
   }
@@ -48,13 +47,10 @@ class _ProjectOwnerEditProjectForm extends Component {
         .forEach(key => this.props.setField(key, project[key]));
       dateFields
         .forEach(key =>
-          this.props.setField(FieldName[key], moment.utc(project[key]).local().format('YYYY-MM-DD')));
+          this.props.setField(FieldName[key], moment(project[key]).format('YYYY-MM-DD')));
 
       const { volunteerRequirements } = project;
-      volunteerRequirements.forEach((_row, index) => {
-        this.handleAddVolunteerRequirement();
-        this.setSubFormFields(volunteerRequirements, index);
-      });
+      volunteerRequirements.forEach(() => this.handleAddVolunteerRequirement());
     }
 
     if (response.hasError) {
@@ -63,26 +59,27 @@ class _ProjectOwnerEditProjectForm extends Component {
       showAlert('getProjectFailure', AlertType.ERROR, formatErrors(errors));
     }
 
-    this.setState({ isLoadingProject: false });
   }
 
   setSubFormFields = (volunteerRequirements, index) => {
-    Object.keys(volunteerRequirements[index]).forEach(detail =>
-      this.state.volunteerRequirementRefs[index].current.setField(
-        VolunteerRequirementFieldName[detail], volunteerRequirements[index][detail]
-      )
-    );
+    if (this.state.volunteerRequirementRefs.length === volunteerRequirements.length) {
+      Object.keys(volunteerRequirements[index]).forEach(detail =>
+        this.state.volunteerRequirementRefs[index].current.setField(
+          VolunteerRequirementFieldName[detail], volunteerRequirements[index][detail]
+        )
+      );
+    }
   }
 
   _isProjectRejected = (project) => project.state === ProjectState.REJECTED;
 
   handleAddVolunteerRequirement = () => {
-    this.setState({
+    this.setState((state) => ({
       volunteerRequirementRefs: [
-        ...this.state.volunteerRequirementRefs,
+        ...state.volunteerRequirementRefs,
         React.createRef(),
       ],
-    });
+    }));
   };
 
   handleDeleteVolunteerRequirement = i => {
@@ -154,6 +151,23 @@ class _ProjectOwnerEditProjectForm extends Component {
     });
   };
 
+  _isProjectInactiveAndEndDateNotPassed = (newProject, oldProject) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endDate = new Date(newProject.endDate);
+    return (oldProject.state === ProjectState.APPROVED_INACTIVE && endDate >= today);
+  };
+
+  _projectEditedSuccessMessageText = (newProject, oldProject) => {
+    if (this._isProjectRejected(oldProject)) {
+      return `${newProject.title} details have been successfully updated! It will now be pending admin approval.`;
+    } else if (this._isProjectInactiveAndEndDateNotPassed(newProject, oldProject))
+      return `${newProject.title} details have been successfully updated! It will now be active as event end date has not passed.`;
+    else {
+      return `${newProject.title} details have been successfully updated!`;
+    }
+  }
+
   handleSubmit = async event => {
     event.preventDefault();
 
@@ -175,16 +189,9 @@ class _ProjectOwnerEditProjectForm extends Component {
     const { requestWithAlert } = this.props.context.utils;
 
     const { projectToRender } = this.state;
-    const PROJECT_EDITED_SUCCESS_MESSAGE =
-      this._isProjectRejected(projectToRender) ?
-        `${projectToRender.title} details have been successfully updated! It will now be pending admin approval.`
-        :
-        `${projectToRender.title} details have been successfully updated!`;
-
-    const volunteerRequirements = this.valuesForAllSubFormFields();
     let updatedProject = {
       ...this.props.valuesForAllFields(),
-      volunteerRequirements,
+      volunteerRequirements: this.valuesForAllSubFormFields(),
     };
 
     if (this._isProjectRejected(projectToRender)) {
@@ -192,7 +199,14 @@ class _ProjectOwnerEditProjectForm extends Component {
         ...updatedProject,
         state: ProjectState.PENDING_APPROVAL,
       };
+    } else if (this._isProjectInactiveAndEndDateNotPassed(updatedProject, projectToRender)) {
+      updatedProject = {
+        ...updatedProject,
+        state: ProjectState.APPROVED_ACTIVE,
+      };
     }
+
+    const PROJECT_EDITED_SUCCESS_MESSAGE = this._projectEditedSuccessMessageText(updatedProject, projectToRender);
 
     formData.append('project', JSON.stringify(updatedProject));
 
@@ -216,7 +230,9 @@ class _ProjectOwnerEditProjectForm extends Component {
 
   render() {
 
-    if (this.props.isLoadingProject) {
+    const { projectToRender } = this.state;
+
+    if (!projectToRender) {
       return <Spinner />;
     };
 
@@ -230,9 +246,13 @@ class _ProjectOwnerEditProjectForm extends Component {
       resetField={this.props.resetField}
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
-      coverImageUrl={this.state.projectToRender.coverImageUrl}
+      projectToRender={projectToRender} // TODO: change ProjectOwnerProjectForm to use this
+      coverImageUrl={projectToRender.coverImageUrl}
+      projectState={projectToRender.state}
+      rejectionReason={projectToRender.rejectionReason}
       projectImageInput={this.projectImageInput}
       formType='edit'
+      setSubFormFields={this.setSubFormFields}
     />;
   }
 }

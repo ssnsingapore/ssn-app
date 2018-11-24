@@ -14,8 +14,10 @@ export const FieldName = getFieldNameObject([
   'endDate',
   'frequency',
   'time',
-  'location',
+  'region',
+  'address',
   'issuesAddressed',
+
 ]);
 
 export const constraints = {
@@ -63,7 +65,7 @@ export const constraints = {
       presence: { allowEmpty: false },
     };
   },
-  [FieldName.frequency]: (value, attributes) => {
+  [FieldName.frequency]: (_value, attributes) => {
     if (attributes.projectType === ProjectType.EVENT) return null;
 
     return {

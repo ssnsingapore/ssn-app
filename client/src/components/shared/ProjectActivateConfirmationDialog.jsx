@@ -34,14 +34,10 @@ class _ProjectActivateConfirmationDialog extends Component {
     );
   }
 
-  handleActivateProject = async (event) => {
-    event.preventDefault();
+  _getEndpoint(dashboardRole, id) {
 
-    const { dashboardRole, project, handleClose } = this.props;
-    const id = project._id;
-  
-    let endpoint = '';
-    switch(dashboardRole) {
+    let endpoint;
+    switch (dashboardRole) {
     case Role.PROJECT_OWNER:
       endpoint = `/api/v1/project_owner/projects/${id}`;
       break;
@@ -51,24 +47,37 @@ class _ProjectActivateConfirmationDialog extends Component {
     default:
       endpoint = '';
     }
+    return endpoint;
+  }
 
+  handleActivateProject = async (event) => {
+    event.preventDefault();
+
+    const { dashboardRole, project, handleClose } = this.props;
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
 
-    const updatedProject = { 
-      project: {
-        state: ProjectState.APPROVED_ACTIVE,
-      }, 
-    };
+    const id = project._id;
+    const endpoint = this._getEndpoint(dashboardRole, id);
+    const updatedProject = { state: ProjectState.APPROVED_ACTIVE };
 
-    this.setState({ isSubmitting: true });
-    const response = await requestWithAlert.put(endpoint, updatedProject, { authenticated: true });
-    this.setState({ isSubmitting: false });
+    let response;
+    if (dashboardRole === Role.PROJECT_OWNER) {
+      const formData = new FormData();
+      formData.append('project', JSON.stringify(updatedProject));
+      this.setState({ isSubmitting: true });
+      response = await requestWithAlert.updateForm(endpoint, formData, { authenticated: true });
+      this.setState({ isSubmitting: false });
+    } else {
+      this.setState({ isSubmitting: true });
+      response = await requestWithAlert.put(endpoint, { project: { ...updatedProject } }, { authenticated: true });
+      this.setState({ isSubmitting: false });
+    }
 
     if (response.isSuccessful) {
       showAlert('projectActivateSuccess', AlertType.SUCCESS, PROJECT_ACTIVATE_SUCCESS_MESSAGE);
       handleClose();
-      this.setState({ shouldRefreshPage: true});
+      this.setState({ shouldRefreshPage: true });
     }
 
     if (response.hasError) {
@@ -91,17 +100,17 @@ class _ProjectActivateConfirmationDialog extends Component {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Activate project</DialogTitle>
+        <DialogTitle id="form-dialog-title">Activate Project</DialogTitle>
         {this.renderDialogContent()}
         <DialogActions>
-          <Button 
-            onClick={handleClose} 
+          <Button
+            onClick={handleClose}
             color="default">
             No
           </Button>
-          <Button 
-            onClick={this.handleActivateProject} 
-            color="primary" 
+          <Button
+            onClick={this.handleActivateProject}
+            color="primary"
             disabled={this.state.isSubmitting}>
             Yes
           </Button>

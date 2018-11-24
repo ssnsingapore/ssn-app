@@ -50,7 +50,7 @@ export const ProjectType = {
   RECURRING: 'RECURRING',
 };
 
-export const ProjectLocation = {
+export const ProjectRegion = {
   CENTRAL: 'CENTRAL',
   NORTH: 'NORTH',
   SOUTH: 'SOUTH',
@@ -125,9 +125,9 @@ const ProjectSchema = new mongoose.Schema(
     time: {
       type: String,
     },
-    location: {
+    region: {
       type: String,
-      enum: Object.values(ProjectLocation),
+      enum: Object.values(ProjectRegion),
     },
     state: {
       type: String,
@@ -168,6 +168,12 @@ const ProjectSchema = new mongoose.Schema(
       enum: Object.values(ProjectFrequency),
     },
     rejectionReason: {
+      type: String,
+      required: [function () {
+        return (this.state === ProjectState.REJECTED);
+      }, 'cannot be blank'],
+    },
+    address: {
       type: String,
     },
   },

@@ -10,12 +10,12 @@ import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { fieldValue } from 'util/form';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { ProjectRegion } from 'components/shared/enums/ProjectRegion';
 import { Month } from 'components/shared/enums/Month';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 import { IssueAddressedDisplayMapping } from './display_mappings/IssueAddressedDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
-import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
+import { ProjectRegionDisplayMapping } from 'components/shared/display_mappings/ProjectRegionDisplayMapping';
 import { MonthDisplayMapping } from 'components/shared/display_mappings/MonthDisplayMapping';
 
 /* Using form control */
@@ -57,7 +57,7 @@ const createMenu = (enumeration, displayMapping) => (
 
 const createIssueAddressedMenu = createMenu(IssueAddressed, IssueAddressedDisplayMapping);
 const createVolunteerRequirementTypeMenu = createMenu(VolunteerRequirementType, VolunteerRequirementTypeDisplayMapping);
-const createProjectLocationMenu = createMenu(ProjectLocation, ProjectLocationDisplayMapping);
+const createProjectRegionMenu = createMenu(ProjectRegion, ProjectRegionDisplayMapping);
 const createMonthMenu = createMenu(Month, MonthDisplayMapping);
 
 export const _SearchBar = ({
@@ -102,8 +102,8 @@ export const _SearchBar = ({
             FieldName
           )}
           near the{' '}
-          {createProjectLocationMenu(
-            FieldName.projectLocation,
+          {createProjectRegionMenu(
+            FieldName.projectRegion,
             'all areas',
             classes,
             fields,
@@ -139,7 +139,7 @@ export const _SearchBar = ({
 const styles = theme => ({
   searchBox: {
     padding: '30px 0',
-    width: '100vw',
+    width: '100%',
     backgroundColor: theme.palette.grey[100],
   },
   formControl: {

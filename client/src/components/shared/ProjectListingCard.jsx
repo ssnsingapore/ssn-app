@@ -18,11 +18,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { capitalizeWords } from 'util/capitalizeWords';
 
 const renderVolunteerRequirements = (project, classes) => {
   return (
     <Grid style={{ marginBottom: '10px' }}>
-      <Typography variant="body1">We need:</Typography>
+      <Typography variant="body1">We need volunteers for:</Typography>
       {project.volunteerRequirements.length !== 0 ? (
         project.volunteerRequirements.map(requirement => {
           return (
@@ -96,20 +97,23 @@ const _ProjectListingCard = ({ project, classes }) => {
                   <Grid container>
                     <Grid item xs={11}>
                       <Typography variant="caption">
-                        {project.startDate === project.endDate
-                          ? moment(project.startDate)
-                            .utc()
-                            .format('dddd, Do MMMM YYYY')
-                          : moment(project.startDate)
-                            .utc()
-                            .format('dddd, Do MMMM YYYY') +
+                        {project.projectType === 'RECURRING'
+                          ? 'Recurring Project'
+                          : project.startDate === project.endDate
+                            ? moment(project.startDate).format(
+                              'dddd, Do MMMM YYYY'
+                            )
+                            : moment(project.startDate).format(
+                              'dddd, Do MMMM YYYY'
+                            ) +
                             ' - ' +
-                            moment(project.endDate)
-                              .utc()
-                              .format('dddd, Do MMMM YYYY')}
+                            moment(project.endDate).format(
+                              'dddd, Do MMMM YYYY'
+                            )}
                       </Typography>
+
                       <Typography variant="headline" gutterBottom>
-                        {project.title}
+                        {capitalizeWords(project.title)}
                       </Typography>
                       <Typography
                         variant="subheading"
@@ -132,20 +136,20 @@ const _ProjectListingCard = ({ project, classes }) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={1}>
-                      <Paper elevation={0} className={classes.dateBadge}>
-                        <Typography variant="caption">
-                          {moment(project.startDate)
-                            .utc()
-                            .format('MMM')}
-                        </Typography>
-                        <Typography variant="title" color="secondary">
-                          <strong>
-                            {moment(project.startDate)
-                              .utc()
-                              .format('DD')}
-                          </strong>
-                        </Typography>
-                      </Paper>
+                      {project.projectType === 'RECURRING' ? (
+                        ''
+                      ) : (
+                        <Paper elevation={0} className={classes.dateBadge}>
+                          <Typography variant="caption">
+                            {moment(project.startDate).format('MMM')}
+                          </Typography>
+                          <Typography variant="title" color="secondary">
+                            <strong>
+                              {moment(project.startDate).format('DD')}
+                            </strong>
+                          </Typography>
+                        </Paper>
+                      )}
                     </Grid>
                   </Grid>
                   <Grid container className={classes.subContentContainer}>

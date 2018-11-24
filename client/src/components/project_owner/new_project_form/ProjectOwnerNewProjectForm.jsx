@@ -17,7 +17,10 @@ export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
 
-class _ProjectOwnerNewProjectForm extends Component {
+const isEmpty = (fields) =>
+  Object.values(fields).every(field => !field);
+
+export class _ProjectOwnerNewProjectForm extends Component {
   constructor(props) {
     super(props);
 
@@ -27,7 +30,6 @@ class _ProjectOwnerNewProjectForm extends Component {
       volunteerRequirementRefs: [React.createRef()],
       isSubmitting: false,
       shouldRedirect: false,
-      projectToRender: {},
     };
 
     props.setField(FieldName.issuesAddressed, []);
@@ -66,9 +68,12 @@ class _ProjectOwnerNewProjectForm extends Component {
 
   valuesForAllSubFormFields = () => {
     const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.map(ref =>
-      ref.current.valuesForAllFields()
-    );
+    return volunteerRequirementRefs.reduce((values, ref) => {
+      if (isEmpty(ref.current.valuesForAllFields())) {
+        return values;
+      }
+      return [...values, ref.current.valuesForAllFields()];
+    }, []);
   };
 
   getImageDimensions = image => {
@@ -141,11 +146,9 @@ class _ProjectOwnerNewProjectForm extends Component {
     const { authenticator } = this.props.context.utils;
 
     const currentUser = authenticator.getCurrentUser();
-
-    const volunteerRequirements = this.valuesForAllSubFormFields();
     const newProject = {
       ...this.props.valuesForAllFields(),
-      volunteerRequirements,
+      volunteerRequirements: this.valuesForAllSubFormFields(),
       projectOwner: currentUser.id,
     };
 

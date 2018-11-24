@@ -5,7 +5,7 @@ import { AlertType } from 'components/shared/Alert';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { Month } from 'components/shared/enums/Month';
-import { ProjectLocation } from 'components/shared/enums/ProjectLocation';
+import { ProjectRegion } from 'components/shared/enums/ProjectRegion';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 import { PublicProjectListing } from 'components/shared/PublicProjectListing';
@@ -21,7 +21,7 @@ import { SEARCH_BAR_FIELD_VALUES } from 'util/storage_keys';
 
 const FieldName = getFieldNameObject([
   'issueAddressed',
-  'projectLocation',
+  'projectRegion',
   'month',
   'volunteerRequirementType',
 ]);
@@ -30,8 +30,8 @@ const constraints = {
   [FieldName.issueAddressed]: {
     inclusion: Object.values(IssueAddressed),
   },
-  [FieldName.projectLocation]: {
-    inclusion: Object.values(ProjectLocation),
+  [FieldName.projectRegion]: {
+    inclusion: Object.values(ProjectRegion),
   },
   [FieldName.month]: {
     inclusion: Object.values(Month),
@@ -145,6 +145,10 @@ class _Projects extends Component {
     localStorage.setItem(SEARCH_BAR_FIELD_VALUES, JSON.stringify(this.props.valuesForAllFields()));
   }
 
+  clearFieldValues = () => {
+    localStorage.removeItem(SEARCH_BAR_FIELD_VALUES);
+  }
+
   getFieldValues = () => {
     return JSON.parse(localStorage.getItem(SEARCH_BAR_FIELD_VALUES));
   }
@@ -162,7 +166,7 @@ class _Projects extends Component {
 
   resetAllFieldsAndRefetch = async () => {
     this.setState({ isLoading: true });
-
+    this.clearFieldValues();
     await this.props.resetAllFields();
     await this.fetchProjectCounts();
     await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));

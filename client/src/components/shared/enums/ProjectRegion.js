@@ -1,4 +1,4 @@
-export const ProjectLocation = {
+export const ProjectRegion = {
   CENTRAL: 'CENTRAL',
   NORTH: 'NORTH',
   SOUTH: 'SOUTH',

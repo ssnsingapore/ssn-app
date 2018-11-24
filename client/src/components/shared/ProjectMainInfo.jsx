@@ -18,11 +18,13 @@ import {
 } from '@material-ui/core';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
-import { ProjectLocationDisplayMapping } from 'components/shared/display_mappings/ProjectLocationDisplayMapping';
+import { ProjectRegionDisplayMapping } from 'components/shared/display_mappings/ProjectRegionDisplayMapping';
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import { capitalizeWords } from 'util/capitalizeWords';
+import { convertToAbsoluteUrl } from 'util/url';
+
 
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
@@ -115,13 +117,7 @@ const renderIssuesAddressed = (classes, project) => {
 
 const renderProjectBaseDetails = (classes, project) => {
   const { title, description, volunteerSignupUrl, coverImageUrl } = project;
-
-  const httpPatternRegex = /^http(s?):\/\//;
-
-  let inputUrl = volunteerSignupUrl;
-  if (!httpPatternRegex.test(volunteerSignupUrl)) {
-    inputUrl = 'http://' + volunteerSignupUrl;
-  }
+  const inputUrl = convertToAbsoluteUrl(volunteerSignupUrl);
 
   return (
     <Card className={classes.card} square>
@@ -164,6 +160,7 @@ const renderProjectBaseDetails = (classes, project) => {
             variant="contained"
             href={inputUrl}
             fullWidth
+            target="_blank"
             color="secondary"
             size="large"
             style={{ textAlign: 'center' }}
@@ -219,7 +216,8 @@ const renderProjectDetails = (classes, project) => {
     startDate,
     endDate,
     time,
-    location,
+    region,
+    address,
     projectType,
     frequency,
   } = project;
@@ -234,14 +232,12 @@ const renderProjectDetails = (classes, project) => {
         renderRow(
           'Start date',
           moment(startDate)
-            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.EVENT &&
         renderRow(
           'End date',
           moment(endDate)
-            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.RECURRING &&
@@ -250,7 +246,8 @@ const renderProjectDetails = (classes, project) => {
         'Time',
         time ? moment(time, 'HH:mm').format('h:mm A') : undefined
       )}
-      {renderRow('Location', ProjectLocationDisplayMapping[location])}
+      {renderRow('Region', ProjectRegionDisplayMapping[region])}
+      {renderRow('Address', address)}
       {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
     </Paper>
   );
