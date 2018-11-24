@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Typography, Paper, Tabs, Tab, Button, Tooltip } from '@material-ui/core';
+import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { AppContext } from 'components/main/AppContext';
@@ -9,7 +8,6 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import GroupIcon from '@material-ui/icons/Group';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { withContext } from 'util/context';
@@ -80,17 +78,6 @@ export class _AdminDashboard extends Component {
             <Typography variant="headline" className={classes.headline}>
               List of Projects
             </Typography>
-            <Tooltip title="Project Owners">
-              <Button
-                variant="fab"
-                color="secondary"
-                aria-label="Add"
-                component={Link}
-                to="/admin/project_owners"
-              >
-                <GroupIcon />
-              </Button>
-            </Tooltip>
           </div>
           <Tabs
             value={tabValue}
