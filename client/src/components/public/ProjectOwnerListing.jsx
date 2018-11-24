@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
-import { Grid, Typography, Paper, Button, Tooltip } from '@material-ui/core';
-import ListIcon from '@material-ui/icons/List';
+import { Grid, Typography, Paper } from '@material-ui/core';
 
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AlertType } from 'components/shared/Alert';
@@ -97,16 +95,6 @@ class _ProjectOwnerListing extends Component {
                 <Typography variant="headline">
                   List of Project Owners
                 </Typography>
-                <Tooltip title="Project Listing">
-                  <Button
-                    variant="fab"
-                    color="secondary"
-                    component={Link}
-                    to="/projects"
-                  >
-                    <ListIcon />
-                  </Button>
-                </Tooltip>
               </div>
             </Paper>
           </Grid>
