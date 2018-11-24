@@ -98,22 +98,21 @@ class _NavBar extends Component {
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
+    const isProjectPath = this.props.location.pathname === '/projects';
 
     if (!isAuthenticated || !currentUser) {
       return (
-        this.props.location.pathname === '/projects' ? (
-          <React.Fragment>
-            <Button
-              variant="flat"
-              component={Link}
-              to="/project_owners"
-            >
-              <Typography variant="body2" color="inherit" style={{ color: 'white' }}>
-                VIEW PROJECT OWNERS
-              </Typography>
-            </Button>
-          </React.Fragment>
-        ) : (null)
+        <React.Fragment>
+          <Button
+            variant="flat"
+            component={Link}
+            to={isProjectPath ? '/project_owners' : '/projects'}
+          >
+            <Typography variant="body2" color="inherit" style={{ color: 'white' }}>
+              {isProjectPath ? 'View Project Owners' : 'View Projects'}
+            </Typography>
+          </Button>
+        </React.Fragment>
       );
     }
 

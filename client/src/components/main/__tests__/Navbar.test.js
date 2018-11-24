@@ -28,8 +28,8 @@ describe('Navbar', () => {
         </BrowserRouter>
       );
 
-      expect(component.find(Button).prop('to')).toEqual('/');
-      expect(component.find(Button).html()).toEqual(
+      expect(component.find(Button).at(0).prop('to')).toEqual('/');
+      expect(component.find(Button).at(0).html()).toEqual(
         expect.stringContaining('<img')
       );
     });
@@ -146,13 +146,44 @@ describe('Navbar', () => {
         expect(component.find(Button).get(0).props.to).toEqual('/');
       });
 
-      it('should not render any text or avatar when no one is logged in', () => {
-        expect(component.find(Typography).exists()).toBeFalsy();
+      it('should render a button to view projects that links to projects page', () => {
+        expect(component.find(Button).get(1).props.to).toEqual('/projects');
+      });
+
+      it('should not render avatar dropdown menu when no one is logged in', () => {
         expect(component.find(Avatar).exists()).toBeFalsy();
-        expect(component.find(Button).at(1).exists()).toBeFalsy();
+      });
+    });
+
+
+    describe('when no one is logged in and on /projects route', () => {
+      beforeEach(() => {
+        mockContext = { ...defaultAppContext, isAuthenticated: false };
+        mockContext.utils.authenticator = {
+          getCurrentUser: jest.fn(() => ({ role: Role.PROJECT_OWNER })),
+        };
+        component = shallow(
+          <NavBar
+            location={{ pathname: '/projects' }}
+            context={mockContext}
+          />
+        ).dive();
+      });
+
+      it('should render a brand logo that redirects to home page on click', () => {
+        expect(component.find(Button).get(0).props.to).toEqual('/');
+      });
+
+      it('should render a button to view project owners', () => {
+        expect(component.find(Button).get(1).props.to).toEqual('/project_owners');
+      });
+
+      it('should not render avatar dropdown menu when no one is logged in', () => {
+        expect(component.find(Avatar).exists()).toBeFalsy();
       });
     });
   });
+
 
   describe('logout', () => {
     describe('when a project owner is logged in', () => {
