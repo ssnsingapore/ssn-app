@@ -20,8 +20,11 @@ projectOwnersRouter.get('/project_owners', asyncWrap(getProjectOwners));
 async function getProjectOwners(req, res) {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.pageSize) || 10;
-  const projectOwners = await ProjectOwner.paginate({}, { page, limit });
-  return res.status(200).json(projectOwners);
+  const customLabels = {
+    docs: 'projectOwners',
+  };
+  const results = await ProjectOwner.paginate({}, { page, limit, customLabels });
+  return res.status(200).json(results);
 }
 
 projectOwnersRouter.get('/project_owners/:id', asyncWrap(getProjectOwner));

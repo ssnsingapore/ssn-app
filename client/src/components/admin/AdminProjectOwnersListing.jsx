@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import ReactPaginate from 'react-paginate';
+
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
@@ -24,7 +26,9 @@ class _AdminProjectOwnersListing extends Component {
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
     const endpoint = '/api/v1/project_owners';
-    const response = await requestWithAlert.get(endpoint, { authenticated: true });
+    const response = await requestWithAlert.get(endpoint, {
+      authenticated: true,
+    });
 
     if (response.isSuccessful) {
       const { projectOwners } = await response.json();
@@ -49,25 +53,23 @@ class _AdminProjectOwnersListing extends Component {
           <Grid item xs={12}>
             {this.renderProjectOwnerTotalsText()}
           </Grid>
-          {
-            Object.keys(projectOwners).map(key =>
-              <Grid
-                item xs={12}
-                className={classes.card}>
-                <ProjectOwnerDetails
-                  projectOwner={projectOwners[key]}
-                  type='list' />
-              </Grid>
-            )
-          }
+          {Object.keys(projectOwners).map(key => (
+            <Grid item xs={12} className={classes.card}>
+              <ProjectOwnerDetails
+                projectOwner={projectOwners[key]}
+                type="list"
+              />
+            </Grid>
+          ))}
         </Grid>
       </Grid>
     );
   }
 
   renderProjectOwnerTotalsText() {
-    const projectOwnerTotalsText =
-      `There are a total of ${this.state.projectOwners.length} project owners on the site!`;
+    const projectOwnerTotalsText = `There are a total of ${
+      this.state.projectOwners.length
+    } project owners on the site!`;
 
     return (
       <React.Fragment>
@@ -81,11 +83,11 @@ class _AdminProjectOwnersListing extends Component {
     );
   }
 
+  handlePageClick = () => {};
+
   render() {
     if (this.state.isLoading) {
-      return (
-        <Spinner />
-      );
+      return <Spinner />;
     }
 
     const { classes, theme } = this.props;
@@ -115,12 +117,23 @@ class _AdminProjectOwnersListing extends Component {
           <Grid item xs={12}>
             {this.renderProjectOwners()}
           </Grid>
+          <ReactPaginate
+            previousLabel={'previous'}
+            nextLabel={'next'}
+            breakLabel={'...'}
+            breakClassName={'break-me'}
+            /* pageCount={this.state.pageCount} */
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            /* onPageChange={this.handlePageClick} */
+            containerClassName={'pagination'}
+            subContainerClassName={'pages pagination'}
+            activeClassName={'active'}
+          />
         </Paper>
       </Grid>
-
     );
   }
-
 }
 
 const styles = {
