@@ -44,8 +44,8 @@ async function getProjects(req, res) {
   } = req.query;
 
   const sortParams = projectState === ProjectState.PENDING_APPROVAL
-    ? { createdAt: 'ascending' }
-    : { updatedAt: 'descending' };
+    ? { createdAt: 1 }
+    : { updatedAt: -1 };
 
   const recurringWithinMonthObj = {
     $and: [
@@ -119,10 +119,12 @@ async function getProjects(req, res) {
         } : { state: ProjectState.APPROVED_ACTIVE },
     },
     {
+      $sort: sortParams,
+    },
+    {
       $limit: pageSize,
     },
   ])
-    .sort(sortParams)
     .exec();
   const projects = await ProjectOwner.populate(aggrProjects, { path: 'projectOwner' });
 
@@ -207,7 +209,6 @@ async function getProjectCounts(req, res) {
       },
     ])
       .exec();
-    console.log(aggrCountProjects);
     counts[projectStates[i]] = aggrCountProjects.length !== 0 ? aggrCountProjects[0].count : 0;
   }
 
