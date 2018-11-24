@@ -9,24 +9,7 @@ import { convertToAbsoluteUrl } from 'util/url';
 import { AccountTypeDisplayMapping } from 'components/shared/display_mappings/AccountTypeDisplayMapping';
 
 class _ProjectOwnerDetails extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      projectOwner: {},
-    };
-  }
-
-  async componentDidMount() {
-    const projectOwner = this.props.projectOwner
-      ? this.props.projectOwner
-      : this.props.context.utils.authenticator.getCurrentUser();
-
-    this.setState({ projectOwner });
-  }
-
-  renderDescriptionOrPersonalBio = () => {
-    const { projectOwner } = this.state;
+  renderDescriptionOrPersonalBio = (projectOwner) => {
 
     if (projectOwner.accountType === AccountType.ORGANISATION) {
       return (
@@ -45,8 +28,7 @@ class _ProjectOwnerDetails extends Component {
     );
   };
 
-  renderTitleAndName = () => {
-    const { projectOwner } = this.state;
+  renderTitleAndName = (projectOwner) => {
     const { type } = this.props;
 
     return (
@@ -73,7 +55,11 @@ class _ProjectOwnerDetails extends Component {
   render = () => {
 
     const { classes } = this.props;
-    const { projectOwner } = this.state;
+
+    const projectOwner = this.props.projectOwner
+      ? this.props.projectOwner
+      : this.props.context.utils.authenticator.getCurrentUser();
+
 
     return (
       <Card className={classes.card} square>
@@ -83,7 +69,7 @@ class _ProjectOwnerDetails extends Component {
         />
         <div className={classes.details}>
           <CardContent className={classes.content}>
-            {this.renderTitleAndName()}
+            {this.renderTitleAndName(projectOwner)}
             <Typography>
               <strong>Email: </strong>
               <a href={`mailto:${projectOwner.email}`} className={classes.links}>
@@ -120,7 +106,7 @@ class _ProjectOwnerDetails extends Component {
                   {projectOwner.socialMediaLink}
                 </a> : '-'}
             </Typography>
-            {this.renderDescriptionOrPersonalBio()}
+            {this.renderDescriptionOrPersonalBio(projectOwner)}
           </CardContent>
         </div>
       </Card >

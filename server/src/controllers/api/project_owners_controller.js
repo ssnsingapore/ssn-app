@@ -22,8 +22,12 @@ async function getProjectOwners(req, res) {
   const limit = Number(req.query.pageSize) || 10;
   const customLabels = {
     docs: 'projectOwners',
+    totalDocs: 'totalProjectOwners',
   };
-  const results = await ProjectOwner.paginate({}, { page, limit, customLabels });
+
+  const results = await ProjectOwner.paginate({}, {
+    page, limit, customLabels, sort: { name: 1 },
+  });
   return res.status(200).json(results);
 }
 

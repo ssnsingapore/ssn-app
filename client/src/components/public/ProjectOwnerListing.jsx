@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactPaginate from 'react-paginate';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
@@ -9,7 +8,9 @@ import { Grid, Typography, Paper } from '@material-ui/core';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
+import { Pagination } from 'components/shared/Pagination';
 
+const pageSize = 10;
 class _ProjectOwnerListing extends Component {
   constructor(props) {
     super(props);
@@ -17,28 +18,32 @@ class _ProjectOwnerListing extends Component {
     this.state = {
       projectOwners: [],
       isLoading: true,
+      totalProjectOwners: 0,
+      noPages: 0,
+      page: 1,
     };
   }
 
-  async componentDidMount() {
+  async _fetchProjects() {
     const { requestWithAlert } = this.props.context.utils;
-    const endpoint = '/api/v1/project_owners';
-    const response = await requestWithAlert.get(endpoint, {
-      authenticated: true,
-    });
+    const endpoint = `/api/v1/project_owners?pageSize=${pageSize}&page=${this.state.page}`;
+    const response = await requestWithAlert.get(endpoint, { authenticated: true });
 
     if (response.isSuccessful) {
-      const { projectOwners } = await response.json();
-      this.setState({ projectOwners });
-    }
-
-    if (response.hasError) {
+      const { projectOwners, totalProjectOwners } = await response.json();
+      const noPages = Math.ceil(totalProjectOwners / pageSize);
+      this.setState({ projectOwners, totalProjectOwners, noPages });
+    } else if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
       showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
     }
-
     this.setState({ isLoading: false });
+
+  }
+
+  componentDidMount() {
+    this._fetchProjects();
   }
 
   renderProjectOwners() {
@@ -47,9 +52,6 @@ class _ProjectOwnerListing extends Component {
     return (
       <Grid item xs={12}>
         <Grid container>
-          <Grid item xs={12}>
-            {this.renderProjectOwnerTotalsText()}
-          </Grid>
           {Object.keys(projectOwners).map(key => (
             <Grid item xs={12} className={classes.card}>
               <ProjectOwnerDetails
@@ -64,21 +66,22 @@ class _ProjectOwnerListing extends Component {
   }
 
   renderProjectOwnerTotalsText() {
-    const projectOwnerTotalsText = `There are a total of ${
-      this.state.projectOwners.length
-    } project owners on the site!`;
-
     return (
       <Typography
         variant="subheading"
         style={{ padding: '40px', paddingBottom: '10px' }}
       >
-        {projectOwnerTotalsText}
+        {`There are a total of ${this.state.totalProjectOwners} project owners on the site!`}
       </Typography>
     );
   }
 
-  handlePageClick = () => { };
+  handlePageClick = (pageDisplayed) => {
+    const page = pageDisplayed.selected + 1;
+    this.setState({ isLoading: true });
+    this.setState({ page }, () => this._fetchProjects());
+    this.setState({ isLoading: false });
+  };
 
   render() {
     if (this.state.isLoading) {
@@ -99,22 +102,14 @@ class _ProjectOwnerListing extends Component {
             </Paper>
           </Grid>
           <Grid item xs={12}>
+            {this.renderProjectOwnerTotalsText()}
+            <Pagination
+              noPages={this.state.noPages}
+              handlePageClick={this.handlePageClick}
+            />
             {this.renderProjectOwners()}
           </Grid>
-          <ReactPaginate
-            previousLabel={'previous'}
-            nextLabel={'next'}
-            breakLabel={'...'}
-            breakClassName={'break-me'}
-            /* pageCount={this.state.pageCount} */
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            /* onPageChange={this.handlePageClick} */
-            containerClassName={'pagination'}
-            subContainerClassName={'pages pagination'}
-            activeClassName={'active'}
-          />
-        </Paper>
+        </Paper >
       </Grid>
     );
   }

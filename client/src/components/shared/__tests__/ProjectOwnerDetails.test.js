@@ -45,7 +45,7 @@ describe('ProjectOwnerDetails', () => {
         disableLifeCycleMethods: true,
       }
     );
-    await component.instance().componentDidMount();
+    // await component.instance().componentDidMount();
     done();
   });
 
@@ -116,7 +116,7 @@ describe('ProjectOwnerDetails', () => {
               disableLifeCycleMethods: true,
             }
           );
-          await component.instance().componentDidMount();
+
           done();
         });
 
@@ -161,7 +161,7 @@ describe('ProjectOwnerDetails', () => {
             disableLifeCycleMethods: true,
           }
         );
-        await component.instance().componentDidMount();
+
 
         expect(component.html()).toEqual(
           expect.stringContaining('<strong>Description: </strong>-'),
@@ -182,7 +182,7 @@ describe('ProjectOwnerDetails', () => {
             disableLifeCycleMethods: true,
           }
         );
-        await component.instance().componentDidMount();
+
         done();
       });
 
@@ -213,7 +213,7 @@ describe('ProjectOwnerDetails', () => {
             disableLifeCycleMethods: true,
           }
         );
-        await component.instance().componentDidMount();
+
 
         expect(component.html()).toEqual(
           expect.stringContaining('<strong>Personal Bio: </strong>-'),
