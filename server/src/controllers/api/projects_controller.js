@@ -53,7 +53,7 @@ async function getProjects(req, res) {
       {
         frequency: {
           $in: [ProjectFrequency.EVERY_DAY, ProjectFrequency.A_FEW_TIMES_A_WEEK, ProjectFrequency.ONCE_A_WEEK,
-          ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
+            ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
         },
       },
     ],
@@ -142,7 +142,7 @@ async function getProjectCounts(req, res) {
       {
         frequency: {
           $in: [ProjectFrequency.EVERY_DAY, ProjectFrequency.A_FEW_TIMES_A_WEEK, ProjectFrequency.ONCE_A_WEEK,
-          ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
+            ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
         },
       },
     ],
