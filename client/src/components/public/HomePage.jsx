@@ -41,6 +41,33 @@ export class _HomePage extends Component {
     this.setState({ isLoading: false });
   }
 
+  renderButtonsBelow() {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          style={{ width: '50%', marginRight: '10px' }}
+          component={Link}
+          to="/projects"
+        >
+          View All Projects
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          style={{ width: '50%' }}
+          component={Link}
+          to="/project_owners"
+        >
+          View All Project Owners
+        </Button>
+      </div>
+    );
+  }
+
   render() {
     const { classes, theme } = this.props;
 
@@ -60,11 +87,7 @@ export class _HomePage extends Component {
           </Typography>
         </div>
 
-        <Grid
-          container
-          spacing={4 * theme.spacing.unit}
-          className={classes.root}
-        >
+        <Grid container spacing={4 * theme.spacing.unit} className={classes.root} >
           <Typography
             variant="headline"
             gutterBottom
@@ -80,22 +103,14 @@ export class _HomePage extends Component {
                 projects={this.state.projects}
                 isLoading={this.state.isLoading}
                 projectState={ProjectState.APPROVED_ACTIVE} />
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                fullWidth
-                component={Link}
-                to="/projects"
-              >
-                View All Projects
-              </Button>
+              {this.renderButtonsBelow()}
             </Grid>
             <Grid item md={3} xs={12}>
               <ProjectOwnerLoginForm />
             </Grid>
           </Grid>
         </Grid>
+
       </div>
     );
   }

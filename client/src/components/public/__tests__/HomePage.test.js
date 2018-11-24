@@ -28,11 +28,14 @@ describe('HomePage', () => {
     component = shallow(<HomePage theme={mockTheme} context={mockContext} />).dive();
   });
 
-  it('should have a list of projects, a button to view all projects, and a login form', () => {
-    const buttonProps = component.find(Button).props();
+  it('should have a list of projects, a button to view all projects and project owners, and a login form', () => {
+    const buttonPropsOne = component.find(Button).at(0).props();
+    const buttonPropsTwo = component.find(Button).at(1).props();
 
-    expect(buttonProps.to).toEqual('/projects');
-    expect(buttonProps.children).toEqual('View All Projects');
+    expect(buttonPropsOne.to).toEqual('/projects');
+    expect(buttonPropsOne.children).toEqual('View All Projects');
+    expect(buttonPropsTwo.to).toEqual('/project_owners');
+    expect(buttonPropsTwo.children).toEqual('View All Project Owners');
     expect(component.find(PublicProjectListing).exists()).toBeTruthy();
     expect(component.find(ProjectOwnerLoginForm).exists()).toBeTruthy();
   });
