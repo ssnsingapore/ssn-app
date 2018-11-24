@@ -10,6 +10,7 @@ import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 
+const pageSize = 10;
 class _ProjectOwnerListing extends Component {
   constructor(props) {
     super(props);
@@ -17,22 +18,22 @@ class _ProjectOwnerListing extends Component {
     this.state = {
       projectOwners: [],
       isLoading: true,
+      totalProjectOwners: 0,
+      noPages: 0,
+      page: 1,
     };
   }
 
-  async componentDidMount() {
+  async _fetchProjects() {
     const { requestWithAlert } = this.props.context.utils;
-    const endpoint = '/api/v1/project_owners';
-    const response = await requestWithAlert.get(endpoint, {
-      authenticated: true,
-    });
+    const endpoint = `/api/v1/project_owners?pageSize=${pageSize}&page=${this.state.page}`;
+    const response = await requestWithAlert.get(endpoint, { authenticated: true });
 
     if (response.isSuccessful) {
-      const { projectOwners } = await response.json();
-      this.setState({ projectOwners });
-    }
-
-    if (response.hasError) {
+      const { projectOwners, totalProjectOwners } = await response.json();
+      const noPages = Math.ceil(totalProjectOwners / pageSize);
+      this.setState({ projectOwners, totalProjectOwners, noPages });
+    } else if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
       showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
@@ -41,15 +42,16 @@ class _ProjectOwnerListing extends Component {
     this.setState({ isLoading: false });
   }
 
+  componentDidMount() {
+    this._fetchProjects();
+  }
+
   renderProjectOwners() {
     const { classes } = this.props;
     const { projectOwners } = this.state;
     return (
       <Grid item xs={12}>
         <Grid container>
-          <Grid item xs={12}>
-            {this.renderProjectOwnerTotalsText()}
-          </Grid>
           {Object.keys(projectOwners).map(key => (
             <Grid item xs={12} className={classes.card}>
               <ProjectOwnerDetails
@@ -64,9 +66,8 @@ class _ProjectOwnerListing extends Component {
   }
 
   renderProjectOwnerTotalsText() {
-    const projectOwnerTotalsText = `There are a total of ${
-      this.state.projectOwners.length
-    } project owners on the site!`;
+    const projectOwnerTotalsText =
+      `There are a total of ${this.state.totalProjectOwners} project owners on the site!`;
 
     return (
       <Typography
@@ -78,7 +79,35 @@ class _ProjectOwnerListing extends Component {
     );
   }
 
-  handlePageClick = () => { };
+  handlePageClick = (data) => {
+    const page = data.selected + 1;
+    this.setState({ page }, () => {
+      this._fetchProjects();
+    });
+  };
+
+  renderPagination() {
+    const { classes } = this.props;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '30px' }}>
+        <Typography variant="body1">
+          <ReactPaginate
+            previousLabel='&laquo;'
+            breakLabel={'...'}
+            nextLabel='&raquo;'
+            pageCount={this.state.noPages}
+            onPageChange={this.handlePageClick}
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={2}
+            pageClassName={classes.page}
+            previousClassName={classes.page}
+            nextClassName={classes.page}
+            breakClassName={classes.page}
+          />
+        </Typography>
+      </div>
+    );
+  }
 
   render() {
     if (this.state.isLoading) {
@@ -99,28 +128,17 @@ class _ProjectOwnerListing extends Component {
             </Paper>
           </Grid>
           <Grid item xs={12}>
+            {this.renderProjectOwnerTotalsText()}
+            {this.renderPagination()}
             {this.renderProjectOwners()}
           </Grid>
-          <ReactPaginate
-            previousLabel={'previous'}
-            nextLabel={'next'}
-            breakLabel={'...'}
-            breakClassName={'break-me'}
-            /* pageCount={this.state.pageCount} */
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            /* onPageChange={this.handlePageClick} */
-            containerClassName={'pagination'}
-            subContainerClassName={'pages pagination'}
-            activeClassName={'active'}
-          />
-        </Paper>
+        </Paper >
       </Grid>
     );
   }
 }
 
-const styles = {
+const styles = theme => ({
   root: {
     width: '80vw',
     margin: '0 auto',
@@ -145,7 +163,18 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-};
+  page: {
+    display: 'inline-block',
+    padding: '2px',
+    '& a.active': {
+      backgroundColor: theme.palette.grey[400],
+    },
+    '& a': {
+      padding: '6px 10px',
+      backgroundColor: theme.palette.grey[200],
+    },
+  },
+});
 
 export const ProjectOwnerListing = withContext(AppContext)(
   withTheme()(withStyles(styles)(_ProjectOwnerListing))
