@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import uniqueValidator from 'mongoose-unique-validator';
 import uid from 'uid-safe';
 import jwt from 'jsonwebtoken';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 import { config } from 'config/environment';
 import { constructMongooseValidationError } from 'util/errors';
@@ -188,4 +189,6 @@ ProjectOwnerSchema.methods.clearPasswordResetFields = async function () {
   await this.save();
 };
 
+
+ProjectOwnerSchema.plugin(mongoosePaginate);
 export const ProjectOwner = mongoose.model('ProjectOwner', ProjectOwnerSchema);
