@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactPaginate from 'react-paginate';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
@@ -9,6 +8,7 @@ import { Grid, Typography, Paper } from '@material-ui/core';
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
+import { Pagination } from 'components/shared/Pagination';
 
 const pageSize = 10;
 class _ProjectOwnerListing extends Component {
@@ -38,8 +38,8 @@ class _ProjectOwnerListing extends Component {
       const errors = await extractErrors(response);
       showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
     }
-
     this.setState({ isLoading: false });
+
   }
 
   componentDidMount() {
@@ -66,48 +66,22 @@ class _ProjectOwnerListing extends Component {
   }
 
   renderProjectOwnerTotalsText() {
-    const projectOwnerTotalsText =
-      `There are a total of ${this.state.totalProjectOwners} project owners on the site!`;
-
     return (
       <Typography
         variant="subheading"
         style={{ padding: '40px', paddingBottom: '10px' }}
       >
-        {projectOwnerTotalsText}
+        {`There are a total of ${this.state.totalProjectOwners} project owners on the site!`}
       </Typography>
     );
   }
 
-  handlePageClick = (data) => {
-    const page = data.selected + 1;
-    this.setState({ page }, () => {
-      this._fetchProjects();
-    });
+  handlePageClick = (pageDisplayed) => {
+    const page = pageDisplayed.selected + 1;
+    this.setState({ isLoading: true });
+    this.setState({ page }, () => this._fetchProjects());
+    this.setState({ isLoading: false });
   };
-
-  renderPagination() {
-    const { classes } = this.props;
-    return (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '30px' }}>
-        <Typography variant="body1">
-          <ReactPaginate
-            previousLabel='&laquo;'
-            breakLabel={'...'}
-            nextLabel='&raquo;'
-            pageCount={this.state.noPages}
-            onPageChange={this.handlePageClick}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={2}
-            pageClassName={classes.page}
-            previousClassName={classes.page}
-            nextClassName={classes.page}
-            breakClassName={classes.page}
-          />
-        </Typography>
-      </div>
-    );
-  }
 
   render() {
     if (this.state.isLoading) {
@@ -129,7 +103,10 @@ class _ProjectOwnerListing extends Component {
           </Grid>
           <Grid item xs={12}>
             {this.renderProjectOwnerTotalsText()}
-            {this.renderPagination()}
+            <Pagination
+              noPages={this.state.noPages}
+              handlePageClick={this.handlePageClick}
+            />
             {this.renderProjectOwners()}
           </Grid>
         </Paper >
@@ -138,7 +115,7 @@ class _ProjectOwnerListing extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = {
   root: {
     width: '80vw',
     margin: '0 auto',
@@ -163,18 +140,7 @@ const styles = theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  page: {
-    display: 'inline-block',
-    padding: '2px',
-    '& a.active': {
-      backgroundColor: theme.palette.grey[400],
-    },
-    '& a': {
-      padding: '6px 10px',
-      backgroundColor: theme.palette.grey[200],
-    },
-  },
-});
+};
 
 export const ProjectOwnerListing = withContext(AppContext)(
   withTheme()(withStyles(styles)(_ProjectOwnerListing))
