@@ -55,9 +55,9 @@ describe('Navbar', () => {
         expect(component.find(Button).get(0).props.to).toEqual('/project_owner/dashboard');
       });
 
-      it('should render PROJECT OWNER DASHBOARD', () => {
+      it('should render PROJECT OWNER', () => {
         expect(component.find(Typography).html()).toEqual(
-          expect.stringContaining('PROJECT OWNER DASHBOARD')
+          expect.stringContaining('PROJECT OWNER')
         );
       });
 
@@ -70,14 +70,19 @@ describe('Navbar', () => {
         });
 
         it('renders logout button', () => {
-          expect(component.find(MenuItem).at(1).html()).toEqual(
+          expect(component.find(MenuItem).at(2).html()).toEqual(
             expect.stringContaining('Logout')
           );
         });
 
+        it('should render a button that navigates to view project owners page', () => {
+          expect(component.find(MenuItem).get(0).props.children).toContain(' View Project Owners');
+          expect(component.find(MenuItem).get(0).props.to).toEqual('/project_owners');
+        });
+
         it('should render a button that navigates to edit profile project owner page', () => {
-          expect(component.find(MenuItem).get(0).props.children).toContain(' Edit Profile');
-          expect(component.find(MenuItem).get(0).props.to).toEqual('/project_owner/edit_profile');
+          expect(component.find(MenuItem).get(1).props.children).toContain(' Edit Profile');
+          expect(component.find(MenuItem).get(1).props.to).toEqual('/project_owner/edit_profile');
         });
       });
     });
@@ -103,9 +108,9 @@ describe('Navbar', () => {
         expect(component.find(Button).get(0).props.to).toEqual('/admin/dashboard');
       });
 
-      it('should render ADMIN DASHBOARD when admin is logged in', () => {
+      it('should render SSN ADMIN when admin is logged in', () => {
         expect(component.find(Typography).html()).toEqual(
-          expect.stringContaining('ADMIN DASHBOARD')
+          expect.stringContaining('SSN ADMIN')
         );
       });
 
@@ -170,7 +175,7 @@ describe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
-        await component.find(MenuItem).at(1).simulate('click');
+        await component.find(MenuItem).at(2).simulate('click');
 
         expect(mockContext.utils.authenticator.logoutProjectOwner).toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).not.toHaveBeenCalled();

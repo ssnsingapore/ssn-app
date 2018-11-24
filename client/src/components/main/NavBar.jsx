@@ -42,14 +42,8 @@ class _NavBar extends Component {
     };
   }
 
-
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
+  handleClick = event => this.setState({ anchorEl: event.currentTarget });
+  handleClose = () => this.setState({ anchorEl: null });
 
   renderNavbarText = (pathname) => {
     const { isAuthenticated } = this.props.context;
@@ -60,11 +54,11 @@ class _NavBar extends Component {
       return null;
     }
 
-    const userMatchPathname = (currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner/dashboard')) ||
-      (currentUser.role === Role.ADMIN && pathname.includes('/admin/dashboard'));
-    return userMatchPathname && (
-      <Typography variant="body2" color="inherit" className={this.props.classes.barTitle}>
-        {NavBarDisplayMapping[currentUser.role]} DASHBOARD
+    const isProjectOwnerPath = currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner/');
+    const isAdminPath = currentUser.role === Role.ADMIN && pathname.includes('/admin/');
+    return (isProjectOwnerPath || isAdminPath) && (
+      <Typography variant="body2" color="inherit" style={{ paddingLeft: '15px' }}>
+        {NavBarDisplayMapping[currentUser.role]}
       </Typography>
     );
   }
@@ -84,33 +78,43 @@ class _NavBar extends Component {
   }
 
   handleLogout = async (currentUser) => {
-
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
     this.setState({ isLoading: true });
-
     const response = currentUser.role === Role.PROJECT_OWNER ?
       await authenticator.logoutProjectOwner() : await authenticator.logoutAdmin();
+
     if (response.isSuccessful) {
       showAlert('logoutSuccess', AlertType.SUCCESS, LOGOUT_SUCCESS_MESSAGE);
-    }
-
-    if (response.hasError) {
+    } else if (response.hasError) {
       showAlert('logoutFailure', AlertType.ERROR, LOGOUT_FAILURE_MESSAGE);
     }
-
     this.setState({ isLoading: false, anchorEl: null });
   }
 
-  renderAvatar = () => {
+  renderRightNavbar = () => {
     const { classes } = this.props;
     const { isAuthenticated } = this.props.context;
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
 
     if (!isAuthenticated || !currentUser) {
-      return null;
+      return (
+        this.props.location.pathname === '/projects' ? (
+          <React.Fragment>
+            <Button
+              variant="flat"
+              component={Link}
+              to="/project_owners"
+            >
+              <Typography variant="body2" color="inherit" style={{ color: 'white' }}>
+                VIEW PROJECT OWNERS
+              </Typography>
+            </Button>
+          </React.Fragment>
+        ) : (null)
+      );
     }
 
     const avatarSrc = currentUser.profilePhotoUrl ? currentUser.profilePhotoUrl : defaultAvatar;
@@ -143,23 +147,43 @@ class _NavBar extends Component {
           }}
           getContentAnchorEl={null}
         >
-          {currentUser.role === Role.PROJECT_OWNER &&
-            <MenuItem component={Link} to={'/project_owner/edit_profile'} onClick={this.handleClose} disabled={this.state.isLoading}>
+          <MenuItem
+            component={Link}
+            to={'/project_owners'}
+            onClick={this.handleClose}
+            disabled={this.state.isLoading}>
+            <GroupIcon style={{ paddingRight: 10 }} /> View Project Owners
+          </MenuItem>
+          {
+            currentUser.role === Role.PROJECT_OWNER &&
+            <MenuItem
+              component={Link}
+              to={'/project_owner/edit_profile'}
+              onClick={this.handleClose}
+              disabled={this.state.isLoading}>
               <EditIcon style={{ paddingRight: 10 }} /> Edit Profile
             </MenuItem>
           }
-
-          {currentUser.role === Role.ADMIN &&
-            <MenuItem component={Link} to={'/admin/project_owners'} onClick={this.handleClose} disabled={this.state.isLoading}>
-              <GroupIcon style={{ paddingRight: 10 }} /> View Project Owners
-            </MenuItem>
-          }
-
-          <MenuItem onClick={() => this.handleLogout(currentUser)} disabled={this.state.isLoading}>
+          <MenuItem
+            onClick={() => this.handleLogout(currentUser)}
+            disabled={this.state.isLoading}>
             <ExitToAppIcon style={{ paddingRight: 10 }} /> Logout
           </MenuItem>
         </Menu>
       </React.Fragment>
+    );
+  }
+
+  renderLeftNavbar() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.leftNavBar}>
+        <Button component={Link} to={this.getLink()} disabled={this.state.isLoading} >
+          <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
+        </Button>
+        {this.renderNavbarText(this.props.location.pathname)}
+      </div>
+
     );
   }
 
@@ -169,15 +193,8 @@ class _NavBar extends Component {
     return this.props.location.pathname !== '/admin' && (
       <AppBar position="static">
         <Toolbar variant="dense" className={classes.toolBar}>
-          <Button
-            component={Link}
-            to={this.getLink()}
-            disabled={this.state.isLoading}
-          >
-            <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
-          </Button>
-          {this.renderNavbarText(this.props.location.pathname)}
-          {this.renderAvatar()}
+          {this.renderLeftNavbar()}
+          {this.renderRightNavbar()}
         </Toolbar>
       </AppBar>
     );
@@ -186,15 +203,14 @@ class _NavBar extends Component {
 
 const styles = {
   toolBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
     width: '80vw',
     margin: '0 auto',
     padding: '0',
   },
   logo: {
     height: '25px',
-  },
-  barTitle: {
-    paddingLeft: '15px',
   },
   logout: {
     position: 'absolute',
@@ -204,6 +220,11 @@ const styles = {
     margin: '0 15px',
     width: '30px',
     height: '30px',
+  },
+  leftNavBar: {
+    display: 'flex',
+    justifyContent: 'flexStart',
+    alignItems: 'center',
   },
 };
 
