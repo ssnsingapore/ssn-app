@@ -22,6 +22,7 @@ class _Pagination extends Component {
             previousClassName={classes.page}
             nextClassName={classes.page}
             breakClassName={classes.page}
+            activeClassName={classes.active}
           />
         </Typography>
       </div>
@@ -33,12 +34,22 @@ const styles = theme => ({
   page: {
     display: 'inline-block',
     padding: '2px',
-    '& a.active': {
-      backgroundColor: theme.palette.grey[400],
-    },
     '& a': {
       padding: '6px 10px',
       backgroundColor: theme.palette.grey[200],
+    },
+    '& a:hover': {
+      backgroundColor: theme.palette.grey[400],
+    },
+  },
+  active: {
+    display: 'inline-block',
+    padding: '2px',
+    '& a': {
+      color: 'white',
+      fontStyle: 'strong',
+      padding: '6px 10px',
+      backgroundColor: theme.palette.grey[400],
     },
   },
 });
