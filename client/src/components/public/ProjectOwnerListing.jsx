@@ -39,7 +39,6 @@ class _ProjectOwnerListing extends Component {
       showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
     }
     this.setState({ isLoading: false });
-
   }
 
   componentDidMount() {
@@ -79,7 +78,7 @@ class _ProjectOwnerListing extends Component {
   handlePageClick = (pageDisplayed) => {
     const page = pageDisplayed.selected + 1;
     this.setState({ isLoading: true });
-    this.setState({ page }, () => this._fetchProjects());
+    this.setState({ page }, this._fetchProjects);
     this.setState({ isLoading: false });
   };
 
