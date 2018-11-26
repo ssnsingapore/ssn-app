@@ -24,8 +24,10 @@ async function getProjectOwners(req, res) {
     docs: 'projectOwners',
     totalDocs: 'totalProjectOwners',
   };
-
-  const results = await ProjectOwner.paginate({}, {
+  const query = {
+    confirmedAt: { $ne: null },
+  };
+  const results = await ProjectOwner.paginate(query, {
     page, limit, customLabels, sort: { name: 1 },
   });
   return res.status(200).json(results);
