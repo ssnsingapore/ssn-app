@@ -175,6 +175,9 @@ class _ProjectOwnerProjectForm extends Component {
                 <Grid item xs={12}>
                   <ProjectMainInfo project={project} />
                 </Grid>
+                <Grid item xs={12}>
+                  <ProjectOwnerDetails />
+                </Grid>
               </React.Fragment>
             </Grid>
           ) : (
