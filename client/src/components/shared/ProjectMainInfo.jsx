@@ -171,16 +171,13 @@ const renderProjectBaseDetails = (classes, project, role) => {
         ) : (
           ''
         )}
-        {
-          (role =
-            'ADMIN' && volunteerSignupUrl ? (
-              <Typography variant="caption" gutterBottom align="center">
-                <em>This button redirects the project viewer to {inputUrl}.</em>
-              </Typography>
-            ) : (
-              ''
-            ))
-        }
+        {role === 'ADMIN' && volunteerSignupUrl ? (
+          <Typography variant="caption" gutterBottom align="center">
+            <em>This button redirects the project viewer to {inputUrl}.</em>
+          </Typography>
+        ) : (
+          ''
+        )}
       </CardContent>
       <CardMedia className={classes.cover} image={coverImageUrl} />
     </Card>

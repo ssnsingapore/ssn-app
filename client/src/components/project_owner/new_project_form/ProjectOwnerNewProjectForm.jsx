@@ -18,7 +18,7 @@ import {
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
 
-export const PROJECT_IMAGE_DISPLAY_WIDTH = 480;
+export const PROJECT_IMAGE_DISPLAY_WIDTH = 640;
 export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;

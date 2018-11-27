@@ -19,7 +19,7 @@ import {
   setFields,
 } from 'components/project_owner/new_project_form/VolunteerRequirementForm';
 
-export const PROJECT_IMAGE_DISPLAY_WIDTH = 480;
+export const PROJECT_IMAGE_DISPLAY_WIDTH = 640;
 export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;

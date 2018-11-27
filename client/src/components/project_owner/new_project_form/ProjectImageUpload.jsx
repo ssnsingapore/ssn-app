@@ -71,7 +71,7 @@ class _ProjectImageUpload extends Component {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
-              Please pick an image larger than 480 x 480 pixels.
+              Please pick an image larger than 640 x 480 pixels.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
