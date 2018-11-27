@@ -43,7 +43,7 @@ const _ProjectBaseDetails = ({
             placeholder=""
             fullWidth
             multiline
-            rows="4"
+            rows="5"
             margin="normal"
             style={{ paddingBottom: 16 }}
             InputLabelProps={{ shrink: true }}
@@ -86,6 +86,7 @@ const styles = theme => ({
   paper: {
     display: 'flex',
     justifyContent: 'space-between',
+    minHeight: '480px',
   },
   content: {
     margin: theme.spacing.unit * 4,

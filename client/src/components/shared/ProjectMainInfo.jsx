@@ -141,21 +141,19 @@ const renderProjectBaseDetails = (classes, project, role) => {
             Project Title (Required)
           </Typography>
         )}
-        <div style={{ marginBottom: '60px' }}>
-          {description ? (
-            description.split('\n').map((i, key) => {
-              return (
-                <Typography key={key} variant="body1" gutterBottom paragraph>
-                  {i}
-                </Typography>
-              );
-            })
-          ) : (
-            <Typography color="error" gutterBottom>
-              Project description (required)
-            </Typography>
-          )}
-        </div>
+        {description ? (
+          description.split('\n').map((i, key) => {
+            return (
+              <Typography key={key} variant="body1" gutterBottom paragraph>
+                {i}
+              </Typography>
+            );
+          })
+        ) : (
+          <Typography color="error" gutterBottom>
+            Project description (required)
+          </Typography>
+        )}
         {volunteerSignupUrl ? (
           <Button
             variant="contained"
@@ -298,6 +296,7 @@ const styles = theme => ({
   },
   cover: {
     minWidth: '45vw',
+    minHeight: '480px',
     objectFit: 'cover',
   },
   tableWrapper: {
