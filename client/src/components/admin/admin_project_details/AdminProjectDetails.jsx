@@ -94,7 +94,7 @@ class _AdminProjectDetails extends Component {
 
   handleApproveConfirmationDialogBoxClose = () => {
     this.setState({ approveConfirmationDialogBoxOpen: false });
-  }
+  };
 
   handleRejectionConfirmationDialogBoxOpen = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: true });
@@ -102,7 +102,7 @@ class _AdminProjectDetails extends Component {
 
   handleRejectionConfirmationDialogBoxClose = () => {
     this.setState({ rejectionConfirmationDialogBoxOpen: false });
-  }
+  };
 
   renderApproveRejectButtons(state) {
     const { classes } = this.props;
@@ -185,9 +185,7 @@ class _AdminProjectDetails extends Component {
       return <Spinner />;
     }
     if (this.state.shouldRedirect) {
-      return (
-        <Redirect to={{ pathname: '/admin/dashboard' }} />
-      );
+      return <Redirect to={{ pathname: '/admin/dashboard' }} />;
     }
     return (
       <React.Fragment>
@@ -207,15 +205,14 @@ class _AdminProjectDetails extends Component {
             isLoading={isLoading}
           />
           <Grid container spacing={16} className={classes.projectDetails}>
-            {
-              this._isProjectRejected() &&
+            {this._isProjectRejected() && (
               <RejectionReason
                 rejectionReason={project.rejectionReason}
                 role={Role.ADMIN}
               />
-            }
+            )}
             <Grid item xs={12}>
-              <ProjectMainInfo project={project} />
+              <ProjectMainInfo project={project} role={Role.ADMIN} />
             </Grid>
             <Grid item xs={12}>
               <ProjectOwnerDetails projectOwner={project.projectOwner} />
