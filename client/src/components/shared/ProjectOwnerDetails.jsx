@@ -109,7 +109,7 @@ class _ProjectOwnerDetails extends Component {
             {this.renderDescriptionOrPersonalBio(projectOwner)}
           </CardContent>
         </div>
-      </Card >
+      </Card>
     );
   };
 }
@@ -132,6 +132,7 @@ const styles = () => ({
   },
   links: {
     textDecoration: 'none',
+    color: '#3E9992',
   },
 });
 
