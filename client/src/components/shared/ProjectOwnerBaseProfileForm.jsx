@@ -1,6 +1,15 @@
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { Paper, TextField, Typography, RadioGroup, Radio, FormControlLabel, Button } from '@material-ui/core';
+import {
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  Button,
+} from '@material-ui/core';
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
 import { AccountType } from 'components/shared/enums/AccountType';
@@ -110,101 +119,103 @@ const _ProjectOwnerBaseProfileForm = ({
   profilePhotoInput,
   resetField }) => {
   return (
-    <Paper elevation={2} className={classes.root} square={true}>
-      <Typography variant="headline">Project Owner Details</Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          name={FieldName.name}
-          className={classes.textInput}
-          id={FieldName.name}
-          label="Name"
-          required={true}
-          onChange={handleChange}
-          value={fieldValue(fields, FieldName.name) || ''}
-          error={fieldHasError(fields, FieldName.name)}
-          helperText={fieldErrorText(fields, FieldName.name)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          name={FieldName.email}
-          className={classes.textInput}
-          id={FieldName.email}
-          label="Email"
-          required={true}
-          onChange={handleChange}
-          value={fieldValue(fields, FieldName.email) || ''}
-          error={fieldHasError(fields, FieldName.email)}
-          helperText={fieldErrorText(fields, FieldName.email)}
-          fullWidth
-          margin="normal"
-        />
-        <RadioGroup
-          name={FieldName.accountType}
-          value={fieldValue(fields, FieldName.accountType) || ''}
-          onChange={event => handleAccountTypeChange(event, handleChange, resetField, FieldName)}
-          className={classes.radioGroup}
-        >
-          <FormControlLabel
-            value={AccountType.ORGANISATION}
-            control={<Radio color="primary" />}
-            label="I am creating an account on behalf of an organisation" />
-          <FormControlLabel
-            value={AccountType.INDIVIDUAL}
-            control={<Radio color="primary" />}
-            label="I am an individual" />
-        </RadioGroup>
-        {renderOrganisationName(classes, FieldName, fields, handleChange)}
-        <TextField
-          name={FieldName.websiteUrl}
-          className={classes.textInput}
-          id={FieldName.websiteUrl}
-          label="Web URL"
-          onChange={handleChange}
-          value={fieldValue(fields, FieldName.websiteUrl) || ''}
-          error={fieldHasError(fields, FieldName.websiteUrl)}
-          helperText={fieldErrorText(fields, FieldName.websiteUrl)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          name={FieldName.socialMediaLink}
-          className={classes.textInput}
-          id={FieldName.socialMediaLink}
-          label="Social Media"
-          onChange={handleChange}
-          value={fieldValue(fields, FieldName.socialMediaLink) || ''}
-          error={fieldHasError(fields, FieldName.socialMediaLink)}
-          helperText={fieldErrorText(fields, FieldName.socialMediaLink)}
-          fullWidth
-          margin="normal"
-        />
-        {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
-        {renderPassword(classes, FieldName, fields, handleChange)}
-        <ProjectOwnerProfilePhotoUpload
-          profilePhotoInput={profilePhotoInput}
-          profilePhotoUrl={fields.profilePhotoUrl}
-        />
-        <Button
-          type="submit"
-          size="medium"
-          className={classes.createButton}
-          disabled={isSubmitting}
-          variant="contained"
-          color="secondary"
-        >
-          {isEditProfileForm ? 'Update Account' : 'Create Account'}
-        </Button>
-      </form>
-
-      {isSubmitting && <Spinner />}
-    </Paper>
+    <Grid container style={{ justifyContent: 'center' }}>
+      <Grid item xs={9} md={4}>
+        <Paper elevation={2} className={classes.root} square={true}>
+          <Typography variant="headline">Project Owner Details</Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              name={FieldName.name}
+              className={classes.textInput}
+              id={FieldName.name}
+              label="Name"
+              required={true}
+              onChange={handleChange}
+              value={fieldValue(fields, FieldName.name) || ''}
+              error={fieldHasError(fields, FieldName.name)}
+              helperText={fieldErrorText(fields, FieldName.name)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              name={FieldName.email}
+              className={classes.textInput}
+              id={FieldName.email}
+              label="Email"
+              required={true}
+              onChange={handleChange}
+              value={fieldValue(fields, FieldName.email) || ''}
+              error={fieldHasError(fields, FieldName.email)}
+              helperText={fieldErrorText(fields, FieldName.email)}
+              fullWidth
+              margin="normal"
+            />
+            <RadioGroup
+              name={FieldName.accountType}
+              value={fieldValue(fields, FieldName.accountType) || ''}
+              onChange={event => handleAccountTypeChange(event, handleChange, resetField, FieldName)}
+              className={classes.radioGroup}
+            >
+              <FormControlLabel
+                value={AccountType.ORGANISATION}
+                control={<Radio color="primary" />}
+                label="I am creating an account on behalf of an organisation" />
+              <FormControlLabel
+                value={AccountType.INDIVIDUAL}
+                control={<Radio color="primary" />}
+                label="I am an individual" />
+            </RadioGroup>
+            {renderOrganisationName(classes, FieldName, fields, handleChange)}
+            <TextField
+              name={FieldName.websiteUrl}
+              className={classes.textInput}
+              id={FieldName.websiteUrl}
+              label="Web URL"
+              onChange={handleChange}
+              value={fieldValue(fields, FieldName.websiteUrl) || ''}
+              error={fieldHasError(fields, FieldName.websiteUrl)}
+              helperText={fieldErrorText(fields, FieldName.websiteUrl)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              name={FieldName.socialMediaLink}
+              className={classes.textInput}
+              id={FieldName.socialMediaLink}
+              label="Social Media"
+              onChange={handleChange}
+              value={fieldValue(fields, FieldName.socialMediaLink) || ''}
+              error={fieldHasError(fields, FieldName.socialMediaLink)}
+              helperText={fieldErrorText(fields, FieldName.socialMediaLink)}
+              fullWidth
+              margin="normal"
+            />
+            {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
+            {renderPassword(classes, FieldName, fields, handleChange)}
+            <ProjectOwnerProfilePhotoUpload
+              profilePhotoInput={profilePhotoInput}
+              profilePhotoUrl={fields.profilePhotoUrl}
+            />
+            <Button
+              type="submit"
+              size="medium"
+              className={classes.createButton}
+              disabled={isSubmitting}
+              variant="contained"
+              color="secondary"
+            >
+              {isEditProfileForm ? 'Update Account' : 'Create Account'}
+            </Button>
+          </form>
+          {isSubmitting && <Spinner />}
+        </Paper>
+      </Grid>
+    </Grid >
   );
 };
 
 const styles = theme => ({
   root: {
-    maxWidth: '450px',
     margin: `${theme.container.margin.vertical}px auto`,
     padding: `${theme.container.padding.vertical}px ${theme.container.padding.horizontal}px`,
   },
