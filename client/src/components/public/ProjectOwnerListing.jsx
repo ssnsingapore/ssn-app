@@ -125,6 +125,7 @@ const styles = {
     width: '100%',
   },
   projectListingContainer: {
+    width: '100%',
     margin: '0px',
     padding: '0px',
     paddingBottom: '30px',
