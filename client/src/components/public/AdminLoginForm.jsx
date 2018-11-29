@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import { Typography, Paper, Button, TextField } from '@material-ui/core';
+import { Typography, Grid, Paper, Button, TextField } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { withContext } from '../../util/context';
 import { AppContext } from '../main/AppContext';
@@ -193,9 +193,13 @@ class _AdminLoginForm extends Component {
             SSN Admin Portal
           </Typography>
         </div>
-        <Paper elevation={2} className={classes.root} square={true}>
-          {isAuthenticated && currentUser.role === Role.ADMIN ? this.renderLoggedIn() : this.renderLoginForm()}
-        </Paper>
+        <Grid container style={{ justifyContent: 'center' }}>
+          <Grid item xs={9} md={4}>
+            <Paper elevation={2} className={classes.root} square={true}>
+              {isAuthenticated && currentUser.role === Role.ADMIN ? this.renderLoggedIn() : this.renderLoginForm()}
+            </Paper>
+          </Grid>
+        </Grid>
       </div>);
   }
 }
@@ -227,7 +231,6 @@ const styles = theme => ({
     letterSpacing: '0.25em',
   },
   root: {
-    maxWidth: '30%',
     margin: `${theme.container.margin.vertical * 0.5}px auto`,
     padding: theme.spacing.unit * 4,
   },
