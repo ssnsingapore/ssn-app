@@ -159,8 +159,6 @@ class _ProjectOwnerSignUpForm extends Component {
       .filter(key => projectOwner[key] !== undefined)
       .forEach(key => formData.append(key, projectOwner[key]));
 
-    console.log(formData);
-
     const { authenticator } = this.props.context.utils;
     const { showAlert } = this.props.context.updaters;
 
