@@ -232,12 +232,14 @@ const renderProjectDetails = (classes, project) => {
         renderRow(
           'Start date',
           moment(startDate)
+            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.EVENT &&
         renderRow(
           'End date',
           moment(endDate)
+            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.RECURRING &&
