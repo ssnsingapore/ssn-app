@@ -36,17 +36,7 @@ const MonthValue = {
 export const projectRouter = express.Router();
 const upload = multer();
 
-projectRouter.get('/projects', asyncWrap(getProjects));
-async function getProjects(req, res) {
-  const pageSize = Number(req.query.pageSize) || 10;
-  const {
-    projectState = ProjectState.APPROVED_ACTIVE,
-  } = req.query;
-
-  const sortParams = projectState === ProjectState.PENDING_APPROVAL
-    ? { createdAt: 1 }
-    : { updatedAt: -1 };
-
+function constructFilterParams(queryParams, projectState) {
   const recurringWithinMonthObj = {
     $and: [
       { projectType: ProjectType.RECURRING },
@@ -66,56 +56,61 @@ async function getProjects(req, res) {
     ],
   });
 
-  const filterParams = Object.keys(req.query).map((param) => {
-    switch (param) {
-      case 'month':
-        return {
-          $or: [
-            eventWithinMonthObj(req.query[param]),
-            recurringWithinMonthObj,
-          ],
-        };
-      case 'issueAddressed':
-        return {
-          issuesAddressed: req.query[param],
-        };
-      case 'projectRegion':
-        return {
-          region: req.query[param],
-        };
-      case 'projectState':
-        return {
-          state: req.query[param],
-        };
-      case 'pageSize':
-        return {};
-      case 'volunteerRequirementType':
-        return {
-          'volunteerRequirements.type': req.query[param],
-        };
-      default:
-        return { [param]: req.query[param] };
-    }
-  });
-  const approvedActiveFilterParams = [{ state: ProjectState.APPROVED_ACTIVE }];
-  filterParams.forEach(item => approvedActiveFilterParams.push(item));
+  const paramMap = {
+    issueAddressed: 'issuesAddressed',
+    projectRegion: 'region',
+    projectState: 'state',
+    volunteerRequirementType: 'volunteerRequirements.type',
+  };
 
-  const constructFilterParams = Object.keys(req.query).includes('projectState') ? filterParams : approvedActiveFilterParams;
+  const filterParams = Object.keys(paramMap).filter(item => queryParams[item] !== undefined).map(key => ({ [paramMap[key]]: queryParams[key] }));
 
-  let constructProjectInclusionField = {};
-  Object.keys(Project.schema.paths).forEach((field) => { constructProjectInclusionField = { ...constructProjectInclusionField, [field]: 1 }; });
+  if (queryParams.month) {
+    filterParams.push({
+      $or: [
+        eventWithinMonthObj(queryParams.month),
+        recurringWithinMonthObj,
+      ],
+    });
+  }
+
+  if (!queryParams.projectState && !projectState) {
+    filterParams.push({ state: ProjectState.APPROVED_ACTIVE });
+  } else if (projectState) {
+    filterParams.push({ state: projectState });
+  }
+
+  return filterParams;
+}
+
+function constructProjectInclusionField() {
+  let projectInclusionField = {};
+  Object.keys(Project.schema.paths).forEach((field) => { projectInclusionField = { ...projectInclusionField, [field]: 1 }; });
+  return projectInclusionField;
+}
+
+projectRouter.get('/projects', asyncWrap(getProjects));
+async function getProjects(req, res) {
+  const pageSize = Number(req.query.pageSize) || 10;
+  const {
+    projectState = ProjectState.APPROVED_ACTIVE,
+  } = req.query;
+
+  const sortParams = projectState === ProjectState.PENDING_APPROVAL
+    ? { createdAt: 1 }
+    : { updatedAt: -1 };
 
   const aggrProjects = await Project.aggregate([
     {
       $project: {
-        ...constructProjectInclusionField,
+        ...constructProjectInclusionField(),
         month: { $month: '$startDate' },
       },
     },
     {
       $match:
         (Object.keys(req.query).length !== 0) ? {
-          $and: constructFilterParams,
+          $and: constructFilterParams(req.query),
         } : { state: ProjectState.APPROVED_ACTIVE },
     },
     {
@@ -136,72 +131,18 @@ async function getProjectCounts(req, res) {
   const counts = {};
   const projectStates = Object.keys(ProjectState);
 
-  const recurringWithinMonthObj = {
-    $and: [
-      { projectType: ProjectType.RECURRING },
-      {
-        frequency: {
-          $in: [ProjectFrequency.EVERY_DAY, ProjectFrequency.A_FEW_TIMES_A_WEEK, ProjectFrequency.ONCE_A_WEEK,
-            ProjectFrequency.FORTNIGHTLY, ProjectFrequency.A_FEW_TIMES_A_MONTH, ProjectFrequency.ONCE_A_MONTH],
-        },
-      },
-    ],
-  };
-
-  const eventWithinMonthObj = month => ({
-    $and: [
-      { projectType: ProjectType.EVENT },
-      { month: MonthValue[month] },
-    ],
-  });
-
-  const filterParams = Object.keys(req.query).map((param) => {
-    switch (param) {
-      case 'month':
-        return {
-          $or: [
-            eventWithinMonthObj(req.query[param]),
-            recurringWithinMonthObj,
-          ],
-        };
-      case 'issueAddressed':
-        return {
-          issuesAddressed: req.query[param],
-        };
-      case 'projectRegion':
-        return {
-          region: req.query[param],
-        };
-      case 'pageSize':
-        return {};
-      case 'volunteerRequirementType':
-        return {
-          'volunteerRequirements.type': req.query[param],
-        };
-      default:
-        return { [param]: req.query[param] };
-    }
-  });
-
-  let constructProjectInclusionField = {};
-  Object.keys(Project.schema.paths).forEach((field) => { constructProjectInclusionField = { ...constructProjectInclusionField, [field]: 1 }; });
-
   for (let i = 0; i < projectStates.length; i += 1) {
-    const constructFilterParams = [{ state: projectStates[i] }];
-    filterParams.forEach(item => constructFilterParams.push(item));
-
     // eslint-disable-next-line no-await-in-loop
     const aggrCountProjects = await Project.aggregate([
       {
         $project: {
-          ...constructProjectInclusionField,
+          ...constructProjectInclusionField(),
           month: { $month: '$startDate' },
         },
       },
       {
-        $match:
-        {
-          $and: constructFilterParams,
+        $match: {
+          $and: constructFilterParams(req.query, projectStates[i]),
         },
       },
       {
