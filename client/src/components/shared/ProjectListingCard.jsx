@@ -100,14 +100,14 @@ const _ProjectListingCard = ({ project, classes }) => {
                         {project.projectType === 'RECURRING'
                           ? 'Recurring Project'
                           : project.startDate === project.endDate
-                            ? moment(project.startDate).format(
+                            ? moment(project.startDate).utc().format(
                               'dddd, Do MMMM YYYY'
                             )
-                            : moment(project.startDate).format(
+                            : moment(project.startDate).utc().format(
                               'dddd, Do MMMM YYYY'
                             ) +
                             ' - ' +
-                            moment(project.endDate).format(
+                            moment(project.endDate).utc().format(
                               'dddd, Do MMMM YYYY'
                             )}
                       </Typography>
@@ -141,11 +141,11 @@ const _ProjectListingCard = ({ project, classes }) => {
                       ) : (
                         <Paper elevation={0} className={classes.dateBadge}>
                           <Typography variant="caption">
-                            {moment(project.startDate).format('MMM')}
+                            {moment(project.startDate).utc().format('MMM')}
                           </Typography>
                           <Typography variant="title" color="secondary">
                             <strong>
-                              {moment(project.startDate).format('DD')}
+                              {moment(project.startDate).utc().format('DD')}
                             </strong>
                           </Typography>
                         </Paper>
