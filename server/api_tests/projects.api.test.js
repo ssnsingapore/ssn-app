@@ -189,8 +189,14 @@ describe('Project owner routes', () => {
       const laterUpdatedProjectAttributes = {
         title: 'Updated later',
       };
-      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...earlierUpdatedProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...laterUpdatedProjectAttributes });
+      const earlierCreatedProjectAttributes = {
+        title: 'Created earlier',
+      };
+      const laterCreatedProjectAttributes = {
+        title: 'Created later',
+      };
+      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...laterCreatedProjectAttributes });
+      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...earlierCreatedProjectAttributes });
       await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, ...earlierUpdatedProjectAttributes });
       await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, ...laterUpdatedProjectAttributes });
       await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE, ...earlierUpdatedProjectAttributes });
@@ -234,22 +240,22 @@ describe('Project owner routes', () => {
       });
 
       it('returns as many projects as the pageSize', async () => {
-        const response = await sendRequest({ pageSize: 1 });
+        const response = await sendRequest({ pageSize: 1, page: 1 });
 
         expect(response.body.projects.length).toEqual(1);
       });
     });
 
     describe('when project state is PENDING_APPROVAL', () => {
-      it('returns 200 status code and PENDING_APPROVAL projects sorted by updatedAt descending', async () => {
+      it('returns 200 status code and PENDING_APPROVAL projects sorted by createdAt ascending', async () => {
         const response = await sendRequest({ projectState: ProjectState.PENDING_APPROVAL });
 
         expect(response.status).toEqual(200);
         expect(response.body.projects.length).toEqual(2);
         expect(response.body.projects[0].state).toEqual(ProjectState.PENDING_APPROVAL);
-        expect(response.body.projects[0].title).toEqual('Updated later');
+        expect(response.body.projects[0].title).toEqual('Created later');
         expect(response.body.projects[1].state).toEqual(ProjectState.PENDING_APPROVAL);
-        expect(response.body.projects[1].title).toEqual('Updated earlier');
+        expect(response.body.projects[1].title).toEqual('Created earlier');
       });
     });
 
