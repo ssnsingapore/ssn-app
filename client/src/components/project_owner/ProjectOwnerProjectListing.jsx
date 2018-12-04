@@ -10,11 +10,13 @@ import { Spinner } from 'components/shared/Spinner';
 import { ProjectDeactivateConfirmationDialog } from 'components/shared/ProjectDeactivateConfirmationDialog';
 import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActivateConfirmationDialog';
 import { ProjectListingCard } from 'components/shared/ProjectListingCard';
+import { Pagination } from 'components/shared/Pagination';
 
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 
+const pageSize = 20;
 class _ProjectOwnerProjectListing extends Component {
   constructor(props) {
     super(props);
@@ -25,15 +27,20 @@ class _ProjectOwnerProjectListing extends Component {
       projectDeactivateConfirmationDialogOpen: false,
       projectActivateConfirmationDialogOpen: false,
       project: null,
+      page: 1,
     };
   }
 
   async componentDidMount() {
+    this._fetchProjects();
+  }
+
+  async _fetchProjects() {
     const { requestWithAlert } = this.props.context.utils;
-    const { pageSize = 10, projectState = ProjectState.APPROVED_ACTIVE } = this.props;
+    const { projectState } = this.props;
 
     const endpoint = '/api/v1/project_owner/projects';
-    const queryParams = `?pageSize=${pageSize}&projectState=${projectState}`;
+    const queryParams = `?pageSize=${pageSize}&projectState=${projectState}&page=${this.state.page}`;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
     if (response.isSuccessful) {
@@ -49,6 +56,13 @@ class _ProjectOwnerProjectListing extends Component {
 
     this.setState({ isLoading: false });
   }
+
+  handlePageClick = (pageDisplayed) => {
+    const page = pageDisplayed.selected + 1;
+    this.setState({ isLoading: true });
+    this.setState({ page }, this._fetchProjects);
+    this.setState({ isLoading: false });
+  };
 
   handleProjectDeactivateConfirmationDialogOpen = (project) => {
     this.setState({ projectDeactivateConfirmationDialogOpen: true, project });
@@ -115,6 +129,8 @@ class _ProjectOwnerProjectListing extends Component {
     return contentGridSize;
   }
 
+  _getNumPages = () => Math.ceil(this.props.totalProjects / pageSize);
+
   _getProjectStateString = () => {
     const { projectState } = this.props;
     return (
@@ -180,7 +196,15 @@ class _ProjectOwnerProjectListing extends Component {
           dashboardRole={Role.PROJECT_OWNER}
           project={project}
         />
-        {this.renderProjects()}
+        <Grid container>
+          <Grid item xs={12}>
+            <Pagination
+              numPages={this._getNumPages()}
+              handlePageClick={this.handlePageClick}
+            />
+            {this.renderProjects()}
+          </Grid>
+        </Grid>
       </Grid>
     );
   }

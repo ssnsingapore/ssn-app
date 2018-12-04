@@ -31,7 +31,7 @@ class _ProjectOwnerDashboard extends Component {
     const response = await requestWithAlert.get('/api/v1/project_owner/project_counts', { authenticated: true });
 
     if (response.isSuccessful) {
-      const counts = (await response.json()).counts;
+      const { counts } = await response.json();
       this.setState({ counts });
     }
 
@@ -74,8 +74,13 @@ class _ProjectOwnerDashboard extends Component {
     );
   }
 
-  renderContent = (value, state) => {
-    return this.state.tabValue === value && <ProjectOwnerProjectListing projectState={state} />;
+  renderContent = (value, projectState) => {
+    const { tabValue, counts } = this.state;
+    return tabValue === value &&
+      <ProjectOwnerProjectListing
+        projectState={projectState}
+        totalProjects={counts[projectState]}
+      />;
   };
 
   renderProjectListing() {
