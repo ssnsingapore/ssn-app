@@ -71,7 +71,8 @@ class _Projects extends Component {
       counts: {},
       activeProjects: [],
       inactiveProjects: [],
-      noPages: { [ProjectState.APPROVED_ACTIVE]: 0, [ProjectState.APPROVED_INACTIVE]: 0 },
+      numPages: { [ProjectState.APPROVED_ACTIVE]: 0, [ProjectState.APPROVED_INACTIVE]: 0 },
+      page: { [ProjectState.APPROVED_ACTIVE]: 1, [ProjectState.APPROVED_INACTIVE]: 1 },
     };
   }
 
@@ -108,11 +109,11 @@ class _Projects extends Component {
 
     if (countResponse.isSuccessful) {
       const counts = (await countResponse.json()).counts;
-      let noPages = {};
-      Object.keys(counts).forEach(key => {
-        noPages = { ...noPages, [key]: Math.ceil(counts[key] / pageSize) };
-      });
-      this.setState({ counts, noPages });
+      const numPages = Object.keys(counts).reduce(function (pageCounts, key) {
+        pageCounts[key] = Math.ceil(counts[key] / pageSize);
+        return pageCounts;
+      }, {});
+      this.setState({ counts, numPages });
     }
 
     if (countResponse.hasError) {
@@ -220,7 +221,7 @@ class _Projects extends Component {
           ) : (
             <React.Fragment>
               <Pagination
-                noPages={this.state.noPages[projectState]}
+                numPages={this.state.numPages[projectState]}
                 handlePageClick={this.handlePageClick}
               />
               <PublicProjectListing

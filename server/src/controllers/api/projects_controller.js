@@ -118,22 +118,15 @@ async function getProjects(req, res) {
       $sort: sortParams,
     },
     {
-      $facet: {
-        metaData: [
-          { $count: 'total' },
-        ],
-        data: [
-          { $skip: (page - 1) * pageSize },
-          { $limit: pageSize },
-        ],
-      },
+      $skip: (page - 1) * pageSize,
+    },
+    {
+      $limit: pageSize,
     },
   ])
     .exec();
 
-  const populatedProjects = aggrProjects[0].data;
-  const projects = await ProjectOwner.populate(populatedProjects, { path: 'projectOwner' });
-  // const totalDocs = aggrProjects[0].metaData[0].total;
+  const projects = await ProjectOwner.populate(aggrProjects, { path: 'projectOwner' });
 
   return res.status(200).json({ projects });
 }
