@@ -57,6 +57,7 @@ class _ProjectOwnerProjectDetails extends Component {
           </Button>
           <Button
             variant="contained"
+            color="primary"
             className={classes.button}
             component={Link}
             to="/project_owner/dashboard"

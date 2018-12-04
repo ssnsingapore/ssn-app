@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import { Grid, Button, Paper } from '@material-ui/core';
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
@@ -34,7 +34,7 @@ class _ProjectOwnerProjectForm extends Component {
     if (
       this.props.projectToRender &&
       prevProps.volunteerRequirementRefs.length !==
-        this.props.volunteerRequirementRefs.length
+      this.props.volunteerRequirementRefs.length
     ) {
       const { volunteerRequirements } = this.props.projectToRender;
       volunteerRequirements.forEach((_row, index) => {
@@ -146,9 +146,19 @@ class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-              Back to form
+                Back to form
             </Button>
           )}
+          <Button
+            component={Link}
+            to="/project_owner/dashboard"
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            disabled={this.props.isSubmitting}
+          >
+            Back to dashboard
+          </Button>
         </div>
       </div>
     );

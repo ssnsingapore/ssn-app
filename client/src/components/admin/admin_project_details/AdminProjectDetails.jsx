@@ -141,12 +141,12 @@ class _AdminProjectDetails extends Component {
       <div className={classes.bottomNavBar}>
         <Button
           variant="contained"
-          colour="default"
+          color="primary"
           className={classes.button}
           component={Link}
           to="/admin/dashboard"
         >
-          Back to Dashboard
+          Back to dashboard
         </Button>
         {this.renderApproveRejectButtons(project.state)}
       </div>
