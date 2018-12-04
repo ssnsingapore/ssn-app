@@ -185,14 +185,19 @@ async function getProjectsForProjectOwner(req, res) {
   const pageSize = Number(req.query.pageSize) || 10;
   const page = Number(req.query.page) || 1;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
+
+  const sortParams = projectState === ProjectState.PENDING_APPROVAL
+    ? { createdAt: 1 }
+    : { updatedAt: -1 };
+
   const projects = await Project.find({
     state: projectState,
     projectOwner: user.id,
   })
+    .sort(sortParams)
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .populate('projectOwner')
-    .sort({ updatedAt: 'descending' })
     .exec();
 
   return res.status(200).json({ projects });
