@@ -16,9 +16,11 @@ import React, { Component } from 'react';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
+import { Pagination } from 'components/shared/Pagination';
 
 import { SEARCH_BAR_FIELD_VALUES } from 'util/storage_keys';
 
+const pageSize = 10;
 const FieldName = getFieldNameObject([
   'issueAddressed',
   'projectRegion',
@@ -54,6 +56,11 @@ const publicProjectStates = [
   ProjectState.APPROVED_INACTIVE,
 ];
 
+const tabValueProjectStateMapping = {
+  0: ProjectState.APPROVED_ACTIVE,
+  1: ProjectState.APPROVED_INACTIVE,
+};
+
 class _Projects extends Component {
   constructor(props) {
     super(props);
@@ -64,6 +71,8 @@ class _Projects extends Component {
       counts: {},
       activeProjects: [],
       inactiveProjects: [],
+      numPages: { [ProjectState.APPROVED_ACTIVE]: 0, [ProjectState.APPROVED_INACTIVE]: 0 },
+      page: { [ProjectState.APPROVED_ACTIVE]: 1, [ProjectState.APPROVED_INACTIVE]: 1 },
     };
   }
 
@@ -75,10 +84,18 @@ class _Projects extends Component {
     }
 
     await this.fetchProjectCounts();
-    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1))); //page 1
 
     this.setState({ isLoading: false });
   }
+
+  handlePageClick = (pageDisplayed) => {
+    const newPage = pageDisplayed.selected + 1;
+    const projectState = tabValueProjectStateMapping[this.state.tabValue];
+    this.setState({ isLoading: true });
+    this.fetchProjects(projectState, newPage);
+    this.setState({ isLoading: false });
+  };
 
   fetchProjectCounts = async () => {
     const { requestWithAlert } = this.props.context.utils;
@@ -92,7 +109,11 @@ class _Projects extends Component {
 
     if (countResponse.isSuccessful) {
       const counts = (await countResponse.json()).counts;
-      this.setState({ counts });
+      const numPages = Object.keys(counts).reduce(function (pageCounts, key) {
+        pageCounts[key] = Math.ceil(counts[key] / pageSize);
+        return pageCounts;
+      }, {});
+      this.setState({ counts, numPages });
     }
 
     if (countResponse.hasError) {
@@ -106,12 +127,13 @@ class _Projects extends Component {
     }
   };
 
-  fetchProjects = async (projectState) => {
+  fetchProjects = async (projectState, currentPage) => {
     const { requestWithAlert } = this.props.context.utils;
     const { pageSize = 10 } = this.props;
+    const page = currentPage;
 
     const endpoint = '/api/v1/projects';
-    const queryObj = { pageSize, projectState, ...this.props.valuesForAllFields() };
+    const queryObj = { pageSize, page, projectState, ...this.props.valuesForAllFields() };
     const queryParams = qs.stringify(queryObj);
 
     const response = await requestWithAlert.get(
@@ -159,7 +181,7 @@ class _Projects extends Component {
     this.setState({ isLoading: true });
 
     await this.fetchProjectCounts();
-    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1)));
 
     this.setState({ isLoading: false });
   };
@@ -169,7 +191,7 @@ class _Projects extends Component {
     this.clearFieldValues();
     await this.props.resetAllFields();
     await this.fetchProjectCounts();
-    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state)));
+    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1)));
 
     this.setState({ isLoading: false });
   };
@@ -197,11 +219,17 @@ class _Projects extends Component {
               There are no {state} projects at the moment.
             </Typography>
           ) : (
-            <PublicProjectListing
-              projects={projects}
-              isLoading={this.state.isLoading}
-              projectState={projectState}
-            />
+            <React.Fragment>
+              <Pagination
+                numPages={this.state.numPages[projectState]}
+                handlePageClick={this.handlePageClick}
+              />
+              <PublicProjectListing
+                projects={projects}
+                isLoading={this.state.isLoading}
+                projectState={projectState}
+              />
+            </React.Fragment>
           )}
         </TabContainer>
       )

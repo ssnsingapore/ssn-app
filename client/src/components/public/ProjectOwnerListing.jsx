@@ -103,7 +103,7 @@ class _ProjectOwnerListing extends Component {
           <Grid item xs={12}>
             {this.renderProjectOwnerTotalsText()}
             <Pagination
-              noPages={this.state.noPages}
+              numPages={this.state.noPages}
               handlePageClick={this.handlePageClick}
             />
             {this.renderProjectOwners()}
