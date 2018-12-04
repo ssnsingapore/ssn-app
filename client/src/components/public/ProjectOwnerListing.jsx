@@ -24,7 +24,7 @@ class _ProjectOwnerListing extends Component {
     };
   }
 
-  async _fetchProjects() {
+  async _fetchProjectOwners() {
     const { requestWithAlert } = this.props.context.utils;
     const endpoint = `/api/v1/project_owners?pageSize=${pageSize}&page=${this.state.page}`;
     const response = await requestWithAlert.get(endpoint, { authenticated: true });
@@ -42,7 +42,7 @@ class _ProjectOwnerListing extends Component {
   }
 
   componentDidMount() {
-    this._fetchProjects();
+    this._fetchProjectOwners();
   }
 
   renderProjectOwners() {
@@ -78,7 +78,7 @@ class _ProjectOwnerListing extends Component {
   handlePageClick = (pageDisplayed) => {
     const page = pageDisplayed.selected + 1;
     this.setState({ isLoading: true });
-    this.setState({ page }, this._fetchProjects);
+    this.setState({ page }, this._fetchProjectOwners);
     this.setState({ isLoading: false });
   };
 
