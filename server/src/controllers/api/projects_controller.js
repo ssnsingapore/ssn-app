@@ -183,11 +183,13 @@ projectRouter.get(
 async function getProjectsForProjectOwner(req, res) {
   const { user } = req;
   const pageSize = Number(req.query.pageSize) || 10;
+  const page = Number(req.query.page) || 1;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
   const projects = await Project.find({
     state: projectState,
     projectOwner: user.id,
   })
+    .skip((page - 1) * pageSize)
     .limit(pageSize)
     .populate('projectOwner')
     .sort({ updatedAt: 'descending' })
