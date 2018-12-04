@@ -160,7 +160,11 @@ class _ProjectOwnerProjectListing extends Component {
           <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
             <Grid container>
               <Grid item xs={12} md={contentGridSize}>
-                <Link to={`/project_owner/projects/${project._id}`} className={classes.link}>
+                <Link
+                  to={`/project_owner/projects/${project._id}`}
+                  className={classes.link}
+                  target="_blank"
+                >
                   <ProjectListingCard project={project} />
                 </Link>
               </Grid>

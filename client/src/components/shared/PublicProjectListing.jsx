@@ -30,7 +30,11 @@ const renderProjects = (classes, projects, projectState, theme) => {
     const linkEndpoint = `/projects/${project._id}`;
     return (
       <Grid style={{ alignItems: 'center' }} item xs={12} key={project._id}>
-        <Link to={linkEndpoint} className={classes.link}>
+        <Link
+          to={linkEndpoint}
+          className={classes.link}
+          target="_blank"
+        >
           <ProjectListingCard project={project} />
         </Link>
       </Grid>
