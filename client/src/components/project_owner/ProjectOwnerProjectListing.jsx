@@ -94,6 +94,7 @@ class _ProjectOwnerProjectListing extends Component {
           className={classes.button}
           component={Link}
           to={`/project_owner/projects/${project._id}/edit`}
+          target="_blank"
         >
           Edit
         </Button>
