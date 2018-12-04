@@ -27,7 +27,7 @@ export class _AdminDashboard extends Component {
     const response = await requestWithAlert.get('/api/v1/project_counts');
 
     if (response.isSuccessful) {
-      const counts = (await response.json()).counts;
+      const { counts } = await response.json();
       this.setState({ counts });
     }
 
@@ -52,14 +52,15 @@ export class _AdminDashboard extends Component {
   };
 
   renderContent = (value, projectState) => {
-    const { tabValue } = this.state;
+    const { tabValue, counts } = this.state;
 
     return (
-      tabValue === value && (
-        <AdminProjectListing
-          projectState={projectState}
-        />
-      )
+      tabValue === value &&
+      <AdminProjectListing
+        projectState={projectState}
+        totalProjects={counts[projectState]}
+      />
+
     );
   };
 
