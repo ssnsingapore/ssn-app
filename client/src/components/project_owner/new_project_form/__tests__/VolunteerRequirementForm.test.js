@@ -8,8 +8,142 @@ import {
 import { 
   VolunteerRequirementForm,
   VolunteerRequirementFieldName,
+  addVolunteerRequirementRef,
+  deleteVolunteerRequirementRef,
+  validateFormFields,
+  resetAllFields,
+  valuesForAllFields,
 } from '../VolunteerRequirementForm';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+
+describe('addVolunteerRequirementRef', () => {
+  it('adds a new ref at index 0 if refs are empty', () => {
+    const volunteerRequirementRefs = {};
+
+    expect(addVolunteerRequirementRef(volunteerRequirementRefs)).toEqual({
+      0: React.createRef(),
+    });
+  });
+
+  it('appends a new ref at the next index', () => {
+    const volunteerRequirementRefs = { 0: React.createRef() };
+
+    expect(addVolunteerRequirementRef(volunteerRequirementRefs)).toEqual({
+      0: React.createRef(),
+      1: React.createRef(),
+    });
+  });
+});
+
+describe('deleteVolunteerRequirementRef', () => {
+  it('returns empty object if given empty refs', () => {
+    const volunteerRequirementRefs = {};
+
+    expect(deleteVolunteerRequirementRef(volunteerRequirementRefs)).toEqual({});
+  });
+
+  it('deletes ref at given index', () => {
+    const volunteerRequirementRefs = {
+      0: React.createRef(),
+      1: React.createRef(),
+      2: React.createRef(),
+    };
+    const updatedRefs = deleteVolunteerRequirementRef(volunteerRequirementRefs, 1);
+
+    expect(updatedRefs).toEqual({
+      0: React.createRef(),
+      2: React.createRef(),
+    });
+  });
+});
+
+describe('validateFormFields', () => {
+  it('returns true if given empty refs', () => {
+    expect(validateFormFields({})).toBe(true);
+  });
+
+  it('calls validate all fields on ref form', () => {
+    const volunteerRequirementRef = {
+      current: {
+        validateAllFields: jest.fn(),
+      },
+    };
+    const volunteerRequirementRefs = { 0: volunteerRequirementRef };
+    
+    validateFormFields(volunteerRequirementRefs);
+
+    expect(
+      volunteerRequirementRef.current.validateAllFields
+    ).toHaveBeenCalled();
+  });
+});
+
+describe('resetAllFields', () => {
+  it('does not throw an error given empty refs', () => {
+    expect(() => resetAllFields({})).not.toThrowError();
+  });
+
+  it('calls reset all fields on ref form', () => {
+    const volunteerRequirementRef = {
+      current: {
+        resetAllFields: jest.fn(),
+      },
+    };
+    const volunteerRequirementRefs = { 0: volunteerRequirementRef };
+    
+    resetAllFields(volunteerRequirementRefs);
+
+    expect(volunteerRequirementRef.current.resetAllFields).toHaveBeenCalled();
+  });
+});
+
+describe('valuesForAllFields', () => {
+  let volunteerRequirementValues;
+  let volunteerRequirementRef;
+
+  beforeEach(() => {
+    volunteerRequirementValues = {
+      type: 'Event Planning',
+      number: 1,
+    };
+
+    volunteerRequirementRef = {
+      current: {
+        valuesForAllFields: jest.fn(() => volunteerRequirementValues),
+      },
+    };
+  });
+
+  it('returns empty array when given empty volunteer requirement refs', () => {
+    expect(valuesForAllFields({})).toEqual([]);
+  });
+
+  it('extracts values of volunteer requirement refs', () => {
+    expect(valuesForAllFields({ 0: volunteerRequirementRef })).toEqual([
+      volunteerRequirementValues,
+    ]);
+  });
+
+  it('does not return volunteer requirements if all values are undefined', () => {
+    const emptyVolunteerRequirementValues = {
+      type: undefined,
+      number: undefined,
+    };
+    const emptyVolunteerRequirementRef = {
+      current: {
+        valuesForAllFields: jest.fn(() => emptyVolunteerRequirementValues),
+      },
+    };
+    const volunteerRequirementRefs = {
+      0: volunteerRequirementRef,
+      1: emptyVolunteerRequirementRef,
+    };
+
+    expect(valuesForAllFields(volunteerRequirementRefs)).toEqual([
+      volunteerRequirementValues,
+    ]);
+  });
+});
 
 describe('VolunteerRequirementForm', () => {
   let component;

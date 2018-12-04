@@ -55,12 +55,12 @@ class _ProjectOwnerProjectForm extends Component {
 
   togglePreviewOn = () => {
     const project = this.getProject();
-    const current = this.props.projectImageInput.current;
-    const coverImageSrc = this.getCoverImageSrc(current);
+    const projectImageInput = this.props.projectImageInput.current;
+    const coverImageSrc = this.getCoverImageSrc(projectImageInput);
 
     project.coverImageUrl = coverImageSrc;
 
-    project.volunteerRequirements = this.props.volunteerRequirementRefs.map(
+    project.volunteerRequirements = Object.values(this.props.volunteerRequirementRefs).map(
       ref => ref.current.valuesForAllFields()
     );
 

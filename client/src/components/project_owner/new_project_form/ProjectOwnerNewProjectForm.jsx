@@ -5,8 +5,15 @@ import { withContext } from 'util/context';
 import { withForm } from 'util/form';
 import { extractErrors, formatErrors } from 'util/errors';
 import { ProjectOwnerProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerProjectForm';
-import { FieldName, constraints } from './ProjectFormFields';
+import { FieldName, constraints } from 'components/project_owner/new_project_form/ProjectFormFields';
 import { AlertType } from 'components/shared/Alert';
+import {
+  addVolunteerRequirementRef,
+  deleteVolunteerRequirementRef,
+  validateFormFields,
+  resetAllFields,
+  valuesForAllFields,
+} from 'components/project_owner/new_project_form/VolunteerRequirementForm';
 
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
@@ -17,9 +24,6 @@ export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
 
-const isEmpty = (fields) =>
-  Object.values(fields).every(field => !field);
-
 export class _ProjectOwnerNewProjectForm extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +31,7 @@ export class _ProjectOwnerNewProjectForm extends Component {
     this.projectImageInput = React.createRef();
 
     this.state = {
-      volunteerRequirementRefs: [React.createRef()],
+      volunteerRequirementRefs: { 0: React.createRef() },
       isSubmitting: false,
       shouldRedirect: false,
     };
@@ -37,43 +41,26 @@ export class _ProjectOwnerNewProjectForm extends Component {
 
   handleAddVolunteerRequirement = () => {
     this.setState({
-      volunteerRequirementRefs: [
-        ...this.state.volunteerRequirementRefs,
-        React.createRef(),
-      ],
+      volunteerRequirementRefs: addVolunteerRequirementRef(this.state.volunteerRequirementRefs),
     });
   };
 
-  handleDeleteVolunteerRequirement = i => {
-    const newVolunteerRequirementRefs = [
-      ...this.state.volunteerRequirementRefs,
-    ];
-    newVolunteerRequirementRefs.splice(i, 1);
+  handleDeleteVolunteerRequirement = index => {
     this.setState({
-      volunteerRequirementRefs: newVolunteerRequirementRefs,
+      volunteerRequirementRefs: deleteVolunteerRequirementRef(this.state.volunteerRequirementRefs, index),
     });
   };
 
   validateAllSubFormFields = () => {
-    const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.every(ref =>
-      ref.current.validateAllFields()
-    );
+    return validateFormFields(this.state.volunteerRequirementRefs);
   };
 
   resetAllSubFormFields = () => {
-    const { volunteerRequirementRefs } = this.state;
-    volunteerRequirementRefs.forEach(ref => ref.current.resetAllFields());
+    resetAllFields(this.state.volunteerRequirementRefs);
   };
 
   valuesForAllSubFormFields = () => {
-    const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.reduce((values, ref) => {
-      if (isEmpty(ref.current.valuesForAllFields())) {
-        return values;
-      }
-      return [...values, ref.current.valuesForAllFields()];
-    }, []);
+    return valuesForAllFields(this.state.volunteerRequirementRefs);
   };
 
   getImageDimensions = image => {

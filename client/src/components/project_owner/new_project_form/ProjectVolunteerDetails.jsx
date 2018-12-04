@@ -13,22 +13,27 @@ const renderVolunteerRequirements = (
   handleDeleteVolunteerRequirement,
   volunteerRequirements
 ) => {
-  return volunteerRequirementRefs.map((volunteerRequirementRef, i) => {
-    return (
-      <div key={i} className={classes.volunteerRow}>
-        <VolunteerRequirementForm
-          ref={volunteerRequirementRef}
-          volunteerRequirement={volunteerRequirements[i]}
-        />
-        <IconButton
-          onClick={() => handleDeleteVolunteerRequirement(i)}
-          className={classes.button}
-        >
-          <RemoveCircleIcon />
-        </IconButton>
-      </div>
-    );
-  });
+  const numberOfRows = Math.max(...Object.keys(volunteerRequirementRefs)) + 1;
+  return [...Array(numberOfRows).keys()].reduce((rows, rowNum) => {
+    if (rowNum in volunteerRequirementRefs) {
+      const volunteerRequirementRow = (
+        <div key={rowNum} className={classes.volunteerRow}>
+          <VolunteerRequirementForm
+            ref={volunteerRequirementRefs[rowNum]}
+          />
+          <IconButton
+            onClick={() => handleDeleteVolunteerRequirement(rowNum)}
+            className={classes.button}
+          >
+            <RemoveCircleIcon />
+          </IconButton>
+        </div>
+      );
+
+      return [...rows,volunteerRequirementRow];
+    }
+    return rows;
+  }, []);
 };
 
 const _ProjectVolunteerDetails = ({

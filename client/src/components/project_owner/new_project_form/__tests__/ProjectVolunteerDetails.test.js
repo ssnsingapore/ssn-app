@@ -27,7 +27,10 @@ describe('ProjectVolunteerDetails', () => {
     const props = {
       fields,
       FieldName,
-      volunteerRequirementRefs: [React.createRef(), React.createRef()],
+      volunteerRequirementRefs: {
+        0: React.createRef(), 
+        1: React.createRef(),
+      },
       volunteerRequirements: [],
     };
 

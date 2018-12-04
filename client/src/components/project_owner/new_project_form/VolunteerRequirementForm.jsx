@@ -50,6 +50,41 @@ export const volunteerRequirementConstraints = {
   },
 };
 
+export const addVolunteerRequirementRef = (volunteerRequirementRefs) => {
+  const rowIndexes = Object.keys(volunteerRequirementRefs);
+  const isEmpty = rowIndexes.length === 0;
+  const index = isEmpty ? 0 : Math.max(...rowIndexes) + 1;
+  return {
+    ...volunteerRequirementRefs,
+    [index]: React.createRef(),
+  };
+};
+
+export const deleteVolunteerRequirementRef = (volunteerRequirementRefs, index) => {
+  const newVolunteerRequirementRefs = { ...volunteerRequirementRefs };
+  delete newVolunteerRequirementRefs[index];
+  return newVolunteerRequirementRefs;
+};
+
+export const validateFormFields = (volunteerRequirementRefs) => 
+  Object.values(volunteerRequirementRefs)
+    .every(ref => ref.current.validateAllFields());
+
+export const resetAllFields = (volunteerRequirementRefs) => {
+  Object.values(volunteerRequirementRefs).forEach(ref => ref.current.resetAllFields());
+};
+
+export const valuesForAllFields = (volunteerRequirementRefs) => {
+  if (Object.keys(volunteerRequirementRefs).length === 0) return [];
+  
+  return Object.values(volunteerRequirementRefs).reduce((values, ref) => {
+    const fields = ref.current.valuesForAllFields();
+    const isEmptyRow = Object.values(fields).every(field => !field);
+    if (isEmptyRow) return values;
+    return [...values, fields];
+  }, []);
+};
+
 class _VolunteerRequirementForm extends React.Component {
   async componentDidMount() {
     if (this.props.volunteerRequirement) {
