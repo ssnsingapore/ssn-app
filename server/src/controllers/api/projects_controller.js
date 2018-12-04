@@ -94,6 +94,7 @@ async function getProjects(req, res) {
   const pageSize = Number(req.query.pageSize) || 10;
   const {
     projectState = ProjectState.APPROVED_ACTIVE,
+    page = 1,
   } = req.query;
 
   const sortParams = projectState === ProjectState.PENDING_APPROVAL
@@ -117,11 +118,22 @@ async function getProjects(req, res) {
       $sort: sortParams,
     },
     {
-      $limit: pageSize,
+      $facet: {
+        metaData: [
+          { $count: 'total' },
+        ],
+        data: [
+          { $skip: (page - 1) * pageSize },
+          { $limit: pageSize },
+        ],
+      },
     },
   ])
     .exec();
-  const projects = await ProjectOwner.populate(aggrProjects, { path: 'projectOwner' });
+
+  const populatedProjects = aggrProjects[0].data;
+  const projects = await ProjectOwner.populate(populatedProjects, { path: 'projectOwner' });
+  // const totalDocs = aggrProjects[0].metaData[0].total;
 
   return res.status(200).json({ projects });
 }
