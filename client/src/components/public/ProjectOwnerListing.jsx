@@ -70,7 +70,7 @@ class _ProjectOwnerListing extends Component {
         variant="subheading"
         style={{ padding: '40px', paddingBottom: '10px' }}
       >
-        {`There are a total of ${this.state.totalProjectOwners} project owners on the site!`}
+        {`There are a total of ${this.state.totalProjectOwners} project owners on the site.`}
       </Typography>
     );
   }
@@ -102,10 +102,12 @@ class _ProjectOwnerListing extends Component {
           </Grid>
           <Grid item xs={12}>
             {this.renderProjectOwnerTotalsText()}
-            <Pagination
-              numPages={this.state.noPages}
-              handlePageClick={this.handlePageClick}
-            />
+            {this.state.projectOwners.length > 0 &&
+              <Pagination
+                numPages={this.state.noPages}
+                handlePageClick={this.handlePageClick}
+              />
+            }
             {this.renderProjectOwners()}
           </Grid>
         </Paper >

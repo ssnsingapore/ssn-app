@@ -201,14 +201,14 @@ class _ProjectOwnerProjectListing extends Component {
           dashboardRole={Role.PROJECT_OWNER}
           project={project}
         />
-        <Grid container>
-          <Grid item xs={12}>
+        <Grid item xs={12}>
+          {this.state.projects.length > 0 &&
             <Pagination
               numPages={this._getNumPages()}
               handlePageClick={this.handlePageClick}
             />
-            {this.renderProjects()}
-          </Grid>
+          }
+          {this.renderProjects()}
         </Grid>
       </Grid>
     );
