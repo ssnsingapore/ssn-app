@@ -26,14 +26,10 @@ class _ProjectOwnerListing extends Component {
   }
 
   componentDidMount() {
-    if (this.props.location) {
-      const queryString = this.props.location.search.substring(1);
-      let { page = 1 } = qs.parse(queryString);
-      page = Number(page);
-      this.setState({ page }, this._fetchProjectOwners);
-    } else {
-      this._fetchProjectOwners();
-    }
+    const queryString = this.props.location.search.substring(1);
+    let { page } = qs.parse(queryString);
+    page = Number(page);
+    this.setState({ page }, this._fetchProjectOwners);
   }
 
   async _fetchProjectOwners() {
@@ -85,7 +81,7 @@ class _ProjectOwnerListing extends Component {
   }
 
   handlePageClick = (pageDisplayed) => {
-    const page = pageDisplayed.selected + 1;
+    const page = pageDisplayed.selected ? pageDisplayed.selected + 1 : 1;
     this.setState({ isLoading: true });
     this.setState({ page }, this._fetchProjectOwners);
     this.setState({ isLoading: false });

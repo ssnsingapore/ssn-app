@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+import qs from 'qs';
 
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
@@ -14,6 +15,7 @@ import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/P
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { extractErrors, formatErrors } from 'util/errors';
+import { ProjectTabValueMapping, ProjectStateMapping } from 'components/admin/AdminDashboard';
 
 class _ProjectOwnerDashboard extends Component {
   constructor(props) {
@@ -27,6 +29,12 @@ class _ProjectOwnerDashboard extends Component {
   }
 
   async componentDidMount() {
+
+    const queryString = this.props.location.search.substring(1);
+    const queryParams = qs.parse(queryString);
+    const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
+    this.setState({ tabValue: ProjectTabValueMapping[projectState] });
+
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get('/api/v1/project_owner/project_counts', { authenticated: true });
 
@@ -46,6 +54,7 @@ class _ProjectOwnerDashboard extends Component {
 
   handleChange = (_event, value) => {
     this.setState({ tabValue: value });
+    this.props.history.push(`?page=1&projectState=${ProjectStateMapping[value]}`);
   };
 
   getTabLabel = projectState => {
@@ -80,6 +89,8 @@ class _ProjectOwnerDashboard extends Component {
       <ProjectOwnerProjectListing
         projectState={projectState}
         totalProjects={counts[projectState]}
+        location={this.props.location}
+        history={this.props.history}
       />;
   };
 

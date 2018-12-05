@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Typography, Paper, Tabs, Tab } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+import qs from 'qs';
 
 import { AppContext } from 'components/main/AppContext';
 import { AdminProjectListing } from 'components/admin/AdminProjectListing';
@@ -11,6 +12,20 @@ import { ProjectState } from 'components/shared/enums/ProjectState';
 
 import { extractErrors, formatErrors } from 'util/errors';
 import { withContext } from 'util/context';
+
+export const ProjectTabValueMapping = {
+  [ProjectState.PENDING_APPROVAL]: 0,
+  [ProjectState.APPROVED_ACTIVE]: 1,
+  [ProjectState.APPROVED_INACTIVE]: 2,
+  [ProjectState.REJECTED]: 3,
+};
+
+export const ProjectStateMapping = {
+  0: ProjectState.PENDING_APPROVAL,
+  1: ProjectState.APPROVED_ACTIVE,
+  2: ProjectState.APPROVED_INACTIVE,
+  3: ProjectState.REJECTED,
+};
 export class _AdminDashboard extends Component {
   constructor(props) {
     super(props);
@@ -23,6 +38,12 @@ export class _AdminDashboard extends Component {
   }
 
   async componentDidMount() {
+
+    const queryString = this.props.location.search.substring(1);
+    const queryParams = qs.parse(queryString);
+    const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
+    this.setState({ tabValue: ProjectTabValueMapping[projectState] });
+
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get('/api/v1/project_counts');
 
@@ -42,13 +63,14 @@ export class _AdminDashboard extends Component {
 
   handleChange = (_event, value) => {
     this.setState({ tabValue: value });
+    this.props.history.push(`?page=1&projectState=${ProjectStateMapping[value]}`);
   };
 
   getTabLabel = projectState => {
     const { counts } = this.state;
-    return `${ProjectStateDisplayMapping[projectState]} (${
-      counts[projectState]
-    })`;
+    return counts[projectState] !== undefined
+      ? `${ProjectStateDisplayMapping[projectState]} (${counts[projectState]})`
+      : ProjectStateDisplayMapping[projectState];
   };
 
   renderContent = (value, projectState) => {
@@ -59,6 +81,8 @@ export class _AdminDashboard extends Component {
       <AdminProjectListing
         projectState={projectState}
         totalProjects={counts[projectState]}
+        location={this.props.location}
+        history={this.props.history}
       />
 
     );

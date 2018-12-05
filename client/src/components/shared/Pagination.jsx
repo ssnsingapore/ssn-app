@@ -23,6 +23,7 @@ const _Pagination = ({ page, numPages, handlePageClick, classes }) => {
           breakClassName={classes.page}
           activeClassName={classes.active}
           disabledClassName={classes.disabled}
+          disableInitialCallback={true}
         />
       </Typography>
     </div>

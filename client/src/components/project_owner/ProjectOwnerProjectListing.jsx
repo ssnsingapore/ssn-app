@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Typography, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+import qs from 'qs';
+
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
@@ -32,7 +34,16 @@ class _ProjectOwnerProjectListing extends Component {
   }
 
   async componentDidMount() {
-    this._fetchProjects();
+    if (this.props.location) {
+      const queryString = this.props.location.search.substring(1);
+      const queryParams = qs.parse(queryString);
+
+      const page = Number(queryParams.page) || 1;
+      const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
+      this.setState({ page, projectState }, this._fetchProjects);
+    } else {
+      this._fetchProjects();
+    }
   }
 
   async _fetchProjects() {
@@ -62,6 +73,7 @@ class _ProjectOwnerProjectListing extends Component {
     this.setState({ isLoading: true });
     this.setState({ page }, this._fetchProjects);
     this.setState({ isLoading: false });
+    this.props.history.push(`?page=${page}&projectState=${this.props.projectState}`);
   };
 
   handleProjectDeactivateConfirmationDialogOpen = (project) => {
@@ -205,6 +217,7 @@ class _ProjectOwnerProjectListing extends Component {
             <Pagination
               numPages={this._getNumPages()}
               handlePageClick={this.handlePageClick}
+              page={this.state.page - 1}
             />
           }
           {this.renderProjects()}

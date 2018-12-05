@@ -11,6 +11,7 @@ import { ProjectDeactivateConfirmationDialog } from 'components/shared/ProjectDe
 import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActivateConfirmationDialog';
 import { ProjectListingCard } from 'components/shared/ProjectListingCard';
 import { Pagination } from 'components/shared/Pagination';
+import qs from 'qs';
 
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
@@ -31,8 +32,17 @@ class _AdminProjectListing extends Component {
     };
   }
 
-  async componentDidMount() {
-    this._fetchProjects();
+  componentDidMount() {
+    if (this.props.location) {
+      const queryString = this.props.location.search.substring(1);
+      const queryParams = qs.parse(queryString);
+
+      const page = Number(queryParams.page) || 1;
+      const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
+      this.setState({ page, projectState }, this._fetchProjects);
+    } else {
+      this._fetchProjects();
+    }
   }
 
   async _fetchProjects() {
@@ -62,6 +72,7 @@ class _AdminProjectListing extends Component {
     this.setState({ isLoading: true });
     this.setState({ page }, this._fetchProjects);
     this.setState({ isLoading: false });
+    this.props.history.push(`?page=${page}&projectState=${this.props.projectState}`);
   };
 
   handleProjectDeactivateConfirmationDialogOpen = (project) => {
@@ -188,6 +199,7 @@ class _AdminProjectListing extends Component {
             <Pagination
               numPages={this._getNumPages()}
               handlePageClick={this.handlePageClick}
+              page={this.state.page - 1}
             />
           }
           {this.renderProjects()}
