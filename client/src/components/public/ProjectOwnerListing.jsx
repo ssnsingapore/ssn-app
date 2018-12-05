@@ -4,13 +4,14 @@ import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { Grid, Typography, Paper } from '@material-ui/core';
+import qs from 'qs';
 
 import { ProjectOwnerDetails } from 'components/shared/ProjectOwnerDetails';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { Pagination } from 'components/shared/Pagination';
 
-const pageSize = 10;
+const PAGE_SIZE = 20;
 class _ProjectOwnerListing extends Component {
   constructor(props) {
     super(props);
@@ -26,12 +27,12 @@ class _ProjectOwnerListing extends Component {
 
   async _fetchProjectOwners() {
     const { requestWithAlert } = this.props.context.utils;
-    const endpoint = `/api/v1/project_owners?pageSize=${pageSize}&page=${this.state.page}`;
+    const endpoint = `/api/v1/project_owners?pageSize=${PAGE_SIZE}&page=${this.state.page}`;
     const response = await requestWithAlert.get(endpoint, { authenticated: true });
 
     if (response.isSuccessful) {
       const { projectOwners, totalProjectOwners } = await response.json();
-      const noPages = Math.ceil(totalProjectOwners / pageSize);
+      const noPages = Math.ceil(totalProjectOwners / PAGE_SIZE);
       this.setState({ projectOwners, totalProjectOwners, noPages });
     } else if (response.hasError) {
       const { showAlert } = this.props.context.updaters;
@@ -42,7 +43,10 @@ class _ProjectOwnerListing extends Component {
   }
 
   componentDidMount() {
-    this._fetchProjectOwners();
+    const queryString = this.props.location.search.substring(1);
+    let { page } = qs.parse(queryString);
+    page = Number(page);
+    this.setState({ page }, this._fetchProjectOwners);
   }
 
   renderProjectOwners() {
@@ -80,6 +84,7 @@ class _ProjectOwnerListing extends Component {
     this.setState({ isLoading: true });
     this.setState({ page }, this._fetchProjectOwners);
     this.setState({ isLoading: false });
+    this.props.history.push(`?page=${page}`);
   };
 
   render() {
@@ -106,6 +111,7 @@ class _ProjectOwnerListing extends Component {
               <Pagination
                 numPages={this.state.noPages}
                 handlePageClick={this.handlePageClick}
+                page={this.state.page - 1}
               />
             }
             {this.renderProjectOwners()}

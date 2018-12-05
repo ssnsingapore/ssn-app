@@ -16,7 +16,7 @@ import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 
-const pageSize = 20;
+const PAGE_SIZE = 20;
 class _ProjectOwnerProjectListing extends Component {
   constructor(props) {
     super(props);
@@ -40,7 +40,7 @@ class _ProjectOwnerProjectListing extends Component {
     const { projectState } = this.props;
 
     const endpoint = '/api/v1/project_owner/projects';
-    const queryParams = `?pageSize=${pageSize}&projectState=${projectState}&page=${this.state.page}`;
+    const queryParams = `?pageSize=${PAGE_SIZE}&projectState=${projectState}&page=${this.state.page}`;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
     if (response.isSuccessful) {
@@ -130,7 +130,7 @@ class _ProjectOwnerProjectListing extends Component {
     return contentGridSize;
   }
 
-  _getNumPages = () => Math.ceil(this.props.totalProjects / pageSize);
+  _getNumPages = () => Math.ceil(this.props.totalProjects / PAGE_SIZE);
 
   _getProjectStateString = () => {
     const { projectState } = this.props;

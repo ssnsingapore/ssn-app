@@ -4,7 +4,7 @@ import { Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 
-const _Pagination = ({ numPages, handlePageClick, classes }) => {
+const _Pagination = ({ page, numPages, handlePageClick, classes }) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '30px' }}>
       <Typography variant="body1">
@@ -12,6 +12,7 @@ const _Pagination = ({ numPages, handlePageClick, classes }) => {
           previousLabel='&laquo;'
           breakLabel={'...'}
           nextLabel='&raquo;'
+          initialPage={page}
           pageCount={numPages}
           onPageChange={handlePageClick}
           marginPagesDisplayed={1}

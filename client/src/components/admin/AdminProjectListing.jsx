@@ -16,7 +16,7 @@ import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
 
-const pageSize = 20;
+const PAGE_SIZE = 20;
 class _AdminProjectListing extends Component {
   constructor(props) {
     super(props);
@@ -40,7 +40,7 @@ class _AdminProjectListing extends Component {
     const { projectState = ProjectState.APPROVED_ACTIVE } = this.props;
 
     const endpoint = '/api/v1/projects';
-    const queryParams = `?pageSize=${pageSize}&projectState=${projectState}&page=${this.state.page}`;
+    const queryParams = `?pageSize=${PAGE_SIZE}&projectState=${projectState}&page=${this.state.page}`;
     const response = await requestWithAlert.get(endpoint + queryParams, { authenticated: true });
 
     if (response.isSuccessful) {
@@ -115,7 +115,7 @@ class _AdminProjectListing extends Component {
   _getContentGridSize = (project) =>
     (this._isApprovedActive(project) || this._isApprovedInactive(project)) ? 10 : 12;
 
-  _getNumPages = () => Math.ceil(this.props.totalProjects / pageSize);
+  _getNumPages = () => Math.ceil(this.props.totalProjects / PAGE_SIZE);
 
   _getProjectStateString = () => {
     const { projectState } = this.props;
