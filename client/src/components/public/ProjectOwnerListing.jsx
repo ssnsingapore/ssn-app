@@ -11,7 +11,7 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { Pagination } from 'components/shared/Pagination';
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 20;
 class _ProjectOwnerListing extends Component {
   constructor(props) {
     super(props);
@@ -23,6 +23,17 @@ class _ProjectOwnerListing extends Component {
       noPages: 0,
       page: 1,
     };
+  }
+
+  componentDidMount() {
+    if (this.props.location) {
+      const queryString = this.props.location.search.substring(1);
+      let { page = 1 } = qs.parse(queryString);
+      page = Number(page);
+      this.setState({ page }, this._fetchProjectOwners);
+    } else {
+      this._fetchProjectOwners();
+    }
   }
 
   async _fetchProjectOwners() {
@@ -42,12 +53,6 @@ class _ProjectOwnerListing extends Component {
     this.setState({ isLoading: false });
   }
 
-  componentDidMount() {
-    const queryString = this.props.location.search.substring(1);
-    let { page = 1 } = qs.parse(queryString);
-    page = Number(page);
-    this.setState({ page }, this._fetchProjectOwners);
-  }
 
   renderProjectOwners() {
     const { classes } = this.props;
