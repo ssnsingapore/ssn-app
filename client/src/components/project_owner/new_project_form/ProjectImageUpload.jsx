@@ -13,7 +13,7 @@ import {
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
-import uploadImageBackground from 'assets/green-background.png';
+import uploadImageBackground from 'assets/image-placeholder.svg';
 import {
   PROJECT_IMAGE_DISPLAY_HEIGHT,
   PROJECT_IMAGE_DISPLAY_WIDTH,
