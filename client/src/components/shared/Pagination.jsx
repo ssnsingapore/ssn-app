@@ -42,6 +42,7 @@ const styles = theme => ({
     },
   },
   disabled: {
+    pointerEvents: 'none',
     cursor: 'default',
     '& a': {
     },
@@ -50,8 +51,10 @@ const styles = theme => ({
     },
   },
   active: {
+    pointerEvents: 'none',
     display: 'inline-block',
     padding: '2px',
+    cursor: 'default',
     '& a': {
       color: 'white',
       fontStyle: 'strong',
