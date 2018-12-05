@@ -21,6 +21,7 @@ const _Pagination = ({ numPages, handlePageClick, classes }) => {
           nextClassName={classes.page}
           breakClassName={classes.page}
           activeClassName={classes.active}
+          disabledClassName={classes.disabled}
         />
       </Typography>
     </div>
@@ -31,12 +32,21 @@ const styles = theme => ({
   page: {
     display: 'inline-block',
     padding: '2px',
+    cursor: 'pointer',
     '& a': {
       padding: '6px 10px',
       backgroundColor: theme.palette.grey[200],
     },
     '& a:hover': {
       backgroundColor: theme.palette.grey[400],
+    },
+  },
+  disabled: {
+    cursor: 'default',
+    '& a': {
+    },
+    '& a:hover': {
+      backgroundColor: theme.palette.grey[200],
     },
   },
   active: {
@@ -47,6 +57,7 @@ const styles = theme => ({
       fontStyle: 'strong',
       padding: '6px 10px',
       backgroundColor: theme.palette.grey[400],
+      pointerEvents: 'none',
     },
   },
 });
