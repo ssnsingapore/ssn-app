@@ -44,23 +44,18 @@ const styles = theme => ({
   disabled: {
     pointerEvents: 'none',
     cursor: 'default',
-    '& a': {
-    },
     '& a:hover': {
       backgroundColor: theme.palette.grey[200],
     },
   },
   active: {
     pointerEvents: 'none',
-    display: 'inline-block',
-    padding: '2px',
     cursor: 'default',
     '& a': {
       color: 'white',
       fontStyle: 'strong',
       padding: '6px 10px',
       backgroundColor: theme.palette.grey[400],
-      pointerEvents: 'none',
     },
   },
 });

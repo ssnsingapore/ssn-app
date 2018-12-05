@@ -164,7 +164,6 @@ class _ProjectOwnerProjectListing extends Component {
                 <Link
                   to={`/project_owner/projects/${project._id}`}
                   className={classes.link}
-                  target="_blank"
                 >
                   <ProjectListingCard project={project} />
                 </Link>

@@ -148,7 +148,6 @@ class _AdminProjectListing extends Component {
               <Link
                 to={`/admin/projects/${project._id}`}
                 className={classes.link}
-                target="_blank"
               >
                 <ProjectListingCard project={project} />
               </Link>

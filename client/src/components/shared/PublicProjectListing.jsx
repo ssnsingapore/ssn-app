@@ -33,7 +33,6 @@ const renderProjects = (classes, projects, projectState, theme) => {
         <Link
           to={linkEndpoint}
           className={classes.link}
-          target="_blank"
         >
           <ProjectListingCard project={project} />
         </Link>

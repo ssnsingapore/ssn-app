@@ -20,7 +20,7 @@ import { Pagination } from 'components/shared/Pagination';
 
 import { SEARCH_BAR_FIELD_VALUES } from 'util/storage_keys';
 
-const pageSize = 10;
+const pageSize = 20;
 const FieldName = getFieldNameObject([
   'issueAddressed',
   'projectRegion',
