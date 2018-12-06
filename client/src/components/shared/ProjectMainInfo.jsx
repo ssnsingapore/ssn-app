@@ -16,15 +16,16 @@ import {
   TableRow,
   Chip,
 } from '@material-ui/core';
+
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { ProjectRegionDisplayMapping } from 'components/shared/display_mappings/ProjectRegionDisplayMapping';
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { ProjectType } from 'components/shared/enums/ProjectType';
+
 import { capitalizeWords } from 'util/capitalizeWords';
 import { convertToAbsoluteUrl } from 'util/url';
-
 
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
@@ -51,12 +52,12 @@ const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
           return (
             <TableRow key={requirement._id}>
               <TableCell component="th" scope="row">
-                {VolunteerRequirementTypeDisplayMapping[requirement.type] ? VolunteerRequirementTypeDisplayMapping[requirement.type] : '-'}
+                {VolunteerRequirementTypeDisplayMapping[requirement.type]
+                  ? VolunteerRequirementTypeDisplayMapping[requirement.type]
+                  : '-'}
               </TableCell>
               <TableCell numeric>
-                {requirement.number
-                  ? `${requirement.number} volunteers`
-                  : '-'}
+                {requirement.number ? `${requirement.number} volunteers` : '-'}
               </TableCell>
               <TableCell numeric>
                 {requirement.commitmentLevel
@@ -115,7 +116,7 @@ const renderIssuesAddressed = (classes, project) => {
   return '-';
 };
 
-const renderProjectBaseDetails = (classes, project) => {
+const renderProjectBaseDetails = (classes, project, role) => {
   const { title, description, volunteerSignupUrl, coverImageUrl } = project;
   const inputUrl = convertToAbsoluteUrl(volunteerSignupUrl);
 
@@ -137,24 +138,22 @@ const renderProjectBaseDetails = (classes, project) => {
             gutterBottom
             className={classes.headline}
           >
-              Project Title (Required)
+            Project Title (Required)
           </Typography>
         )}
-        <div style={{ marginBottom: '60px' }}>
-          {description ? (
-            description.split('\n').map((i, key) => {
-              return (
-                <Typography key={key} variant="body1" gutterBottom paragraph>
-                  {i}
-                </Typography>
-              );
-            })
-          ) : (
-            <Typography color="error" gutterBottom>
-                Project description (required)
-            </Typography>
-          )}
-        </div>
+        {description ? (
+          description.split('\n').map((i, key) => {
+            return (
+              <Typography key={key} variant="body1" gutterBottom paragraph>
+                {i}
+              </Typography>
+            );
+          })
+        ) : (
+          <Typography color="error" gutterBottom>
+            Project description (required)
+          </Typography>
+        )}
         {volunteerSignupUrl ? (
           <Button
             variant="contained"
@@ -163,10 +162,17 @@ const renderProjectBaseDetails = (classes, project) => {
             target="_blank"
             color="secondary"
             size="large"
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: 'center', marginBottom: '8px' }}
           >
             Sign up as a volunteer!
           </Button>
+        ) : (
+          ''
+        )}
+        {role === 'ADMIN' && volunteerSignupUrl ? (
+          <Typography variant="caption" gutterBottom align="center">
+            <em>This button redirects the project viewer to {inputUrl}.</em>
+          </Typography>
         ) : (
           ''
         )}
@@ -255,11 +261,11 @@ const renderProjectDetails = (classes, project) => {
   );
 };
 
-const _ProjectMainInfo = ({ classes, project }) => {
+const _ProjectMainInfo = ({ classes, project, role }) => {
   return (
     <Grid container spacing={16}>
       <Grid item xs={12}>
-        {renderProjectBaseDetails(classes, project)}
+        {renderProjectBaseDetails(classes, project, role)}
       </Grid>
       <Grid item xs={12} sm={6}>
         {renderVolunteerDetails(classes, project)}
@@ -290,6 +296,7 @@ const styles = theme => ({
   },
   cover: {
     minWidth: '45vw',
+    minHeight: '480px',
     objectFit: 'cover',
   },
   tableWrapper: {

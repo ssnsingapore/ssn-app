@@ -136,10 +136,6 @@ const styles = theme => ({
     margin: '0 auto',
     padding: '60px 0',
   },
-  previewNotice: {
-    padding: theme.spacing.unit / 2,
-    backgroundColor: theme.palette.grey[200],
-  },
   leftIcon: {
     marginRight: theme.spacing.unit,
   },

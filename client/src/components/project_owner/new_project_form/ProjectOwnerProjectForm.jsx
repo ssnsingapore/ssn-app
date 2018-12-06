@@ -62,13 +62,8 @@ class _ProjectOwnerProjectForm extends Component {
 
   getPreviewDefaultImageUrl = () => {
     const project = this.getProject();
-    let defaultUrl;
+    const defaultUrl = this.getDefaultUrl(project);
 
-    if (this.state.project === null) {
-      defaultUrl = this.getDefaultUrl(project);
-    } else {
-      defaultUrl = this.getDefaultUrl(this.state.project);
-    }
 
     this.setState({ isDefaultCoverImage: true });
     return defaultUrl || DefaultCoverImageUrl[IssueAddressed.OTHER];
@@ -174,6 +169,9 @@ class _ProjectOwnerProjectForm extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <ProjectMainInfo project={project} />
+                </Grid>
+                <Grid item xs={12}>
+                  <ProjectOwnerDetails />
                 </Grid>
               </React.Fragment>
             </Grid>

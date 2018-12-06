@@ -17,6 +17,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
+import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { capitalizeWords } from 'util/capitalizeWords';
 
@@ -98,7 +99,10 @@ const _ProjectListingCard = ({ project, classes }) => {
                     <Grid item xs={11}>
                       <Typography variant="caption">
                         {project.projectType === 'RECURRING'
-                          ? 'Recurring Project'
+                          ? 'Recurs ' +
+                            capitalizeWords(
+                              ProjectFrequencyDisplayMapping[project.frequency]
+                            )
                           : project.startDate === project.endDate
                             ? moment(project.startDate).utc().format(
                               'dddd, Do MMMM YYYY'

@@ -13,7 +13,7 @@ import {
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
-// import classnames from 'classnames';
+import uploadImageBackground from 'assets/image-placeholder.svg';
 import {
   PROJECT_IMAGE_DISPLAY_HEIGHT,
   PROJECT_IMAGE_DISPLAY_WIDTH,
@@ -71,7 +71,7 @@ class _ProjectImageUpload extends Component {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
-              Please pick an image larger than 480 x 480 pixels.
+              Please pick an image larger than 640 x 480 pixels.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -147,14 +147,11 @@ class _ProjectImageUpload extends Component {
   }
 }
 
-const defaultImage =
-  'https://webgradients.com/public/webgradients_png/053%20Soft%20Grass.png';
-
 const styles = theme => ({
   defaultImage: {
     objectFit: 'cover',
     height: '100%',
-    backgroundImage: `url(${defaultImage})`,
+    backgroundImage: `url(${uploadImageBackground})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
