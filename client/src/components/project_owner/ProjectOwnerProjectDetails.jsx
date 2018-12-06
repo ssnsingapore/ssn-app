@@ -61,7 +61,7 @@ class _ProjectOwnerProjectDetails extends Component {
         color="primary"
         className={classes.button}
         component={Link}
-        to="/admin/dashboard"
+        to="/project_owner/dashboard"
       >
         Back to dashboard
       </Button>
