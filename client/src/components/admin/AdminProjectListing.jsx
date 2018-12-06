@@ -138,7 +138,7 @@ class _AdminProjectListing extends Component {
   };
 
   renderProjects = () => {
-    const { classes, theme } = this.props;
+    const { classes, theme, location } = this.props;
 
     if (this.state.projects.length === 0) {
       return (
@@ -147,6 +147,8 @@ class _AdminProjectListing extends Component {
         </Typography>
       );
     }
+
+    const currentRoute = location.search ? location.pathname + location.search : location.pathname;
 
     return this.state.projects.map(project => {
       const contentGridSize = this._getContentGridSize(project);
@@ -157,7 +159,10 @@ class _AdminProjectListing extends Component {
           <Grid container>
             <Grid item xs={12} md={contentGridSize}>
               <Link
-                to={`/admin/projects/${project._id}`}
+                to={{
+                  pathname: `/admin/projects/${project._id}`,
+                  previousRoute: currentRoute,
+                }}
                 className={classes.link}
               >
                 <ProjectListingCard project={project} />

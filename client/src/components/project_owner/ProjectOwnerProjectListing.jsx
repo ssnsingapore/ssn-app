@@ -154,7 +154,7 @@ class _ProjectOwnerProjectListing extends Component {
   };
 
   renderProjects = () => {
-    const { classes, theme } = this.props;
+    const { classes, theme, location } = this.props;
 
     if (this.state.projects.length === 0) {
       return (
@@ -163,6 +163,8 @@ class _ProjectOwnerProjectListing extends Component {
         </Typography>
       );
     }
+
+    const currentRoute = location.search ? location.pathname + location.search : location.pathname;
 
     return this.state.projects.map(
       project => {
@@ -174,7 +176,10 @@ class _ProjectOwnerProjectListing extends Component {
             <Grid container>
               <Grid item xs={12} md={contentGridSize}>
                 <Link
-                  to={`/project_owner/projects/${project._id}`}
+                  to={{
+                    pathname: `/project_owner/projects/${project._id}`,
+                    previousRoute: currentRoute,
+                  }}
                   className={classes.link}
                 >
                   <ProjectListingCard project={project} />

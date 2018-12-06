@@ -39,6 +39,35 @@ class _ProjectOwnerProjectDetails extends Component {
     this.setState({ isLoading: false });
   }
 
+  renderBackToDashboardButton() {
+    const { classes, location } = this.props;
+    if (location) {
+      if (location.previousRoute && location.previousRoute.includes('/project_owner/dashboard')) {
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => this.props.history.goBack()}
+          >
+            Back to dashboard
+          </Button>
+        );
+      }
+    }
+    return (
+      <Button
+        variant="contained"
+        color="primary"
+        className={classes.button}
+        component={Link}
+        to="/admin/dashboard"
+      >
+        Back to dashboard
+      </Button>
+    );
+  }
+
   renderActionBar = () => {
     const { classes } = this.props;
     const { id } = this.props.match.params;
@@ -55,15 +84,7 @@ class _ProjectOwnerProjectDetails extends Component {
           >
             Edit
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            component={Link}
-            to="/project_owner/dashboard"
-          >
-            Back to dashboard
-          </Button>
+          {this.renderBackToDashboardButton()}
         </div>
       </div>
     );

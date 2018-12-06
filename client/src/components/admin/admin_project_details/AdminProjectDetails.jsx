@@ -133,21 +133,42 @@ class _AdminProjectDetails extends Component {
     );
   }
 
+  renderBackToDashboardButton() {
+    const { classes, location } = this.props;
+    if (location) {
+      if (location.previousRoute && location.previousRoute.includes('/admin/dashboard')) {
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => this.props.history.goBack()}
+          >
+            Back to dashboard
+          </Button>
+        );
+      }
+    }
+    return (
+      <Button
+        variant="contained"
+        color="primary"
+        className={classes.button}
+        component={Link}
+        to="/admin/dashboard"
+      >
+        Back to dashboard
+      </Button>
+    );
+  }
+
   renderNavBar() {
     const { classes } = this.props;
     const { project } = this.state;
 
     return (
       <div className={classes.bottomNavBar}>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          component={Link}
-          to="/admin/dashboard"
-        >
-          Back to dashboard
-        </Button>
+        {this.renderBackToDashboardButton()}
         {this.renderApproveRejectButtons(project.state)}
       </div>
     );
