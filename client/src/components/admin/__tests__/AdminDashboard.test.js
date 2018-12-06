@@ -3,7 +3,7 @@ import { Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { Tab } from '@material-ui/core';
 
-import { _AdminDashboard } from '../AdminDashboard';
+import { _AdminDashboard, ProjectStateMapping } from '../AdminDashboard';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 
@@ -16,7 +16,9 @@ const mockSuccessfulResponse = (body) => {
 };
 
 describe('AdminDashboard', () => {
-  let component, counts;
+  let component;
+  let adminDashboard;
+  let counts;
 
   beforeEach(() => {
     counts = {
@@ -33,7 +35,15 @@ describe('AdminDashboard', () => {
         },
       },
     };
-
+    const props = {
+      context: mockContext,
+      location: {
+        search: '?some=search-string',
+      },
+      history: {
+        push: jest.fn(),
+      },
+    };
     const mockStyles = {
       root: '',
       tabHeader: '',
@@ -44,20 +54,29 @@ describe('AdminDashboard', () => {
 
     const AdminDashboard = withStyles(mockStyles)(_AdminDashboard);
 
-    component = shallow(<AdminDashboard context={mockContext} />).dive();
+    component = shallow(<AdminDashboard {...props} />);
+    adminDashboard = component.dive();
   });
 
   describe('handleChange', () => {
     it('sets the given tab value to state', () => {
-      component.instance().handleChange(null, 1);
+      const value = 1;
+      adminDashboard.instance().handleChange(null, value);
 
-      expect(component.state('tabValue')).toEqual(1);
+      expect(adminDashboard.state('tabValue')).toEqual(value);
+    });
+
+    it('adds current project state to history', () => {
+      const value = 1;
+      adminDashboard.instance().handleChange(null, value);
+
+      expect(component.props().history.push).toHaveBeenCalledWith(`?page=1&projectState=${ProjectStateMapping[value]}`);
     });
   });
 
   describe('getTabLabel', () => {
     it('returns tabel label together with the number of project counts', () => {
-      const tabLabel = component.instance().getTabLabel(ProjectState.PENDING_APPROVAL);
+      const tabLabel = adminDashboard.instance().getTabLabel(ProjectState.PENDING_APPROVAL);
 
       expect(tabLabel).toEqual('Pending Approval (1)');
     });
@@ -65,53 +84,53 @@ describe('AdminDashboard', () => {
 
   describe('render', () => {
     it('only renders spinner when page is loading', () => {
-      component.setState({ isLoading: true });
+      adminDashboard.setState({ isLoading: true });
 
-      expect(component.find(Spinner)).toExist();
-      expect(component.find(Paper)).not.toExist();
+      expect(adminDashboard.find(Spinner)).toExist();
+      expect(adminDashboard.find(Paper)).not.toExist();
     });
 
     it('displays tab labels with counts', () => {
-      const pendingApprovalTab = component.find(Tab).get(0);
+      const pendingApprovalTab = adminDashboard.find(Tab).get(0);
       expect(pendingApprovalTab.props.label).toEqual(`Pending Approval (${counts[ProjectState.PENDING_APPROVAL]})`);
-      const activeTab = component.find(Tab).get(1);
+      const activeTab = adminDashboard.find(Tab).get(1);
       expect(activeTab.props.label).toEqual(`Active (${counts[ProjectState.APPROVED_ACTIVE]})`);
-      const inactiveTab = component.find(Tab).get(2);
+      const inactiveTab = adminDashboard.find(Tab).get(2);
       expect(inactiveTab.props.label).toEqual(`Inactive (${counts[ProjectState.APPROVED_INACTIVE]})`);
-      const rejectedTab = component.find(Tab).get(3);
+      const rejectedTab = adminDashboard.find(Tab).get(3);
       expect(rejectedTab.props.label).toEqual(`Rejected (${counts[ProjectState.REJECTED]})`);
     });
 
     it('renders the project listing for pending approval projects on the first tab', () => {
-      component.setState({
+      adminDashboard.setState({
         tabValue: 0,
       });
 
-      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.PENDING_APPROVAL);
+      expect(adminDashboard.find('AdminProjectListing').props().projectState).toEqual(ProjectState.PENDING_APPROVAL);
     });
 
     it('renders the project listing for approved projects on the second tab', () => {
-      component.setState({
+      adminDashboard.setState({
         tabValue: 1,
       });
 
-      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
+      expect(adminDashboard.find('AdminProjectListing').props().projectState).toEqual(ProjectState.APPROVED_ACTIVE);
     });
 
     it('renders the project listing for inactive projects on the third tab', () => {
-      component.setState({
+      adminDashboard.setState({
         tabValue: 2,
       });
 
-      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.APPROVED_INACTIVE);
+      expect(adminDashboard.find('AdminProjectListing').props().projectState).toEqual(ProjectState.APPROVED_INACTIVE);
     });
 
     it('renders the project listing for rejected projects on the fourth tab', () => {
-      component.setState({
+      adminDashboard.setState({
         tabValue: 3,
       });
 
-      expect(component.find('AdminProjectListing').props().projectState).toEqual(ProjectState.REJECTED);
+      expect(adminDashboard.find('AdminProjectListing').props().projectState).toEqual(ProjectState.REJECTED);
     });
   });
 });

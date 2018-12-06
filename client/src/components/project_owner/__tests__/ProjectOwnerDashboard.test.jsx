@@ -44,9 +44,16 @@ describe('ProjectOwnerDashboard', () => {
       get: jest.fn(() => Promise.resolve(mockResponse)),
     };
     mockContext.updaters.showAlert = jest.fn();
-
+    const props = {
+      theme,
+      classes: {},
+      context: mockContext,
+      location: {
+        search: '?some=search-string',
+      },
+    };
     component = shallow(
-      <ProjectOwnerDashboard theme={theme} classes={{}} context={mockContext} />,
+      <ProjectOwnerDashboard {...props} />,
       { disableLifecycleMethods: true },
     );
   });
@@ -76,9 +83,17 @@ describe('ProjectOwnerDashboard', () => {
           get: jest.fn(() => Promise.resolve(mockResponse)),
         };
         mockContext.updaters.showAlert = jest.fn();
+        const props = {
+          theme,
+          classes: {},
+          context: mockContext,
+          location: {
+            search: '?some=search-string',
+          },
+        };
 
         component = shallow(
-          <ProjectOwnerDashboard theme={theme} classes={{}} context={mockContext} />,
+          <ProjectOwnerDashboard {...props} />,
           { disableLifecycleMethods: true },
         );
       });
