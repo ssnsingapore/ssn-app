@@ -10,7 +10,14 @@ import { ProjectOwnerProjectForm } from 'components/project_owner/new_project_fo
 import { FieldName, constraints } from './ProjectFormFields';
 import { AlertType } from 'components/shared/Alert';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { VolunteerRequirementFieldName } from './VolunteerRequirementForm';
+import { 
+  addVolunteerRequirementRef,
+  deleteVolunteerRequirementRef,
+  validateFormFields,
+  resetAllFields,
+  valuesForAllFields,
+  setFields,
+} from 'components/project_owner/new_project_form/VolunteerRequirementForm';
 
 export const PROJECT_IMAGE_DISPLAY_WIDTH = 480;
 export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
@@ -18,14 +25,14 @@ export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
 
-class _ProjectOwnerEditProjectForm extends Component {
+export class _ProjectOwnerEditProjectForm extends Component {
   constructor(props) {
-    super(props);
+    super(props); 
 
     this.projectImageInput = React.createRef();
 
     this.state = {
-      volunteerRequirementRefs: [],
+      volunteerRequirementRefs: {},
       isSubmitting: false,
       shouldRedirect: false,
       projectToRender: null,
@@ -49,8 +56,9 @@ class _ProjectOwnerEditProjectForm extends Component {
         .forEach(key =>
           this.props.setField(FieldName[key], moment(project[key]).format('YYYY-MM-DD')));
 
-      const { volunteerRequirements } = project;
-      volunteerRequirements.forEach(() => this.handleAddVolunteerRequirement());
+      if(project.volunteerRequirements) {
+        this.setSubFormFields(project.volunteerRequirements);
+      }    
     }
 
     if (response.hasError) {
@@ -58,49 +66,39 @@ class _ProjectOwnerEditProjectForm extends Component {
       const errors = await extractErrors(response);
       showAlert('getProjectFailure', AlertType.ERROR, formatErrors(errors));
     }
-
   }
 
-  setSubFormFields = (volunteerRequirements, index) => {
-    if (this.state.volunteerRequirementRefs.length === volunteerRequirements.length) {
-      Object.keys(volunteerRequirements[index]).forEach(detail =>
-        this.state.volunteerRequirementRefs[index].current.setField(
-          VolunteerRequirementFieldName[detail], volunteerRequirements[index][detail]
-        )
-      );
-    }
+  setSubFormFields = (volunteerRequirements) => {
+    volunteerRequirements.forEach((requirement, index) => {
+      this.handleAddVolunteerRequirement();
+      setFields(this.state.volunteerRequirementRefs[index], requirement);
+    });
   }
 
   _isProjectRejected = (project) => project.state === ProjectState.REJECTED;
 
   handleAddVolunteerRequirement = () => {
-    this.setState((state) => ({
-      volunteerRequirementRefs: [
-        ...state.volunteerRequirementRefs,
-        React.createRef(),
-      ],
-    }));
+    this.setState({
+      volunteerRequirementRefs: addVolunteerRequirementRef(this.state.volunteerRequirementRefs),
+    });
   };
 
-  handleDeleteVolunteerRequirement = i => {
-    const newVolunteerRequirementRefs = [...this.state.volunteerRequirementRefs];
-    newVolunteerRequirementRefs.splice(i, 1);
-    this.setState({ volunteerRequirementRefs: newVolunteerRequirementRefs });
+  handleDeleteVolunteerRequirement = index => {
+    this.setState({
+      volunteerRequirementRefs: deleteVolunteerRequirementRef(this.state.volunteerRequirementRefs, index),
+    });
   };
 
   validateAllSubFormFields = () => {
-    const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.every(ref => ref.current.validateAllFields());
+    return validateFormFields(this.state.volunteerRequirementRefs);
   };
 
   resetAllSubFormFields = () => {
-    const { volunteerRequirementRefs } = this.state;
-    volunteerRequirementRefs.forEach(ref => ref.current.resetAllFields());
+    resetAllFields(this.state.volunteerRequirementRefs);
   };
 
   valuesForAllSubFormFields = () => {
-    const { volunteerRequirementRefs } = this.state;
-    return volunteerRequirementRefs.map(ref => ref.current.valuesForAllFields());
+    return valuesForAllFields(this.state.volunteerRequirementRefs);
   };
 
   resizeImage = async () => {
@@ -246,13 +244,12 @@ class _ProjectOwnerEditProjectForm extends Component {
       resetField={this.props.resetField}
       shouldRedirect={this.state.shouldRedirect}
       isSubmitting={this.state.isSubmitting}
-      projectToRender={projectToRender} // TODO: change ProjectOwnerProjectForm to use this
+      projectToRender={projectToRender}
       coverImageUrl={projectToRender.coverImageUrl}
       projectState={projectToRender.state}
       rejectionReason={projectToRender.rejectionReason}
       projectImageInput={this.projectImageInput}
       formType='edit'
-      setSubFormFields={this.setSubFormFields}
     />;
   }
 }

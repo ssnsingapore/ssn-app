@@ -30,19 +30,6 @@ class _ProjectOwnerProjectForm extends Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.projectToRender &&
-      prevProps.volunteerRequirementRefs.length !==
-      this.props.volunteerRequirementRefs.length
-    ) {
-      const { volunteerRequirements } = this.props.projectToRender;
-      volunteerRequirements.forEach((_row, index) => {
-        this.props.setSubFormFields(volunteerRequirements, index);
-      });
-    }
-  }
-
   getProject = () => {
     const { fields } = this.props;
     const project = {};
@@ -221,11 +208,6 @@ class _ProjectOwnerProjectForm extends Component {
             </Grid>
             <Grid item xs={12} sm={6}>
               <ProjectVolunteerDetails
-                volunteerRequirements={
-                  this.state.project
-                    ? this.state.project.volunteerRequirements
-                    : []
-                }
                 volunteerRequirementRefs={this.props.volunteerRequirementRefs}
                 FieldName={FieldName}
                 fields={this.props.fields}

@@ -85,19 +85,15 @@ export const valuesForAllFields = (volunteerRequirementRefs) => {
   }, []);
 };
 
-class _VolunteerRequirementForm extends React.Component {
-  async componentDidMount() {
-    if (this.props.volunteerRequirement) {
-      Object.keys(VolunteerRequirementFieldName).forEach(key => {
-        const fieldName = VolunteerRequirementFieldName[key];
-        this.props.setField(
-          fieldName,
-          this.props.volunteerRequirement[fieldName]
-        );
-      });
-    }
-  }
+export const setFields = (ref, volunteerRequirements) => 
+  Object.keys(volunteerRequirements).forEach(field =>
+    ref.current.setField(
+      VolunteerRequirementFieldName[field], volunteerRequirements[field]
+    )
+  );
 
+class _VolunteerRequirementForm extends React.Component {
+  
   render() {
     const { fields, handleChange, classes } = this.props;
     return (

@@ -13,6 +13,7 @@ import {
   validateFormFields,
   resetAllFields,
   valuesForAllFields,
+  setFields,
 } from '../VolunteerRequirementForm';
 import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
 
@@ -142,6 +143,27 @@ describe('valuesForAllFields', () => {
     expect(valuesForAllFields(volunteerRequirementRefs)).toEqual([
       volunteerRequirementValues,
     ]);
+  });
+});
+
+describe('setFields', () => {
+  it('calls setField on all volunteer requirement fields and values', () => {
+    const mockRef = {
+      current: {
+        setField: jest.fn(),
+      },
+    };
+    const volunteerRequirements = {
+      type: 'Ad hoc',
+      commitmentLevel: 'high',
+      number: '1',
+    };
+
+    setFields(mockRef, volunteerRequirements);
+
+    expect(mockRef.current.setField).toHaveBeenCalledWith('type', volunteerRequirements.type);
+    expect(mockRef.current.setField).toHaveBeenCalledWith('commitmentLevel', volunteerRequirements.commitmentLevel);
+    expect(mockRef.current.setField).toHaveBeenCalledWith('number', volunteerRequirements.number);
   });
 });
 

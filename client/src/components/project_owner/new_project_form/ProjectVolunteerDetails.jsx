@@ -11,7 +11,6 @@ const renderVolunteerRequirements = (
   volunteerRequirementRefs,
   classes,
   handleDeleteVolunteerRequirement,
-  volunteerRequirements
 ) => {
   const numberOfRows = Math.max(...Object.keys(volunteerRequirementRefs)) + 1;
   return [...Array(numberOfRows).keys()].reduce((rows, rowNum) => {
@@ -43,7 +42,6 @@ const _ProjectVolunteerDetails = ({
   fields,
   handleChange,
   handleAddVolunteerRequirement,
-  volunteerRequirements,
 }) => {
   return (
     <React.Fragment>
@@ -66,12 +64,11 @@ const _ProjectVolunteerDetails = ({
             className={classes.textField}
           />
 
-          {renderVolunteerRequirements(
+          {Object.keys(volunteerRequirementRefs).length > 0 ? renderVolunteerRequirements(
             volunteerRequirementRefs,
             classes,
             handleDeleteVolunteerRequirement,
-            volunteerRequirements
-          )}
+          ): ''}
 
           <IconButton
             onClick={handleAddVolunteerRequirement}
