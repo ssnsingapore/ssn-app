@@ -99,6 +99,7 @@ class _NavBar extends Component {
     const { authenticator } = this.props.context.utils;
     const currentUser = authenticator.getCurrentUser();
     const isProjectPath = this.props.location.pathname === '/projects';
+    const isProjectOwnersPath = this.props.location.pathname === '/project_owners';
 
     if (!isAuthenticated || !currentUser) {
       return (
@@ -150,7 +151,7 @@ class _NavBar extends Component {
             component={Link}
             to={'/project_owners'}
             onClick={this.handleClose}
-            disabled={this.state.isLoading}>
+            disabled={this.state.isLoading || isProjectOwnersPath}>
             <GroupIcon style={{ paddingRight: 10 }} /> View Project Owners
           </MenuItem>
           {

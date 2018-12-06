@@ -11,7 +11,7 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { Pagination } from 'components/shared/Pagination';
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 20;
 class _ProjectOwnerListing extends Component {
   constructor(props) {
     super(props);
@@ -23,6 +23,13 @@ class _ProjectOwnerListing extends Component {
       noPages: 0,
       page: 1,
     };
+  }
+
+  componentDidMount() {
+    const queryString = this.props.location.search.substring(1);
+    let { page } = qs.parse(queryString);
+    page = Number(page);
+    this.setState({ page }, this._fetchProjectOwners);
   }
 
   async _fetchProjectOwners() {
@@ -42,12 +49,6 @@ class _ProjectOwnerListing extends Component {
     this.setState({ isLoading: false });
   }
 
-  componentDidMount() {
-    const queryString = this.props.location.search.substring(1);
-    let { page = 1 } = qs.parse(queryString);
-    page = Number(page);
-    this.setState({ page }, this._fetchProjectOwners);
-  }
 
   renderProjectOwners() {
     const { classes } = this.props;
@@ -80,7 +81,7 @@ class _ProjectOwnerListing extends Component {
   }
 
   handlePageClick = (pageDisplayed) => {
-    const page = pageDisplayed.selected + 1;
+    const page = pageDisplayed.selected ? pageDisplayed.selected + 1 : 1;
     this.setState({ isLoading: true });
     this.setState({ page }, this._fetchProjectOwners);
     this.setState({ isLoading: false });
