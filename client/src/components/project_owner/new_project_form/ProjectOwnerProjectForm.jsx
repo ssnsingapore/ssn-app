@@ -43,10 +43,18 @@ class _ProjectOwnerProjectForm extends Component {
   togglePreviewOn = () => {
     const project = this.getProject();
     const projectImageInput = this.props.projectImageInput.current;
-    const coverImageSrc = this.getCoverImageSrc(projectImageInput);
+    let coverImageSrc = this.getNewCoverImageSrc(projectImageInput);
+
+    if (!coverImageSrc) {
+      if (this.props.coverImageUrl) {
+        coverImageSrc = this.props.coverImageUrl;
+      } else {
+        coverImageSrc = this.getPreviewDefaultImageUrl();
+        this.setState({ isDefaultCoverImage: true });
+      }
+    }
 
     project.coverImageUrl = coverImageSrc;
-
     project.volunteerRequirements = Object.values(this.props.volunteerRequirementRefs).map(
       ref => ref.current.valuesForAllFields()
     );
@@ -63,18 +71,14 @@ class _ProjectOwnerProjectForm extends Component {
   getPreviewDefaultImageUrl = () => {
     const project = this.getProject();
     const defaultUrl = this.getDefaultUrl(project);
-
-
-    this.setState({ isDefaultCoverImage: true });
     return defaultUrl || DefaultCoverImageUrl[IssueAddressed.OTHER];
   };
 
-  getCoverImageSrc = current => {
+  getNewCoverImageSrc = current => {
     if (current && current.files.length > 0) {
       return window.URL.createObjectURL(current.files[0]);
     }
-
-    return this.getPreviewDefaultImageUrl();
+    return undefined;
   };
 
   togglePreviewOff = () => {
