@@ -23,8 +23,8 @@ const wordsToNotCapitalize = [
 ];
 
 export const capitalizeWords = (string) => {
-  return string.toLowerCase().split` `.map(word => {
-    if (wordsToNotCapitalize.includes(word)) {
+  return string.toLowerCase().split` `.map((word, idx) => {
+    if (wordsToNotCapitalize.includes(word) & idx !== 0) {
       return word;
     }
 
