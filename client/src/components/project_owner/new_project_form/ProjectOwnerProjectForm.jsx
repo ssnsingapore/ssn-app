@@ -102,6 +102,35 @@ class _ProjectOwnerProjectForm extends Component {
     );
   };
 
+  renderBackToDashboardButton() {
+    const { classes, location } = this.props;
+    if (location) {
+      if (location.previousRoute && location.previousRoute.includes('/project_owner/dashboard')) {
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => this.props.history.goBack()}
+          >
+            Back to dashboard
+          </Button>
+        );
+      }
+    }
+    return (
+      <Button
+        variant="contained"
+        color="primary"
+        className={classes.button}
+        component={Link}
+        to="/project_owner/dashboard"
+      >
+        Back to dashboard
+      </Button>
+    );
+  }
+
   renderActionBar = () => {
     const { classes } = this.props;
     const { preview } = this.state;
@@ -135,16 +164,7 @@ class _ProjectOwnerProjectForm extends Component {
                 Back to form
             </Button>
           )}
-          <Button
-            component={Link}
-            to="/project_owner/dashboard"
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            disabled={this.props.isSubmitting}
-          >
-            Back to dashboard
-          </Button>
+          {this.renderBackToDashboardButton()}
         </div>
       </div>
     );

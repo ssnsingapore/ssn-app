@@ -97,6 +97,11 @@ class _ProjectOwnerProjectListing extends Component {
   _isPendingApproval = (project) => project.state === ProjectState.PENDING_APPROVAL;
   _isRejected = (project) => project.state === ProjectState.REJECTED;
 
+  _getCurrentRoute = () => {
+    const { location } = this.props;
+    return location.search ? location.pathname + location.search : location.pathname;
+  }
+
   renderButtons(project) {
     const { classes } = this.props;
     return (
@@ -105,7 +110,10 @@ class _ProjectOwnerProjectListing extends Component {
           variant="contained"
           className={classes.button}
           component={Link}
-          to={`/project_owner/projects/${project._id}/edit`}
+          to={{
+            pathname: `/project_owner/projects/${project._id}/edit`,
+            previousRoute: this._getCurrentRoute(),
+          }}
         >
           Edit
         </Button>
@@ -153,7 +161,7 @@ class _ProjectOwnerProjectListing extends Component {
   };
 
   renderProjects = () => {
-    const { classes, theme, location } = this.props;
+    const { classes, theme } = this.props;
 
     if (this.state.projects.length === 0) {
       return (
@@ -163,7 +171,6 @@ class _ProjectOwnerProjectListing extends Component {
       );
     }
 
-    const currentRoute = location.search ? location.pathname + location.search : location.pathname;
 
     return this.state.projects.map(
       project => {
@@ -177,7 +184,7 @@ class _ProjectOwnerProjectListing extends Component {
                 <Link
                   to={{
                     pathname: `/project_owner/projects/${project._id}`,
-                    previousRoute: currentRoute,
+                    previousRoute: this._getCurrentRoute(),
                   }}
                   className={classes.link}
                 >

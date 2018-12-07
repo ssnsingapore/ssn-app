@@ -10,7 +10,7 @@ import { ProjectOwnerProjectForm } from 'components/project_owner/new_project_fo
 import { FieldName, constraints } from './ProjectFormFields';
 import { AlertType } from 'components/shared/Alert';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-import { 
+import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
   validateFormFields,
@@ -27,7 +27,7 @@ const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
 
 export class _ProjectOwnerEditProjectForm extends Component {
   constructor(props) {
-    super(props); 
+    super(props);
 
     this.projectImageInput = React.createRef();
 
@@ -56,9 +56,9 @@ export class _ProjectOwnerEditProjectForm extends Component {
         .forEach(key =>
           this.props.setField(FieldName[key], moment(project[key]).format('YYYY-MM-DD')));
 
-      if(project.volunteerRequirements) {
+      if (project.volunteerRequirements) {
         this.setSubFormFields(project.volunteerRequirements);
-      }    
+      }
     }
 
     if (response.hasError) {
@@ -249,6 +249,8 @@ export class _ProjectOwnerEditProjectForm extends Component {
       projectState={projectToRender.state}
       rejectionReason={projectToRender.rejectionReason}
       projectImageInput={this.projectImageInput}
+      location={this.props.location}
+      history={this.props.history}
       formType='edit'
     />;
   }

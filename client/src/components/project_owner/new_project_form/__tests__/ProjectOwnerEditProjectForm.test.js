@@ -3,7 +3,6 @@ import React from 'react';
 import { _ProjectOwnerEditProjectForm } from '../ProjectOwnerEditProjectForm';
 import { FieldName, constraints } from '../ProjectFormFields';
 import { withForm } from 'util/form';
-import { withContext } from 'util/context';
 import { defaultAppContext } from 'components/main/AppContext';
 
 jest.mock('../VolunteerRequirementForm');
@@ -42,7 +41,7 @@ describe('ProjectOwnerEditProjectForm', () => {
       },
     };
     const ProjectOwnerEditProjectForm = withForm(FieldName, constraints)(_ProjectOwnerEditProjectForm);
-    component = shallow(<ProjectOwnerEditProjectForm {...props}/>).dive();
+    component = shallow(<ProjectOwnerEditProjectForm {...props} />).dive();
   });
 
   describe('handleAddVolunteerRequirement', () => {
@@ -69,7 +68,7 @@ describe('ProjectOwnerEditProjectForm', () => {
 
   describe('validateAllSubFormFields', () => {
     it('calls validateAllFields with volunteer requirement refs', () => {
-      const volunteerRequirementRefs = { 
+      const volunteerRequirementRefs = {
         0: React.createRef(),
         1: React.createRef(),
       };
@@ -86,7 +85,7 @@ describe('ProjectOwnerEditProjectForm', () => {
 
   describe('resetAllSubFormFields', () => {
     it('calls resetAllFields with volunteer requirement refs', () => {
-      const volunteerRequirementRefs = { 
+      const volunteerRequirementRefs = {
         0: React.createRef(),
         1: React.createRef(),
       };
@@ -103,7 +102,7 @@ describe('ProjectOwnerEditProjectForm', () => {
 
   describe('valuesForAllSubFormFields', () => {
     it('calls valuesForAllFields with volunteer requirement refs', () => {
-      const volunteerRequirementRefs = { 
+      const volunteerRequirementRefs = {
         0: React.createRef(),
         1: React.createRef(),
       };
