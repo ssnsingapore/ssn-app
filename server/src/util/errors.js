@@ -27,7 +27,7 @@ class UnauthorizedErrorView {
   constructor() {
     this.status = 401;
     this.title = 'Unauthorized';
-    this.detail = 'Looks like you tried to make an unauthorized request.';
+    this.detail = 'Looks like you\'ve been logged out.';
   }
 }
 

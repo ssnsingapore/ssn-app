@@ -46,6 +46,7 @@ class App extends Component {
       requestWithAlert,
       this.setAuthState
     );
+    requestWithAlert.onAuthenticationError(authenticator.clearAuthState);
 
     this.state = {
       isAuthenticated: authenticator.isAuthenticated(),

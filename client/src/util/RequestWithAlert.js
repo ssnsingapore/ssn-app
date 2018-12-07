@@ -6,6 +6,11 @@ export class RequestWithAlert {
     this.showAlert = showAlert;
   }
 
+  onAuthenticationError = (handler) => {
+    this.authenticationErrorHandler = handler;
+    return this;
+  }
+
   onNetworkError = (handler) => {
     this.networkErrorHandler = handler;
     return this;
@@ -130,6 +135,12 @@ export class RequestWithAlert {
         response.isSuccessful = true;
       } else {
         response.hasError = true;
+      }
+
+      if (response.status === 401) {
+        if (this.authenticationErrorHandler) {
+          this.authenticationErrorHandler();
+        }
       }
 
       return response;
