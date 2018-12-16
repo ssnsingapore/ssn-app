@@ -20,7 +20,7 @@ import { Pagination } from 'components/shared/Pagination';
 
 import { SEARCH_BAR_FIELD_VALUES } from 'util/storage_keys';
 
-const pageSize = 20;
+const PAGE_SIZE = 20;
 const FieldName = getFieldNameObject([
   'issueAddressed',
   'projectRegion',
@@ -61,6 +61,11 @@ const tabValueProjectStateMapping = {
   1: ProjectState.APPROVED_INACTIVE,
 };
 
+const projectStateTabValueMapping = {
+  [ProjectState.APPROVED_ACTIVE]: 0,
+  [ProjectState.APPROVED_INACTIVE]: 1,
+};
+
 class _Projects extends Component {
   constructor(props) {
     super(props);
@@ -72,19 +77,24 @@ class _Projects extends Component {
       activeProjects: [],
       inactiveProjects: [],
       numPages: { [ProjectState.APPROVED_ACTIVE]: 0, [ProjectState.APPROVED_INACTIVE]: 0 },
-      page: { [ProjectState.APPROVED_ACTIVE]: 1, [ProjectState.APPROVED_INACTIVE]: 1 },
+      page: 1,
     };
   }
 
   async componentDidMount() {
     const cachedFields = this.getFieldValues();
+    const queryString = this.props.location.search.substring(1);
+    const queryParams = qs.parse(queryString);
+    const projectState = queryParams.projectState || ProjectState.APPROVED_ACTIVE;
+    const page = Number(queryParams.page) || 1;
+
     if (cachedFields && this.props.history.action === 'POP') {
       const promiseArray = Object.keys(cachedFields).map(key => this.props.setField(key, cachedFields[key]));
       await Promise.all(promiseArray);
     }
 
     await this.fetchProjectCounts();
-    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1))); //page 1
+    this.setState(({ page, tabValue: projectStateTabValueMapping[projectState] }), async () => { await this.fetchProjects(projectState, page); });
 
     this.setState({ isLoading: false });
   }
@@ -92,8 +102,9 @@ class _Projects extends Component {
   handlePageClick = (pageDisplayed) => {
     const newPage = pageDisplayed.selected + 1;
     const projectState = tabValueProjectStateMapping[this.state.tabValue];
+    this.props.history.push(`?page=${newPage}&projectState=${projectState}`);
     this.setState({ isLoading: true });
-    this.fetchProjects(projectState, newPage);
+    this.setState(({ page: newPage }), async () => { await this.fetchProjects(projectState, newPage); });
     this.setState({ isLoading: false });
   };
 
@@ -110,7 +121,7 @@ class _Projects extends Component {
     if (countResponse.isSuccessful) {
       const counts = (await countResponse.json()).counts;
       const numPages = Object.keys(counts).reduce(function (pageCounts, key) {
-        pageCounts[key] = Math.ceil(counts[key] / pageSize);
+        pageCounts[key] = Math.ceil(counts[key] / PAGE_SIZE);
         return pageCounts;
       }, {});
       this.setState({ counts, numPages });
@@ -129,7 +140,7 @@ class _Projects extends Component {
 
   fetchProjects = async (projectState, currentPage) => {
     const { requestWithAlert } = this.props.context.utils;
-    const { pageSize = 10 } = this.props;
+    const pageSize = PAGE_SIZE;
     const page = currentPage;
 
     const endpoint = '/api/v1/projects';
@@ -160,7 +171,8 @@ class _Projects extends Component {
   };
 
   handleTabValueChange = (_event, value) => {
-    this.setState({ tabValue: value });
+    this.setState({ page: 1, tabValue: value }, async () => { await this.fetchProjects(tabValueProjectStateMapping[value], 1); });
+    this.props.history.push(`?page=1&projectState=${tabValueProjectStateMapping[value]}`);
   };
 
   setFieldValues = () => {
@@ -181,7 +193,7 @@ class _Projects extends Component {
     this.setState({ isLoading: true });
 
     await this.fetchProjectCounts();
-    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1)));
+    this.setState({ page: 1 }, async () => { await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1))); });
 
     this.setState({ isLoading: false });
   };
@@ -191,7 +203,8 @@ class _Projects extends Component {
     this.clearFieldValues();
     await this.props.resetAllFields();
     await this.fetchProjectCounts();
-    await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1)));
+
+    this.setState({ page: 1 }, async () => { await Promise.all(publicProjectStates.map(state => this.fetchProjects(state, 1))); });
 
     this.setState({ isLoading: false });
   };
@@ -223,6 +236,7 @@ class _Projects extends Component {
               <Pagination
                 numPages={this.state.numPages[projectState]}
                 handlePageClick={this.handlePageClick}
+                page={this.state.page - 1}
               />
               <PublicProjectListing
                 projects={projects}
