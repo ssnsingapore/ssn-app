@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { createError } from 'http-errors';
+import createError from 'http-errors';
 import multer from 'multer';
 import { s3 } from 'config/aws';
 
@@ -211,7 +211,7 @@ projectOwnersRouter.put('/project_owners/password/reset', asyncWrap(resetPasswor
 async function resetPassword(req, res, next) {
   const csrfToken = req.get('csrf-token');
   if (!csrfToken) {
-    next(createError.Unauthorized());
+    return next(createError.Forbidden());
   }
 
   const email = req.cookies[config.PASSWORD_RESET_EMAIL_COOKIE_NAME];
