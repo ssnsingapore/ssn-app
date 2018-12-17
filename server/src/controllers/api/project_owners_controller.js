@@ -175,7 +175,7 @@ async function confirmProjectOwner(req, res) {
 
 const passwordResetService = new PasswordResetService(ProjectOwner);
 
-projectOwnersRouter.post('/project_owners/passwordReset', asyncWrap(triggerPasswordReset));
+projectOwnersRouter.post('/project_owners/password/reset', asyncWrap(triggerPasswordReset));
 async function triggerPasswordReset(req, res) {
   const { email } = req.body;
   const errorsObject = await passwordResetService.trigger(email);
@@ -191,7 +191,7 @@ async function triggerPasswordReset(req, res) {
     .json();
 }
 
-projectOwnersRouter.get('/project_owners/:id/passwordReset/:passwordResetToken', asyncWrap(redirectToPasswordResetForm));
+projectOwnersRouter.get('/project_owners/:id/password/reset/:passwordResetToken', asyncWrap(redirectToPasswordResetForm));
 async function redirectToPasswordResetForm(req, res) {
   const { id, passwordResetToken } = req.params;
   const { redirectUrl, cookieArgs } = await passwordResetService.getRedirectUrlAndCookieArgs(
@@ -207,7 +207,7 @@ async function redirectToPasswordResetForm(req, res) {
   return res.redirect(redirectUrl);
 }
 
-projectOwnersRouter.put('/project_owners/passwordReset', asyncWrap(resetPassword));
+projectOwnersRouter.put('/project_owners/password/reset', asyncWrap(resetPassword));
 async function resetPassword(req, res, next) {
   const csrfToken = req.get('csrf-token');
   if (!csrfToken) {

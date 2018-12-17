@@ -22,7 +22,7 @@ import { PASSWORD_RESET_CSRF_COOKIE_NAME } from 'util/constants';
 import { CSRF_TOKEN_KEY } from 'util/storage_keys';
 import { formatErrors, extractErrors } from 'util/errors';
 
-const FieldName = getFieldNameObject([ 'password', 'passwordConfirmation' ]);
+const FieldName = getFieldNameObject(['password', 'passwordConfirmation']);
 const constraints = {
   [FieldName.password]: {
     presence: { allowEmpty: false },
@@ -76,7 +76,7 @@ class _PasswordResetForm extends Component {
     const { requestWithAlert } = this.props.context.utils;
     const password = fieldValue(this.props.fields, FieldName.password);
     const response = await requestWithAlert
-      .put('/api/v1/project_owners/passwordReset', { password }, { authenticated: true });
+      .put('/api/v1/project_owners/password/reset', { password }, { authenticated: true });
 
     this.setState({ isLoading: false });
 
