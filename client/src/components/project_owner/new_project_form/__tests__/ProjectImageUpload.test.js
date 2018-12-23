@@ -6,6 +6,7 @@ import {
   Button,
   IconButton,
   Dialog,
+  DialogContentText,
 } from '@material-ui/core';
 
 describe('ProjectImageUpload', () => {
@@ -20,7 +21,7 @@ describe('ProjectImageUpload', () => {
         },
       },
     };
-    component = shallow( < ProjectImageUpload { ...props
+    component = shallow(< ProjectImageUpload {...props
       }
     />);
 
@@ -80,8 +81,9 @@ describe('ProjectImageUpload', () => {
     });
 
     it('should open dialog when image selected has low resolution', () => {
-
-      expect(wrapper.find(Dialog).exists()).toBeTruthy();
+      expect(wrapper.find(Dialog).find(DialogContentText).html()).toEqual(
+        expect.stringContaining('640 x 480 pixels')
+      );
     });
 
     it('should reset state after closing dialog', () => {
@@ -92,6 +94,4 @@ describe('ProjectImageUpload', () => {
       expect(wrapper.state().isImageResolutionTooLow).toBe(false);
     });
   });
-
-
 });
