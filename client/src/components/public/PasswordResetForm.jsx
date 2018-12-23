@@ -84,7 +84,7 @@ class _PasswordResetForm extends Component {
 
     this.setState({ isLoading: true });
     const { requestWithAlert } = this.props.context.utils;
-    const password = fieldValue(this.props.fields, FieldName.password);
+    const { password } = this.props.valuesForAllFields();
     const response = await requestWithAlert
       .put('/api/v1/project_owners/password/reset', { password }, { authenticated: true });
 
@@ -111,49 +111,48 @@ class _PasswordResetForm extends Component {
 
     const { classes, fields, handleChange } = this.props;
 
-    return (
-      <Paper square={true} className={classes.root} >
-        <Typography variant="headline">Reset your password</Typography>
-        <form onSubmit={this.handleSubmit}>
-          <TextField
-            name={FieldName.password}
-            id={FieldName.password}
-            label="Password"
-            required={true}
-            type="password"
-            onChange={handleChange}
-            value={fieldValue(fields, FieldName.password)}
-            error={fieldHasError(fields, FieldName.password)}
-            helperText={fieldErrorText(fields, FieldName.password)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            name={FieldName.passwordConfirmation}
-            id={FieldName.passwordConfirmation}
-            label="Password confirmation"
-            required={true}
-            type="password"
-            onChange={handleChange}
-            value={fieldValue(fields, FieldName.passwordConfirmation)}
-            error={fieldHasError(fields, FieldName.passwordConfirmation)}
-            helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
-            fullWidth
-            margin="normal"
-          />
-          {this.state.isLoading && <Spinner />}
-          <Button
-            type="submit"
-            size="medium"
-            variant="contained"
-            color="secondary"
-            className={classes.resetButton}
-            disabled={this.state.isLoading}
-          >
-            Reset Password
-          </Button>
-        </form>
-      </Paper>
+    return (<Paper square={true} className={classes.root} >
+      <Typography variant="headline">Reset your password</Typography>
+      <form onSubmit={this.handleSubmit}>
+        <TextField
+          name={FieldName.password}
+          id={FieldName.password}
+          label="Password"
+          required={true}
+          type="password"
+          onChange={handleChange}
+          value={fieldValue(fields, FieldName.password)}
+          error={fieldHasError(fields, FieldName.password)}
+          helperText={fieldErrorText(fields, FieldName.password)}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          name={FieldName.passwordConfirmation}
+          id={FieldName.passwordConfirmation}
+          label="Password confirmation"
+          required={true}
+          type="password"
+          onChange={handleChange}
+          value={fieldValue(fields, FieldName.passwordConfirmation)}
+          error={fieldHasError(fields, FieldName.passwordConfirmation)}
+          helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
+          fullWidth
+          margin="normal"
+        />
+        {this.state.isLoading && <Spinner />}
+        <Button
+          type="submit"
+          size="medium"
+          variant="contained"
+          color="secondary"
+          className={classes.resetButton}
+          disabled={this.state.isLoading}
+        >
+          Reset Password
+        </Button>
+      </form>
+    </Paper>
     );
   }
 }
@@ -182,3 +181,14 @@ export const PasswordResetForm = withForm(
       _PasswordResetForm)
   )
 );
+
+export const _testExports = {
+  PasswordResetForm: withForm(
+    FieldName,
+    constraints,
+    validateGroupsMap,
+  )(
+    withStyles({})(
+      _PasswordResetForm
+    )),
+};
