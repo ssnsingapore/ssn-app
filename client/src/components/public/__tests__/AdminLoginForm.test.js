@@ -10,11 +10,12 @@ import { _testExports } from '../AdminLoginForm';
 const AdminLoginForm = _testExports.AdminLoginForm;
 describe('AdminLoginForm', () => {
   let component;
+  let mockContext;
 
   describe('render', () => {
     describe('when admin is not logged in', () => {
       beforeEach(() => {
-        const mockContext = {
+        mockContext = {
           ...defaultAppContext,
           isAuthenticated: false,
         };
@@ -51,6 +52,17 @@ describe('AdminLoginForm', () => {
         expect(component.find(Redirect).props().to).toEqual('/admin/dashboard');
       });
 
+      it('redirects to referrer when should shouldRedirect is true', () => {
+        const locationState = {
+          referrerPath: '/somereferrer',
+        };
+        component = shallow(<AdminLoginForm context={mockContext} location={{ state: locationState }} />).dive().dive();
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/somereferrer');
+      });
     });
 
     describe('when admin is logged in', () => {

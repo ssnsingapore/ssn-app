@@ -62,12 +62,25 @@ describe('ProjectOwnerLoginForm', () => {
           expect(dialog.prop('open')).toEqual(true);
         });
       });
-      it('should redirect to project owner dashboard when should redirect is true', () => {
+
+      it('should redirect to project owner dashboard when shouldRedirect is true and there is no referrer', () => {
         component.setState({
           shouldRedirect: true,
         });
 
         expect(component.find(Redirect).props().to).toEqual('/project_owner/dashboard');
+      });
+
+      it('should redirect to referrer when shouldRedirect is true', () => {
+        const locationState = {
+          referrerPath: '/somereferrer',
+        };
+        component = shallow(<TestProjectOwnerLoginForm {...props} location={{ state: locationState }} />).dive();
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/somereferrer');
       });
     });
 
