@@ -152,13 +152,12 @@ async function confirmProjectOwner(req, res) {
       sameSite: true,
     }
   );
-  res.set('cache-control', 'no-store');
+  res.set('cache-control', 'private, no-cache, no-store, must-revalidate');
 
   if (!projectOwner || projectOwner.confirmationToken !== confirmationToken) {
     const message = 'There was an error confirming your account. Please try again!';
     return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=ERROR&message=${encodeURIComponent(message)}`);
   }
-
   if (projectOwner.isConfirmed()) {
     const message = 'Your account has already been confirmed. Please login.';
     return res.redirect(`${config.WEBSITE_BASE_URL}/login#type=INFO&message=${encodeURIComponent(message)}`);
@@ -203,7 +202,7 @@ async function redirectToPasswordResetForm(req, res) {
     res.cookie(...cookieArgs[type]);
   });
 
-  res.set('cache-control', 'no-store');
+  res.set('cache-control', 'private, no-cache, no-store, must-revalidate');
   return res.redirect(redirectUrl);
 }
 
