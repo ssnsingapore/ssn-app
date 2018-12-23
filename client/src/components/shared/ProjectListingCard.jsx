@@ -17,8 +17,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
-import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { ProjectType } from 'components/shared/enums/ProjectType';
 import { capitalizeWords } from 'util/capitalizeWords';
 
 const renderVolunteerRequirements = (project, classes) => {
@@ -76,6 +76,81 @@ const renderRejectionMessage = (project, classes, rejectionMessageSize) => {
   );
 };
 
+const renderFrequencyOrEventDateInfo = (project) => {
+  if (project.projectType === ProjectType.RECURRING) {
+    return (
+      <Typography variant="caption">
+        capitalizeWords(
+          ProjectFrequencyDisplayMapping[project.frequency]
+        )
+      </Typography>
+    );
+  }
+
+  const startDate = moment(project.startDate).format('dddd, Do MMMM YYYY');
+  const endDate = moment(project.endDate).format('dddd, Do MMMM YYYY');
+  const eventDatesString = project.startDate === project.endDate ?
+    startDate : `${startDate} - ${endDate}`;
+
+  return (
+    <Typography variant="caption">
+      {eventDatesString}
+    </Typography >
+  );
+};
+const renderProjectTitle = (project) => (
+  <Typography variant="headline" gutterBottom>
+    {capitalizeWords(project.title)}
+  </Typography>
+);
+const renderProjectOwnerWithAvatar = (project, classes) => (
+  <Typography
+    variant="subheading"
+    color="textSecondary"
+    gutterBottom
+  >
+    <List className={classes.removePadding}>
+      <ListItem className={classes.removePadding}>
+        <Avatar
+          alt="Profile Photo"
+          src={project.projectOwner.profilePhotoUrl}
+          className={classes.smallAvatar}
+        />
+        <ListItemText
+          className={classes.removePadding}
+          primary={project.projectOwner.name}
+        />
+      </ListItem>
+    </List>
+  </Typography>
+);
+
+const renderDateBadge = (project, classes) => {
+  if (project.type !== ProjectType.EVENT) {
+    return null;
+  }
+  return (
+    <Paper elevation={0} className={classes.dateBadge}>
+      <Typography variant="caption">
+        {moment(project.startDate).utc().format('MMM')}
+      </Typography>
+      <Typography variant="title" color="secondary">
+        <strong>
+          {moment(project.startDate).utc().format('DD')}
+        </strong>
+      </Typography>
+    </Paper>
+  );
+};
+
+const renderProjectDescription = (project) => (
+  <Typography variant="caption">
+    {project.description.length <= 320
+      ? project.description
+      : project.description.slice(0, 320) + '...'}
+  </Typography>
+);
+
 const _ProjectListingCard = ({ project, classes }) => {
   const cardContentSize = project.state === ProjectState.REJECTED ? 8 : 12;
   const rejectionMessageSize =
@@ -97,72 +172,17 @@ const _ProjectListingCard = ({ project, classes }) => {
                 <CardContent className={classes.content}>
                   <Grid container>
                     <Grid item xs={11}>
-                      <Typography variant="caption">
-                        {project.projectType === 'RECURRING'
-                          ? 'Recurs ' +
-                            capitalizeWords(
-                              ProjectFrequencyDisplayMapping[project.frequency]
-                            )
-                          : project.startDate === project.endDate
-                            ? moment(project.startDate).utc().format(
-                              'dddd, Do MMMM YYYY'
-                            )
-                            : moment(project.startDate).utc().format(
-                              'dddd, Do MMMM YYYY'
-                            ) +
-                            ' - ' +
-                            moment(project.endDate).utc().format(
-                              'dddd, Do MMMM YYYY'
-                            )}
-                      </Typography>
-
-                      <Typography variant="headline" gutterBottom>
-                        {capitalizeWords(project.title)}
-                      </Typography>
-                      <Typography
-                        variant="subheading"
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        <List className={classes.removePadding}>
-                          <ListItem className={classes.removePadding}>
-                            <Avatar
-                              alt="Profile Photo"
-                              src={project.projectOwner.profilePhotoUrl}
-                              className={classes.smallAvatar}
-                            />
-                            <ListItemText
-                              className={classes.removePadding}
-                              primary={project.projectOwner.name}
-                            />
-                          </ListItem>
-                        </List>
-                      </Typography>
+                      {renderFrequencyOrEventDateInfo(project)}
+                      {renderProjectTitle(project)}
+                      {renderProjectOwnerWithAvatar(project, classes)}
                     </Grid>
                     <Grid item xs={1}>
-                      {project.projectType === 'RECURRING' ? (
-                        ''
-                      ) : (
-                        <Paper elevation={0} className={classes.dateBadge}>
-                          <Typography variant="caption">
-                            {moment(project.startDate).utc().format('MMM')}
-                          </Typography>
-                          <Typography variant="title" color="secondary">
-                            <strong>
-                              {moment(project.startDate).utc().format('DD')}
-                            </strong>
-                          </Typography>
-                        </Paper>
-                      )}
+                      {renderDateBadge(project, classes)}
                     </Grid>
                   </Grid>
                   <Grid container className={classes.subContentContainer}>
                     <Grid item xs={8} className={classes.projectDescription}>
-                      <Typography variant="caption">
-                        {project.description.length <= 320
-                          ? project.description
-                          : project.description.slice(0, 320) + '...'}
-                      </Typography>
+                      {renderProjectDescription(project)}
                     </Grid>
                     <Grid item xs={4}>
                       {renderVolunteerRequirements(project, classes)}
