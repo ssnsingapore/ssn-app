@@ -3,13 +3,14 @@ import moment from 'moment';
 
 import { Spinner } from 'components/shared/Spinner';
 import { AppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
+import { ProjectState } from 'components/shared/enums/ProjectState';
 import { withContext } from 'util/context';
 import { withForm } from 'util/form';
 import { extractErrors, formatErrors } from 'util/errors';
-import { ProjectOwnerProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerProjectForm';
-import { FieldName, constraints } from './ProjectFormFields';
-import { AlertType } from 'components/shared/Alert';
-import { ProjectState } from 'components/shared/enums/ProjectState';
+
+import { ProjectOwnerProjectForm } from './ProjectOwnerProjectForm';
+import { FieldName, constraints, validateGroupsMap } from './ProjectFormFields';
 import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
@@ -17,7 +18,7 @@ import {
   resetAllFields,
   valuesForAllFields,
   setFields,
-} from 'components/project_owner/new_project_form/VolunteerRequirementForm';
+} from './VolunteerRequirementForm';
 
 export const PROJECT_IMAGE_DISPLAY_WIDTH = 640;
 export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
@@ -257,6 +258,6 @@ export class _ProjectOwnerEditProjectForm extends Component {
 }
 
 export const ProjectOwnerEditProjectForm =
-  withForm(FieldName, constraints)(
+  withForm(FieldName, constraints, validateGroupsMap)(
     withContext(AppContext)(_ProjectOwnerEditProjectForm)
   );

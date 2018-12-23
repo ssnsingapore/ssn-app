@@ -38,6 +38,16 @@ const constraints = {
   },
 };
 
+const validateGroupsMap = {
+  fields: {
+    [FieldName.password]: 'password',
+    [FieldName.passwordConfirmation]: 'password',
+  },
+  validateGroups: {
+    password: [FieldName.password, FieldName.passwordConfirmation],
+  },
+};
+
 const PASSWORD_RESET_SUCCESS_MESSAGE = 'You have successully reset your password. Please try logging in.';
 
 class _PasswordResetForm extends Component {
@@ -162,7 +172,11 @@ const styles = theme => ({
   },
 });
 
-export const PasswordResetForm = withForm(FieldName, constraints)(
+export const PasswordResetForm = withForm(
+  FieldName,
+  constraints,
+  validateGroupsMap,
+)(
   withStyles(styles)(
     withContext(AppContext)(
       _PasswordResetForm)
