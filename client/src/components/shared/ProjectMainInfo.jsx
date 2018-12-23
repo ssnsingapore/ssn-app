@@ -138,7 +138,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
             gutterBottom
             className={classes.headline}
           >
-            Project Title (Required)
+              Project Title (Required)
           </Typography>
         )}
         {description ? (
@@ -151,7 +151,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
           })
         ) : (
           <Typography color="error" gutterBottom>
-            Project description (required)
+              Project description (required)
           </Typography>
         )}
         {volunteerSignupUrl ? (
@@ -238,14 +238,12 @@ const renderProjectDetails = (classes, project) => {
         renderRow(
           'Start date',
           moment(startDate)
-            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.EVENT &&
         renderRow(
           'End date',
           moment(endDate)
-            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.RECURRING &&
