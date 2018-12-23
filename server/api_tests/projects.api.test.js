@@ -1,9 +1,12 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from 'app';
+import moment from 'moment';
 
 import { config } from 'config/environment';
-import { Project, ProjectState } from 'models/Project';
+import {
+  Project, ProjectState, ProjectFrequency, ProjectType, IssueAddressed, VolunteerRequirementType, ProjectRegion,
+} from 'models/Project';
 import { ProjectOwner } from 'models/ProjectOwner';
 import {
   createProjectOwner, createProject, saveProjectOwner, saveProject, constructQueryString,
@@ -19,98 +22,389 @@ afterAll(async () => {
 
 describe('Public routes', () => {
   describe('GET /projects', () => {
-    beforeAll(async (done) => {
-      const projectOwner = await saveProjectOwner();
-      const olderProjectAttributes = {
-        title: 'Created earlier',
-      };
-      const newerProjectAttributes = {
-        title: 'Created later',
-      };
-      const earlierUpdatedProjectAttributes = {
-        title: 'Updated earlier',
-      };
-      const laterUpdatedProjectAttributes = {
-        title: 'Updated later',
-      };
-      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...olderProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...newerProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, ...earlierUpdatedProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, ...laterUpdatedProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE, ...earlierUpdatedProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE, ...laterUpdatedProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.REJECTED, ...earlierUpdatedProjectAttributes });
-      await saveProject(projectOwner, { state: ProjectState.REJECTED, ...laterUpdatedProjectAttributes });
-      done();
-    });
+    describe('filtering', () => {
+      describe('filtering by projectState', () => {
+        beforeAll(async (done) => {
+          const projectOwner = await saveProjectOwner();
+          const olderProjectAttributes = {
+            title: 'Created earlier',
+          };
+          const newerProjectAttributes = {
+            title: 'Created later',
+          };
+          const earlierUpdatedProjectAttributes = {
+            title: 'Updated earlier',
+          };
+          const laterUpdatedProjectAttributes = {
+            title: 'Updated later',
+          };
+          await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...olderProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL, ...newerProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, ...earlierUpdatedProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, ...laterUpdatedProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE, ...earlierUpdatedProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE, ...laterUpdatedProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.REJECTED, ...earlierUpdatedProjectAttributes });
+          await saveProject(projectOwner, { state: ProjectState.REJECTED, ...laterUpdatedProjectAttributes });
+          done();
+        });
 
-    afterAll(async (done) => {
-      await ProjectOwner.deleteMany();
-      await Project.deleteMany();
-      done();
-    });
+        afterAll(async () => {
+          await ProjectOwner.deleteMany();
+          await Project.deleteMany();
+        });
 
-    describe('when projectState is not specified', () => {
-      it('returns 200 status code and APPROVED_ACTIVE projects sorted by updatedAt descending', async () => {
-        const response = await request(app).get('/api/v1/projects');
+        describe('when projectState is not specified', () => {
+          it('returns 200 status code and APPROVED_ACTIVE projects sorted by updatedAt descending', async () => {
+            const response = await request(app).get('/api/v1/projects');
 
-        expect(response.status).toEqual(200);
-        expect(response.body.projects.length).toEqual(2);
-        expect(response.body.projects[0].state).toEqual(ProjectState.APPROVED_ACTIVE);
-        expect(response.body.projects[0].title).toEqual('Updated later');
-        expect(response.body.projects[1].state).toEqual(ProjectState.APPROVED_ACTIVE);
-        expect(response.body.projects[1].title).toEqual('Updated earlier');
+            expect(response.status).toEqual(200);
+            expect(response.body.projects.length).toEqual(2);
+            expect(response.body.projects[0].state).toEqual(ProjectState.APPROVED_ACTIVE);
+            expect(response.body.projects[0].title).toEqual('Updated later');
+            expect(response.body.projects[1].state).toEqual(ProjectState.APPROVED_ACTIVE);
+            expect(response.body.projects[1].title).toEqual('Updated earlier');
+          });
+
+          it('returns as many projects as the pageSize', async () => {
+            const response = await request(app).get('/api/v1/projects?pageSize=1');
+
+            expect(response.body.projects.length).toEqual(1);
+          });
+        });
+
+        describe('when project state is PENDING_APPROVAL', () => {
+          it('returns 200 status code and PENDING_APPROVAL projects sorted by createdAt ascending', async () => {
+            const response = await request(app).get('/api/v1/projects?projectState=PENDING_APPROVAL');
+
+            expect(response.status).toEqual(200);
+            expect(response.body.projects.length).toEqual(2);
+            expect(response.body.projects[0].state).toEqual(ProjectState.PENDING_APPROVAL);
+            expect(response.body.projects[0].title).toEqual('Created earlier');
+            expect(response.body.projects[1].state).toEqual(ProjectState.PENDING_APPROVAL);
+            expect(response.body.projects[1].title).toEqual('Created later');
+          });
+        });
+
+        describe('when project state is APPROVED_INACTIVE', () => {
+          it('returns 200 status code and APPROVED_INACTIVE projects sorted by updatedAt descending', async () => {
+            const response = await request(app).get('/api/v1/projects?projectState=APPROVED_INACTIVE');
+
+            expect(response.status).toEqual(200);
+            expect(response.body.projects.length).toEqual(2);
+            expect(response.body.projects[0].state).toEqual(ProjectState.APPROVED_INACTIVE);
+            expect(response.body.projects[0].title).toEqual('Updated later');
+            expect(response.body.projects[1].state).toEqual(ProjectState.APPROVED_INACTIVE);
+            expect(response.body.projects[1].title).toEqual('Updated earlier');
+          });
+        });
+
+        describe('when project state is REJECTED', () => {
+          it('returns 200 status code and REJECTED projects sorted by updatedAt descending', async () => {
+            const response = await request(app).get('/api/v1/projects?projectState=REJECTED');
+
+            expect(response.status).toEqual(200);
+            expect(response.body.projects.length).toEqual(2);
+            expect(response.body.projects[0].state).toEqual(ProjectState.REJECTED);
+            expect(response.body.projects[0].title).toEqual('Updated later');
+            expect(response.body.projects[1].state).toEqual(ProjectState.REJECTED);
+            expect(response.body.projects[1].title).toEqual('Updated earlier');
+          });
+        });
       });
 
-      it('returns as many projects as the pageSize', async () => {
-        const response = await request(app).get('/api/v1/projects?pageSize=1');
+      describe('filtering by issue addressed', () => {
+        beforeAll(async () => {
+          const projectOwner = await saveProjectOwner();
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              issuesAddressed: [
+                IssueAddressed.AIR_QUALITY, IssueAddressed.CONSERVATION,
+              ],
+              title: 'Air Quality, Conservation 1',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              issuesAddressed: [
+                IssueAddressed.CLIMATE, IssueAddressed.CONSERVATION,
+              ],
+              title: 'Climate, Conservation 2',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              issuesAddressed: [
+                IssueAddressed.CLIMATE, IssueAddressed.ENERGY,
+              ],
+              title: 'Climate, Energy 3',
+            }
+          );
+        });
 
-        expect(response.body.projects.length).toEqual(1);
+        afterAll(async () => {
+          await ProjectOwner.deleteMany();
+          await Project.deleteMany();
+        });
+
+        it('returns 200 status code and projects which have that issue in issuesAddressed', async () => {
+          let response = await request(app).get('/api/v1/projects?issueAddressed=CONSERVATION');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(2);
+          expect(response.body.projects[0].title).toEqual('Climate, Conservation 2');
+          expect(response.body.projects[1].title).toEqual('Air Quality, Conservation 1');
+
+          response = await request(app).get('/api/v1/projects?issueAddressed=CLIMATE');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(2);
+          expect(response.body.projects[0].title).toEqual('Climate, Energy 3');
+          expect(response.body.projects[1].title).toEqual('Climate, Conservation 2');
+        });
+      });
+
+      describe('filtering by month', () => {
+        beforeAll(async () => {
+          const projectOwner = await saveProjectOwner();
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              projectType: ProjectType.EVENT,
+              startDate: moment('2018-12-12').toDate(),
+              endDate: moment('2018-12-12').toDate(),
+              title: 'December Event',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              projectType: ProjectType.EVENT,
+              startDate: moment('2018-11-12').toDate(),
+              endDate: moment('2018-11-12').toDate(),
+              title: 'November Event',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              projectType: ProjectType.RECURRING,
+              frequency: ProjectFrequency.EVERY_DAY,
+              title: 'Recurring under a month',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              projectType: ProjectType.RECURRING,
+              frequency: ProjectFrequency.ONCE_A_YEAR,
+              title: 'Recurring above a month',
+            }
+          );
+        });
+
+        afterAll(async () => {
+          await ProjectOwner.deleteMany();
+          await Project.deleteMany();
+        });
+
+        it('returns 200 status code and projects of type event which occur in that month or of type recurring that recur with a frequency less than a month', async () => {
+          let response = await request(app).get('/api/v1/projects?month=DECEMBER');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(2);
+          expect(response.body.projects[0].title).toEqual('Recurring under a month');
+          expect(response.body.projects[1].title).toEqual('December Event');
+
+          response = await request(app).get('/api/v1/projects?month=NOVEMBER');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(2);
+          expect(response.body.projects[0].title).toEqual('Recurring under a month');
+          expect(response.body.projects[1].title).toEqual('November Event');
+        });
+      });
+
+      describe('filtering by volunteer requirement type', () => {
+        beforeAll(async () => {
+          const projectOwner = await saveProjectOwner();
+          const interactionRequirement = {
+            type: VolunteerRequirementType.INTERACTION,
+            commitmentLevel: 'Once a week',
+            number: 5,
+          };
+          const contentCreationRequirement = {
+            type: VolunteerRequirementType.CONTENT_CREATION,
+            commitmentLevel: 'Once a week',
+            number: 5,
+          };
+          const eventPlanningRequirement = {
+            type: VolunteerRequirementType.EVENT_PLANNING,
+            commitmentLevel: 'Once a week',
+            number: 5,
+          };
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              volunteerRequirements: [
+                interactionRequirement,
+                contentCreationRequirement,
+              ],
+              title: 'Interaction, Content Creation',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              volunteerRequirements: [
+                contentCreationRequirement,
+                eventPlanningRequirement,
+              ],
+              title: 'Content Creation, Event Planning',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              volunteerRequirements: [
+                eventPlanningRequirement,
+                interactionRequirement,
+              ],
+              title: 'Event Planning, Interaction',
+            }
+          );
+        });
+
+        afterAll(async () => {
+          await ProjectOwner.deleteMany();
+          await Project.deleteMany();
+        });
+
+        it('returns 200 status code and projects which have that volunteer requirement type', async () => {
+          let response = await request(app).get('/api/v1/projects?volunteerRequirementType=INTERACTION');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(2);
+          expect(response.body.projects[0].title).toEqual('Event Planning, Interaction');
+          expect(response.body.projects[1].title).toEqual('Interaction, Content Creation');
+
+          response = await request(app).get('/api/v1/projects?volunteerRequirementType=CONTENT_CREATION');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(2);
+          expect(response.body.projects[0].title).toEqual('Content Creation, Event Planning');
+          expect(response.body.projects[1].title).toEqual('Interaction, Content Creation');
+        });
+      });
+
+      describe('filtering by region', () => {
+        beforeAll(async () => {
+          const projectOwner = await saveProjectOwner();
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              region: ProjectRegion.NORTH,
+              title: 'North',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              region: ProjectRegion.SOUTH,
+              title: 'South',
+            }
+          );
+        });
+
+        afterAll(async () => {
+          await ProjectOwner.deleteMany();
+          await Project.deleteMany();
+        });
+
+
+        it('returns 200 status code and projects occuring in that region', async () => {
+          let response = await request(app).get('/api/v1/projects?projectRegion=NORTH');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(1);
+          expect(response.body.projects[0].title).toEqual('North');
+
+          response = await request(app).get('/api/v1/projects?projectRegion=SOUTH');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(1);
+          expect(response.body.projects[0].title).toEqual('South');
+        });
+      });
+
+      describe('filtering by multiple criteria', () => {
+        beforeAll(async () => {
+          const projectOwner = await saveProjectOwner();
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              issuesAddressed: [IssueAddressed.AIR_QUALITY],
+              projectType: ProjectType.RECURRING,
+              frequency: ProjectFrequency.EVERY_DAY,
+              volunteerRequirements: [
+                {
+                  type: VolunteerRequirementType.INTERACTION,
+                  commitmentLevel: 'some level',
+                  number: 1,
+                },
+              ],
+              region: ProjectRegion.NORTH,
+              title: 'Returned',
+            }
+          );
+          await saveProject(
+            projectOwner,
+            {
+              state: ProjectState.APPROVED_ACTIVE,
+              region: ProjectRegion.NORTH,
+              title: 'Not returned',
+            }
+          );
+        });
+
+        afterAll(async () => {
+          await ProjectOwner.deleteMany();
+          await Project.deleteMany();
+        });
+
+        fit('returns 200 status code and projects which satisfy criteria', async () => {
+          const response = await request(app).get('/api/v1/projects?issueAddressed=AIR_QUALITY&month=JANUARY&volunteerRequirementType=INTERACTION&projectRegion=NORTH');
+
+          expect(response.status).toEqual(200);
+          expect(response.body.projects.length).toEqual(1);
+          expect(response.body.projects[0].title).toEqual('Returned');
+        });
       });
     });
 
-    describe('when project state is PENDING_APPROVAL', () => {
-      it('returns 200 status code and PENDING_APPROVAL projects sorted by createdAt ascending', async () => {
-        const response = await request(app).get('/api/v1/projects?projectState=PENDING_APPROVAL');
+    describe('pagination', () => {
 
-        expect(response.status).toEqual(200);
-        expect(response.body.projects.length).toEqual(2);
-        expect(response.body.projects[0].state).toEqual(ProjectState.PENDING_APPROVAL);
-        expect(response.body.projects[0].title).toEqual('Created earlier');
-        expect(response.body.projects[1].state).toEqual(ProjectState.PENDING_APPROVAL);
-        expect(response.body.projects[1].title).toEqual('Created later');
-      });
-    });
-
-    describe('when project state is APPROVED_INACTIVE', () => {
-      it('returns 200 status code and APPROVED_INACTIVE projects sorted by updatedAt descending', async () => {
-        const response = await request(app).get('/api/v1/projects?projectState=APPROVED_INACTIVE');
-
-        expect(response.status).toEqual(200);
-        expect(response.body.projects.length).toEqual(2);
-        expect(response.body.projects[0].state).toEqual(ProjectState.APPROVED_INACTIVE);
-        expect(response.body.projects[0].title).toEqual('Updated later');
-        expect(response.body.projects[1].state).toEqual(ProjectState.APPROVED_INACTIVE);
-        expect(response.body.projects[1].title).toEqual('Updated earlier');
-      });
-    });
-
-    describe('when project state is REJECTED', () => {
-      it('returns 200 status code and REJECTED projects sorted by updatedAt descending', async () => {
-        const response = await request(app).get('/api/v1/projects?projectState=REJECTED');
-
-        expect(response.status).toEqual(200);
-        expect(response.body.projects.length).toEqual(2);
-        expect(response.body.projects[0].state).toEqual(ProjectState.REJECTED);
-        expect(response.body.projects[0].title).toEqual('Updated later');
-        expect(response.body.projects[1].state).toEqual(ProjectState.REJECTED);
-        expect(response.body.projects[1].title).toEqual('Updated earlier');
-      });
     });
   });
 
   describe('GET /project_counts', () => {
-    beforeAll(async (done) => {
+    beforeAll(async () => {
       const projectOwner = await saveProjectOwner();
       await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL });
       await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE });
@@ -122,7 +416,6 @@ describe('Public routes', () => {
       await saveProject(projectOwner, { state: ProjectState.REJECTED });
       await saveProject(projectOwner, { state: ProjectState.REJECTED });
       await saveProject(projectOwner, { state: ProjectState.REJECTED });
-      done();
     });
 
     afterAll(async (done) => {
@@ -140,6 +433,24 @@ describe('Public routes', () => {
         [ProjectState.APPROVED_ACTIVE]: 2,
         [ProjectState.APPROVED_INACTIVE]: 3,
         [ProjectState.REJECTED]: 4,
+      });
+    });
+
+    describe('filtering', () => {
+      it('returns 200 status code and count of projects which have that issue in issuesAddressed', () => {
+
+      });
+
+      it('returns 200 status code and count of projects of type event which occur in that month or of type recurring that recur with a frequency less than a month', () => {
+
+      });
+
+      it('returns 200 status code and count of projects which have that volunteer requirement type', () => {
+
+      });
+
+      it('returns 200 status code and count of projects occuring in that region', () => {
+
       });
     });
   });

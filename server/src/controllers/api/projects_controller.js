@@ -63,7 +63,9 @@ function constructFilterParams(queryParams, projectState) {
     volunteerRequirementType: 'volunteerRequirements.type',
   };
 
-  const filterParams = Object.keys(paramMap).filter(item => queryParams[item] !== undefined).map(key => ({ [paramMap[key]]: queryParams[key] }));
+  const filterParams = Object.keys(paramMap)
+    .filter(item => queryParams[item] !== undefined)
+    .map(key => ({ [paramMap[key]]: queryParams[key] }));
 
   if (queryParams.month) {
     filterParams.push({
