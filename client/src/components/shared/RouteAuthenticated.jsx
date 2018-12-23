@@ -15,10 +15,9 @@ const _RouteAuthenticated = ({
   authorize = [],
   context,
 }) => {
-  const { isAuthenticated } = context;
   const { authenticator } = context.utils;
 
-  if (!isAuthenticated) {
+  if (!authenticator.isAuthenticated()) {
     return <Redirect to={{
       pathname: redirectTo || '/login',
       state: { referrerPath: window.location.pathname },
@@ -26,8 +25,7 @@ const _RouteAuthenticated = ({
   }
 
   if (authorize.includes(Role.ALL)) {
-    authorize = [...authorize, Object.keys(Role)];
-    authorize = [Role.ALL, Role.USER, Role.ADMIN];
+    authorize = [...authorize, ...Object.values(Role)];
   }
 
   if (!authorize.includes(authenticator.getCurrentUser().role)) {
@@ -39,3 +37,7 @@ const _RouteAuthenticated = ({
 };
 
 export const RouteAuthenticated = withContext(AppContext)(_RouteAuthenticated);
+
+export const _testExports = {
+  RouteAuthenticated: _RouteAuthenticated,
+};
