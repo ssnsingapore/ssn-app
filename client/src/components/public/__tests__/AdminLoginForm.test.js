@@ -1,9 +1,11 @@
-import { Button, TextField, Typography } from '@material-ui/core';
-import { defaultAppContext } from 'components/main/AppContext';
-import { AlertType } from 'components/shared/Alert';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { Role } from '../../../../../server/src/models/Role';
+import { Button, TextField, Typography } from '@material-ui/core';
+
+import { defaultAppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
+import { Role } from 'components/shared/enums/Role';
+
 import { _testExports } from '../AdminLoginForm';
 
 
@@ -159,7 +161,7 @@ describe('AdminLoginForm', () => {
         adminLoginComponent.instance().handleSubmit(event);
       });
 
-      it('calls authenticator to login admin when there are no validation errors', () => {
+      fit('calls authenticator to login admin when there are no validation errors', () => {
         expect(component.props().context.utils.authenticator.loginAdmin).toHaveBeenCalledWith('email@email.com', 'test123');
       });
 
