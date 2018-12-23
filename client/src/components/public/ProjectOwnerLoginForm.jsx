@@ -203,7 +203,7 @@ class _ProjectOwnerLoginForm extends React.Component {
           variant="contained"
           color="primary"
           component={Link}
-          to={currentUser.role === Role.PROJECT_OWNER ? '/project_owner/dashboard' : '/admin/dashboard'}
+          to="/project_owner/dashboard"
           className={classes.button}
         >
           Go to Dashboard
@@ -316,13 +316,13 @@ class _ProjectOwnerLoginForm extends React.Component {
   }
 
   render() {
-    const { isAuthenticated } = this.props.context;
+    const { authenticator } = this.props.context.utils;
 
     if (this.state.shouldRedirect) {
       return <Redirect to={this.getRedirectReferrer()} />;
     }
 
-    return isAuthenticated ? this.renderLoggedIn() : this.renderLoginForm();
+    return authenticator.isAuthenticated() ? this.renderLoggedIn() : this.renderLoginForm();
   }
 
 }
