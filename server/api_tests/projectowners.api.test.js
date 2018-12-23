@@ -70,7 +70,7 @@ describe('Password reset', () => {
         const response = await request(app).get(`/api/v1/project_owners/${projectOwner.id}/password/reset/invalidToken`);
 
         expect(response.status).toEqual(302);
-        expect(response.header['cache-control']).toEqual('no-store');
+        expect(response.header['cache-control']).toEqual('private, no-cache, no-store, must-revalidate');
         expect(response.header.location).toEqual(
           expect.stringContaining('/login')
         );
@@ -85,7 +85,7 @@ describe('Password reset', () => {
         const response = await request(app).get(`/api/v1/project_owners/${projectOwner.id}/password/reset/${projectOwner.passwordResetToken}`);
 
         expect(response.status).toEqual(302);
-        expect(response.header['cache-control']).toEqual('no-store');
+        expect(response.header['cache-control']).toEqual('private, no-cache, no-store, must-revalidate');
         expect(response.header.location).toEqual(
           expect.stringContaining('/passwordReset')
         );
