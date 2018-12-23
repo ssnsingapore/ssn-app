@@ -105,7 +105,7 @@ async function getProjects(req, res) {
     {
       $project: {
         ...constructProjectInclusionField(),
-        month: { $month: '$startDate' },
+        month: { $month: { date: '$startDate', timezone: '+08:00' } },
       },
     },
     {
@@ -142,7 +142,7 @@ async function getProjectCounts(req, res) {
       {
         $project: {
           ...constructProjectInclusionField(),
-          month: { $month: '$startDate' },
+          month: { $month: { date: '$startDate', timezone: '+08:00' } },
         },
       },
       {
