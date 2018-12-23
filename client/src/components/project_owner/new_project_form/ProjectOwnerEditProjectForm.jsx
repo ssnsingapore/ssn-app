@@ -11,6 +11,7 @@ import { extractErrors, formatErrors } from 'util/errors';
 
 import { ProjectOwnerProjectForm } from './ProjectOwnerProjectForm';
 import { FieldName, constraints, validateGroupsMap } from './ProjectFormFields';
+import { PROJECT_IMAGE_DISPLAY_WIDTH, PROJECT_IMAGE_DISPLAY_HEIGHT } from './Constants';
 import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
@@ -19,9 +20,6 @@ import {
   valuesForAllFields,
   setFields,
 } from './VolunteerRequirementForm';
-
-export const PROJECT_IMAGE_DISPLAY_WIDTH = 640;
-export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;

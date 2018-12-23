@@ -8,6 +8,7 @@ import { extractErrors, formatErrors } from 'util/errors';
 
 import { ProjectOwnerProjectForm } from './ProjectOwnerProjectForm';
 import { FieldName, constraints, validateGroupsMap } from './ProjectFormFields';
+import { PROJECT_IMAGE_DISPLAY_WIDTH, PROJECT_IMAGE_DISPLAY_HEIGHT } from './Constants';
 import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
@@ -18,9 +19,6 @@ import {
 
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
-
-export const PROJECT_IMAGE_DISPLAY_WIDTH = 640;
-export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
