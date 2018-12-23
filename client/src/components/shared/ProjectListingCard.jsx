@@ -126,9 +126,11 @@ const renderProjectOwnerWithAvatar = (project, classes) => (
 );
 
 const renderDateBadge = (project, classes) => {
-  if (project.type !== ProjectType.EVENT) {
+  console.log(project);
+  if (project.projectType !== ProjectType.EVENT) {
     return null;
   }
+
   return (
     <Paper elevation={0} className={classes.dateBadge}>
       <Typography variant="caption">
