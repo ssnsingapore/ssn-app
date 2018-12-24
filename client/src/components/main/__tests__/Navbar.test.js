@@ -143,11 +143,11 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to home page on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/');
       });
 
       it('should render a button to view projects that links to projects page', () => {
-        expect(component.find(Button).get(1).props.to).toEqual('/projects');
+        expect(component.find('[data-testid="public-nav-button"]').props().to).toEqual('/projects');
       });
 
       it('should not render avatar dropdown menu when no one is logged in', () => {
@@ -171,11 +171,11 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to home page on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/');
       });
 
       it('should render a button to view project owners', () => {
-        expect(component.find(Button).get(1).props.to).toEqual('/project_owners');
+        expect(component.find('[data-testid="public-nav-button"]').props().to).toEqual('/project_owners');
       });
 
       it('should not render avatar dropdown menu when no one is logged in', () => {
@@ -206,8 +206,10 @@ describe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
+        component.find('[data-testid="dropdown-button"]').props().onClick({ currentTarget: {} });
         await component.find(MenuItem).at(2).simulate('click');
 
+        expect(component.state().anchorEl).toBeNull();
         expect(mockContext.utils.authenticator.logoutProjectOwner).toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).not.toHaveBeenCalled();
       });
@@ -233,8 +235,10 @@ describe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
+        component.find('[data-testid="dropdown-button"]').props().onClick({ currentTarget: {} });
         await component.find(MenuItem).at(1).simulate('click');
 
+        expect(component.state().anchorEl).toBeNull();
         expect(mockContext.utils.authenticator.logoutProjectOwner).not.toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).toHaveBeenCalled();
       });

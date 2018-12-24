@@ -105,6 +105,7 @@ class _NavBar extends Component {
       return (
         <React.Fragment>
           <Button
+            data-testid="public-nav-button"
             variant="flat"
             component={Link}
             to={isProjectPath ? '/project_owners' : '/projects'}
@@ -122,6 +123,7 @@ class _NavBar extends Component {
     return currentUser && (
       <React.Fragment>
         <Button
+          data-testid="dropdown-button"
           aria-owns={this.state.anchorEl ? 'simple-menu' : null}
           aria-haspopup="true"
           onClick={this.handleClick}
@@ -178,7 +180,12 @@ class _NavBar extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.leftNavBar}>
-        <Button component={Link} to={this.getLink()} disabled={this.state.isLoading} >
+        <Button
+          data-testid="logo-button"
+          component={Link}
+          to={this.getLink()}
+          disabled={this.state.isLoading}
+        >
           <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
         </Button>
         {this.renderNavbarText(this.props.location.pathname)}
