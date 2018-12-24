@@ -57,7 +57,12 @@ class _NavBar extends Component {
     const isProjectOwnerPath = currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner/');
     const isAdminPath = currentUser.role === Role.ADMIN && pathname.includes('/admin/');
     return (isProjectOwnerPath || isAdminPath) && (
-      <Typography variant="body2" color="inherit" style={{ paddingLeft: '15px' }}>
+      <Typography
+        data-testid="navbar-text"
+        variant="body2"
+        color="inherit"
+        style={{ paddingLeft: '15px' }}
+      >
         {NavBarDisplayMapping[currentUser.role]}
       </Typography>
     );

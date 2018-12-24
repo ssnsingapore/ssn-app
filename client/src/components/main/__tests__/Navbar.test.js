@@ -52,13 +52,11 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to project owner dashboard on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/project_owner/dashboard');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/project_owner/dashboard');
       });
 
       it('should render PROJECT OWNER', () => {
-        expect(component.find(Typography).html()).toEqual(
-          expect.stringContaining('PROJECT OWNER')
-        );
+        expect(component.find('[data-testid="navbar-text"]').props().children).toEqual('PROJECT OWNER');
       });
 
       describe('avatar dropdown', () => {
@@ -105,12 +103,12 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to admin dashboard on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/admin/dashboard');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/admin/dashboard');
       });
 
       it('should render SSN ADMIN when admin is logged in', () => {
-        expect(component.find(Typography).html()).toEqual(
-          expect.stringContaining('SSN ADMIN')
+        expect(component.find('[data-testid="navbar-text"]').props().children).toEqual(
+          'SSN ADMIN'
         );
       });
 
@@ -118,7 +116,7 @@ describe('Navbar', () => {
 
         it('should render avatar with dropdown and logout button', () => {
           expect(component.find(Avatar).exists()).toBeTruthy();
-          expect(component.find(Button).at(1).html()).toEqual(
+          expect(component.find('[data-testid="dropdown-button"]').html()).toEqual(
             expect.stringContaining('admin@email.com')
           );
 
