@@ -16,6 +16,10 @@ import { authMiddleware } from 'util/auth';
 
 export const projectOwnersRouter = express.Router();
 
+// =============================================================================
+// Public routes
+// =============================================================================
+
 projectOwnersRouter.get('/project_owners', asyncWrap(getProjectOwners));
 async function getProjectOwners(req, res) {
   const page = Number(req.query.page) || 1;
@@ -26,6 +30,7 @@ async function getProjectOwners(req, res) {
   };
   const query = {
     confirmedAt: { $ne: null },
+
   };
   const results = await ProjectOwner.paginate(query, {
     page, limit, customLabels, sort: { name: 1 },
@@ -39,6 +44,10 @@ async function getProjectOwner(req, res) {
   const projectOwner = await ProjectOwner.findById(id);
   return res.status(200).json({ projectOwner });
 }
+
+// =============================================================================
+// Login/Logout
+// =============================================================================
 
 projectOwnersRouter.post(
   '/project_owners/login',
@@ -84,8 +93,13 @@ async function logout(req, res) {
   return res.status(204).end();
 }
 
+// =============================================================================
+// Project Owner Routes
+// =============================================================================
+
 const upload = multer();
 
+// TODO: Rename and make authenticated route
 projectOwnersRouter.put('/project_owners/:id',
   upload.single('profilePhoto'),
   asyncWrap(updateProjectOwner));

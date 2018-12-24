@@ -2,7 +2,7 @@ import app from 'app';
 import { ProjectOwner } from 'models/ProjectOwner';
 import mongoose from 'mongoose';
 import request from 'supertest';
-import { saveProjectOwner } from 'util/testHelper';
+import { saveProjectOwner, createProjectOwner } from 'util/testHelper';
 
 
 beforeAll(async () => {
@@ -11,6 +11,79 @@ beforeAll(async () => {
 
 afterAll(async () => {
   mongoose.disconnect();
+});
+
+describe('Public routes', () => {
+  const emails = [
+    'test1@test.com',
+    'test2@test.com',
+    'test3@test.com',
+    'test4@test.com',
+    'test5@test.com',
+    'test6@test.com',
+    'test7@test.com',
+    'test8@test.com',
+    'test9@test.com',
+    'test10@test.com',
+    'test11@test.com',
+    'test12@test.com',
+    'test13@test.com',
+    'test14@test.com',
+    'test15@test.com',
+    'test16@test.com',
+    'test17@test.com',
+    'test18@test.com',
+    'test19@test.com',
+    'test20@test.com',
+  ];
+
+  describe('GET /project_owners', () => {
+    beforeAll(async () => {
+      await Promise.all(emails.map(async (email, index) => saveProjectOwner({ email, name: `${String.fromCharCode(index)} project owner` })));
+    });
+
+    afterAll(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    it('should fetch the first 20 project owners by default, sorted by name', async () => {
+      const response = await request(app).get('/api/v1/project_owners');
+
+      expect(response.status).toEqual(200);
+      expect(response.body.projectOwners.length).toEqual(20);
+      expect(response.body.projectOwners[0].email).toEqual('test1@test.com');
+      expect(response.body.projectOwners[19].email).toEqual('test20@test.com');
+    });
+
+    it('should fetch the number of project owners specified by pageSize by the given page', async () => {
+      const response = await request(app).get('/api/v1/project_owners?pageSize=5&page=2');
+
+      expect(response.status).toEqual(200);
+      expect(response.body.projectOwners.length).toEqual(5);
+      expect(response.body.projectOwners[0].email).toEqual('test6@test.com');
+      expect(response.body.projectOwners[4].email).toEqual('test10@test.com');
+    });
+  });
+
+  describe('GET /project_owners/:id', () => {
+
+  });
+});
+
+describe('Login/Logout', () => {
+  describe('POST /project_owners/login', () => {
+
+  });
+
+  describe('DELETE /project_owners/logout', () => {
+
+  });
+});
+
+describe('Project Owner routes', () => {
+  describe('PUT /project_owner/profile', () => {
+
+  });
 });
 
 describe('Password reset', () => {
