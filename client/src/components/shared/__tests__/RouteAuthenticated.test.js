@@ -11,7 +11,7 @@ const DummyComponent = () => (
   <p>Dummy</p>
 );
 
-const renderWithRoute = (props = {}) => {
+const shallowWithRoute = (props = {}) => {
   return shallow(
     <RouteAuthenticated path="/somepath" component={DummyComponent} {...props} />
   );
@@ -32,7 +32,7 @@ describe('RouteAuthenticated', () => {
         isAuthenticated: () => false,
         getCurrentUser: () => null,
       };
-      component = renderWithRoute({ context: mockContext });
+      component = shallowWithRoute({ context: mockContext });
     });
 
     it('should render Redirect to login page by default', () => {
@@ -44,7 +44,7 @@ describe('RouteAuthenticated', () => {
     });
 
     it('should render Redirect to provided redirectTo', () => {
-      component = renderWithRoute({ context: mockContext, redirectTo: '/anotherpath' });
+      component = shallowWithRoute({ context: mockContext, redirectTo: '/anotherpath' });
 
       expect(component.find(Redirect).props().to).toEqual(
         expect.objectContaining({
@@ -80,7 +80,7 @@ describe('RouteAuthenticated', () => {
           }),
         };
 
-        component = renderWithRoute({ context: mockContext, authorize: [Role.ALL] });
+        component = shallowWithRoute({ context: mockContext, authorize: [Role.ALL] });
         expect(component.find(Route).exists()).toEqual(true);
       });
     });
@@ -95,7 +95,7 @@ describe('RouteAuthenticated', () => {
           }),
         };
 
-        component = renderWithRoute({ context: mockContext, authorize: [Role.ADMIN] });
+        component = shallowWithRoute({ context: mockContext, authorize: [Role.ADMIN] });
         expect(component.find(Redirect).props().to).toEqual('/unauthorized');
       });
     });
@@ -110,7 +110,7 @@ describe('RouteAuthenticated', () => {
           }),
         };
 
-        component = renderWithRoute({ context: mockContext, authorize: [Role.PROJECT_OWNER] });
+        component = shallowWithRoute({ context: mockContext, authorize: [Role.PROJECT_OWNER] });
         expect(component.find(Redirect).props().to).toEqual('/unauthorized');
       });
 
