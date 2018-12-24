@@ -19,11 +19,12 @@ import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/displa
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectType } from 'components/shared/enums/ProjectType';
+import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { capitalizeWords } from 'util/capitalizeWords';
 
 const renderVolunteerRequirements = (project, classes) => {
   return (
-    <Grid style={{ marginBottom: '10px' }}>
+    <Grid style={{ marginBottom: '10px' }} data-testid="volunteer-requirements">
       <Typography variant="body1">We need volunteers for:</Typography>
       {project.volunteerRequirements.length !== 0 ? (
         project.volunteerRequirements.map(requirement => {
@@ -36,7 +37,7 @@ const renderVolunteerRequirements = (project, classes) => {
           );
         })
       ) : (
-        <Typography variant="body1">-</Typography>
+        <Typography variant="body1" data-testid="no-volunteer-requirements">-</Typography>
       )}
     </Grid>
   );
@@ -44,7 +45,7 @@ const renderVolunteerRequirements = (project, classes) => {
 
 const renderIssuesAddressed = (project, classes) => {
   return (
-    <Grid style={{ marginBottom: '10px' }}>
+    <Grid style={{ marginBottom: '10px' }} data-testid="issues-addressed">
       <Typography variant="body1">Issues addressed:</Typography>
       {project.issuesAddressed.length !== 0 ? (
         project.issuesAddressed.map(issueAddressed => {
@@ -58,7 +59,7 @@ const renderIssuesAddressed = (project, classes) => {
           );
         })
       ) : (
-        <Typography variant="body1">-</Typography>
+        <Typography variant="body1" data-testid="no-issues-addressed">-</Typography>
       )}
     </Grid>
   );
@@ -79,27 +80,25 @@ const renderRejectionMessage = (project, classes, rejectionMessageSize) => {
 const renderFrequencyOrEventDateInfo = (project) => {
   if (project.projectType === ProjectType.RECURRING) {
     return (
-      <Typography variant="caption">
-        capitalizeWords(
-          ProjectFrequencyDisplayMapping[project.frequency]
-        )
+      <Typography variant="caption" data-testid="frequency">
+        Recurs {ProjectFrequencyDisplayMapping[project.frequency].toLowerCase()}
       </Typography>
     );
   }
 
   const startDate = moment(project.startDate).format('dddd, Do MMMM YYYY');
   const endDate = moment(project.endDate).format('dddd, Do MMMM YYYY');
-  const eventDatesString = project.startDate === project.endDate ?
+  const eventDatesString = startDate === endDate ?
     startDate : `${startDate} - ${endDate}`;
 
   return (
-    <Typography variant="caption">
+    <Typography variant="caption" data-testid="event-dates">
       {eventDatesString}
     </Typography >
   );
 };
 const renderProjectTitle = (project) => (
-  <Typography variant="headline" gutterBottom>
+  <Typography variant="headline" gutterBottom data-testid="title">
     {capitalizeWords(project.title)}
   </Typography>
 );
@@ -115,10 +114,12 @@ const renderProjectOwnerWithAvatar = (project, classes) => (
           alt="Profile Photo"
           src={project.projectOwner.profilePhotoUrl}
           className={classes.smallAvatar}
+          data-testid="project-owner-avatar"
         />
         <ListItemText
           className={classes.removePadding}
           primary={project.projectOwner.name}
+          data-testid="project-owner-name"
         />
       </ListItem>
     </List>
@@ -126,19 +127,18 @@ const renderProjectOwnerWithAvatar = (project, classes) => (
 );
 
 const renderDateBadge = (project, classes) => {
-  console.log(project);
   if (project.projectType !== ProjectType.EVENT) {
     return null;
   }
 
   return (
-    <Paper elevation={0} className={classes.dateBadge}>
+    <Paper elevation={0} className={classes.dateBadge} data-testid="date-badge">
       <Typography variant="caption">
-        {moment(project.startDate).utc().format('MMM')}
+        {moment(project.startDate).format('MMM')}
       </Typography>
       <Typography variant="title" color="secondary">
         <strong>
-          {moment(project.startDate).utc().format('DD')}
+          {moment(project.startDate).format('DD')}
         </strong>
       </Typography>
     </Paper>
@@ -146,7 +146,7 @@ const renderDateBadge = (project, classes) => {
 };
 
 const renderProjectDescription = (project) => (
-  <Typography variant="caption">
+  <Typography variant="caption" data-testid="description">
     {project.description.length <= 320
       ? project.description
       : project.description.slice(0, 320) + '...'}
