@@ -942,7 +942,7 @@ describe('Public routes', () => {
         .send(body);
 
       beforeEach(async (done) => {
-        projectOwner = createProjectOwner();
+        projectOwner = await createProjectOwner();
         project = createProject(projectOwner);
 
         csrfToken = 'token';
