@@ -2,7 +2,8 @@ import app from 'app';
 import { ProjectOwner } from 'models/ProjectOwner';
 import mongoose from 'mongoose';
 import request from 'supertest';
-import { saveProjectOwner, createProjectOwner } from 'util/testHelper';
+import { saveProjectOwner } from 'util/testHelper';
+import { config } from 'config/environment';
 
 
 beforeAll(async () => {
@@ -72,11 +73,95 @@ describe('Public routes', () => {
 
 describe('Login/Logout', () => {
   describe('POST /project_owners/login', () => {
+    const email = 'projectowner@email.com';
+    const password = 'test123';
 
+    describe('when the account is not yet confirmed', () => {
+      beforeAll(async () => {
+        await saveProjectOwner({ email, confirmedAt: undefined }, password);
+      });
+
+      afterAll(async () => {
+        await ProjectOwner.deleteMany();
+      });
+
+      it('should return a bad request error when the credentials are correct but account is not yet activated', async () => {
+        const response = await request(app).post('/api/v1/project_owners/login')
+          .send({ user: { email, password } });
+
+        expect(response.status).toEqual(400);
+        expect(response.body.errors[0].detail).toEqual('Please activate your account before logging in.');
+      });
+    });
+
+    describe('when the account is already confirmed', () => {
+      let projectOwner;
+
+      beforeAll(async () => {
+        projectOwner = await saveProjectOwner({ email }, password);
+      });
+
+      afterAll(async () => {
+        await ProjectOwner.deleteMany();
+      });
+
+
+      it('should return an unauthenticated error if the credentials are incorrect', async () => {
+        const response = await request(app).post('/api/v1/project_owners/login')
+          .send({ user: { email, password: 'wrong password' } });
+
+        expect(response.status).toEqual(401);
+      });
+
+      it('should return a 200 response with csrf token header and jwt cookies', async () => {
+        const response = await request(app).post('/api/v1/project_owners/login')
+          .send({ user: { email, password } });
+
+        expect(response.status).toEqual(200);
+        expect(response.body.user.id).toEqual(projectOwner.id);
+        expect(response.headers['csrf-token']).toBeTruthy();
+        expect(response.headers['set-cookie'][0]).toEqual(
+          expect.stringContaining('ssn_token')
+        );
+      });
+    });
   });
 
   describe('DELETE /project_owners/logout', () => {
+    let jwt;
+    const csrfToken = 'csrfToken';
 
+    beforeAll(async () => {
+      const projectOwner = await saveProjectOwner();
+      jwt = projectOwner.generateJwt(csrfToken);
+    });
+
+    afterAll(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    it('should be an authenticated route', async () => {
+      const response = await request(app).delete('/api/v1/project_owners/logout');
+
+      expect(response.status).toEqual(401);
+      expect(response.body.errors[0].title).toEqual('Unauthorized');
+    });
+
+    it('returns forbidden error when request does not contain CSRF token in header', async () => {
+      const response = await request(app).delete('/api/v1/project_owners/logout')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`]);
+
+      expect(response.status).toEqual(403);
+      expect(response.body.errors[0].title).toEqual('Forbidden');
+    });
+
+    it('returns a 204 status with no content if the user is already logged in', async () => {
+      const response = await request(app).delete('/api/v1/project_owners/logout')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .set('csrf-token', csrfToken);
+
+      expect(response.status).toEqual(204);
+    });
   });
 });
 

@@ -16,11 +16,8 @@ export const constructQueryString = params => Object.keys(params)
   .filter(queryString => !!queryString)
   .join('&');
 
-export const createProjectOwner = (overrideAttributes = {}) => {
-  const projectOwner = new ProjectOwner();
-  projectOwner.setPassword('test123');
-
-  return new ProjectOwner({
+export const createProjectOwner = async (overrideAttributes = {}, password = 'test123') => {
+  const projectOwner = new ProjectOwner({
     name: 'Cat Society',
     email: 'test@test.com',
     accountType: 'ORGANISATION',
@@ -31,13 +28,15 @@ export const createProjectOwner = (overrideAttributes = {}) => {
     organisationName: 'Cat Society',
     description: 'Everything cats.',
     role: Role.PROJECT_OWNER,
-    hashedPassword: projectOwner.hashedPassword,
     confirmedAt: new Date(),
     ...overrideAttributes,
   });
+  await projectOwner.setPassword(password);
+
+  return projectOwner;
 };
 
-export const saveProjectOwner = async (overrideAttributes = {}) => createProjectOwner(overrideAttributes).save();
+export const saveProjectOwner = async (overrideAttributes = {}, password = 'test123') => (await createProjectOwner(overrideAttributes, password)).save();
 
 export const createProject = (projectOwner, overrideAttributes = {}) => new Project({
   title: 'Cat Adoption Drive',
