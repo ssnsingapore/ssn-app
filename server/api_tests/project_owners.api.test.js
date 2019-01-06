@@ -155,12 +155,15 @@ describe('Login/Logout', () => {
       expect(response.body.errors[0].title).toEqual('Forbidden');
     });
 
-    it('returns a 204 status with no content if the user is already logged in', async () => {
+    it('returns a 204 status with a clear cookie header if the user is already logged in', async () => {
       const response = await request(app).delete('/api/v1/project_owners/logout')
         .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
         .set('csrf-token', csrfToken);
 
       expect(response.status).toEqual(204);
+      expect(response.headers['set-cookie'][0]).toEqual(
+        expect.stringContaining('ssn_token=;')
+      );
     });
   });
 });

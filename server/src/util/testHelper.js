@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Admin } from 'models/Admin';
 import { ProjectOwner } from 'models/ProjectOwner';
 import {
   Project,
@@ -15,6 +16,20 @@ export const constructQueryString = params => Object.keys(params)
   .map(key => (key ? `${key}=${params[key]}` : ''))
   .filter(queryString => !!queryString)
   .join('&');
+
+export const createAdmin = async (overrideAttributes = {}, password = 'test123') => {
+  const admin = new Admin({
+    name: 'admin',
+    email: 'admin@email.com',
+    ...overrideAttributes,
+  });
+  await admin.setPassword(password);
+
+  return admin;
+};
+
+export const saveAdmin = async (overrideAttributes = {}, password = 'test123') => (await createAdmin(overrideAttributes, password)).save();
+
 
 export const createProjectOwner = async (overrideAttributes = {}, password = 'test123') => {
   const projectOwner = new ProjectOwner({

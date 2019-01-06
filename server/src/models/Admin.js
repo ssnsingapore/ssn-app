@@ -59,6 +59,7 @@ AdminSchema.methods.generateJwt = function (csrfToken) {
 
 AdminSchema.methods.toJSON = function () {
   return {
+    id: this._id,
     email: this.email,
     role: this.role,
   };
