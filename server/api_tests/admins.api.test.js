@@ -44,7 +44,7 @@ describe('Login/Logout', () => {
       expect(response.body.user.id).toEqual(admin.id);
       expect(response.headers['csrf-token']).toBeTruthy();
       expect(response.headers['set-cookie'][0]).toEqual(
-        expect.stringContaining('ssn_token')
+        expect.stringContaining(config.TOKEN_COOKIE_NAME)
       );
     });
   });
@@ -85,7 +85,7 @@ describe('DELETE /admins/logout', () => {
 
     expect(response.status).toEqual(204);
     expect(response.headers['set-cookie'][0]).toEqual(
-      expect.stringContaining('ssn_token=;')
+      expect.stringContaining(config.TOKEN_COOKIE_NAME)
     );
   });
 });
