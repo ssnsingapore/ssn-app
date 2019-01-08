@@ -113,14 +113,15 @@ class _ProjectOwnerEditProfileForm extends Component {
 
     this.setState({ isSubmitting: true });
     const response = await requestWithAlert
-      .updateForm(`/api/v1/project_owners/${currentUser.id}`, formData, { authenticated: true });
+      .updateForm('/api/v1/project_owner/profile', formData, { authenticated: true });
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
       const { projectOwner } = await response.json();
       authenticator.setCurrentUser(projectOwner);
       showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
-      window.location.reload();
+      // Set timeout so that alert has sufficient time to show before reload takes place
+      setTimeout(() => window.location.reload(), 2000);
     }
 
     if (response.hasError) {

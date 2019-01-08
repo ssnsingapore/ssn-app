@@ -1,9 +1,10 @@
 import app from 'app';
-import { ProjectOwner } from 'models/ProjectOwner';
 import mongoose from 'mongoose';
 import request from 'supertest';
-import { saveProjectOwner } from 'util/testHelper';
 import { config } from 'config/environment';
+import { s3 } from 'config/aws';
+import { ProjectOwner } from 'models/ProjectOwner';
+import { saveProjectOwner } from 'util/testHelper';
 
 
 beforeAll(async () => {
@@ -185,7 +186,53 @@ describe('Login/Logout', () => {
 
 describe('Project Owner routes', () => {
   describe('PUT /project_owner/profile', () => {
+    let projectOwner;
+    let jwt;
+    const csrfToken = 'csrfToken';
 
+    beforeAll(async () => {
+      projectOwner = await saveProjectOwner();
+      jwt = projectOwner.generateJwt(csrfToken);
+
+      s3.upload = jest.fn(() => ({ promise: () => Promise.resolve({ Location: 'some image url' }) }));
+    });
+
+    afterAll(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    it('should be an authenticated route', async () => {
+      const response = await request(app).put('/api/v1/project_owner/profile');
+
+      expect(response.status).toEqual(401);
+      expect(response.body.errors[0].title).toEqual('Unauthorized');
+    });
+
+    it('returns forbidden error when request does not contain CSRF token in header', async () => {
+      const response = await request(app).put('/api/v1/project_owner/profile')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`]);
+
+      expect(response.status).toEqual(403);
+      expect(response.body.errors[0].title).toEqual('Forbidden');
+    });
+
+    it('should upload the profile photo image to s3 and return a 200 status with the updated project owner', async () => {
+      const response = await request(app).put('/api/v1/project_owner/profile')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .set('csrf-token', csrfToken)
+        .attach('profilePhoto', './api_tests/test-file.jpg')
+        .field('name', 'new name');
+
+      expect(response.status).toEqual(200);
+      expect(s3.upload).toHaveBeenCalledWith({
+        Body: expect.any(Buffer),
+        Key: expect.stringContaining(`${projectOwner.id}-new name`),
+        ACL: 'public-read',
+        Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
+      });
+      expect(response.body.projectOwner.name).toEqual('new name');
+      expect(response.body.projectOwner.profilePhotoUrl).toEqual('some image url');
+    });
   });
 });
 

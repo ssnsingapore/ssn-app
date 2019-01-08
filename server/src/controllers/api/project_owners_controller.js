@@ -100,33 +100,32 @@ async function logout(req, res) {
 const upload = multer();
 
 // TODO: Rename and make authenticated route
-projectOwnersRouter.put('/project_owners/:id',
+projectOwnersRouter.put('/project_owner/profile',
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   upload.single('profilePhoto'),
   asyncWrap(updateProjectOwner));
 
 async function updateProjectOwner(req, res) {
-  const { id } = req.params;
-  const projectOwner = req.body;
+  const projectOwner = req.user;
+  const projectOwnerAttributes = req.body;
   const profilePhotoImage = req.file;
 
-  const updatedProjectOwner = await ProjectOwner.findById(id).exec();
-
-  updatedProjectOwner.set(projectOwner);
-  await updatedProjectOwner.save();
+  projectOwner.set(projectOwnerAttributes);
+  await projectOwner.save();
 
   if (profilePhotoImage) {
     const response = await s3.upload({
       Body: profilePhotoImage.buffer,
-      Key: `${new Date().getTime()}-${updatedProjectOwner.id}-${updatedProjectOwner.name}`,
+      Key: `${new Date().getTime()}-${projectOwner.id}-${projectOwner.name}`,
       ACL: 'public-read',
       Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
     }).promise();
 
-    updatedProjectOwner.set({ profilePhotoUrl: response.Location });
-    await updatedProjectOwner.save();
+    projectOwner.set({ profilePhotoUrl: response.Location });
+    await projectOwner.save();
   }
 
-  return res.status(200).json({ projectOwner: updatedProjectOwner });
+  return res.status(200).json({ projectOwner });
 }
 
 // =============================================================================
