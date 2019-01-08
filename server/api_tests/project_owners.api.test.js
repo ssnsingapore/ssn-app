@@ -67,7 +67,22 @@ describe('Public routes', () => {
   });
 
   describe('GET /project_owners/:id', () => {
+    let projectOwner;
 
+    beforeEach(async () => {
+      projectOwner = await saveProjectOwner({ email: 'projectowner@email.com' });
+    });
+
+    afterAll(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    it('should fetch the project owner with the given id', async () => {
+      const response = await request(app).get(`/api/v1/project_owners/${projectOwner.id}`);
+
+      expect(response.status).toEqual(200);
+      expect(response.body.projectOwner.email).toEqual('projectowner@email.com');
+    });
   });
 });
 
