@@ -23,7 +23,8 @@ if (!isTest) {
         password: config.MONGO_PASSWORD,
       },
     } : {};
-  mongoose.connect(config.DATABASE_URI, options);
+  mongoose.connect(config.DATABASE_URI, { ...options, useNewUrlParser: true });
+  mongoose.set('useCreateIndex', true);
 }
 
 configurePassport();
@@ -32,7 +33,6 @@ const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
