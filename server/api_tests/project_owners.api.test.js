@@ -1,3 +1,5 @@
+
+/* eslint no-underscore-dangle: 0 */
 import app from 'app';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -399,6 +401,125 @@ describe('Password reset', () => {
         );
         expect(response.headers['set-cookie'][0]).toEqual(
           expect.stringContaining('ssn_password_reset_token=;')
+        );
+      });
+    });
+  });
+});
+
+describe('Sign up and account confirmation', () => {
+  describe('POST /project_owners', () => {
+    beforeAll(async () => {
+      await saveProjectOwner({ email: 'existingprojectowner@email.com' });
+    });
+
+    afterAll(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    it('should return a 422 response when project owner data is invalid', async () => {
+      const response = await request(app).post('/api/v1/project_owners')
+        .send({
+          name: 'Duplicate Email Project Owner',
+          email: 'existingprojectowner@email.com',
+          accountType: 'ORGANISATION',
+          websiteUrl: 'https://thecatsite.com/',
+          socialMediaLink: 'https://twitter.com/awyeahcatgifs',
+          organisationName: 'Cat Society',
+          description: 'Everything cats.',
+          password: 'some password',
+        });
+
+      expect(response.status).toEqual(422);
+      expect(response.body.errors[0].title).toEqual('Email is taken');
+    });
+
+    it('should return a 201 response and the created project owner when the project owner data is valid', async () => {
+      const response = await request(app).post('/api/v1/project_owners')
+        .send({
+          name: 'Valid Project Owner',
+          email: 'valid@email.com',
+          accountType: 'ORGANISATION',
+          websiteUrl: 'https://thecatsite.com/',
+          socialMediaLink: 'https://twitter.com/awyeahcatgifs',
+          organisationName: 'Cat Society',
+          description: 'Everything cats.',
+          password: 'some password',
+        });
+
+      expect(response.status).toEqual(201);
+      expect(response.body.projectOwner.email).toEqual('valid@email.com');
+    });
+  });
+
+  describe('GET /project_owners/:id/confirmationToken/:confirmationToken', () => {
+    let projectOwner;
+
+    beforeEach(async () => {
+      await request(app).post('/api/v1/project_owners')
+        .send({
+          name: 'Valid Project Owner',
+          email: 'valid@email.com',
+          accountType: 'ORGANISATION',
+          websiteUrl: 'https://thecatsite.com/',
+          socialMediaLink: 'https://twitter.com/awyeahcatgifs',
+          organisationName: 'Cat Society',
+          description: 'Everything cats.',
+          password: 'some password',
+        });
+      projectOwner = await ProjectOwner.findOne({ name: 'Valid Project Owner' });
+    });
+
+    afterEach(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    describe('when the confirmation token is invalid', () => {
+      it('should reidrect to the login page with an error message', async () => {
+        const response = await request(app).get(`/api/v1/project_owners/${projectOwner._id}/confirmation/invalidToken`);
+
+        expect(response.status).toEqual(302);
+        expect(response.header['cache-control']).toEqual('private, no-cache, no-store, must-revalidate');
+        expect(response.header.location).toEqual(
+          expect.stringContaining('/login')
+        );
+        expect(response.header.location).toEqual(
+          expect.stringContaining('type=ERROR')
+        );
+      });
+    });
+
+    describe('when the project owner is already confirmed', () => {
+      beforeEach(async () => {
+        projectOwner.set({ confirmedAt: new Date() });
+        await projectOwner.save();
+      });
+
+      it('should redirect to the login page with an info message in hash params', async () => {
+        const response = await request(app).get(`/api/v1/project_owners/${projectOwner.id}/confirmation/${projectOwner.confirmationToken}`);
+
+        expect(response.status).toEqual(302);
+        expect(response.header['cache-control']).toEqual('private, no-cache, no-store, must-revalidate');
+        expect(response.header.location).toEqual(
+          expect.stringContaining('/login')
+        );
+        expect(response.header.location).toEqual(
+          expect.stringContaining('type=INFO')
+        );
+      });
+    });
+
+    describe('when the project owner is not yet confirmed', () => {
+      it('should redirect to the login page with a success message in hash params', async () => {
+        const response = await request(app).get(`/api/v1/project_owners/${projectOwner.id}/confirmation/${projectOwner.confirmationToken}`);
+
+        expect(response.status).toEqual(302);
+        expect(response.header['cache-control']).toEqual('private, no-cache, no-store, must-revalidate');
+        expect(response.header.location).toEqual(
+          expect.stringContaining('/login')
+        );
+        expect(response.header.location).toEqual(
+          expect.stringContaining('type=SUCCESS')
         );
       });
     });
