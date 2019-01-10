@@ -14,6 +14,7 @@ import {
 
 beforeAll(async () => {
   await mongoose.connect(global.mongoUri);
+  mongoose.set('useCreateIndex', true);
 });
 
 afterAll(async () => {
@@ -399,7 +400,63 @@ describe('Public routes', () => {
     });
 
     describe('pagination', () => {
+      beforeAll(async (done) => {
+        const projectOwner = await saveProjectOwner();
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project20' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project19' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project18' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project17' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project16' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project15' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project14' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project13' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project12' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project11' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project10' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project9' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project8' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project7' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project6' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project5' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project4' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project3' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project2' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project1' });
+        done();
+      });
 
+      afterAll(async () => {
+        await ProjectOwner.deleteMany();
+        await Project.deleteMany();
+      });
+
+      it('should return the specified number of projects in the page and page 1 by default', async () => {
+        const response = await request(app).get('/api/v1/projects?pageSize=5');
+
+        expect(response.status).toEqual(200);
+        expect(response.body.projects.length).toEqual(5);
+        expect(response.body.projects[0].title).toEqual('project1');
+        expect(response.body.projects[4].title).toEqual('project5');
+      });
+
+      it('should return the specified page of projects and 10 projects by default', async () => {
+        const response = await request(app).get('/api/v1/projects?page=2');
+
+        expect(response.status).toEqual(200);
+        expect(response.body.projects.length).toEqual(10);
+        expect(response.body.projects[0].title).toEqual('project11');
+        expect(response.body.projects[9].title).toEqual('project20');
+      });
+
+      it('should return the specified page with the specified number of projects', async () => {
+        const response = await request(app).get('/api/v1/projects?page=2&pageSize=3');
+
+        expect(response.status).toEqual(200);
+        expect(response.body.projects.length).toEqual(3);
+        expect(response.body.projects[0].title).toEqual('project4');
+        expect(response.body.projects[1].title).toEqual('project5');
+        expect(response.body.projects[2].title).toEqual('project6');
+      });
     });
   });
 
@@ -743,17 +800,46 @@ describe('Public routes', () => {
       expect(response.body.project.state).toEqual(project.state);
     });
   });
+});
 
-  describe('Project owner routes', () => {
-    describe('GET /project_owner/projects', () => {
-      let jwt;
-      const csrfToken = 'csrfToken';
+describe('Project owner routes', () => {
+  describe('GET /project_owner/projects', () => {
+    let jwt;
+    const csrfToken = 'csrfToken';
 
-      const sendRequest = (params = {}) => request(app)
-        .get(`/api/v1/project_owner/projects?${constructQueryString(params)}`)
-        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
-        .set('csrf-token', csrfToken);
+    const sendRequest = (params = {}) => request(app)
+      .get(`/api/v1/project_owner/projects?${constructQueryString(params)}`)
+      .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+      .set('csrf-token', csrfToken);
 
+    describe('authentication', () => {
+      beforeAll(async () => {
+        const projectOwner = await saveProjectOwner();
+        jwt = projectOwner.generateJwt(csrfToken);
+      });
+
+      afterAll(async () => {
+        await ProjectOwner.deleteMany();
+        await Project.deleteMany();
+      });
+
+      it('should be an authenticated route', async () => {
+        const response = await request(app).get('/api/v1/project_owner/projects');
+
+        expect(response.status).toEqual(401);
+        expect(response.body.errors[0].title).toEqual('Unauthorized');
+      });
+
+      it('returns forbidden error when request does not contain CSRF token in header', async () => {
+        const response = await request(app).get('/api/v1/project_owner/projects')
+          .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`]);
+
+        expect(response.status).toEqual(403);
+        expect(response.body.errors[0].title).toEqual('Forbidden');
+      });
+    });
+
+    describe('project state', () => {
       beforeAll(async (done) => {
         const projectOwner = await saveProjectOwner();
         jwt = projectOwner.generateJwt(csrfToken);
@@ -780,25 +866,9 @@ describe('Public routes', () => {
         done();
       });
 
-      afterAll(async (done) => {
+      afterAll(async () => {
         await ProjectOwner.deleteMany();
         await Project.deleteMany();
-        done();
-      });
-
-      it('should be an authenticated route', async () => {
-        const response = await request(app).get('/api/v1/project_owner/projects');
-
-        expect(response.status).toEqual(401);
-        expect(response.body.errors[0].title).toEqual('Unauthorized');
-      });
-
-      it('returns forbidden error when request does not contain CSRF token in header', async () => {
-        const response = await request(app).get('/api/v1/project_owner/projects')
-          .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`]);
-
-        expect(response.status).toEqual(403);
-        expect(response.body.errors[0].title).toEqual('Forbidden');
       });
 
       describe('when projectState is not specified', () => {
@@ -860,346 +930,407 @@ describe('Public routes', () => {
       });
     });
 
-    describe('GET /project_owner/project_counts', () => {
-      let jwt;
-      const csrfToken = 'csrfToken';
-
-      const sendRequest = () => request(app)
-        .get('/api/v1/project_owner/project_counts')
-        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
-        .set('csrf-token', csrfToken);
-
+    describe('pagination', () => {
       beforeAll(async (done) => {
         const projectOwner = await saveProjectOwner();
         jwt = projectOwner.generateJwt(csrfToken);
-        await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL });
-        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE });
-        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE });
-        await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE });
-        await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE });
-        await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE });
-        await saveProject(projectOwner, { state: ProjectState.REJECTED });
-        await saveProject(projectOwner, { state: ProjectState.REJECTED });
-        await saveProject(projectOwner, { state: ProjectState.REJECTED });
-        await saveProject(projectOwner, { state: ProjectState.REJECTED });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project20' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project19' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project18' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project17' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project16' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project15' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project14' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project13' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project12' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project11' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project10' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project9' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project8' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project7' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project6' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project5' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project4' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project3' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project2' });
+        await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE, title: 'project1' });
         done();
       });
 
-      afterAll(async (done) => {
+      afterAll(async () => {
         await ProjectOwner.deleteMany();
         await Project.deleteMany();
-        done();
       });
 
-      it('should be an authenticated route', async () => {
-        const response = await request(app).get('/api/v1/project_owner/project_counts');
-
-        expect(response.status).toEqual(401);
-        expect(response.body.errors[0].title).toEqual('Unauthorized');
-      });
-
-      it('returns forbidden error when request does not contain CSRF token in header', async () => {
-        const response = await request(app).get('/api/v1/project_owner/project_counts')
-          .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`]);
-
-        expect(response.status).toEqual(403);
-        expect(response.body.errors[0].title).toEqual('Forbidden');
-      });
-
-      it('returns 200 status code and an object of counts of projects in each state', async () => {
-        const response = await sendRequest();
+      it('should return the specified number of projects in the page and page 1 by default', async () => {
+        const response = await sendRequest({ pageSize: 5 });
 
         expect(response.status).toEqual(200);
-        expect(response.body.counts).toEqual({
-          [ProjectState.PENDING_APPROVAL]: 1,
-          [ProjectState.APPROVED_ACTIVE]: 2,
-          [ProjectState.APPROVED_INACTIVE]: 3,
-          [ProjectState.REJECTED]: 4,
+        expect(response.body.projects.length).toEqual(5);
+        expect(response.body.projects[0].title).toEqual('project1');
+        expect(response.body.projects[4].title).toEqual('project5');
+      });
+
+      it('should return the specified page of projects and 10 projects by default', async () => {
+        const response = await sendRequest({ page: 2 });
+
+        expect(response.status).toEqual(200);
+        expect(response.body.projects.length).toEqual(10);
+        expect(response.body.projects[0].title).toEqual('project11');
+        expect(response.body.projects[9].title).toEqual('project20');
+      });
+
+      it('should return the specified page with the specified number of projects', async () => {
+        const response = await sendRequest({ page: 2, pageSize: 3 });
+
+        expect(response.status).toEqual(200);
+        expect(response.body.projects.length).toEqual(3);
+        expect(response.body.projects[0].title).toEqual('project4');
+        expect(response.body.projects[1].title).toEqual('project5');
+        expect(response.body.projects[2].title).toEqual('project6');
+      });
+    });
+  });
+
+  describe('GET /project_owner/project_counts', () => {
+    let jwt;
+    const csrfToken = 'csrfToken';
+
+    const sendRequest = () => request(app)
+      .get('/api/v1/project_owner/project_counts')
+      .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+      .set('csrf-token', csrfToken);
+
+    beforeAll(async (done) => {
+      const projectOwner = await saveProjectOwner();
+      jwt = projectOwner.generateJwt(csrfToken);
+      await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL });
+      await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE });
+      await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE });
+      await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE });
+      await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE });
+      await saveProject(projectOwner, { state: ProjectState.APPROVED_INACTIVE });
+      await saveProject(projectOwner, { state: ProjectState.REJECTED });
+      await saveProject(projectOwner, { state: ProjectState.REJECTED });
+      await saveProject(projectOwner, { state: ProjectState.REJECTED });
+      await saveProject(projectOwner, { state: ProjectState.REJECTED });
+      done();
+    });
+
+    afterAll(async (done) => {
+      await ProjectOwner.deleteMany();
+      await Project.deleteMany();
+      done();
+    });
+
+    it('should be an authenticated route', async () => {
+      const response = await request(app).get('/api/v1/project_owner/project_counts');
+
+      expect(response.status).toEqual(401);
+      expect(response.body.errors[0].title).toEqual('Unauthorized');
+    });
+
+    it('returns forbidden error when request does not contain CSRF token in header', async () => {
+      const response = await request(app).get('/api/v1/project_owner/project_counts')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`]);
+
+      expect(response.status).toEqual(403);
+      expect(response.body.errors[0].title).toEqual('Forbidden');
+    });
+
+    it('returns 200 status code and an object of counts of projects in each state', async () => {
+      const response = await sendRequest();
+
+      expect(response.status).toEqual(200);
+      expect(response.body.counts).toEqual({
+        [ProjectState.PENDING_APPROVAL]: 1,
+        [ProjectState.APPROVED_ACTIVE]: 2,
+        [ProjectState.APPROVED_INACTIVE]: 3,
+        [ProjectState.REJECTED]: 4,
+      });
+    });
+  });
+
+  describe('PUT /project_owner/projects/:id', () => {
+    let jwt;
+    let csrfToken;
+    let project;
+    let projectOwner;
+    const ERROR_TITLE = 'Invalid state change.';
+    const ERROR_MESSAGE = 'This change is not allowed.';
+
+    const setProjectState = (state) => {
+      project.set({
+        state,
+      });
+
+      return project.save();
+    };
+
+    const sendRequestWithBody = body => request(app)
+      .put(`/api/v1/project_owner/projects/${project.id}`)
+      .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+      .set('csrf-token', csrfToken)
+      .send(body);
+
+    beforeEach(async (done) => {
+      projectOwner = await createProjectOwner();
+      project = createProject(projectOwner);
+
+      csrfToken = 'token';
+
+      await projectOwner.save();
+      await project.save();
+      jwt = projectOwner.generateJwt(csrfToken);
+      done();
+    });
+
+    afterEach(async (done) => {
+      await projectOwner.remove();
+      await project.remove();
+      done();
+    });
+
+    test('is an authenticated route', async () => {
+      const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
+        .send({
+          project: JSON.stringify({
+            title: 'updated name',
+          }),
         });
+
+      expect(response.status).toEqual(401);
+      expect(response.body.errors[0].title).toEqual('Unauthorized');
+    });
+
+    test('returns forbidden error when request does not contain CSRF token in header', async () => {
+      const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .send({
+          project: JSON.stringify({
+            title: 'updated name',
+          }),
+        });
+
+      expect(response.status).toEqual(403);
+      expect(response.body.errors[0].title).toEqual('Forbidden');
+    });
+
+    test('returns 200 status code and updates project details', async () => {
+      const newTitle = 'updated name';
+
+      const response = await sendRequestWithBody({
+        project: JSON.stringify({
+          title: newTitle,
+        }),
+      });
+
+      expect(response.status).toEqual(200);
+      expect(response.body.project).toEqual(
+        expect.objectContaining({
+          title: newTitle,
+        })
+      );
+
+      const projectFromDB = await Project.findById(project.id);
+      expect(projectFromDB.title).toEqual(newTitle);
+    });
+
+    describe('state change for pending approval project', () => {
+      beforeEach(async () => {
+        await setProjectState(ProjectState.PENDING_APPROVAL);
+      });
+
+      test('returns 422 status code for change to active', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.APPROVED_ACTIVE,
+          }),
+        });
+
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
+
+      test('returns 422 status code for change to inactive', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.APPROVED_INACTIVE,
+          }),
+        });
+
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
+
+      test('returns 422 status code for change to rejected', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.REJECTED,
+          }),
+        });
+
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
       });
     });
 
-    describe('PUT /project_owner/projects/:id', () => {
-      let jwt;
-      let csrfToken;
-      let project;
-      let projectOwner;
-      const ERROR_TITLE = 'Invalid state change.';
-      const ERROR_MESSAGE = 'This change is not allowed.';
-
-      const setProjectState = (state) => {
-        project.set({
-          state,
-        });
-
-        return project.save();
-      };
-
-      const sendRequestWithBody = body => request(app)
-        .put(`/api/v1/project_owner/projects/${project.id}`)
-        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
-        .set('csrf-token', csrfToken)
-        .send(body);
-
-      beforeEach(async (done) => {
-        projectOwner = await createProjectOwner();
-        project = createProject(projectOwner);
-
-        csrfToken = 'token';
-
-        await projectOwner.save();
-        await project.save();
-        jwt = projectOwner.generateJwt(csrfToken);
-        done();
+    describe('state change for active project', () => {
+      beforeEach(async () => {
+        await setProjectState(ProjectState.APPROVED_ACTIVE);
       });
 
-      afterEach(async (done) => {
-        await projectOwner.remove();
-        await project.remove();
-        done();
-      });
-
-      test('is an authenticated route', async () => {
-        const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
-          .send({
-            project: JSON.stringify({
-              title: 'updated name',
-            }),
-          });
-
-        expect(response.status).toEqual(401);
-        expect(response.body.errors[0].title).toEqual('Unauthorized');
-      });
-
-      test('returns forbidden error when request does not contain CSRF token in header', async () => {
-        const response = await request(app).put(`/api/v1/project_owner/projects/${project.id}`)
-          .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
-          .send({
-            project: JSON.stringify({
-              title: 'updated name',
-            }),
-          });
-
-        expect(response.status).toEqual(403);
-        expect(response.body.errors[0].title).toEqual('Forbidden');
-      });
-
-      test('returns 200 status code and updates project details', async () => {
-        const newTitle = 'updated name';
-
+      test('returns 200 status code and updates project state to inactive', async () => {
         const response = await sendRequestWithBody({
           project: JSON.stringify({
-            title: newTitle,
+            state: ProjectState.APPROVED_INACTIVE,
           }),
         });
 
         expect(response.status).toEqual(200);
         expect(response.body.project).toEqual(
           expect.objectContaining({
-            title: newTitle,
+            state: ProjectState.APPROVED_INACTIVE,
           })
         );
 
         const projectFromDB = await Project.findById(project.id);
-        expect(projectFromDB.title).toEqual(newTitle);
+        expect(projectFromDB.state).toEqual(ProjectState.APPROVED_INACTIVE);
       });
 
-      describe('state change for pending approval project', () => {
-        beforeEach(async () => {
-          await setProjectState(ProjectState.PENDING_APPROVAL);
+      test('returns 422 status code for change to pending approval', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.PENDING_APPROVAL,
+          }),
         });
 
-        test('returns 422 status code for change to active', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.APPROVED_ACTIVE,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
-
-        test('returns 422 status code for change to inactive', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.APPROVED_INACTIVE,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
-
-        test('returns 422 status code for change to rejected', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.REJECTED,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
       });
 
-      describe('state change for active project', () => {
-        beforeEach(async () => {
-          await setProjectState(ProjectState.APPROVED_ACTIVE);
+      test('returns 422 status code for change to rejected', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.REJECTED,
+          }),
         });
 
-        test('returns 200 status code and updates project state to inactive', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.APPROVED_INACTIVE,
-            }),
-          });
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
+    });
 
-          expect(response.status).toEqual(200);
-          expect(response.body.project).toEqual(
-            expect.objectContaining({
-              state: ProjectState.APPROVED_INACTIVE,
-            })
-          );
-
-          const projectFromDB = await Project.findById(project.id);
-          expect(projectFromDB.state).toEqual(ProjectState.APPROVED_INACTIVE);
-        });
-
-        test('returns 422 status code for change to pending approval', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.PENDING_APPROVAL,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
-
-        test('returns 422 status code for change to rejected', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.REJECTED,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
+    describe('state change for inactive project', () => {
+      beforeEach(async () => {
+        await setProjectState(ProjectState.APPROVED_INACTIVE);
       });
 
-      describe('state change for inactive project', () => {
-        beforeEach(async () => {
-          await setProjectState(ProjectState.APPROVED_INACTIVE);
+      test('updates project state from inactive to active', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.APPROVED_ACTIVE,
+          }),
         });
 
-        test('updates project state from inactive to active', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.APPROVED_ACTIVE,
-            }),
-          });
+        expect(response.status).toEqual(200);
+        expect(response.body.project).toEqual(
+          expect.objectContaining({
+            state: ProjectState.APPROVED_ACTIVE,
+          })
+        );
 
-          expect(response.status).toEqual(200);
-          expect(response.body.project).toEqual(
-            expect.objectContaining({
-              state: ProjectState.APPROVED_ACTIVE,
-            })
-          );
-
-          const projectFromDB = await Project.findById(project.id);
-          expect(projectFromDB.state).toEqual(ProjectState.APPROVED_ACTIVE);
-        });
-
-        test('returns 422 status code for change to pending approval', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.PENDING_APPROVAL,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
-
-        test('returns 422 status code for change to rejected', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.REJECTED,
-            }),
-          });
-
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
-        });
+        const projectFromDB = await Project.findById(project.id);
+        expect(projectFromDB.state).toEqual(ProjectState.APPROVED_ACTIVE);
       });
 
-      describe('state change for rejected project', () => {
-        beforeEach(async () => {
-          await setProjectState(ProjectState.REJECTED);
+      test('returns 422 status code for change to pending approval', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.PENDING_APPROVAL,
+          }),
         });
 
-        test('returns 200 status code for change to pending approval', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.PENDING_APPROVAL,
-            }),
-          });
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
 
-          expect(response.status).toEqual(200);
-          expect(response.body.project).toEqual(
-            expect.objectContaining({
-              state: ProjectState.PENDING_APPROVAL,
-            })
-          );
-
-          const projectFromDB = await Project.findById(project.id);
-          expect(projectFromDB.state).toEqual(ProjectState.PENDING_APPROVAL);
+      test('returns 422 status code for change to rejected', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.REJECTED,
+          }),
         });
 
-        test('returns 422 status code for change to active', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.APPROVED_ACTIVE,
-            }),
-          });
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
+    });
 
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+    describe('state change for rejected project', () => {
+      beforeEach(async () => {
+        await setProjectState(ProjectState.REJECTED);
+      });
+
+      test('returns 200 status code for change to pending approval', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.PENDING_APPROVAL,
+          }),
         });
 
-        test('returns 422 status code for change to inactive', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.APPROVED_INACTIVE,
-            }),
-          });
+        expect(response.status).toEqual(200);
+        expect(response.body.project).toEqual(
+          expect.objectContaining({
+            state: ProjectState.PENDING_APPROVAL,
+          })
+        );
 
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+        const projectFromDB = await Project.findById(project.id);
+        expect(projectFromDB.state).toEqual(ProjectState.PENDING_APPROVAL);
+      });
+
+      test('returns 422 status code for change to active', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.APPROVED_ACTIVE,
+          }),
         });
 
-        test('returns 422 status code for change to rejected', async () => {
-          const response = await sendRequestWithBody({
-            project: JSON.stringify({
-              state: ProjectState.REJECTED,
-            }),
-          });
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
 
-          expect(response.status).toEqual(422);
-          expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
-          expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      test('returns 422 status code for change to inactive', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.APPROVED_INACTIVE,
+          }),
         });
+
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
+      });
+
+      test('returns 422 status code for change to rejected', async () => {
+        const response = await sendRequestWithBody({
+          project: JSON.stringify({
+            state: ProjectState.REJECTED,
+          }),
+        });
+
+        expect(response.status).toEqual(422);
+        expect(response.body.errors[0].title).toEqual(ERROR_TITLE);
+        expect(response.body.errors[0].detail).toEqual(ERROR_MESSAGE);
       });
     });
   });
