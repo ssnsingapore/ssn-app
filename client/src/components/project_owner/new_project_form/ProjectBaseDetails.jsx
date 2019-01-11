@@ -18,7 +18,7 @@ const _ProjectBaseDetails = ({
     <Paper className={classes.paper} square>
       <Grid item xs={7}>
         <Grid className={classes.content}>
-          <Typography variant="headline" gutterBottom>
+          <Typography variant="h5" gutterBottom>
             {formType === 'edit' ? 'Edit Project' : 'Add a New Project'}
           </Typography>
           <TextField

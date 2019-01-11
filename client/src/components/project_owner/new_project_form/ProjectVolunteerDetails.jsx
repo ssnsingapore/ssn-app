@@ -46,7 +46,7 @@ const _ProjectVolunteerDetails = ({
   return (
     <React.Fragment>
       <Paper square className={classes.paper}>
-        <Typography variant="headline">Volunteer Details</Typography>
+        <Typography variant="h5">Volunteer Details</Typography>
         <Grid item xs={12}>
           <TextField
             fullWidth

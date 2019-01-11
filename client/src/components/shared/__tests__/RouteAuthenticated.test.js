@@ -21,11 +21,14 @@ describe('RouteAuthenticated', () => {
   describe('when there is no user logged in', () => {
     let component;
     let mockContext;
+    const originalLocation = window.location;
 
     beforeEach(() => {
-      Object.defineProperty(window.location, 'pathname', {
-        value: '/currentpath',
-      });
+      delete window.location;
+      window.location = {
+        ...originalLocation,
+        pathname: '/currentpath',
+      };
 
       mockContext = { ...defaultAppContext, isAuthenticated: false };
       mockContext.utils.authenticator = {
@@ -33,6 +36,10 @@ describe('RouteAuthenticated', () => {
         getCurrentUser: () => null,
       };
       component = shallowWithRoute({ context: mockContext });
+    });
+
+    afterAll(() => {
+      window.location = originalLocation;
     });
 
     it('should render Redirect to login page by default', () => {
@@ -113,7 +120,6 @@ describe('RouteAuthenticated', () => {
         component = shallowWithRoute({ context: mockContext, authorize: [Role.PROJECT_OWNER] });
         expect(component.find(Redirect).props().to).toEqual('/unauthorized');
       });
-
     });
   });
 });

@@ -1051,6 +1051,11 @@ describe('Project owner routes', () => {
     });
   });
 
+  // TODO
+  describe('POST /project_owner/projects', () => {
+
+  });
+
   describe('PUT /project_owner/projects/:id', () => {
     let jwt;
     let csrfToken;

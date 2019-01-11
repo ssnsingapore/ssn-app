@@ -226,7 +226,7 @@ class _Projects extends Component {
         <TabContainer>
           {counts === 0 ? (
             <Typography
-              variant="subheading"
+              variant="subtitle1"
               style={{ color: theme.palette.grey[500] }}
             >
               There are no {state} projects at the moment.
@@ -261,7 +261,7 @@ class _Projects extends Component {
     return (
       <Paper className={classes.body} square>
         <Paper square>
-          <Typography variant="headline" className={classes.title}>
+          <Typography variant="h5" className={classes.title}>
             List of projects
           </Typography>
           <Tabs

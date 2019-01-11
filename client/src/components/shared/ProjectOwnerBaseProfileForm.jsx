@@ -122,7 +122,7 @@ const _ProjectOwnerBaseProfileForm = ({
     <Grid container style={{ justifyContent: 'center' }}>
       <Grid item xs={9} md={4}>
         <Paper elevation={2} className={classes.root} square={true}>
-          <Typography variant="headline">Project Owner Details</Typography>
+          <Typography variant="h5">Project Owner Details</Typography>
           <form onSubmit={handleSubmit}>
             <TextField
               name={FieldName.name}

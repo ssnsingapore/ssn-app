@@ -72,7 +72,7 @@ class _ProjectOwnerListing extends Component {
     return (
       <Typography
         data-testid="total-text"
-        variant="subheading"
+        variant="subtitle1"
         style={{ padding: '40px', paddingBottom: '10px' }}
       >
         {`There are a total of ${this.state.totalProjectOwners} project owners on the site.`}
@@ -101,7 +101,7 @@ class _ProjectOwnerListing extends Component {
           <Grid item xs={12}>
             <Paper className={classes.headerPaper} square>
               <div className={classes.header}>
-                <Typography variant="headline">
+                <Typography variant="h5">
                   List of Project Owners
                 </Typography>
               </div>

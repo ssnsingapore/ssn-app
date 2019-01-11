@@ -123,7 +123,7 @@ class _ProjectOwnerDashboard extends Component {
           >
             <div className={classes.header}>
               <Typography
-                variant="headline"
+                variant="h5"
                 style={{ marginBottom: theme.spacing.unit * 3 }}
               >
                 My Projects

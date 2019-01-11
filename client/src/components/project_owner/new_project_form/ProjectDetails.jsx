@@ -88,7 +88,7 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
   return (
     <React.Fragment>
       <Paper square className={classes.paper}>
-        <Typography variant="headline">Project Details</Typography>
+        <Typography variant="h5">Project Details</Typography>
         <Grid item xs={12}>
           <div className={classes.sharedRow}>
             <TextField

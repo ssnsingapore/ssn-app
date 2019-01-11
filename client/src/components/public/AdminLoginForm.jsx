@@ -189,7 +189,7 @@ class _AdminLoginForm extends Component {
     return (
       <div>
         <div className={classes.landingImage}>
-          <Typography variant="display2" gutterBottom className={classes.landingHeader} >
+          <Typography variant="h3" gutterBottom className={classes.landingHeader} >
             SSN Admin Portal
           </Typography>
         </div>

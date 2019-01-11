@@ -75,13 +75,13 @@ export class _HomePage extends Component {
       <div>
         <div className={classes.landingImage}>
           <Typography
-            variant="display2"
+            variant="h3"
             gutterBottom
             className={classes.landingHeader}
           >
             SSN Project Portal
           </Typography>
-          <Typography variant="headline">
+          <Typography variant="h5">
             SSN Project Portal aims to match volunteers and organisers in the
             Singapore Sustainability Space
           </Typography>
@@ -89,7 +89,7 @@ export class _HomePage extends Component {
 
         <Grid container spacing={4 * theme.spacing.unit} className={classes.root} >
           <Typography
-            variant="headline"
+            variant="h5"
             gutterBottom
             className={classes.marginBottom3}
           >

@@ -59,7 +59,7 @@ class _NavBar extends Component {
     return (isProjectOwnerPath || isAdminPath) && (
       <Typography
         data-testid="navbar-text"
-        variant="body2"
+        variant="body1"
         color="inherit"
         style={{ paddingLeft: '15px' }}
       >
@@ -111,11 +111,11 @@ class _NavBar extends Component {
         <React.Fragment>
           <Button
             data-testid="public-nav-button"
-            variant="flat"
+            variant="text"
             component={Link}
             to={isProjectPath ? '/project_owners' : '/projects'}
           >
-            <Typography variant="body2" color="inherit" style={{ color: 'white' }}>
+            <Typography variant="body1" color="inherit" style={{ color: 'white' }}>
               {isProjectPath ? 'View Project Owners' : 'View Projects'}
             </Typography>
           </Button>

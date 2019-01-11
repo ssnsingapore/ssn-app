@@ -221,7 +221,7 @@ class _ProjectOwnerLoginForm extends React.Component {
     return (
       <Grid container className={rootStyle}>
         <Grid item xs={12}>
-          <Typography variant="headline" component="h3" gutterBottom>
+          <Typography variant="h5" component="h3" gutterBottom>
             Have a project in mind?
           </Typography>
           <Typography

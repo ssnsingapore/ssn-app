@@ -112,7 +112,7 @@ class _PasswordResetForm extends Component {
     const { classes, fields, handleChange } = this.props;
 
     return (<Paper square={true} className={classes.root} >
-      <Typography variant="headline">Reset your password</Typography>
+      <Typography variant="h5">Reset your password</Typography>
       <form onSubmit={this.handleSubmit}>
         <TextField
           name={FieldName.password}

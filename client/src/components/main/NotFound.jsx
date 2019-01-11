@@ -26,7 +26,7 @@ export const NotFound = withStyles(styles)(({ classes }) => (
       src="https://s3-ap-southeast-1.amazonaws.com/ssn-app-test/Other.jpg"
       className={classes.avatar}
     />
-    <Typography variant="display1" align="center">
+    <Typography variant="h4" align="center">
       Oops. We couldn't find the page you're looking for!
     </Typography>
   </div>
