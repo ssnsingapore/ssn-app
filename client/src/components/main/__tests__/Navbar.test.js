@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Typography, Avatar, Button, MenuItem } from '@material-ui/core';
+import { Avatar, Button, MenuItem } from '@material-ui/core';
 
 import { _testExports } from '../NavBar';
 import { defaultAppContext } from 'components/main/AppContext';

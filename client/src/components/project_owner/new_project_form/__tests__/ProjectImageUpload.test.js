@@ -21,9 +21,7 @@ describe('ProjectImageUpload', () => {
         },
       },
     };
-    component = shallow(< ProjectImageUpload {...props
-      }
-    />);
+    component = shallow(<ProjectImageUpload {...props} />);
 
     wrapper = component.dive();
   });
