@@ -63,7 +63,9 @@ function constructFilterParams(queryParams, projectState) {
     volunteerRequirementType: 'volunteerRequirements.type',
   };
 
-  const filterParams = Object.keys(paramMap).filter(item => queryParams[item] !== undefined).map(key => ({ [paramMap[key]]: queryParams[key] }));
+  const filterParams = Object.keys(paramMap)
+    .filter(item => queryParams[item] !== undefined)
+    .map(key => ({ [paramMap[key]]: queryParams[key] }));
 
   if (queryParams.month) {
     filterParams.push({
@@ -105,7 +107,7 @@ async function getProjects(req, res) {
     {
       $project: {
         ...constructProjectInclusionField(),
-        month: { $month: '$startDate' },
+        month: { $month: { date: '$startDate', timezone: '+08:00' } },
       },
     },
     {
@@ -142,7 +144,7 @@ async function getProjectCounts(req, res) {
       {
         $project: {
           ...constructProjectInclusionField(),
-          month: { $month: '$startDate' },
+          month: { $month: { date: '$startDate', timezone: '+08:00' } },
         },
       },
       {
@@ -182,7 +184,7 @@ projectRouter.get(
 );
 async function getProjectsForProjectOwner(req, res) {
   const { user } = req;
-  const pageSize = Number(req.query.pageSize) || 20;
+  const pageSize = Number(req.query.pageSize) || 10;
   const page = Number(req.query.page) || 1;
   const { projectState = ProjectState.APPROVED_ACTIVE } = req.query;
 
@@ -270,7 +272,7 @@ projectRouter.put(
 );
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  const coverImage = req.file;
+  let coverImageUrl = req.file;
   const updatedProject = JSON.parse(req.body.project);
   const { user } = req;
 
@@ -284,22 +286,24 @@ async function projectOwnerChangeProjectState(req, res) {
     existingProject.set(updatedProject);
     await existingProject.save();
 
-    if (coverImage) {
+    if (coverImageUrl) {
       const response = await s3
         .upload({
-          Body: coverImage.buffer,
-          Key: `${new Date().getTime()}-${existingProject.id}-${existingProject.title}`,
+          Body: coverImageUrl.buffer,
+          Key: `${new Date().getTime()}-${existingProject.id}-${
+            existingProject.title
+          }`,
           ACL: 'public-read',
           Bucket: `${config.AWS_BUCKET_NAME}/project_cover_images`,
         })
         .promise();
-      existingProject.set({ coverImageUrl: response.Location });
-      await existingProject.save();
-    }
 
-    return res
-      .status(200)
-      .json({ project: existingProject });
+      coverImageUrl = response.Location;
+    }
+    existingProject.set({ coverImageUrl });
+    await existingProject.save();
+
+    return res.status(200).json({ project: existingProject });
   }
   return res.status(422).json({
     errors: [

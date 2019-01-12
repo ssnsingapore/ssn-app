@@ -1,20 +1,23 @@
-import { Button, TextField, Typography } from '@material-ui/core';
-import { defaultAppContext } from 'components/main/AppContext';
-import { AlertType } from 'components/shared/Alert';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { Role } from '../../../../../server/src/models/Role';
+import { Button, TextField, Typography } from '@material-ui/core';
+
+import { defaultAppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
+import { Role } from 'components/shared/enums/Role';
+
 import { _testExports } from '../AdminLoginForm';
 
 
 const AdminLoginForm = _testExports.AdminLoginForm;
 describe('AdminLoginForm', () => {
   let component;
+  let mockContext;
 
   describe('render', () => {
     describe('when admin is not logged in', () => {
       beforeEach(() => {
-        const mockContext = {
+        mockContext = {
           ...defaultAppContext,
           isAuthenticated: false,
         };
@@ -51,6 +54,17 @@ describe('AdminLoginForm', () => {
         expect(component.find(Redirect).props().to).toEqual('/admin/dashboard');
       });
 
+      it('redirects to referrer when should shouldRedirect is true', () => {
+        const locationState = {
+          referrerPath: '/somereferrer',
+        };
+        component = shallow(<AdminLoginForm context={mockContext} location={{ state: locationState }} />).dive().dive();
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/somereferrer');
+      });
     });
 
     describe('when admin is logged in', () => {
@@ -147,7 +161,7 @@ describe('AdminLoginForm', () => {
         adminLoginComponent.instance().handleSubmit(event);
       });
 
-      it('calls authenticator to login admin when there are no validation errors', () => {
+      fit('calls authenticator to login admin when there are no validation errors', () => {
         expect(component.props().context.utils.authenticator.loginAdmin).toHaveBeenCalledWith('email@email.com', 'test123');
       });
 

@@ -20,7 +20,7 @@ const _getProjectStateString = (projectState) => {
 const renderProjects = (classes, projects, projectState, theme) => {
   if (projects.length === 0) {
     return (
-      <Typography variant="subheading" style={{ color: theme.palette.grey[500], padding: '20px' }} >
+      <Typography variant="subtitle1" style={{ color: theme.palette.grey[500], padding: '20px' }} >
         There are no {_getProjectStateString(projectState)} at the moment.
       </Typography>
     );

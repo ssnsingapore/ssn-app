@@ -96,7 +96,6 @@ class _Routes extends Component {
                 redirectTo="/admin"
               />
 
-
               <Route component={NotFound} />
             </Switch>
           </div>

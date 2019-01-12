@@ -53,9 +53,7 @@ describe('AdminProjectDetails', () => {
     };
 
 
-    component = shallow( < AdminProjectDetails { ...props
-      }
-    / > );
+    component = shallow(<AdminProjectDetails { ...props } />);
   });
 
   it('should show ProjectMainInfo and ProjectOwnerDetails upon render', () => {

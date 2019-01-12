@@ -36,15 +36,15 @@ const renderRow = (label, value) => (
 
 const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
   <React.Fragment>
-    <Typography variant="body2" data-test-id="volunteerRequirementHeadline">
+    <Typography variant="body1" data-test-id="volunteerRequirementHeadline">
       We need the following volunteers:
     </Typography>
     <Table className={classes.table}>
       <TableHead>
         <TableRow>
           <TableCell>Volunteer Roles</TableCell>
-          <TableCell numeric>No. of Volunteers</TableCell>
-          <TableCell numeric>Commitment Level</TableCell>
+          <TableCell align="right">No. of Volunteers</TableCell>
+          <TableCell align="right">Commitment Level</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -56,10 +56,10 @@ const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
                   ? VolunteerRequirementTypeDisplayMapping[requirement.type]
                   : '-'}
               </TableCell>
-              <TableCell numeric>
+              <TableCell align="right">
                 {requirement.number ? `${requirement.number} volunteers` : '-'}
               </TableCell>
-              <TableCell numeric>
+              <TableCell align="right">
                 {requirement.commitmentLevel
                   ? requirement.commitmentLevel
                   : '-'}
@@ -125,7 +125,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
       <CardContent className={classes.content}>
         {title ? (
           <Typography
-            variant="headline"
+            variant="h5"
             gutterBottom
             className={classes.headline}
           >
@@ -133,12 +133,12 @@ const renderProjectBaseDetails = (classes, project, role) => {
           </Typography>
         ) : (
           <Typography
-            variant="headline"
+            variant="h5"
             color="error"
             gutterBottom
             className={classes.headline}
           >
-            Project Title (Required)
+              Project Title (Required)
           </Typography>
         )}
         {description ? (
@@ -151,7 +151,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
           })
         ) : (
           <Typography color="error" gutterBottom>
-            Project description (required)
+              Project description (required)
           </Typography>
         )}
         {volunteerSignupUrl ? (
@@ -195,7 +195,7 @@ const renderVolunteerDetails = (classes, project) => {
 
   return (
     <Paper className={classes.paper} square>
-      <Typography variant="headline" gutterBottom className={classes.headline}>
+      <Typography variant="h5" gutterBottom className={classes.headline}>
         Volunteer Details
       </Typography>
       <div className={classes.tableWrapper}>
@@ -207,7 +207,7 @@ const renderVolunteerDetails = (classes, project) => {
             classes
           )}
       </div>
-      <Typography variant="body2">Volunteer benefits:</Typography>
+      <Typography variant="body1">Volunteer benefits:</Typography>
       {volunteerBenefitsDescription ? (
         <Typography variant="body1">{volunteerBenefitsDescription}</Typography>
       ) : (
@@ -230,7 +230,7 @@ const renderProjectDetails = (classes, project) => {
 
   return (
     <Paper className={classes.paper} square>
-      <Typography variant="headline" gutterBottom className={classes.headline}>
+      <Typography variant="h5" gutterBottom className={classes.headline}>
         Project Details
       </Typography>
       {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
@@ -238,14 +238,12 @@ const renderProjectDetails = (classes, project) => {
         renderRow(
           'Start date',
           moment(startDate)
-            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.EVENT &&
         renderRow(
           'End date',
           moment(endDate)
-            .utc()
             .format('dddd, Do MMMM YYYY')
         )}
       {projectType === ProjectType.RECURRING &&

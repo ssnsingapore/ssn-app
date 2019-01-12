@@ -205,7 +205,7 @@ class _ProjectListing extends Component {
     if (this.state.projects.length === 0) {
       return (
         <Typography
-          variant="subheading"
+          variant="subtitle1"
           style={{ color: theme.palette.grey[500] }}
         >
           There are no

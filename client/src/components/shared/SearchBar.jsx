@@ -36,14 +36,14 @@ const createMenu = (enumeration, displayMapping) => (
         onChange={handleChange}
       >
         <MenuItem key={firstLabel} value="">
-          <Typography variant="body2" className={classes.menuText}>
+          <Typography variant="body1" className={classes.menuText}>
             {firstLabel}
           </Typography>
         </MenuItem>
         {Object.values(enumeration).map(option => {
           return (
             <MenuItem key={option} value={option}>
-              <Typography variant="body2" className={classes.menuText}>
+              <Typography variant="body1" className={classes.menuText}>
                 {displayMapping[option]}
               </Typography>
             </MenuItem>
@@ -72,8 +72,8 @@ export const _SearchBar = ({
   return (
     <Paper className={classes.searchBox}>
       <div style={{ width: '80vw', margin: '0 auto' }}>
-        <Typography variant="title">Filter Projects</Typography>
-        <Typography variant="headline">
+        <Typography variant="h6">Filter Projects</Typography>
+        <Typography variant="h5">
           I am looking for projects about{' '}
           {createIssueAddressedMenu(
             FieldName.issueAddressed,

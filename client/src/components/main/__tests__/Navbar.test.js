@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Typography, Avatar, Button, MenuItem } from '@material-ui/core';
+import { Avatar, Button, MenuItem } from '@material-ui/core';
 
 import { _testExports } from '../NavBar';
 import { defaultAppContext } from 'components/main/AppContext';
@@ -52,13 +52,11 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to project owner dashboard on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/project_owner/dashboard');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/project_owner/dashboard');
       });
 
       it('should render PROJECT OWNER', () => {
-        expect(component.find(Typography).html()).toEqual(
-          expect.stringContaining('PROJECT OWNER')
-        );
+        expect(component.find('[data-testid="navbar-text"]').props().children).toEqual('PROJECT OWNER');
       });
 
       describe('avatar dropdown', () => {
@@ -105,12 +103,12 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to admin dashboard on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/admin/dashboard');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/admin/dashboard');
       });
 
       it('should render SSN ADMIN when admin is logged in', () => {
-        expect(component.find(Typography).html()).toEqual(
-          expect.stringContaining('SSN ADMIN')
+        expect(component.find('[data-testid="navbar-text"]').props().children).toEqual(
+          'SSN ADMIN'
         );
       });
 
@@ -118,7 +116,7 @@ describe('Navbar', () => {
 
         it('should render avatar with dropdown and logout button', () => {
           expect(component.find(Avatar).exists()).toBeTruthy();
-          expect(component.find(Button).at(1).html()).toEqual(
+          expect(component.find('[data-testid="dropdown-button"]').html()).toEqual(
             expect.stringContaining('admin@email.com')
           );
 
@@ -143,11 +141,11 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to home page on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/');
       });
 
       it('should render a button to view projects that links to projects page', () => {
-        expect(component.find(Button).get(1).props.to).toEqual('/projects');
+        expect(component.find('[data-testid="public-nav-button"]').props().to).toEqual('/projects');
       });
 
       it('should not render avatar dropdown menu when no one is logged in', () => {
@@ -171,11 +169,11 @@ describe('Navbar', () => {
       });
 
       it('should render a brand logo that redirects to home page on click', () => {
-        expect(component.find(Button).get(0).props.to).toEqual('/');
+        expect(component.find('[data-testid="logo-button"]').props().to).toEqual('/');
       });
 
       it('should render a button to view project owners', () => {
-        expect(component.find(Button).get(1).props.to).toEqual('/project_owners');
+        expect(component.find('[data-testid="public-nav-button"]').props().to).toEqual('/project_owners');
       });
 
       it('should not render avatar dropdown menu when no one is logged in', () => {
@@ -206,8 +204,10 @@ describe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
+        component.find('[data-testid="dropdown-button"]').props().onClick({ currentTarget: {} });
         await component.find(MenuItem).at(2).simulate('click');
 
+        expect(component.state().anchorEl).toBeNull();
         expect(mockContext.utils.authenticator.logoutProjectOwner).toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).not.toHaveBeenCalled();
       });
@@ -233,8 +233,10 @@ describe('Navbar', () => {
       });
 
       it('should log out project owner when logout button is clicked', async () => {
+        component.find('[data-testid="dropdown-button"]').props().onClick({ currentTarget: {} });
         await component.find(MenuItem).at(1).simulate('click');
 
+        expect(component.state().anchorEl).toBeNull();
         expect(mockContext.utils.authenticator.logoutProjectOwner).not.toHaveBeenCalled();
         expect(mockContext.utils.authenticator.logoutAdmin).toHaveBeenCalled();
       });

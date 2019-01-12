@@ -1,25 +1,24 @@
 import React, { Component } from 'react';
 
 import { AppContext } from 'components/main/AppContext';
+import { AlertType } from 'components/shared/Alert';
 import { withContext } from 'util/context';
 import { withForm } from 'util/form';
 import { extractErrors, formatErrors } from 'util/errors';
-import { ProjectOwnerProjectForm } from 'components/project_owner/new_project_form/ProjectOwnerProjectForm';
-import { FieldName, constraints } from 'components/project_owner/new_project_form/ProjectFormFields';
-import { AlertType } from 'components/shared/Alert';
+
+import { ProjectOwnerProjectForm } from './ProjectOwnerProjectForm';
+import { FieldName, constraints, validateGroupsMap } from './ProjectFormFields';
+import { PROJECT_IMAGE_DISPLAY_WIDTH, PROJECT_IMAGE_DISPLAY_HEIGHT } from './Constants';
 import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
   validateFormFields,
   resetAllFields,
   valuesForAllFields,
-} from 'components/project_owner/new_project_form/VolunteerRequirementForm';
+} from './VolunteerRequirementForm';
 
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
-
-export const PROJECT_IMAGE_DISPLAY_WIDTH = 640;
-export const PROJECT_IMAGE_DISPLAY_HEIGHT = 480;
 
 const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
 const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
@@ -181,6 +180,6 @@ export class _ProjectOwnerNewProjectForm extends Component {
 }
 
 export const ProjectOwnerNewProjectForm =
-  withForm(FieldName, constraints)(
+  withForm(FieldName, constraints, validateGroupsMap)(
     withContext(AppContext)(_ProjectOwnerNewProjectForm)
   );

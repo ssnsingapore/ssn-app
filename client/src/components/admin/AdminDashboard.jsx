@@ -100,7 +100,7 @@ export class _AdminDashboard extends Component {
       <Paper className={classes.root} square>
         <Paper className={classes.tabHeader} square>
           <div className={classes.header}>
-            <Typography variant="headline" className={classes.headline}>
+            <Typography variant="h5" className={classes.headline}>
               List of Projects
             </Typography>
           </div>

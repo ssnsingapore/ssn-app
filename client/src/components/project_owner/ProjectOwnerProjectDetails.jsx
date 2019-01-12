@@ -99,28 +99,29 @@ class _ProjectOwnerProjectDetails extends Component {
       return <Spinner />;
     }
     return (
-      <Grid container className={classes.root}>
-        <Grid item xs={12} className={classes.projectDetails}>
-          <Grid container spacing={16}>
-            {
-              this._isProjectRejected() &&
-              <RejectionReason
-                rejectionReason={this.state.project.rejectionReason}
-                role={Role.PROJECT_OWNER}
-              />
-            }
-            <Grid item xs={12}>
-              <ProjectMainInfo project={this.state.project} />
-            </Grid>
-            <Grid item xs={12}>
-              <ProjectOwnerDetails
-                projectOwner={this.state.project.projectOwner}
-              />
+      <React.Fragment>
+        <Grid container className={classes.root}>
+          <Grid item xs={12} className={classes.projectDetails}>
+            <Grid container spacing={16}>
+              {this._isProjectRejected() && (
+                <RejectionReason
+                  rejectionReason={this.state.project.rejectionReason}
+                  role={Role.PROJECT_OWNER}
+                />
+              )}
+              <Grid item xs={12}>
+                <ProjectMainInfo project={this.state.project} />
+              </Grid>
+              <Grid item xs={12}>
+                <ProjectOwnerDetails
+                  projectOwner={this.state.project.projectOwner}
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
         {this.renderActionBar()}
-      </Grid>
+      </React.Fragment>
     );
   }
 }
@@ -150,6 +151,7 @@ const styles = theme => ({
     float: 'right',
   },
   actionBar: {
+    display: 'flex',
     position: 'sticky',
     bottom: 0,
     backgroundColor: theme.palette.grey[200],

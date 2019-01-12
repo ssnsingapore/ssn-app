@@ -1,256 +1,316 @@
 import React from 'react';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Typography } from '@material-ui/core';
 import { TestProjectOwnerLoginForm } from 'components/public/ProjectOwnerLoginForm';
 import { AlertType } from 'components/shared/Alert';
 import { PasswordResetDialog } from '../PasswordResetDialog';
+import { Role } from 'components/shared/enums/Role';
+import { defaultAppContext } from 'components/main/AppContext';
+import { Redirect } from 'react-router-dom';
 
 describe('ProjectOwnerLoginForm', () => {
-  let props;
-  let component;
-
   const LOGIN_SUCCESS_MESSAGE = 'You\'ve successfully logged in!';
   const LOGIN_FAILURE_MESSAGE = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
 
+  describe('when project owner is not logged in', () => {
+    describe('render', () => {
+      let props;
+      let component;
 
-  beforeEach(() => {
-
-    props = {
-      classes: {},
-      context: {
-        updaters: {
-          showAlert: jest.fn(),
-        },
-      },
-    };
-    
-    component = shallow(<TestProjectOwnerLoginForm {...props}/>);
-  });
-
-  describe('invalid field', () => {
-    it('should show invalid email message when login with invalid email', async () => {
-      const emailTextField = component.dive().find(TextField).filterWhere(n => n.props().name === 'email');
-      expect(emailTextField.exists()).toBeTruthy();
-
-      const event = {
-        target: {name: 'email', value: 'invalid email'},
-      };
-      
-      await component.instance().handleChange(event);
-      component.update();
-      const emailTextFieldNew = component.dive().find(TextField)
-        .filterWhere(n => n.props().name === 'email');
-      expect(emailTextFieldNew.props().error).toBeTruthy();
-      expect(emailTextFieldNew.props().helperText).toBeTruthy();
-    });
-  });
-
-  describe('handleSubmit happy flow',  () => {
-    let props;
-    let component;
-    const valuesForAllFields = {email: 'test@test.com',
-      password: 'test123'};
-
-    beforeEach(() => {
-  
-      props = {
-        classes: {},
-        context: {
-          updaters: {
-            showAlert: jest.fn(),
-          },
-          utils: {
-            authenticator: {
-              loginProjectOwner: jest.fn(() => {
-                return new Promise(resolve => resolve({
-                  isSuccessful: true,
-                }));
-              }),
+      beforeEach(() => {
+        props = {
+          classes: {},
+          context: {
+            updaters: {
+              showAlert: jest.fn(),
+            },
+            utils: {
+              authenticator: {
+                isAuthenticated: () => false,
+              },
             },
           },
-        },
-        valuesForAllFields: jest.fn(() => {
-          return valuesForAllFields;
-        }),
-        validateAllFields: jest.fn(() => {
-          return true;
-        }),
-      };
+          handlePasswordResetDialog: jest.fn(),
+        };
+        component = shallow(<TestProjectOwnerLoginForm {...props} />).dive();
+      });
 
-      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
+      describe('sign up button', () => {
+        it('should exist', () => {
+          const signUpButton = component.find(Button).filterWhere(button => button.props().to === '/signup');
+
+          expect(signUpButton.exists()).toBeTruthy();
+        });
+      });
+
+      describe('Forgot password button', () => {
+        it('should exist', () => {
+          const forgotPasswordButton = component.find(Button).at(1);
+
+          expect(forgotPasswordButton.exists()).toBeTruthy();
+        });
+
+        it('should open the reset password dialog when clicked', () => {
+          let dialog = component.find(PasswordResetDialog);
+          expect(dialog.prop('open')).toEqual(false);
+
+          const forgotPasswordButton = component.find(Button).at(1);
+          forgotPasswordButton.simulate('click');
+
+          expect(component.state().passwordResetDialogOpen).toEqual(true);
+
+          dialog = component.find(PasswordResetDialog);
+          expect(dialog.prop('open')).toEqual(true);
+        });
+      });
+
+      it('should redirect to project owner dashboard when shouldRedirect is true and there is no referrer', () => {
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/project_owner/dashboard');
+      });
+
+      it('should redirect to referrer when shouldRedirect is true', () => {
+        const locationState = {
+          referrerPath: '/somereferrer',
+        };
+        component = shallow(<TestProjectOwnerLoginForm {...props} location={{ state: locationState }} />).dive();
+        component.setState({
+          shouldRedirect: true,
+        });
+
+        expect(component.find(Redirect).props().to).toEqual('/somereferrer');
+      });
     });
 
-    it('should prevent default when handleSubmit is clicked', async () => {      
+    describe('form validations', () => {
+      let props;
+      let component;
 
-      const event = {
-        preventDefault: jest.fn(),
-      };
-      component.dive().instance().handleSubmit(event);
+      beforeEach(() => {
+        props = {
+          classes: {},
+          context: {
+            updaters: {
+              showAlert: jest.fn(),
 
-      expect(event.preventDefault).toHaveBeenCalled();
-      expect(component.props().validateAllFields).toHaveBeenCalled();
-      expect(component.props().validateAllFields()).toBeTruthy();
-    });
-
-    it('should invoke authenticator when handleSubmit is clicked', async () => {      
-
-      const event = {
-        preventDefault: jest.fn(),
-      };
-      component.dive().instance().handleSubmit(event);
-
-      const {email, password} = valuesForAllFields;
-
-      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
-      expect(await component.props().context.utils.authenticator.loginProjectOwner(email, password)).toEqual({isSuccessful: true});
-    });
-
-    it('should show success alert when authentication successful', async () => {      
-
-      const event = {
-        preventDefault: jest.fn(),
-      };
-      component.dive().instance().handleSubmit(event);
-
-      const {email, password} = valuesForAllFields;
-      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
-
-      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
-    });
-  });
-
-  describe('handleSubmit not so happy flow', () => {
-    let props;
-    let component;
-    const valuesForAllFields = {email: 'test@test.com',
-      password: 'test123'};
-    const response = {
-      isSuccessful: false,
-      hasError: true,
-      status: 401,
-    };
-  
-    beforeEach(() => {
-  
-      props = {
-        classes: {},
-        context: {
-          updaters: {
-            showAlert: jest.fn(),
-          },
-          utils: {
-            authenticator: {
-              loginProjectOwner: jest.fn(() => {
-                return new Promise(resolve => resolve(response));
-              }),
+            },
+            utils: {
+              authenticator: {
+                isAuthenticated: () => false,
+              },
             },
           },
-        },
-        valuesForAllFields: jest.fn(() => {
-          return valuesForAllFields;
-        }),
-        validateAllFields: jest.fn(() => {
-          return true;
-        }),
-      };
+          handlePasswordResetDialog: jest.fn(),
+        };
+        component = shallow(<TestProjectOwnerLoginForm {...props} />);
+      });
 
-      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
+      it('should show invalid email message when login with invalid email', async () => {
+        const emailTextField = component.dive().find(TextField).filterWhere(n => n.props().name === 'email');
+        expect(emailTextField.exists()).toBeTruthy();
+
+        const event = {
+          target: { name: 'email', value: 'invalid email' },
+        };
+
+        await component.instance().handleChange(event);
+        component.update();
+        const emailTextFieldNew = component.dive().find(TextField)
+          .filterWhere(n => n.props().name === 'email');
+        expect(emailTextFieldNew.props().error).toBeTruthy();
+        expect(emailTextFieldNew.props().helperText).toBeTruthy();
+      });
+
     });
 
-    it('should invoke authenticator when handleSubmit is clicked', async () => {      
+    describe('handling submission', () => {
+      describe('when login is successful', () => {
+        let props;
+        let component;
+        const valuesForAllFields = {
+          email: 'test@test.com',
+          password: 'test123',
+        };
 
-      const event = {
-        preventDefault: jest.fn(),
-      };
-      component.dive().instance().handleSubmit(event);
+        beforeEach(() => {
+          props = {
+            classes: {},
+            context: {
+              updaters: {
+                showAlert: jest.fn(),
+              },
+              utils: {
+                authenticator: {
+                  loginProjectOwner: jest.fn(() => {
+                    return new Promise(resolve => resolve({
+                      isSuccessful: true,
+                    }));
+                  }),
+                  isAuthenticated: () => false,
+                },
+              },
+            },
+            valuesForAllFields: jest.fn(() => {
+              return valuesForAllFields;
+            }),
+            validateAllFields: jest.fn(() => {
+              return true;
+            }),
+          };
 
-      const {email, password} = valuesForAllFields;
+          component = shallow(<TestProjectOwnerLoginForm {...props} />);
+        });
 
-      expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
-      expect(await component.props().context.utils.authenticator.loginProjectOwner(email, password)).toEqual(response);
-    });
+        it('should prevent default when handleSubmit is clicked', async () => {
 
-    it('should show failure alert when authentication failed', async () => {      
+          const event = {
+            preventDefault: jest.fn(),
+          };
+          component.dive().instance().handleSubmit(event);
 
-      const event = {
-        preventDefault: jest.fn(),
-      };
-      component.dive().instance().handleSubmit(event);
+          expect(event.preventDefault).toHaveBeenCalled();
+          expect(component.props().validateAllFields).toHaveBeenCalled();
+          expect(component.props().validateAllFields()).toBeTruthy();
+        });
 
-      const {email, password} = valuesForAllFields;
-      await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+        it('should invoke authenticator when handleSubmit is clicked', async () => {
 
-      expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginFailure', AlertType.ERROR, LOGIN_FAILURE_MESSAGE);
+          const event = {
+            preventDefault: jest.fn(),
+          };
+          component.dive().instance().handleSubmit(event);
+
+          const { email, password } = valuesForAllFields;
+
+          expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
+          expect(await component.props().context.utils.authenticator.loginProjectOwner(email, password)).toEqual({ isSuccessful: true });
+        });
+
+        it('should show success alert when authentication successful', async () => {
+
+          const event = {
+            preventDefault: jest.fn(),
+          };
+          component.dive().instance().handleSubmit(event);
+
+          const { email, password } = valuesForAllFields;
+          await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+
+          expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginSuccess', AlertType.SUCCESS, LOGIN_SUCCESS_MESSAGE);
+        });
+      });
+
+      describe('when login is unsuccessful', () => {
+        let props;
+        let component;
+        const valuesForAllFields = {
+          email: 'test@test.com',
+          password: 'test123',
+        };
+        const response = {
+          isSuccessful: false,
+          hasError: true,
+          status: 401,
+        };
+
+        beforeEach(() => {
+          props = {
+            classes: {},
+            context: {
+              updaters: {
+                showAlert: jest.fn(),
+              },
+              utils: {
+                authenticator: {
+                  loginProjectOwner: jest.fn(() => {
+                    return new Promise(resolve => resolve(response));
+                  }),
+                  isAuthenticated: () => false,
+                },
+              },
+            },
+            valuesForAllFields: jest.fn(() => {
+              return valuesForAllFields;
+            }),
+            validateAllFields: jest.fn(() => {
+              return true;
+            }),
+          };
+
+          component = shallow(<TestProjectOwnerLoginForm {...props} />);
+        });
+
+        it('should invoke authenticator when handleSubmit is clicked', async () => {
+
+          const event = {
+            preventDefault: jest.fn(),
+          };
+          component.dive().instance().handleSubmit(event);
+
+          const { email, password } = valuesForAllFields;
+
+          expect(component.props().context.utils.authenticator.loginProjectOwner).toHaveBeenCalledWith(email, password);
+          expect(await component.props().context.utils.authenticator.loginProjectOwner(email, password)).toEqual(response);
+        });
+
+        it('should show failure alert when authentication failed', async () => {
+
+          const event = {
+            preventDefault: jest.fn(),
+          };
+          component.dive().instance().handleSubmit(event);
+
+          const { email, password } = valuesForAllFields;
+          await component.props().context.utils.authenticator.loginProjectOwner(email, password);
+
+          expect(component.props().context.updaters.showAlert).toHaveBeenCalledWith('loginFailure', AlertType.ERROR, LOGIN_FAILURE_MESSAGE);
+        });
+      });
     });
   });
-  
-  describe('sign up button', () => {
-    let props;
-    let component;
-    beforeEach(() => {
 
-      props = {
-        classes: {},
-        context: {
-          updaters: {
-            showAlert: jest.fn(),
-          },
-        },
+  describe('when project owner is already logged in', () => {
+    let mockContext;
+    let component;
+
+    beforeEach(() => {
+      mockContext = { ...defaultAppContext, isAuthenticated: true };
+      mockContext.utils.authenticator = {
+        isAuthenticated: () => true,
+        getCurrentUser: jest.fn(() => ({
+          role: Role.PROJECT_OWNER,
+          email: 'projectowner@email.com',
+        })),
+        logoutProjectOwner: jest.fn(() => Promise.resolve({})),
       };
-      
-    });
-    it('should exist', () => {
 
-      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
-
-      const signUpButton = component.dive().find(Button).filterWhere(button => button.props().to === '/signup');
-
-      expect(signUpButton.dive()).toBeTruthy();
-
-    });
-  });
-
-  describe('Forgot password button', () => {
-    let props;
-    let component;
-    beforeEach(() => {
-
-      props = {
+      const props = {
         classes: {},
-        context: {
-          updaters: {
-            showAlert: jest.fn(),
-          },
-        },
+        context: mockContext,
         handlePasswordResetDialog: jest.fn(),
       };
-      component = shallow(<TestProjectOwnerLoginForm {...props}/>);
-      
-    });
-    it('should exist', () => {
 
-      const forgotPasswordButton = component.dive().find(Button).at(1);
-    
-      expect(forgotPasswordButton.dive()).toBeTruthy();
-
+      component = shallow(<TestProjectOwnerLoginForm {...props} />).dive();
     });
 
-    it('onclick should passwordResetDialogOpen = true', () => { 
+    describe('render', () => {
+      it('should show the current logged in user, a button to logout and a button to go to the dashboard', () => {
+        expect(component.find(Typography).html()).toEqual(
+          expect.stringContaining('logged in as projectowner@email.com')
+        );
+        expect(component.find(Button).get(0).props.children).toContain('Logout');
+        expect(component.find(Button).get(1).props.to).toEqual('/project_owner/dashboard');
+      });
+    });
 
-      const wrapper = component.dive(); 
-      const forgotPasswordButton = wrapper.find(Button).at(1);
+    describe('logging out', () => {
+      it('should log out project owner when logout button is clicked', async () => {
+        await component.find(Button).at(0).simulate('click');
 
-      expect(wrapper.state().passwordResetDialogOpen).toEqual(false);
-
-      let dialog = wrapper.find(PasswordResetDialog);
-      expect(dialog.prop('open')).toEqual(false);
-      
-      forgotPasswordButton.dive().simulate('click');
-
-      expect(wrapper.state().passwordResetDialogOpen).toEqual(true);
-
-      dialog = wrapper.find(PasswordResetDialog);
-      expect(dialog.prop('open')).toEqual(true);
-
+        expect(mockContext.utils.authenticator.logoutProjectOwner).toHaveBeenCalled();
+      });
     });
   });
 });

@@ -17,7 +17,7 @@ import uploadImageBackground from 'assets/image-placeholder.svg';
 import {
   PROJECT_IMAGE_DISPLAY_HEIGHT,
   PROJECT_IMAGE_DISPLAY_WIDTH,
-} from 'components/project_owner/new_project_form/ProjectOwnerNewProjectForm';
+} from './Constants';
 
 class _ProjectImageUpload extends Component {
   constructor(props) {

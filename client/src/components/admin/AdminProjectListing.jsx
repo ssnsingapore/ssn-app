@@ -142,7 +142,7 @@ class _AdminProjectListing extends Component {
 
     if (this.state.projects.length === 0) {
       return (
-        <Typography variant="subheading" style={{ color: theme.palette.grey[500] }} >
+        <Typography variant="subtitle1" style={{ color: theme.palette.grey[500] }} >
           There are no {this._getProjectStateString()} at the moment.
         </Typography>
       );

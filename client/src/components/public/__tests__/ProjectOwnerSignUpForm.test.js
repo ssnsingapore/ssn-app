@@ -32,13 +32,13 @@ describe('ProjectOwnerSignUpForm', () => {
       expect(component.state('email').errors).toEqual(['Email can\'t be blank', 'Email is not a valid email']);
     });
 
-    it('when password is empty there are validation error messages', async() => {
+    it('when password is empty there are validation error messages', async () => {
       component.instance().setField('password', '');
 
       expect(component.state('password').errors).toEqual(['Password can\'t be blank', 'Password is too short (minimum is 6 characters)']);
     });
 
-    it('when password does not match passwordConfirmation then validation message appears', async() => {
+    it('when password does not match passwordConfirmation then validation message appears', async () => {
       component.instance().setField('password', 'some password');
       component.instance().setField('passwordConfirmation', 'different password');
 
@@ -46,14 +46,14 @@ describe('ProjectOwnerSignUpForm', () => {
 
     });
 
-    it('when password is less than 6 chars then validation message appears', async() => {
+    it('when password is less than 6 chars then validation message appears', async () => {
       component.instance().setField('password', 'short');
 
       expect(component.state('password').errors).toEqual(['Password is too short (minimum is 6 characters)']);
 
     });
 
-    it('when email is invalid then validation message appears', async() => {
+    it('when email is invalid then validation message appears', async () => {
       component.instance().setField('email', 'invalid email');
 
       expect(component.state('email').errors).toEqual(['Email is not a valid email']);
@@ -77,7 +77,7 @@ describe('ProjectOwnerSignUpForm', () => {
       };
 
       mockContext = { ...defaultAppContext };
-      mockRefCurrent = { files: [new Blob()]};
+      mockRefCurrent = { files: [new Blob()] };
 
       // Note: window.URL.createObjectURL is not a function in jsdom
       // see https://github.com/jsdom/jsdom/issues/1721
@@ -119,8 +119,9 @@ describe('ProjectOwnerSignUpForm', () => {
         name: 'owner name',
         role: 'project owner',
       };
-      
+
       const formData = new FormData();
+      formData.append('profilePhoto', mockRefCurrent.files[0]);
       formData.append('name', projectOwner.name);
       formData.append('role', projectOwner.role);
 

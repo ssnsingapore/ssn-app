@@ -87,7 +87,7 @@ export class PasswordResetService {
 
   _verifyPasswordResetToken = (user, passwordResetToken) => user && user.passwordResetToken === passwordResetToken
 
-   _findUser = async email => this.userModel.findOne({ email })
+  _findUser = async email => this.userModel.findOne({ email })
 
   _checkUserExists = (user) => {
     if (!user) {
@@ -127,47 +127,47 @@ export class PasswordResetService {
     <p><em>SSN</em></p>
   `)
 
-  _passwordResetUrl = user => encodeURI(`${config.API_BASE_URL}/api/v1/${user.role.toLowerCase()}s/${user.id}/passwordReset/${user.passwordResetToken}`)
+  _passwordResetUrl = user => encodeURI(`${config.API_BASE_URL}/api/v1/${user.role.toLowerCase()}s/${user.id}/password/reset/${user.passwordResetToken}`)
 
- _getPasswordResetCookieArgs = async (isSuccess, user) => {
-   const messageCookieArgs = [
-     config.MESSAGE_COOKIE_NAME,
-     config.MESSAGE_COOKIE_NAME,
-     this.baseCookieOptions,
-   ];
+  _getPasswordResetCookieArgs = async (isSuccess, user) => {
+    const messageCookieArgs = [
+      config.MESSAGE_COOKIE_NAME,
+      config.MESSAGE_COOKIE_NAME,
+      this.baseCookieOptions,
+    ];
 
-   if (isSuccess) {
-     const csrf = await uid(18);
-     return {
-       message: messageCookieArgs,
-       passwordResetToken: [
-         config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
-         user.passwordResetToken,
-         {
-           ...this.baseCookieOptions,
-           httpOnly: true,
-         },
-       ],
-       email: [
-         config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
-         user.email,
-         {
-           ...this.baseCookieOptions,
-           httpOnly: true,
-         },
-       ],
-       csrf: [
-         config.PASSWORD_RESET_CSRF_COOKIE_NAME,
-         csrf,
-         this.baseCookieOptions,
-       ],
-     };
-   }
+    if (isSuccess) {
+      const csrf = await uid(18);
+      return {
+        message: messageCookieArgs,
+        passwordResetToken: [
+          config.PASSWORD_RESET_TOKEN_COOKIE_NAME,
+          user.passwordResetToken,
+          {
+            ...this.baseCookieOptions,
+            httpOnly: true,
+          },
+        ],
+        email: [
+          config.PASSWORD_RESET_EMAIL_COOKIE_NAME,
+          user.email,
+          {
+            ...this.baseCookieOptions,
+            httpOnly: true,
+          },
+        ],
+        csrf: [
+          config.PASSWORD_RESET_CSRF_COOKIE_NAME,
+          csrf,
+          this.baseCookieOptions,
+        ],
+      };
+    }
 
-   return {
-     message: messageCookieArgs,
-   };
- }
+    return {
+      message: messageCookieArgs,
+    };
+  }
 
   testExports = {
     passwordResetEmailHtml: this._passwordResetEmailHtml,

@@ -22,7 +22,7 @@ describe('CheckForInactiveProjectsService', () => {
   let project;
 
   beforeEach(async () => {
-    const projectOwner = createProjectOwner();
+    const projectOwner = await createProjectOwner();
     project = createProject(projectOwner);
 
     await projectOwner.save();

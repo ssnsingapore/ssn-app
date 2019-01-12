@@ -26,7 +26,7 @@ import { extractErrors, formatErrors } from '../../util/errors';
 
 const PASSWORD_RESET_SUCCESS_MESSAGE = 'You should have received an email with a password reset link';
 
-const FieldName = getFieldNameObject([ 'email' ]);
+const FieldName = getFieldNameObject(['email']);
 const constraints = {
   [FieldName.email]: {
     presence: { allowEmpty: false },
@@ -47,7 +47,7 @@ class _PasswordResetDialog extends Component {
     const data = { email: fieldValue(fields, FieldName.email) };
 
     this.setState({ isLoading: true });
-    const response = await requestWithAlert.post('/api/v1/project_owners/passwordReset', data);
+    const response = await requestWithAlert.post('/api/v1/project_owners/password/reset', data);
     this.setState({ isLoading: false });
 
     if (response.isSuccessful) {

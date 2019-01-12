@@ -4,6 +4,13 @@ import 'jest-enzyme';
 
 configure({ adapter: new Adapter() });
 
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  clear: jest.fn(),
+};
+global.localStorage = localStorageMock;
+
 global.fetch = require('jest-fetch-mock');
 
 global.shallow = shallow;

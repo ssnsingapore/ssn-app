@@ -17,13 +17,14 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/display_mappings/VolunteerRequirementTypeDisplayMapping';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
-import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { ProjectState } from 'components/shared/enums/ProjectState';
+import { ProjectType } from 'components/shared/enums/ProjectType';
+import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { capitalizeWords } from 'util/capitalizeWords';
 
 const renderVolunteerRequirements = (project, classes) => {
   return (
-    <Grid style={{ marginBottom: '10px' }}>
+    <Grid style={{ marginBottom: '10px' }} data-testid="volunteer-requirements">
       <Typography variant="body1">We need volunteers for:</Typography>
       {project.volunteerRequirements.length !== 0 ? (
         project.volunteerRequirements.map(requirement => {
@@ -36,7 +37,7 @@ const renderVolunteerRequirements = (project, classes) => {
           );
         })
       ) : (
-        <Typography variant="body1">-</Typography>
+        <Typography variant="body1" data-testid="no-volunteer-requirements">-</Typography>
       )}
     </Grid>
   );
@@ -44,7 +45,7 @@ const renderVolunteerRequirements = (project, classes) => {
 
 const renderIssuesAddressed = (project, classes) => {
   return (
-    <Grid style={{ marginBottom: '10px' }}>
+    <Grid style={{ marginBottom: '10px' }} data-testid="issues-addressed">
       <Typography variant="body1">Issues addressed:</Typography>
       {project.issuesAddressed.length !== 0 ? (
         project.issuesAddressed.map(issueAddressed => {
@@ -58,7 +59,7 @@ const renderIssuesAddressed = (project, classes) => {
           );
         })
       ) : (
-        <Typography variant="body1">-</Typography>
+        <Typography variant="body1" data-testid="no-issues-addressed">-</Typography>
       )}
     </Grid>
   );
@@ -75,6 +76,82 @@ const renderRejectionMessage = (project, classes, rejectionMessageSize) => {
     </Grid>
   );
 };
+
+const renderFrequencyOrEventDateInfo = (project) => {
+  if (project.projectType === ProjectType.RECURRING) {
+    return (
+      <Typography variant="caption" data-testid="frequency">
+        Recurs {ProjectFrequencyDisplayMapping[project.frequency].toLowerCase()}
+      </Typography>
+    );
+  }
+
+  const startDate = moment(project.startDate).format('dddd, Do MMMM YYYY');
+  const endDate = moment(project.endDate).format('dddd, Do MMMM YYYY');
+  const eventDatesString = startDate === endDate ?
+    startDate : `${startDate} - ${endDate}`;
+
+  return (
+    <Typography variant="caption" data-testid="event-dates">
+      {eventDatesString}
+    </Typography >
+  );
+};
+const renderProjectTitle = (project) => (
+  <Typography variant="headline" gutterBottom data-testid="title">
+    {capitalizeWords(project.title)}
+  </Typography>
+);
+const renderProjectOwnerWithAvatar = (project, classes) => (
+  <Typography
+    variant="subheading"
+    color="textSecondary"
+    gutterBottom
+  >
+    <List className={classes.removePadding}>
+      <ListItem className={classes.removePadding}>
+        <Avatar
+          alt="Profile Photo"
+          src={project.projectOwner.profilePhotoUrl}
+          className={classes.smallAvatar}
+          data-testid="project-owner-avatar"
+        />
+        <ListItemText
+          className={classes.removePadding}
+          primary={project.projectOwner.name}
+          data-testid="project-owner-name"
+        />
+      </ListItem>
+    </List>
+  </Typography>
+);
+
+const renderDateBadge = (project, classes) => {
+  if (project.projectType !== ProjectType.EVENT) {
+    return null;
+  }
+
+  return (
+    <Paper elevation={0} className={classes.dateBadge} data-testid="date-badge">
+      <Typography variant="caption">
+        {moment(project.startDate).format('MMM')}
+      </Typography>
+      <Typography variant="title" color="secondary">
+        <strong>
+          {moment(project.startDate).format('DD')}
+        </strong>
+      </Typography>
+    </Paper>
+  );
+};
+
+const renderProjectDescription = (project) => (
+  <Typography variant="caption" data-testid="description">
+    {project.description.length <= 320
+      ? project.description
+      : project.description.slice(0, 320) + '...'}
+  </Typography>
+);
 
 const _ProjectListingCard = ({ project, classes }) => {
   const cardContentSize = project.state === ProjectState.REJECTED ? 8 : 12;
@@ -97,72 +174,17 @@ const _ProjectListingCard = ({ project, classes }) => {
                 <CardContent className={classes.content}>
                   <Grid container>
                     <Grid item xs={11}>
-                      <Typography variant="caption">
-                        {project.projectType === 'RECURRING'
-                          ? 'Recurs ' +
-                            capitalizeWords(
-                              ProjectFrequencyDisplayMapping[project.frequency]
-                            )
-                          : project.startDate === project.endDate
-                            ? moment(project.startDate).utc().format(
-                              'dddd, Do MMMM YYYY'
-                            )
-                            : moment(project.startDate).utc().format(
-                              'dddd, Do MMMM YYYY'
-                            ) +
-                            ' - ' +
-                            moment(project.endDate).utc().format(
-                              'dddd, Do MMMM YYYY'
-                            )}
-                      </Typography>
-
-                      <Typography variant="headline" gutterBottom>
-                        {capitalizeWords(project.title)}
-                      </Typography>
-                      <Typography
-                        variant="subheading"
-                        color="textSecondary"
-                        gutterBottom
-                      >
-                        <List className={classes.removePadding}>
-                          <ListItem className={classes.removePadding}>
-                            <Avatar
-                              alt="Profile Photo"
-                              src={project.projectOwner.profilePhotoUrl}
-                              className={classes.smallAvatar}
-                            />
-                            <ListItemText
-                              className={classes.removePadding}
-                              primary={project.projectOwner.name}
-                            />
-                          </ListItem>
-                        </List>
-                      </Typography>
+                      {renderFrequencyOrEventDateInfo(project)}
+                      {renderProjectTitle(project)}
+                      {renderProjectOwnerWithAvatar(project, classes)}
                     </Grid>
                     <Grid item xs={1}>
-                      {project.projectType === 'RECURRING' ? (
-                        ''
-                      ) : (
-                        <Paper elevation={0} className={classes.dateBadge}>
-                          <Typography variant="caption">
-                            {moment(project.startDate).utc().format('MMM')}
-                          </Typography>
-                          <Typography variant="title" color="secondary">
-                            <strong>
-                              {moment(project.startDate).utc().format('DD')}
-                            </strong>
-                          </Typography>
-                        </Paper>
-                      )}
+                      {renderDateBadge(project, classes)}
                     </Grid>
                   </Grid>
                   <Grid container className={classes.subContentContainer}>
                     <Grid item xs={8} className={classes.projectDescription}>
-                      <Typography variant="caption">
-                        {project.description.length <= 320
-                          ? project.description
-                          : project.description.slice(0, 320) + '...'}
-                      </Typography>
+                      {renderProjectDescription(project)}
                     </Grid>
                     <Grid item xs={4}>
                       {renderVolunteerRequirements(project, classes)}

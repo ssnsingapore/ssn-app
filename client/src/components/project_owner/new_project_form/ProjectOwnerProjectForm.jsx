@@ -19,7 +19,7 @@ import { DefaultCoverImageUrl } from 'components/shared/enums/DefaultCoverImageU
 import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { Role } from 'components/shared/enums/Role';
 
-class _ProjectOwnerProjectForm extends Component {
+export class _ProjectOwnerProjectForm extends Component {
   constructor(props) {
     super(props);
 
@@ -44,14 +44,9 @@ class _ProjectOwnerProjectForm extends Component {
     const project = this.getProject();
     const projectImageInput = this.props.projectImageInput.current;
     let coverImageSrc = this.getNewCoverImageSrc(projectImageInput);
-
     if (!coverImageSrc) {
-      if (this.props.coverImageUrl) {
-        coverImageSrc = this.props.coverImageUrl;
-      } else {
-        coverImageSrc = this.getPreviewDefaultImageUrl();
-        this.setState({ isDefaultCoverImage: true });
-      }
+      coverImageSrc = this.getPreviewDefaultImageUrl();
+      this.setState({ isDefaultCoverImage: true });
     }
 
     project.coverImageUrl = coverImageSrc;
@@ -138,30 +133,32 @@ class _ProjectOwnerProjectForm extends Component {
     return (
       <div className={classes.actionBar}>
         <div className={classes.buttonGroup}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
-            className={classes.button}
-            disabled={this.props.isSubmitting}
-          >
-            Submit
-          </Button>
           {!preview ? (
-            <Button
-              variant="contained"
-              className={classes.button}
-              onClick={this.togglePreviewOn}
-            >
-              Preview
-            </Button>
+            <React.Fragment>
+              <Button
+                type="submit"
+                variant="contained"
+                color="secondary"
+                className={classes.button}
+                disabled={this.props.isSubmitting}
+              >
+                Submit
+              </Button>
+              <Button
+                variant="contained"
+                className={classes.button}
+                onClick={this.togglePreviewOn}
+              >
+                Preview
+              </Button>
+            </React.Fragment>
           ) : (
             <Button
               variant="contained"
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-                Back to form
+              Back to form
             </Button>
           )}
           {this.renderBackToDashboardButton()}

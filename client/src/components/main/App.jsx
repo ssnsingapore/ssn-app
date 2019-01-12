@@ -10,6 +10,9 @@ import { Routes } from './Routes';
 import { Alert } from 'components/shared/Alert';
 
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: { main: '#3E9992' },
     secondary: { main: '#FF9391' },

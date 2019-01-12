@@ -57,7 +57,12 @@ class _NavBar extends Component {
     const isProjectOwnerPath = currentUser.role === Role.PROJECT_OWNER && pathname.includes('/project_owner/');
     const isAdminPath = currentUser.role === Role.ADMIN && pathname.includes('/admin/');
     return (isProjectOwnerPath || isAdminPath) && (
-      <Typography variant="body2" color="inherit" style={{ paddingLeft: '15px' }}>
+      <Typography
+        data-testid="navbar-text"
+        variant="body1"
+        color="inherit"
+        style={{ paddingLeft: '15px' }}
+      >
         {NavBarDisplayMapping[currentUser.role]}
       </Typography>
     );
@@ -105,11 +110,12 @@ class _NavBar extends Component {
       return (
         <React.Fragment>
           <Button
-            variant="flat"
+            data-testid="public-nav-button"
+            variant="text"
             component={Link}
             to={isProjectPath ? '/project_owners' : '/projects'}
           >
-            <Typography variant="body2" color="inherit" style={{ color: 'white' }}>
+            <Typography variant="body1" color="inherit" style={{ color: 'white' }}>
               {isProjectPath ? 'View Project Owners' : 'View Projects'}
             </Typography>
           </Button>
@@ -122,6 +128,7 @@ class _NavBar extends Component {
     return currentUser && (
       <React.Fragment>
         <Button
+          data-testid="dropdown-button"
           aria-owns={this.state.anchorEl ? 'simple-menu' : null}
           aria-haspopup="true"
           onClick={this.handleClick}
@@ -178,7 +185,12 @@ class _NavBar extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.leftNavBar}>
-        <Button component={Link} to={this.getLink()} disabled={this.state.isLoading} >
+        <Button
+          data-testid="logo-button"
+          component={Link}
+          to={this.getLink()}
+          disabled={this.state.isLoading}
+        >
           <img src={ssnLogo} alt="ssn-logo" className={classes.logo} />
         </Button>
         {this.renderNavbarText(this.props.location.pathname)}

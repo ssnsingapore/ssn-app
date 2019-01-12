@@ -70,3 +70,13 @@ export const constraints = {
     };
   },
 };
+
+export const validateGroupsMap = {
+  fields: {
+    [FieldName.startDate]: 'eventDates',
+    [FieldName.endDate]: 'eventDates',
+  },
+  validateGroups: {
+    eventDates: [FieldName.startDate, FieldName.endDate],
+  },
+};

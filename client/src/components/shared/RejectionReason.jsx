@@ -12,7 +12,7 @@ export const RejectionReason = ({ role, rejectionReason }) => {
 
   return (
     <Grid item xs={12}>
-      <Typography variant="body2">
+      <Typography variant="body1">
         {preambleText}
       </Typography>
       <Typography variant="body1">

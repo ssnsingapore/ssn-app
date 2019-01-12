@@ -34,7 +34,7 @@ class _ProjectOwnerDetails extends Component {
     return (
       <React.Fragment>
         {type !== 'list' &&
-          <Typography variant="headline" gutterBottom>
+          <Typography variant="h5" gutterBottom>
             Project Owner Details
           </Typography>
         }
