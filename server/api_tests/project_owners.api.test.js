@@ -243,8 +243,8 @@ describe('Project Owner routes', () => {
         ACL: 'public-read',
         Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
       });
-      expect(response.body.projectOwner.name).toEqual('new name');
-      expect(response.body.projectOwner.profilePhotoUrl).toEqual('some image url');
+      expect(response.body.user.name).toEqual('new name');
+      expect(response.body.user.profilePhotoUrl).toEqual('some image url');
     });
   });
 });
