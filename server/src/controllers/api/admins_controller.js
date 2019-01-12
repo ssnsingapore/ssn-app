@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from 'passport';
+import parser from 'cron-parser';
 
 import { config } from 'config/environment';
 import { asyncWrap } from 'util/async_wrapper';
@@ -16,6 +17,23 @@ async function getAdmins(_req, res) {
   return res
     .status(200)
     .json({ admins });
+}
+
+adminsRouter.get(
+  '/admins/cron_job_time',
+  ...authMiddleware({ authorize: Role.ADMIN }),
+  asyncWrap(getJobTime)
+);
+async function getJobTime(_req, res) {
+  const nextJobRunTime = parser
+    .parseExpression(config.CRON_SCHEDULE, { tz: 'Asia/Singapore' })
+    .next()
+    .toString();
+  return res
+    .status(200)
+    .json({
+      nextJobRunTime,
+    });
 }
 
 adminsRouter.post(
