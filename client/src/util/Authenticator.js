@@ -27,7 +27,7 @@ export class Authenticator {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
   }
 
-  _setSuccessfulAuthState = async (response) => {
+  setSuccessfulAuthState = async (response) => {
     const { user } = await response.json();
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
 
@@ -97,7 +97,7 @@ export class Authenticator {
       .post(loginPath, data, { authenticated: true });
 
     if (response.isSuccessful) {
-      await this._setSuccessfulAuthState(response);
+      await this.setSuccessfulAuthState(response);
     }
 
     return response;
