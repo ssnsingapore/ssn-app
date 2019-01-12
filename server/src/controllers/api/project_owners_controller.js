@@ -30,10 +30,9 @@ async function getProjectOwners(req, res) {
   };
   const query = {
     confirmedAt: { $ne: null },
-
   };
   const results = await ProjectOwner.paginate(query, {
-    page, limit, customLabels, sort: { name: 1 },
+    page, limit, customLabels, sort: { name: 'asc' }, collation: { locale: 'en' },
   });
   return res.status(200).json(results);
 }
