@@ -19,7 +19,7 @@ const LOGOUT_FAILURE_MESSAGE = 'We\'ve encountered an error logging you out. Ple
 
 const FieldName = getFieldNameObject([
   'email',
-  'hashedPassword',
+  'password',
 ]);
 
 const constraints = {
@@ -27,7 +27,7 @@ const constraints = {
     presence: { allowEmpty: false },
     email: true,
   },
-  [FieldName.hashedPassword]: {
+  [FieldName.password]: {
     presence: { allowEmpty: false },
   },
 };
@@ -54,8 +54,8 @@ class _AdminLoginForm extends Component {
 
     this.setState({ isLoading: true });
 
-    const { email, hashedPassword } = this.props.valuesForAllFields();
-    const response = await authenticator.loginAdmin(email, hashedPassword);
+    const { email, password } = this.props.valuesForAllFields();
+    const response = await authenticator.loginAdmin(email, password);
 
     this.setState({ isLoading: false });
 
@@ -150,14 +150,14 @@ class _AdminLoginForm extends Component {
             value={fieldValue(fields, FieldName.email) || ''}
             fullWidth />
           <TextField
-            name={FieldName.hashedPassword}
+            name={FieldName.password}
             className={classes.textInput}
-            id={FieldName.hashedPassword}
+            id={FieldName.password}
             label="Password"
             type="password"
             required={true}
             onChange={handleChange}
-            value={fieldValue(fields, FieldName.hashedPassword) || ''}
+            value={fieldValue(fields, FieldName.password) || ''}
             fullWidth />
           <Button
             type="submit"
