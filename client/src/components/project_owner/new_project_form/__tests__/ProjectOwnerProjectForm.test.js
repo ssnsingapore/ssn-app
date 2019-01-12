@@ -3,6 +3,8 @@ import { Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { _ProjectOwnerProjectForm } from '../ProjectOwnerProjectForm';
+import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
+import { DefaultCoverImageUrl } from 'components/shared/enums/DefaultCoverImageUrl';
 
 describe('ProjectOwnerProjectForm', () => {
   let component;
@@ -23,6 +25,16 @@ describe('ProjectOwnerProjectForm', () => {
       component.setState({
         preview: true,
       });
+
+      component.setProps({
+        volunteerRequirementRefs: {
+          0: {
+            current: {
+              valuesForAllFields: jest.fn(),
+            },
+          },
+        },
+      });
     });
 
     it('displays notice that user is viewing a preview', () => {
@@ -40,7 +52,7 @@ describe('ProjectOwnerProjectForm', () => {
         component.find(Button).at(2).prop('children')
       ).toEqual('Back to dashboard');
     });
-    
+
     it('does not display submit button', () => {
       const allButtons = component.find(Button).map(button => button.prop('children'));
       expect(allButtons).not.toContain('Submit');
@@ -48,6 +60,30 @@ describe('ProjectOwnerProjectForm', () => {
 
     it('displays only total of 3 buttons', () => {
       expect(component.find(Button)).toHaveLength(3);
+    });
+
+    it('should display default image if no cover image is uploaded', () => {
+      const mockProject = {
+        coverImageUrl: {
+          value: '',
+        },
+        issuesAddressed: {
+          value: [IssueAddressed.AIR_QUALITY],
+        },
+      };
+
+      component.setProps({
+        projectImageInput: {
+          current: undefined,
+        },
+        fields: mockProject,
+      });
+
+      component.instance().togglePreviewOn();
+
+      expect(component.state().project.coverImageUrl).toEqual(
+        DefaultCoverImageUrl[IssueAddressed.AIR_QUALITY]
+      );
     });
   });
 

@@ -44,14 +44,9 @@ export class _ProjectOwnerProjectForm extends Component {
     const project = this.getProject();
     const projectImageInput = this.props.projectImageInput.current;
     let coverImageSrc = this.getNewCoverImageSrc(projectImageInput);
-
     if (!coverImageSrc) {
-      if (this.props.coverImageUrl) {
-        coverImageSrc = this.props.coverImageUrl;
-      } else {
-        coverImageSrc = this.getPreviewDefaultImageUrl();
-        this.setState({ isDefaultCoverImage: true });
-      }
+      coverImageSrc = this.getPreviewDefaultImageUrl();
+      this.setState({ isDefaultCoverImage: true });
     }
 
     project.coverImageUrl = coverImageSrc;
