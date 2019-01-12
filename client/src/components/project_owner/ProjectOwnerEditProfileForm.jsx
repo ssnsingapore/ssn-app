@@ -27,6 +27,8 @@ const FieldName = getFieldNameObject([
   'socialMediaLink',
   'description',
   'personalBio',
+  'password',
+  'passwordConfirmation',
 ]);
 
 const constraints = {
@@ -51,6 +53,13 @@ const constraints = {
       presence: { allowEmpty: false },
     };
   },
+  [FieldName.password]: {
+  },
+  [FieldName.passwordConfirmation]: {
+    sameValueAs: {
+      other: FieldName.password,
+    },
+  },
 };
 
 class _ProjectOwnerEditProfileForm extends Component {
@@ -62,6 +71,8 @@ class _ProjectOwnerEditProfileForm extends Component {
     this.state = {
       isSubmitting: false,
       isLoading: true,
+      isImageTooLowResolution: false,
+      shouldShowPasswordChange: false,
     };
   }
 
@@ -71,8 +82,7 @@ class _ProjectOwnerEditProfileForm extends Component {
     const currentUser = authenticator.getCurrentUser();
 
     const endPoint = `/api/v1/project_owners/${currentUser.id}`;
-    const response = await requestWithAlert.get(endPoint,
-      { authenticated: true });
+    const response = await requestWithAlert.get(endPoint, { authenticated: true });
 
     if (response.isSuccessful) {
       const { projectOwner } = await response.json();
@@ -86,6 +96,16 @@ class _ProjectOwnerEditProfileForm extends Component {
     }
 
     this.setState({ isLoading: false });
+  }
+
+  handleShowPasswordChange = () => {
+    if (this.state.shouldShowPasswordChange) {
+      this.setState({ shouldShowPasswordChange: false });
+      this.props.resetField(FieldName.password);
+      this.props.resetField(FieldName.passwordConfirmation);
+    } else {
+      this.setState({ shouldShowPasswordChange: true });
+    }
   }
 
   handleSubmit = async (event) => {
@@ -193,7 +213,9 @@ class _ProjectOwnerEditProfileForm extends Component {
         handleChange={this.props.handleChange}
         handleSubmit={this.handleSubmit}
         isSubmitting={this.state.isSubmitting}
-        isEditProfileForm={true} />
+        isEditProfileForm={true}
+        shouldShowPasswordChange={this.state.shouldShowPasswordChange}
+        handleShowPasswordChange={this.handleShowPasswordChange} />
     );
   }
 }
