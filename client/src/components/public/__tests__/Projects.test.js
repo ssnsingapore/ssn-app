@@ -6,7 +6,7 @@ import { defaultAppContext } from 'components/main/AppContext';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
-import { ProjectListing } from 'components/shared/ProjectListing';
+import { PublicProjectListing } from 'components/shared/PublicProjectListing';
 import { SearchBar } from 'components/shared/SearchBar';
 
 const Projects = _testExports.Projects;
@@ -132,7 +132,7 @@ xdescribe('Projects', () => {
           component.setState({ tabValue: 0 });
           component.update();
 
-          expect(component.find(ProjectListing).props().projectState).toEqual(
+          expect(component.find(PublicProjectListing).props().projectState).toEqual(
             ProjectState.APPROVED_ACTIVE
           );
         });
@@ -143,7 +143,7 @@ xdescribe('Projects', () => {
           component.setState({ tabValue: 1 });
           component.update();
 
-          expect(component.find(ProjectListing).props().projectState).toEqual(
+          expect(component.find(PublicProjectListing).props().projectState).toEqual(
             ProjectState.APPROVED_INACTIVE
           );
         });
