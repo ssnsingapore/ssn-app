@@ -177,10 +177,13 @@ export class _ProjectOwnerEditProjectForm extends Component {
     }
 
     const formData = new FormData();
-    if (this.projectImageInput.current.files[0]) {
+    let image = this.projectImageInput.current.files[0];
+
+    if (image) {
       const resizedProjectImage = await this.resizeImage();
-      formData.append('projectImage', resizedProjectImage);
+      image = resizedProjectImage;
     }
+    formData.append('projectImage', image);
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;

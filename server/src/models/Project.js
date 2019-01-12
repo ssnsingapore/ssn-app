@@ -97,12 +97,6 @@ const ProjectSchema = new mongoose.Schema(
     },
     coverImageUrl: {
       type: String,
-      required: [true, 'cannot be blank'],
-      default() {
-        const defaultUrl = defaultCoverImageUrl[this.issuesAddressed[0]];
-
-        return defaultUrl || defaultCoverImageUrl[IssueAddressed.OTHER];
-      },
     },
     description: {
       type: String,
@@ -179,5 +173,14 @@ const ProjectSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+ProjectSchema.pre('save', function (next) {
+  if (!this.coverImageUrl) {
+    const defaultUrl = defaultCoverImageUrl[this.issuesAddressed[0]];
+    this.coverImageUrl = defaultUrl || defaultCoverImageUrl[IssueAddressed.OTHER];
+  }
+
+  next();
+});
 
 export const Project = mongoose.model('Project', ProjectSchema);

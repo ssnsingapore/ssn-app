@@ -272,7 +272,7 @@ projectRouter.put(
 );
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  const coverImage = req.file;
+  let coverImageUrl = req.file;
   const updatedProject = JSON.parse(req.body.project);
   const { user } = req;
 
@@ -286,22 +286,24 @@ async function projectOwnerChangeProjectState(req, res) {
     existingProject.set(updatedProject);
     await existingProject.save();
 
-    if (coverImage) {
+    if (coverImageUrl) {
       const response = await s3
         .upload({
-          Body: coverImage.buffer,
-          Key: `${new Date().getTime()}-${existingProject.id}-${existingProject.title}`,
+          Body: coverImageUrl.buffer,
+          Key: `${new Date().getTime()}-${existingProject.id}-${
+            existingProject.title
+          }`,
           ACL: 'public-read',
           Bucket: `${config.AWS_BUCKET_NAME}/project_cover_images`,
         })
         .promise();
-      existingProject.set({ coverImageUrl: response.Location });
-      await existingProject.save();
-    }
 
-    return res
-      .status(200)
-      .json({ project: existingProject });
+      coverImageUrl = response.Location;
+    }
+    existingProject.set({ coverImageUrl });
+    await existingProject.save();
+
+    return res.status(200).json({ project: existingProject });
   }
   return res.status(422).json({
     errors: [
