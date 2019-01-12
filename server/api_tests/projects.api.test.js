@@ -3,6 +3,7 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import app from 'app';
 import moment from 'moment';
+import { s3 } from 'config/aws';
 
 import { config } from 'config/environment';
 import {
@@ -1084,6 +1085,8 @@ describe('Project owner routes', () => {
         startDate: moment('2018-10-01').toDate(),
         endDate: moment('2018-10-01').toDate(),
       };
+
+      s3.upload = jest.fn(() => ({ promise: () => Promise.resolve({ Location: 'some image url' }) }));
     });
 
     afterEach(async () => {
