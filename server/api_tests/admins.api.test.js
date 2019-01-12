@@ -135,4 +135,15 @@ describe('GET /admins/cron_job_time', () => {
       nextJobRunTime: 'Sun Jan 13 2019 10:30:00 GMT+0800',
     });
   });
+
+  it('returns 500 when unable to parse cron syntax', async () => {
+    config.CRON_SCHEDULE = 'wrong syntax';
+
+    const response = await request(app)
+      .get('/api/v1/admins/cron_job_time')
+      .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+      .set('csrf-token', csrfToken);
+
+    expect(response.status).toEqual(500);
+  });
 });

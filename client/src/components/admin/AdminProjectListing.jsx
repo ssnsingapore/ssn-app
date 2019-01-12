@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import qs from 'qs';
 import { Grid, Typography, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
@@ -11,8 +13,7 @@ import { ProjectDeactivateConfirmationDialog } from 'components/shared/ProjectDe
 import { ProjectActivateConfirmationDialog } from 'components/shared/ProjectActivateConfirmationDialog';
 import { ProjectListingCard } from 'components/shared/ProjectListingCard';
 import { Pagination } from 'components/shared/Pagination';
-import qs from 'qs';
-
+import { JobScheduleMessage } from 'components/admin/JobScheduleMessage';
 import { Role } from 'components/shared/enums/Role';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectStateDisplayMapping } from 'components/shared/display_mappings/ProjectStateDisplayMapping';
@@ -200,6 +201,9 @@ class _AdminProjectListing extends Component {
           project={project}
         />
         <Grid item xs={12}>
+          {this.props.projectState === ProjectState.APPROVED_ACTIVE &&
+            <JobScheduleMessage />
+          }
           {this.state.projects.length > 0 &&
             <Pagination
               numPages={this._getNumPages()}
