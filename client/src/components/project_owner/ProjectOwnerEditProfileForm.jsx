@@ -109,7 +109,6 @@ class _ProjectOwnerEditProfileForm extends Component {
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert, authenticator } = this.props.context.utils;
-    const currentUser = authenticator.getCurrentUser();
 
     this.setState({ isSubmitting: true });
     const response = await requestWithAlert
