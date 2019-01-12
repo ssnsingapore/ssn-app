@@ -58,15 +58,15 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
         </label>
 
       ) : (
-          <Button
-            color="default"
-            variant="contained"
-            className={classes.button}
-            onClick={this.handleCancel}
-          >
+        <Button
+          color="default"
+          variant="contained"
+          className={classes.button}
+          onClick={this.handleCancel}
+        >
             Cancel
         </Button>
-        )
+      )
     );
 
   }
@@ -82,7 +82,7 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
       classnames(classes.image, classes.imageWithError) : classes.image;
 
     return (
-      <React.Fragment>
+      <div>
 
         {(profilePhotoUrl || imageSrc) &&
           <img
@@ -105,7 +105,7 @@ export class _ProjectOwnerProfilePhotoUpload extends Component {
           className={classes.uploadInput}
         />
         {this.renderButton()}
-      </React.Fragment>
+      </div>
     );
   }
 }
