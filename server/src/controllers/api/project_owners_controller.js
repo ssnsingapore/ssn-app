@@ -107,20 +107,26 @@ projectOwnersRouter.put('/project_owner/profile',
 async function updateProjectOwner(req, res) {
   const projectOwner = req.user;
   const { password } = req.body;
+
   const projectOwnerAttributes = req.body;
   if (projectOwnerAttributes.password) {
     delete projectOwnerAttributes.password;
     delete projectOwnerAttributes.passwordConfirmation;
   }
-  const profilePhotoImage = req.file;
 
   projectOwner.set(projectOwnerAttributes);
   if (password) {
     projectOwner.setPassword(password);
+    await projectOwner.save();
+    const { cookieArguments, csrfToken } = await new LoginService(projectOwner)
+      .generateCookieAndCsrfToken();
+    res.set('csrf-token', csrfToken);
+    res.cookie(...cookieArguments);
+  } else {
+    await projectOwner.save();
   }
 
-  await projectOwner.save();
-
+  const profilePhotoImage = req.file;
   if (profilePhotoImage) {
     const response = await s3.upload({
       Body: profilePhotoImage.buffer,
@@ -128,12 +134,11 @@ async function updateProjectOwner(req, res) {
       ACL: 'public-read',
       Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
     }).promise();
-
     projectOwner.set({ profilePhotoUrl: response.Location });
     await projectOwner.save();
   }
 
-  return res.status(200).json({ projectOwner });
+  return res.status(200).json({ user: projectOwner });
 }
 
 // =============================================================================
