@@ -31,7 +31,7 @@ function initializeFormFields(names) {
 
     return fields;
   }, {});
-};
+}
 
 function updateFormField(fields, fieldName, value, errors = []) {
   return {
@@ -41,7 +41,7 @@ function updateFormField(fields, fieldName, value, errors = []) {
       errors,
     },
   };
-};
+}
 
 function updateFormErrors(fields, fieldsWithErrors) {
   return Object.keys(fields).reduce((newFields, fieldName) => {
@@ -52,30 +52,30 @@ function updateFormErrors(fields, fieldsWithErrors) {
 
     return newFields;
   }, {});
-};
+}
 
 export function fieldValue(fields, fieldName) {
   return fields[fieldName].value;
-};
+}
 
 function fieldErrors(fields, fieldName) {
   return fields[fieldName].errors;
-};
+}
 
 export function fieldHasError(fields, fieldName) {
   return fieldErrors(fields, fieldName).length > 0;
-};
+}
 
 export function fieldErrorText(fields, fieldName) {
   return fieldErrors(fields, fieldName).join('. ');
-};
+}
 
 function valuesForFields(fields, fieldNames) {
   return fieldNames.reduce((values, name) => {
     values[name] = fields[name].value;
     return values;
   }, {});
-};
+}
 
 // Custom validators
 
@@ -104,7 +104,9 @@ validate.validators.isUrl = (value, options) => {
 };
 
 validate.extend(validate.validators.datetime, {
-  parse: (value) => +moment.utc(value),
+  parse: value => {
+    return +moment.utc(value);
+  },
   format: (value, options) => {
     const format = options.dateOnly ? 'YYYY-MM-DD' : 'YYYY-MM-DD hh:mm:ss';
     return moment.utc(value).format(format);
@@ -147,7 +149,11 @@ function validateField(fieldName, value, values, constraints) {
 //   },
 // }
 
-export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormComponent) => {
+export const withForm = (
+  fieldNames,
+  constraints,
+  validateGroupsMap
+) => FormComponent => {
   return class Form extends Component {
     constructor(props) {
       super(props);
@@ -155,12 +161,9 @@ export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormCom
       this.state = initializeFormFields(fieldNames);
     }
 
-    valuesForAllFields = (state) => {
-      return valuesForFields(
-        state || this.state,
-        Object.keys(fieldNames),
-      );
-    }
+    valuesForAllFields = state => {
+      return valuesForFields(state || this.state, Object.keys(fieldNames));
+    };
 
     validateAllFields = () => {
       const values = this.valuesForAllFields();
@@ -173,13 +176,14 @@ export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormCom
       }
 
       return true;
-    }
+    };
 
-    crossValidateFields = (name) => {
+    crossValidateFields = name => {
       if (validateGroupsMap && validateGroupsMap.fields[name]) {
         const validateGroupName = validateGroupsMap.fields[name];
-        const validateGroup = validateGroupsMap.validateGroups[validateGroupName];
-        validateGroup.forEach((fieldName) => {
+        const validateGroup =
+          validateGroupsMap.validateGroups[validateGroupName];
+        validateGroup.forEach(fieldName => {
           if (fieldName === name) {
             return;
           }
@@ -187,20 +191,22 @@ export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormCom
           this.setField(fieldName, value);
         });
       }
-
-    }
+    };
 
     setField = (name, value) => {
       return new Promise(resolve => {
-        this.setState((state) => {
-          const values = this.valuesForAllFields(state);
-          const errors = validateField(name, value, values, constraints);
-          return updateFormField(state, name, value, errors);
-        }, () => resolve());
+        this.setState(
+          state => {
+            const values = this.valuesForAllFields(state);
+            const errors = validateField(name, value, values, constraints);
+            return updateFormField(state, name, value, errors);
+          },
+          () => resolve()
+        );
       });
-    }
+    };
 
-    handleChange = (event) => {
+    handleChange = event => {
       let { value } = event.target;
 
       if (!value) {
@@ -210,14 +216,13 @@ export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormCom
       const { name } = event.target;
       this.setField(name, value);
       this.crossValidateFields(name);
-    }
+    };
 
-    resetField = (name) => {
-      this.setState((state) => {
+    resetField = name => {
+      this.setState(state => {
         return updateFormField(state, name, undefined, []);
-      }
-      );
-    }
+      });
+    };
 
     resetAllFields = async () => {
       const updatedFields = Object.keys(fieldNames).reduce((fields, name) => {
@@ -225,11 +230,14 @@ export const withForm = (fieldNames, constraints, validateGroupsMap) => (FormCom
       }, this.state);
 
       return new Promise(resolve => {
-        this.setState({
-          ...updatedFields,
-        }, () => resolve());
+        this.setState(
+          {
+            ...updatedFields,
+          },
+          () => resolve()
+        );
       });
-    }
+    };
 
     render() {
       return (

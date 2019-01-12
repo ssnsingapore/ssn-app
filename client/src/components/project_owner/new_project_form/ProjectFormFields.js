@@ -17,7 +17,6 @@ export const FieldName = getFieldNameObject([
   'region',
   'address',
   'issuesAddressed',
-
 ]);
 
 export const constraints = {
@@ -48,7 +47,6 @@ export const constraints = {
 
     return {
       datetime: {
-        dateOnly: true,
         latest: attributes.endDate,
       },
       presence: { allowEmpty: false },
@@ -59,7 +57,6 @@ export const constraints = {
 
     return {
       datetime: {
-        dateOnly: true,
         earliest: attributes.startDate,
       },
       presence: { allowEmpty: false },

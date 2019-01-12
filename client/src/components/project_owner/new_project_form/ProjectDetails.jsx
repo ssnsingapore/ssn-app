@@ -1,8 +1,21 @@
-import { Paper, TextField, Typography, MenuItem, Grid, Checkbox, ListItemText, Chip, Select, Input, InputLabel } from '@material-ui/core';
+import {
+  Paper,
+  TextField,
+  Typography,
+  MenuItem,
+  Grid,
+  Checkbox,
+  ListItemText,
+  Chip,
+  Select,
+  Input,
+  InputLabel,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { fieldErrorText, fieldHasError, fieldValue } from 'util/form';
 
+import { DatePickers, TimePickers } from 'components/shared/Pickers';
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import { ProjectTypeDisplayMapping } from 'components/shared/display_mappings/ProjectTypeDisplayMapping';
 import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
@@ -13,67 +26,74 @@ import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { IssueAddressedDisplayMapping } from 'components/shared/display_mappings/IssueAddressedDisplayMapping';
 import { FieldName } from './ProjectFormFields';
 
-const isSelectedBefore = (issuesAddressed = [], data) => !!issuesAddressed.find(issue => issue === data);
+const isSelectedBefore = (issuesAddressed = [], data) =>
+  !!issuesAddressed.find(issue => issue === data);
 
 const renderFrequency = (handleChange, fields) => {
-  return fields[FieldName.projectType].value === ProjectType.RECURRING &&
-    <TextField
-      required
-      select
-      label="Frequency"
-      value={fieldValue(fields, FieldName.frequency) || ''}
-      error={fieldHasError(fields, FieldName.frequency)}
-      helperText={fieldErrorText(fields, FieldName.frequency)}
-      onChange={handleChange}
-      name={FieldName.frequency}
-      InputLabelProps={{ shrink: true }}
-      fullWidth
-    >
-      <MenuItem value={ProjectFrequency.EVERY_DAY}>{ProjectFrequencyDisplayMapping[ProjectFrequency.EVERY_DAY]}</MenuItem>
-      <MenuItem value={ProjectFrequency.A_FEW_TIMES_A_WEEK}>{ProjectFrequencyDisplayMapping[ProjectFrequency.A_FEW_TIMES_A_WEEK]}</MenuItem>
-      <MenuItem value={ProjectFrequency.ONCE_A_WEEK}>{ProjectFrequencyDisplayMapping[ProjectFrequency.ONCE_A_WEEK]}</MenuItem>
-      <MenuItem value={ProjectFrequency.FORTNIGHTLY}>{ProjectFrequencyDisplayMapping[ProjectFrequency.FORTNIGHTLY]}</MenuItem>
-      <MenuItem value={ProjectFrequency.A_FEW_TIMES_A_MONTH}>{ProjectFrequencyDisplayMapping[ProjectFrequency.A_FEW_TIMES_A_MONTH]}</MenuItem>
-      <MenuItem value={ProjectFrequency.ONCE_A_MONTH}>{ProjectFrequencyDisplayMapping[ProjectFrequency.ONCE_A_MONTH]}</MenuItem>
-      <MenuItem value={ProjectFrequency.A_FEW_TIMES_A_YEAR}>{ProjectFrequencyDisplayMapping[ProjectFrequency.A_FEW_TIMES_A_YEAR]}</MenuItem>
-      <MenuItem value={ProjectFrequency.ONCE_A_YEAR}>{ProjectFrequencyDisplayMapping[ProjectFrequency.ONCE_A_YEAR]}</MenuItem>
-    </TextField>;
+  return (
+    fields[FieldName.projectType].value === ProjectType.RECURRING && (
+      <TextField
+        required
+        select
+        label="Frequency"
+        value={fieldValue(fields, FieldName.frequency) || ''}
+        error={fieldHasError(fields, FieldName.frequency)}
+        helperText={fieldErrorText(fields, FieldName.frequency)}
+        onChange={handleChange}
+        name={FieldName.frequency}
+        InputLabelProps={{ shrink: true }}
+        fullWidth
+      >
+        <MenuItem value={ProjectFrequency.EVERY_DAY}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.EVERY_DAY]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.A_FEW_TIMES_A_WEEK}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.A_FEW_TIMES_A_WEEK]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.ONCE_A_WEEK}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.ONCE_A_WEEK]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.FORTNIGHTLY}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.FORTNIGHTLY]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.A_FEW_TIMES_A_MONTH}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.A_FEW_TIMES_A_MONTH]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.ONCE_A_MONTH}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.ONCE_A_MONTH]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.A_FEW_TIMES_A_YEAR}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.A_FEW_TIMES_A_YEAR]}
+        </MenuItem>
+        <MenuItem value={ProjectFrequency.ONCE_A_YEAR}>
+          {ProjectFrequencyDisplayMapping[ProjectFrequency.ONCE_A_YEAR]}
+        </MenuItem>
+      </TextField>
+    )
+  );
 };
 
 const renderStartEndDate = (classes, handleChange, fields) => {
-  return fields[FieldName.projectType].value === ProjectType.EVENT &&
-    <div className={classes.sharedRow}>
-      <TextField
-        type="date"
-        name={FieldName.startDate}
-        id={FieldName.startDate}
-        label="Start Date"
-        onChange={handleChange}
-        value={fieldValue(fields, FieldName.startDate) || ''}
-        InputLabelProps={{ shrink: true }}
-        error={fieldHasError(fields, FieldName.startDate)}
-        helperText={fieldErrorText(fields, FieldName.startDate)}
-        required
-        fullWidth
-        className={classes.columnInRow}
-      />
-      <TextField
-        type="date"
-        name={FieldName.endDate}
-        id={FieldName.endDate}
-        label="End Date"
-        onChange={handleChange}
-        value={fieldValue(fields, FieldName.endDate) || ''}
-        InputLabelProps={{ shrink: true }}
-        error={fieldHasError(fields, FieldName.endDate)}
-        helperText={fieldErrorText(fields, FieldName.endDate)}
-        required
-        fullWidth
-      />
-    </div>;
+  return (
+    fields[FieldName.projectType].value === ProjectType.EVENT && (
+      <div className={classes.sharedRow}>
+        <DatePickers
+          fields={fields}
+          handleChange={handleChange}
+          fullWidth
+          className={classes.columnInRow}
+        />
+      </div>
+    )
+  );
 };
 
-const handleProjectTypeChange = (event, handleChange, resetField, FieldName) => {
+const handleProjectTypeChange = (
+  event,
+  handleChange,
+  resetField,
+  FieldName
+) => {
   if (event.target.value === ProjectType.RECURRING) {
     resetField(FieldName.startDate);
     resetField(FieldName.endDate);
@@ -83,8 +103,22 @@ const handleProjectTypeChange = (event, handleChange, resetField, FieldName) => 
   handleChange(event);
 };
 
-export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) => {
+const handleTimeChange = (time, handleChange) => {
+  const event = {
+    target: {
+      name: FieldName.time,
+      value: time !== null ? time.format() : '',
+    },
+  };
+  handleChange(event);
+};
 
+export const _ProjectDetails = ({
+  classes,
+  fields,
+  handleChange,
+  resetField,
+}) => {
   return (
     <React.Fragment>
       <Paper square className={classes.paper}>
@@ -97,7 +131,14 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
               label="Project Type"
               fullWidth
               value={fieldValue(fields, FieldName.projectType) || ''}
-              onChange={event => handleProjectTypeChange(event, handleChange, resetField, FieldName)}
+              onChange={event =>
+                handleProjectTypeChange(
+                  event,
+                  handleChange,
+                  resetField,
+                  FieldName
+                )
+              }
               name={FieldName.projectType}
               className={classes.columnInRow}
               InputLabelProps={{ shrink: true }}
@@ -114,19 +155,14 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
             {renderFrequency(handleChange, fields)}
           </div>
           {renderStartEndDate(classes, handleChange, fields)}
-          <TextField
-            type="time"
+          <TimePickers
             name={FieldName.time}
             className={classes.sharedRowTextField}
             id={FieldName.time}
             label="Time"
-            InputLabelProps={{ shrink: true }}
-            onChange={handleChange}
+            onChange={time => handleTimeChange(time, handleChange)}
             value={fieldValue(fields, FieldName.time) || ''}
-
-            inputProps={{
-              step: 1800, // 30mins
-            }}
+            style={{ display: 'inline' }}
           />
           <TextField
             select
@@ -140,11 +176,21 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
             <MenuItem value="">
               <em>Undecided</em>
             </MenuItem>
-            <MenuItem value={ProjectRegion.CENTRAL}>{ProjectRegionDisplayMapping[ProjectRegion.CENTRAL]}</MenuItem>
-            <MenuItem value={ProjectRegion.NORTH}>{ProjectRegionDisplayMapping[ProjectRegion.NORTH]}</MenuItem>
-            <MenuItem value={ProjectRegion.SOUTH}>{ProjectRegionDisplayMapping[ProjectRegion.SOUTH]}</MenuItem>
-            <MenuItem value={ProjectRegion.EAST}>{ProjectRegionDisplayMapping[ProjectRegion.EAST]}</MenuItem>
-            <MenuItem value={ProjectRegion.WEST}>{ProjectRegionDisplayMapping[ProjectRegion.WEST]}</MenuItem>
+            <MenuItem value={ProjectRegion.CENTRAL}>
+              {ProjectRegionDisplayMapping[ProjectRegion.CENTRAL]}
+            </MenuItem>
+            <MenuItem value={ProjectRegion.NORTH}>
+              {ProjectRegionDisplayMapping[ProjectRegion.NORTH]}
+            </MenuItem>
+            <MenuItem value={ProjectRegion.SOUTH}>
+              {ProjectRegionDisplayMapping[ProjectRegion.SOUTH]}
+            </MenuItem>
+            <MenuItem value={ProjectRegion.EAST}>
+              {ProjectRegionDisplayMapping[ProjectRegion.EAST]}
+            </MenuItem>
+            <MenuItem value={ProjectRegion.WEST}>
+              {ProjectRegionDisplayMapping[ProjectRegion.WEST]}
+            </MenuItem>
           </TextField>
           <div>
             <TextField
@@ -159,7 +205,12 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
             />
           </div>
           <div className={classes.textField}>
-            <InputLabel htmlFor="issues-addressed-select" style={{ fontSize: 12 }}>Issues Addressed</InputLabel>
+            <InputLabel
+              htmlFor="issues-addressed-select"
+              style={{ fontSize: 12 }}
+            >
+              Issues Addressed
+            </InputLabel>
             <Select
               multiple
               value={fieldValue(fields, FieldName.issuesAddressed) || []}
@@ -182,8 +233,15 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
               {Object.keys(IssueAddressed).map(data => {
                 return (
                   <MenuItem value={data} key={data}>
-                    <Checkbox checked={isSelectedBefore(fields.issuesAddressed.value, data)} />
-                    <ListItemText primary={IssueAddressedDisplayMapping[data]} />
+                    <Checkbox
+                      checked={isSelectedBefore(
+                        fields.issuesAddressed.value,
+                        data
+                      )}
+                    />
+                    <ListItemText
+                      primary={IssueAddressedDisplayMapping[data]}
+                    />
                   </MenuItem>
                 );
               })}
@@ -193,7 +251,6 @@ export const _ProjectDetails = ({ classes, fields, handleChange, resetField }) =
       </Paper>
     </React.Fragment>
   );
-
 };
 
 const styles = theme => ({
