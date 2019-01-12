@@ -106,10 +106,19 @@ projectOwnersRouter.put('/project_owner/profile',
 
 async function updateProjectOwner(req, res) {
   const projectOwner = req.user;
+  const { password } = req.body;
   const projectOwnerAttributes = req.body;
+  if (projectOwnerAttributes.password) {
+    delete projectOwnerAttributes.password;
+    delete projectOwnerAttributes.passwordConfirmation;
+  }
   const profilePhotoImage = req.file;
 
   projectOwner.set(projectOwnerAttributes);
+  if (password) {
+    projectOwner.setPassword(password);
+  }
+
   await projectOwner.save();
 
   if (profilePhotoImage) {
