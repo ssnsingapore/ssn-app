@@ -98,13 +98,6 @@ const renderPassword = (classes, FieldName, fields, handleChange, isEditProfileF
   );
 };
 
-const test = () => {
-  return (
-    <React.fragment>
-      Test
-    </React.fragment>
-  );
-};
 
 const handleAccountTypeChange = (event, handleChange, resetField, FieldName) => {
   if (event.target.value === AccountType.ORGANISATION) {
