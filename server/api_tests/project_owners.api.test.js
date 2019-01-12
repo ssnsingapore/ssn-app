@@ -1,4 +1,3 @@
-
 /* eslint no-underscore-dangle: 0 */
 import app from 'app';
 import mongoose from 'mongoose';
@@ -216,6 +215,18 @@ describe('Project Owner routes', () => {
 
       expect(response.status).toEqual(403);
       expect(response.body.errors[0].title).toEqual('Forbidden');
+    });
+
+    it('should not upload the profile photo image to s3 and should return a 400 status if project owner fields are invalid', async () => {
+      const response = await request(app).put('/api/v1/project_owner/profile')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .set('csrf-token', csrfToken)
+        .attach('profilePhoto', './api_tests/test-file.jpg')
+        .field('name', '');
+
+      expect(response.status).toEqual(422);
+      expect(response.body.errors[0].title).toEqual('name');
+      expect(s3.upload).not.toHaveBeenCalled();
     });
 
     it('should upload the profile photo image to s3 and return a 200 status with the updated project owner', async () => {

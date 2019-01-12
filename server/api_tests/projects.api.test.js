@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from 'app';
@@ -1052,8 +1053,85 @@ describe('Project owner routes', () => {
   });
 
   // TODO
-  describe('POST /project_owner/projects', () => {
+  describe('POST /project_owner/projects/new', () => {
+    let jwt;
+    const csrfToken = 'csrfToken';
+    let project;
 
+    beforeEach(async () => {
+      const projectOwner = await saveProjectOwner();
+      jwt = projectOwner.generateJwt(csrfToken);
+
+      project = {
+        projectOwner: projectOwner._id,
+        title: 'Cat Adoption Drive',
+        description: 'Save the earth description',
+        volunteerSignupUrl: '',
+        volunteerRequirements: [
+          {
+            type: [VolunteerRequirementType.INTERACTION],
+            commitmentLevel: 'Once a Week',
+            number: 5,
+          },
+        ],
+        issuesAddressed: [IssueAddressed.AIR_QUALITY],
+        volunteerRequirementsDescription: 'requirementDescription2',
+        volunteerBenefitsDescription: 'lunch',
+        projectType: ProjectType.EVENT,
+        time: '10 AM',
+        location: ProjectRegion.WEST,
+        state: ProjectState.PENDING_APPROVAL,
+        startDate: moment('2018-10-01').toDate(),
+        endDate: moment('2018-10-01').toDate(),
+      };
+    });
+
+    afterEach(async () => {
+      await ProjectOwner.deleteMany();
+    });
+
+    it('is an authenticated route', async () => {
+      const response = await request(app).post('/api/v1/project_owner/projects/new')
+        .field('project', JSON.stringify(project));
+
+      expect(response.status).toEqual(401);
+      expect(response.body.errors[0].title).toEqual('Unauthorized');
+    });
+
+    it('returns forbidden error when request does not contain CSRF token in header', async () => {
+      const response = await request(app).post('/api/v1/project_owner/projects/new')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .field('project', JSON.stringify(project));
+
+      expect(response.status).toEqual(403);
+      expect(response.body.errors[0].title).toEqual('Forbidden');
+    });
+
+    it('returns a 422 status code and error when project fields are invalid', async () => {
+      const invalidProject = {
+        ...project,
+        title: null,
+      };
+      const response = await request(app).post('/api/v1/project_owner/projects/new')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .set('csrf-token', csrfToken)
+        .attach('projectImage', './api_tests/test-file.jpg')
+        .field('project', JSON.stringify(invalidProject));
+
+      expect(response.status).toEqual(422);
+      expect(response.body.errors[0].title).toEqual('title');
+    });
+
+    it('should upload the cover image to s3 and return a 201 status code and created project when project fields are valid', async () => {
+      const response = await request(app).post('/api/v1/project_owner/projects/new')
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .set('csrf-token', csrfToken)
+        .attach('projectImage', './api_tests/test-file.jpg')
+        .field('project', JSON.stringify(project));
+
+      expect(response.status).toEqual(201);
+      expect(response.body.project.title).toEqual(project.title);
+    });
   });
 
   describe('PUT /project_owner/projects/:id', () => {
