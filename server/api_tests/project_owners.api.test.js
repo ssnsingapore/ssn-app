@@ -42,7 +42,7 @@ describe('Public routes', () => {
 
   describe('GET /project_owners', () => {
     beforeAll(async () => {
-      await Promise.all(emails.map(async (email, index) => saveProjectOwner({ email, name: `${String.fromCharCode(index)} project owner` })));
+      await Promise.all(emails.map(async (email, index) => saveProjectOwner({ email, name: `${index + 1} project owner` })));
     });
 
     afterAll(async () => {
@@ -55,7 +55,7 @@ describe('Public routes', () => {
       expect(response.status).toEqual(200);
       expect(response.body.projectOwners.length).toEqual(20);
       expect(response.body.projectOwners[0].email).toEqual('test1@test.com');
-      expect(response.body.projectOwners[19].email).toEqual('test20@test.com');
+      expect(response.body.projectOwners[19].email).toEqual('test9@test.com');
     });
 
     it('should fetch the number of project owners specified by pageSize by the given page', async () => {
@@ -63,8 +63,8 @@ describe('Public routes', () => {
 
       expect(response.status).toEqual(200);
       expect(response.body.projectOwners.length).toEqual(5);
-      expect(response.body.projectOwners[0].email).toEqual('test6@test.com');
-      expect(response.body.projectOwners[4].email).toEqual('test10@test.com');
+      expect(response.body.projectOwners[0].email).toEqual('test14@test.com');
+      expect(response.body.projectOwners[4].email).toEqual('test18@test.com');
     });
   });
 
