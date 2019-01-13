@@ -3,6 +3,7 @@ import React from 'react';
 import { TestProjectOwnerSignUpForm } from 'components/public/ProjectOwnerSignUpForm';
 import { AccountType } from 'components/shared/enums/AccountType';
 import { defaultAppContext } from 'components/main/AppContext';
+import { mockSuccessfulResponse } from 'util/testHelper';
 
 describe('ProjectOwnerSignUpForm', () => {
   it('sets account type to organisation as a default field', () => {
@@ -62,14 +63,6 @@ describe('ProjectOwnerSignUpForm', () => {
 
   describe('handleSubmit', () => {
     let mockEvent, mockContext, mockRefCurrent;
-
-    const mockSuccessfulResponse = (body) => {
-      const mockResponse = new Response(
-        JSON.stringify(body),
-      );
-      mockResponse.isSuccessful = true;
-      return mockResponse;
-    };
 
     beforeEach(() => {
       mockEvent = {

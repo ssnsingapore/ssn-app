@@ -8,22 +8,9 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectOwnerProjectListing } from 'components/project_owner/ProjectOwnerProjectListing';
+import { mockSuccessfulResponse, mockErrorResponse } from 'util/testHelper';
 
 const ProjectOwnerDashboard = _testExports.ProjectOwnerDashboard;
-const mockSuccessfulResponse = (body) => {
-  const mockResponse = new Response(
-    JSON.stringify(body),
-  );
-  mockResponse.isSuccessful = true;
-  return mockResponse;
-};
-const mockErrorResponse = (body) => {
-  const mockResponse = new Response(
-    JSON.stringify(body),
-  );
-  mockResponse.hasError = true;
-  return mockResponse;
-};
 
 describe('ProjectOwnerDashboard', () => {
   let component;

@@ -8,18 +8,9 @@ import { AlertType } from 'components/shared/Alert';
 import { Spinner } from 'components/shared/Spinner';
 import { PublicProjectListing } from 'components/shared/PublicProjectListing';
 import { SearchBar } from 'components/shared/SearchBar';
+import { mockSuccessfulResponse, mockErrorResponse } from 'util/testHelper';
 
 const Projects = _testExports.Projects;
-const mockSuccessfulResponse = body => {
-  const mockResponse = new Response(JSON.stringify(body));
-  mockResponse.isSuccessful = true;
-  return mockResponse;
-};
-const mockErrorResponse = body => {
-  const mockResponse = new Response(JSON.stringify(body));
-  mockResponse.hasError = true;
-  return mockResponse;
-};
 
 xdescribe('Projects', () => {
   let component;

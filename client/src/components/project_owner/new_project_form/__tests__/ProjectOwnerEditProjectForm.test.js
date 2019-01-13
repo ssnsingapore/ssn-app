@@ -4,16 +4,9 @@ import { _ProjectOwnerEditProjectForm } from '../ProjectOwnerEditProjectForm';
 import { FieldName, constraints } from '../ProjectFormFields';
 import { withForm } from 'util/form';
 import { defaultAppContext } from 'components/main/AppContext';
+import { mockSuccessfulResponse } from 'util/testHelper';
 
 jest.mock('../VolunteerRequirementForm');
-
-const mockSuccessfulResponse = (body) => {
-  const mockResponse = new Response(
-    JSON.stringify(body),
-  );
-  mockResponse.isSuccessful = true;
-  return mockResponse;
-};
 
 describe('ProjectOwnerEditProjectForm', () => {
   let component;

@@ -6,14 +6,7 @@ import { Tab } from '@material-ui/core';
 import { _AdminDashboard, ProjectStateMapping } from '../AdminDashboard';
 import { Spinner } from 'components/shared/Spinner';
 import { ProjectState } from 'components/shared/enums/ProjectState';
-
-const mockSuccessfulResponse = (body) => {
-  const mockResponse = new Response(
-    JSON.stringify(body),
-  );
-  mockResponse.isSuccessful = true;
-  return mockResponse;
-};
+import { mockSuccessfulResponse } from 'util/testHelper';
 
 describe('AdminDashboard', () => {
   let component;
