@@ -131,9 +131,9 @@ describe('GET /admins/cron_job_time', () => {
       .set('csrf-token', csrfToken);
 
     expect(response.status).toEqual(200);
-    expect(response.body).toEqual({
-      nextJobRunTime: 'Sun Jan 13 2019 10:30:00 GMT+0800',
-    });
+    expect(response.body.nextJobRunTime).toEqual(
+      expect.stringContaining('10:30:00 GMT+0800')
+    );
   });
 
   it('returns 500 when unable to parse cron syntax', async () => {
