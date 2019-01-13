@@ -4,10 +4,11 @@ import {
 } from 'components/project_owner/new_project_form/ProjectImageUpload';
 import {
   Button,
-  IconButton,
   Dialog,
   DialogContentText,
 } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Fab from '@material-ui/core/Fab';
 
 describe('ProjectImageUpload', () => {
   let component, props, wrapper;
@@ -56,11 +57,11 @@ describe('ProjectImageUpload', () => {
     const inputFileUpload = wrapper.find('input');
     inputFileUpload.simulate('change');
 
-    expect(wrapper.find(IconButton).exists()).toBeTruthy();
+    expect(wrapper.find(DeleteIcon).exists()).toBeTruthy();
   });
 
   it('should remove current value when click cancel', () => {
-    const cancelButton = wrapper.find(IconButton);
+    const cancelButton = wrapper.find(Fab);
     expect(component.prop('projectImageInput').current.value).not.toEqual('');
     expect(wrapper.state().imageSrc).not.toEqual('');
 
