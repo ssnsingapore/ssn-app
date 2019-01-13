@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import amber from '@material-ui/core/colors/amber';
+import { amber, red } from '@material-ui/core/colors';
 
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 
+export const errorMessage = 'There is no running job to check for inactive projects.' + 
+' If this configuration was not removed, please check if cron syntax is correct.';
 export class _JobScheduleMessage extends Component {
   state = {
     nextJobRunTime: '',
+    errorMessage: '',
   };
   
   async componentDidMount() {
@@ -21,18 +24,31 @@ export class _JobScheduleMessage extends Component {
         nextJobRunTime,
       });
     }
+    if (response.hasError) {
+      this.setState({
+        errorMessage,
+      });
+    }
   }
 
   render() {
     const { classes } = this.props; 
-    
+
     return (
-      this.state.nextJobRunTime && 
-      <div className={classes.root}>
-        <Typography>
-          Projects past their event end dates will become inactive on  {this.state.nextJobRunTime}
-        </Typography>
-      </div>
+      <React.Fragment>
+        {this.state.errorMessage &&
+        <div className={classes.error}>
+          <Typography>
+            {this.state.errorMessage}
+          </Typography>
+        </div>}
+        {this.state.nextJobRunTime && 
+        <div className={classes.root}>
+          <Typography>
+            Projects past their event end dates will become inactive on  {this.state.nextJobRunTime}
+          </Typography>
+        </div>}
+      </React.Fragment>
     );
   }
 }
@@ -40,6 +56,11 @@ export class _JobScheduleMessage extends Component {
 const styles = {
   root: {
     backgroundColor: amber[100],
+    padding: '10px',
+    borderRadius: '5px',
+  },
+  error: {
+    backgroundColor: red[50],
     padding: '10px',
     borderRadius: '5px',
   },
