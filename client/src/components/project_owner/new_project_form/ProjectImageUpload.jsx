@@ -3,15 +3,15 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
   Grid,
-  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
+import Fab from '@material-ui/core/Fab';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import uploadImageBackground from 'assets/image-placeholder.svg';
 import {
@@ -116,13 +116,13 @@ class _ProjectImageUpload extends Component {
           backgroundImage: `url(${imageSrc ? imageSrc : coverImageRender})`,
         }}
       >
-        <IconButton
-          color="secondary"
-          className={classes.iconButton}
+        <Fab
+          aria-label="Delete"
+          className={classes.fabutton}
           onClick={this.handleCancel}
         >
-          <HighlightOffIcon style={{ fontSize: '32px' }} />
-        </IconButton>
+          <DeleteIcon />
+        </Fab>
         {isImageResolutionTooLow && this.renderDialog()}
       </Grid>
     );
@@ -175,6 +175,9 @@ const styles = theme => ({
   },
   iconButton: {
     margin: theme.spacing.unit,
+  },
+  fabutton: {
+    margin: 3 * theme.spacing.unit,
   },
 });
 
