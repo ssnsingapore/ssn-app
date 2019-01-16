@@ -98,7 +98,6 @@ async function logout(req, res) {
 
 const upload = multer();
 
-// TODO: Rename and make authenticated route
 projectOwnersRouter.put('/project_owner/profile',
   ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
   upload.single('profilePhoto'),
