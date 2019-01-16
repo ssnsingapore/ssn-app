@@ -248,7 +248,7 @@ Resources:
 - [https://stackoverflow.com/questions/36980058/do-cookies-protect-tokens-against-xss-attacks](https://stackoverflow.com/questions/36980058/do-cookies-protect-tokens-against-xss-attacks)
 
 ### Nodemailer
-We are using nodemailer connected to a Gmail SMTP server through OAuth2 to send emails. Establishing the OAuth2 connection to the Gmail server requires us to obtain the `clientId` and `clientSecret` from the [Google Cloud Platform console](https://console.cloud.google.com/) and the `refreshToken` from [Google OAuth Playground](https://developers.google.com/oauthplayground) (these will be stored in the `.env` file)
+We are using nodemailer connected to a Gmail SMTP server through OAuth2 to send emails. Establishing the OAuth2 connection to the Gmail server requires us to obtain the `clientId` and `clientSecret` from the [Google Cloud Platform console](https://console.cloud.google.com/) and the `refreshToken` from [Google OAuth Playground](https://developers.google.com/oauthplayground) (these will be stored in the `.env` file).
 
 [This stackoverflow answer](https://stackoverflow.com/questions/24098461/nodemailer-gmail-what-exactly-is-a-refresh-token-and-how-do-i-get-one) gives a good step-by-step overview of how to obtain the above information, although the answer is somewhat old and some of the steps are slightly outdated, overall the steps are more or less the same.
 
