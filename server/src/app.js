@@ -1,5 +1,6 @@
 import createError from 'http-errors';
 import express from 'express';
+import helmet from 'helmet';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -34,6 +35,7 @@ const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(helmet());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
