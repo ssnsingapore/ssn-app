@@ -1,0 +1,47 @@
+import { Admin } from 'models/Admin';
+import { Role } from 'models/Role';
+import { seedData, connectMongoose, closeMongooseConnection } from './utils';
+
+// Sample file for seeding new admins
+// Copy this out to `create-admins.js` in the same folder (`server/src/db/seeds`)
+// Ensure that DATABASE_URI, MONGOOSE_USERNAME, and MONGOOSE_PASSWORD
+// are correctly set in your server/.env file
+
+// Specify the admins you would like to seed here
+// You only need to specify the email and password for each admin
+// (change the below to something sensible)
+const admins = [
+  {
+    email: 'ssnadmin1@gmail.com',
+    password: 'ssnadmin1password',
+  },
+  {
+    email: 'ssnadmin2@gmail.com',
+    password: 'ssnadmin2password',
+  },
+  {
+    email: 'ssnadmin3@gmail.com',
+    password: 'ssnadmin3password',
+  },
+];
+
+const adminModel = new Admin();
+
+async function seed() {
+  connectMongoose();
+
+  const adminAttributesPromises = admins.map(async (admin) => {
+    await adminModel.setPassword(admin.password);
+    return {
+      email: admin.email,
+      role: Role.ADMIN,
+      hashedPassword: adminModel.hashedPassword,
+    };
+  });
+
+  const adminAttributes = await Promise.all(adminAttributesPromises);
+  await seedData(adminAttributes, Admin, 'admin');
+  closeMongooseConnection();
+}
+
+seed();

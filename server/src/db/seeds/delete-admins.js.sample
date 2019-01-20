@@ -1,0 +1,30 @@
+import { Admin } from 'models/Admin';
+import { connectMongoose, closeMongooseConnection } from './utils';
+
+// Sample file for deleting admins
+// Copy this out to `delete-admins.js` in the same folder (`server/src/db/seeds`)
+// Ensure that DATABASE_URI, MONGOOSE_USERNAME, and MONGOOSE_PASSWORD
+// are correctly set in your server/.env file
+
+// Specify the admins you would like to seed here
+// You only need to specify the email(s) of the admin(s) you would like to delete
+// (change the below to something sensible)
+const emails = [
+  'ssnadmin1@gmail.com',
+  'ssnadmin2@gmail.com',
+  'ssnadmin3@gmail.com',
+];
+
+async function deleteAdmins() {
+  connectMongoose();
+  const deletePromises = emails.map(async (email) => {
+    console.log(`Deleting admin with email ${email}...`);
+    return Admin.deleteOne({ email });
+  });
+
+  await Promise.all(deletePromises);
+  console.log('All specified admins successfully deleted!');
+  closeMongooseConnection();
+}
+
+deleteAdmins();

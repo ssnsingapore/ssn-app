@@ -9,6 +9,8 @@ export const connectMongoose = () => {
         user: config.MONGO_USERNAME,
         password: config.MONGO_PASSWORD,
       },
+      useCreateIndex: true,
+      useNewUrlParser: true,
     } : {};
   mongoose.connect(config.DATABASE_URI, options);
 };

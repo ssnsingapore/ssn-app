@@ -68,3 +68,7 @@ typings/
 
 # next.js build output
 .next
+
+# seeds
+src/db/seeds/create-admins.js
+src/db/seeds/delete-admins.js
