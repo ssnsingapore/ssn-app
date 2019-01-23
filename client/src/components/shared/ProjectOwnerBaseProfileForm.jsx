@@ -64,8 +64,8 @@ const renderDescriptionOrBio = (classes, FieldName, fields, handleChange) => {
   );
 };
 
-const renderPassword = (classes, FieldName, fields, handleChange) => {
-  return !!fields[FieldName.password] && (
+const renderPassword = (classes, FieldName, fields, handleChange, isEditProfileForm) => {
+  return !isEditProfileForm && (
     <React.Fragment>
       <TextField
         name={FieldName.password}
@@ -98,6 +98,7 @@ const renderPassword = (classes, FieldName, fields, handleChange) => {
   );
 };
 
+
 const handleAccountTypeChange = (event, handleChange, resetField, FieldName) => {
   if (event.target.value === AccountType.ORGANISATION) {
     resetField(FieldName.personalBio);
@@ -117,7 +118,9 @@ const _ProjectOwnerBaseProfileForm = ({
   isSubmitting,
   isEditProfileForm,
   profilePhotoInput,
-  resetField }) => {
+  resetField,
+  handleShowPasswordChange,
+  shouldShowPasswordChange }) => {
   return (
     <Grid container style={{ justifyContent: 'center' }}>
       <Grid item xs={9} md={4}>
@@ -150,6 +153,52 @@ const _ProjectOwnerBaseProfileForm = ({
               fullWidth
               margin="normal"
             />
+            {
+              isEditProfileForm &&
+              <Button
+                color="primary"
+                size="medium"
+                variant="contained"
+                className={classes.buttons}
+                component="span"
+                onClick={handleShowPasswordChange}
+              >
+                Change my password
+              </Button>
+            }
+            {
+              (isEditProfileForm && shouldShowPasswordChange) &&
+              <React.Fragment>
+                <TextField
+                  name={FieldName.password}
+                  className={classes.textInput}
+                  id={FieldName.password}
+                  label="New Password"
+                  required={true}
+                  onChange={handleChange}
+                  value={fieldValue(fields, FieldName.password) || ''}
+                  error={fieldHasError(fields, FieldName.password)}
+                  helperText={fieldErrorText(fields, FieldName.password)}
+                  type="password"
+                  fullWidth
+                  margin="normal"
+                />
+                <TextField
+                  name={FieldName.passwordConfirmation}
+                  className={classes.textInput}
+                  id={FieldName.passwordConfirmation}
+                  label="New Password Confirmation"
+                  required={true}
+                  onChange={handleChange}
+                  value={fieldValue(fields, FieldName.passwordConfirmation) || ''}
+                  error={fieldHasError(fields, FieldName.passwordConfirmation)}
+                  helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
+                  type="password"
+                  fullWidth
+                  margin="normal"
+                />
+              </React.Fragment>
+            }
             <RadioGroup
               name={FieldName.accountType}
               value={fieldValue(fields, FieldName.accountType) || ''}
@@ -191,7 +240,7 @@ const _ProjectOwnerBaseProfileForm = ({
               margin="normal"
             />
             {renderDescriptionOrBio(classes, FieldName, fields, handleChange)}
-            {renderPassword(classes, FieldName, fields, handleChange)}
+            {renderPassword(classes, FieldName, fields, handleChange, isEditProfileForm)}
             <ProjectOwnerProfilePhotoUpload
               profilePhotoInput={profilePhotoInput}
               profilePhotoUrl={fields.profilePhotoUrl}
@@ -199,7 +248,7 @@ const _ProjectOwnerBaseProfileForm = ({
             <Button
               type="submit"
               size="medium"
-              className={classes.createButton}
+              className={classes.buttons}
               disabled={isSubmitting}
               variant="contained"
               color="secondary"
@@ -222,11 +271,8 @@ const styles = theme => ({
   radioGroup: {
     marginTop: `${2 * theme.formInput.margin.vertical}px`,
   },
-  createButton: {
-    display: 'block',
-    margin: '30px auto',
-    marginBottom: 0,
-    color: '#FFFFFF',
+  buttons: {
+    marginTop: theme.spacing.unit * 2,
   },
 });
 

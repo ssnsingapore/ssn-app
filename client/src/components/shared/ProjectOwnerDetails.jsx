@@ -91,6 +91,7 @@ class _ProjectOwnerDetails extends Component {
               {projectOwner.websiteUrl ?
                 <a
                   target='_blank'
+                  rel='noopener noreferrer'
                   href={convertToAbsoluteUrl(projectOwner.websiteUrl)}
                   className={classes.links}>
                   {projectOwner.websiteUrl}
@@ -101,6 +102,7 @@ class _ProjectOwnerDetails extends Component {
               {projectOwner.socialMediaLink ?
                 <a
                   target='_blank'
+                  rel='noopener noreferrer'
                   href={convertToAbsoluteUrl(projectOwner.socialMediaLink)}
                   className={classes.links}>
                   {projectOwner.socialMediaLink}

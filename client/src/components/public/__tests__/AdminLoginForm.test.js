@@ -150,7 +150,7 @@ describe('AdminLoginForm', () => {
       beforeEach(() => {
         const formComponent = component.dive();
         formComponent.props().setField('email', 'email@email.com');
-        formComponent.props().setField('hashedPassword', 'test123');
+        formComponent.props().setField('password', 'test123');
 
         component.props().context.utils.authenticator.loginAdmin.mockImplementation(() => {
           return new Promise(resolve => resolve({ isSuccessful: true }));
