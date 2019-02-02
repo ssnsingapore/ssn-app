@@ -10,8 +10,8 @@ const connectMongoose = () => {
         user: config.MONGO_USERNAME,
         password: config.MONGO_PASSWORD,
       },
+      useNewUrlParser: true,
     } : {};
-  options.useNewUrlParser = true;
   mongoose.connect(config.DATABASE_URI, options);
 };
 
