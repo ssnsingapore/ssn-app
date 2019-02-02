@@ -102,7 +102,7 @@ export class TimePickers extends PureComponent {
           mask={value => {
             return value ? [/\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M'] : [];
           }}
-          value={this.props.value}
+          value={moment(this.props.value, 'HH:mm A')}
           onChange={this.handleTimeChange}
           disableOpenOnEnter
           InputLabelProps={{ shrink: true }}

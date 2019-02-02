@@ -254,7 +254,7 @@ const renderProjectDetails = (classes, project) => {
         renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
       {renderRow(
         'Time',
-        time ? moment(time).format('h:mm A') : undefined
+        time ? moment(time, 'hh:mm A').format('h:mm A') : undefined
       )}
       {renderRow('Region', ProjectRegionDisplayMapping[region])}
       {renderRow('Address', address)}

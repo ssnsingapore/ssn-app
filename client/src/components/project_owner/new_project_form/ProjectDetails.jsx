@@ -103,7 +103,7 @@ const handleTimeChange = (time, handleChange) => {
   const event = {
     target: {
       name: FieldName.time,
-      value: time !== null ? time.format() : '',
+      value: time !== null ? time.format('hh:mm A') : '',
     },
   };
   handleChange(event);
