@@ -115,7 +115,7 @@ async function updateProjectOwner(req, res) {
 
   projectOwner.set(projectOwnerAttributes);
   if (password) {
-    projectOwner.setPassword(password);
+    await projectOwner.setPassword(password);
     await projectOwner.save();
     const { cookieArguments, csrfToken } = await new LoginService(projectOwner)
       .generateCookieAndCsrfToken();
