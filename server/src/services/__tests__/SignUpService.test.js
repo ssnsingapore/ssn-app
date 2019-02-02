@@ -15,7 +15,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  mongoose.disconnect();
+  await mongoose.disconnect();
 });
 
 describe('Sign up service', () => {
@@ -72,9 +72,14 @@ describe('Sign up service', () => {
       });
 
       describe('when the profile photo image is given', () => {
-        it('should upload the image to s3', async () => {
-          const multerFile = { buffer: Buffer.from('some buffer') };
+        let multerFile;
+
+        beforeEach(() => {
+          multerFile = { buffer: Buffer.from('some buffer') };
           signUpService = new SignUpService(mockProjectOwner, password, Role.PROJECT_OWNER, multerFile);
+        });
+
+        it('should upload the image to s3', async () => {
           await signUpService.execute();
           const projectOwner = await ProjectOwner.findOne({ name: mockProjectOwner.name });
 
@@ -85,6 +90,17 @@ describe('Sign up service', () => {
             Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
           });
           expect(projectOwner.profilePhotoUrl).toEqual('some image url');
+        });
+
+        it('should not save user if image failed to upload', async () => {
+          s3.upload = jest.fn(() => ({
+            promise: () => Promise.reject(new Error('some error')),
+          }));
+
+          await signUpService.execute();
+
+          const projectOwner = await ProjectOwner.findOne({ name: mockProjectOwner.name });
+          expect(projectOwner).toBeNull();
         });
       });
     });
@@ -115,8 +131,22 @@ describe('Sign up service', () => {
         });
         password = 'password';
         signUpService = new SignUpService(mockProjectOwner, password, Role.PROJECT_OWNER);
+        const errorsObj = await signUpService.execute();
 
-        await expect(signUpService.execute()).rejects.toEqual(expect.any(Error));
+        expect(errorsObj.errors).toEqual(expect.any(Error));
+      });
+    });
+
+    describe('when there are errors sending confirmation email', () => {
+      beforeEach(() => {
+        mailer.sendMail = jest.fn(() => Promise.reject(new Error('some error')));
+      });
+
+      it('should not save user', async () => {
+        await signUpService.execute();
+
+        const projectOwner = await ProjectOwner.findOne({ name: mockProjectOwner.name });
+        expect(projectOwner).toBeNull();
       });
     });
   });

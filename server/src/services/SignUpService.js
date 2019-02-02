@@ -1,7 +1,6 @@
 import { s3 } from 'config/aws';
 import { mailer } from 'config/mailer';
 import { config } from 'config/environment';
-import { UnprocessableEntityErrorView } from 'util/errors';
 
 export class SignUpService {
   constructor(user, password, userType, profilePhotoImage) {
@@ -12,13 +11,17 @@ export class SignUpService {
   }
 
   execute = async () => {
-    const errorsObject = await this._saveUser();
-    if (!errorsObject) {
+    try {
+      await this._saveUser();
       await this._uploadProfilePhotoAndSetUrl();
       await this._sendConfirmationEmail();
+      return null;
+    } catch (err) {
+      await this.user.remove();
+      return {
+        errors: err,
+      };
     }
-
-    return errorsObject;
   }
 
   _saveUser = async () => {
@@ -27,26 +30,8 @@ export class SignUpService {
     try {
       await this.user.save();
     } catch (err) {
-      return this._checkForDuplicateEmail(err);
+      throw err;
     }
-
-    return null;
-  }
-
-  _checkForDuplicateEmail = (err) => {
-    if (err.name === 'ValidationError' && err.errors && err.errors.email
-      && err.errors.email.message === 'is already taken.') {
-      return {
-        errors: [
-          new UnprocessableEntityErrorView(
-            'Email is taken',
-            'The email address you have entered is already associated with another account',
-          ),
-        ],
-      };
-    }
-
-    throw err;
   }
 
   _uploadProfilePhotoAndSetUrl = async () => {
@@ -57,7 +42,6 @@ export class SignUpService {
         ACL: 'public-read',
         Bucket: `${config.AWS_BUCKET_NAME}/project_owner_profile_photos`,
       }).promise();
-
       this.user.set({ profilePhotoUrl: response.Location });
       await this.user.save();
     }

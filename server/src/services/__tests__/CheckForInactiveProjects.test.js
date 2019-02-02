@@ -25,7 +25,6 @@ describe('CheckForInactiveProjectsService', () => {
     const projectOwner = await createProjectOwner();
     project = createProject(projectOwner);
 
-    await projectOwner.save();
     await project.save();
   });
 
