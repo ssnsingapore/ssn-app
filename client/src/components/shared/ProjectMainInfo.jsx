@@ -27,7 +27,7 @@ import { ProjectType } from 'components/shared/enums/ProjectType';
 import { capitalizeWords } from 'util/capitalizeWords';
 import { convertToAbsoluteUrl } from 'util/url';
 
-const renderLabel = (label) => (
+const renderLabel = label => (
   <Typography variant="body1" gutterBottom>
     <strong>{label}: </strong>
   </Typography>
@@ -54,9 +54,9 @@ const renderVolunteerDetailsTable = (volunteerRequirements, classes) => (
         </TableRow>
       </TableHead>
       <TableBody>
-        {volunteerRequirements.map(requirement => {
+        {volunteerRequirements.map((requirement, index) => {
           return (
-            <TableRow key={requirement._id}>
+            <TableRow key={`${requirement._id}-${index}`}>
               <TableCell component="th" scope="row">
                 {VolunteerRequirementTypeDisplayMapping[requirement.type]
                   ? VolunteerRequirementTypeDisplayMapping[requirement.type]
@@ -119,11 +119,7 @@ const renderIssuesAddressed = (classes, project) => {
       </React.Fragment>
     );
   }
-  return (
-    <React.Fragment>
-      {renderRow('Issues Addressed', '-')}
-    </React.Fragment>
-  );
+  return <React.Fragment>{renderRow('Issues Addressed', '-')}</React.Fragment>;
 };
 
 const renderProjectBaseDetails = (classes, project, role) => {
@@ -134,11 +130,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
     <Card className={classes.card} square>
       <CardContent className={classes.content}>
         {title ? (
-          <Typography
-            variant="h5"
-            gutterBottom
-            className={classes.headline}
-          >
+          <Typography variant="h5" gutterBottom className={classes.headline}>
             {capitalizeWords(title)}
           </Typography>
         ) : (
@@ -148,7 +140,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
             gutterBottom
             className={classes.headline}
           >
-              Project Title (Required)
+            Project Title (Required)
           </Typography>
         )}
         {description ? (
@@ -161,7 +153,7 @@ const renderProjectBaseDetails = (classes, project, role) => {
           })
         ) : (
           <Typography color="error" gutterBottom>
-              Project description (required)
+            Project description (required)
           </Typography>
         )}
         {volunteerSignupUrl ? (
@@ -249,17 +241,9 @@ const renderProjectDetails = (classes, project) => {
       </Typography>
       {renderRow('Project Type', ProjectTypeDisplayMapping[projectType])}
       {projectType === ProjectType.EVENT &&
-        renderRow(
-          'Start date',
-          moment(startDate)
-            .format('dddd, Do MMMM YYYY')
-        )}
+        renderRow('Start date', moment(startDate).format('dddd, Do MMMM YYYY'))}
       {projectType === ProjectType.EVENT &&
-        renderRow(
-          'End date',
-          moment(endDate)
-            .format('dddd, Do MMMM YYYY')
-        )}
+        renderRow('End date', moment(endDate).format('dddd, Do MMMM YYYY'))}
       {projectType === ProjectType.RECURRING &&
         renderRow('Frequency', ProjectFrequencyDisplayMapping[frequency])}
       {renderRow(
