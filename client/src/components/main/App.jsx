@@ -28,6 +28,11 @@ const theme = createMuiTheme({
     },
   },
   overrides: {
+    MuiButton: {
+      raisedSecondary: {
+        color: 'white',
+      },
+    },
     MuiFab: {
       secondary: {
         color: 'white',
