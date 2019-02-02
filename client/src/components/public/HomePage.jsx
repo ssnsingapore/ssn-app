@@ -98,7 +98,6 @@ export class _HomePage extends Component {
           <Grid container spacing={4 * theme.spacing.unit}>
             <Grid item md={9} xs={12}>
               <PublicProjectListing
-                classes={classes}
                 theme={theme}
                 projects={this.state.projects}
                 isLoading={this.state.isLoading}
