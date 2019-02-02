@@ -90,6 +90,11 @@ export class TimePickers extends PureComponent {
     this.props.onChange(time);
   };
 
+  getTimeValue = () => {
+    const timeMoment = moment(this.props.value, 'HH:mm A');
+    return timeMoment.isValid() ? timeMoment : null;
+  }
+
   render() {
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -102,7 +107,7 @@ export class TimePickers extends PureComponent {
           mask={value => {
             return value ? [/\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M'] : [];
           }}
-          value={moment(this.props.value, 'HH:mm A')}
+          value={this.getTimeValue()}
           onChange={this.handleTimeChange}
           disableOpenOnEnter
           InputLabelProps={{ shrink: true }}
