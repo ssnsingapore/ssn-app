@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
+import { CURRENT_USER_KEY } from 'util/storage_keys';
 
 import { AccountType } from 'components/shared/enums/AccountType';
 import { AlertType } from 'components/shared/Alert';
 import { AppContext } from 'components/main/AppContext';
 import { ProjectOwnerBaseProfileForm } from 'components/shared/ProjectOwnerBaseProfileForm';
 import { Spinner } from 'components/shared/Spinner';
-
 
 export const PROJECT_OWNER_PROFILE_DISPLAY_WIDTH = 200;
 export const PROJECT_OWNER_PROFILE_DISPLAY_HEIGHT = 200;
@@ -154,6 +154,9 @@ class _ProjectOwnerEditProfileForm extends Component {
     if (response.isSuccessful) {
       if (projectOwner.password) {
         await authenticator.setSuccessfulAuthState(response);
+      } else {
+        const { user } = await response.json();
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
       }
       showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
       // Set timeout so that alert has sufficient time to show before reload takes place
