@@ -5,7 +5,7 @@ import qs from 'qs';
 
 import { AppContext } from '../main/AppContext';
 import { withContext } from 'util/context';
-import { Paper, Typography, Grid, Tabs, Tab, Button } from '@material-ui/core';
+import { Paper, Typography, Grid, Tabs, Tab, Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
 import { ProjectOwnerProjectListing } from 'components/project_owner/ProjectOwnerProjectListing';
@@ -128,15 +128,14 @@ class _ProjectOwnerDashboard extends Component {
               >
                 My Projects
               </Typography>
-              <Button
-                variant="fab"
+              <Fab
                 color="secondary"
                 aria-label="Add"
                 component={Link}
                 to="/project_owner/projects/new"
               >
                 <AddIcon />
-              </Button>
+              </Fab>
             </div>
             {this.renderTabs()}
           </Paper>

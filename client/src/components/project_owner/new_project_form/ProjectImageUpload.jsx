@@ -8,8 +8,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Fab,
 } from '@material-ui/core';
-import Fab from '@material-ui/core/Fab';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete';
 
