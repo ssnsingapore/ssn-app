@@ -7,7 +7,7 @@ import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 
 export const errorMessage = 'There is no running job to check for inactive projects.' +
-  ' Check if CRON_SCHEDULE environment variable is set correctly.';
+  ' Please check if CRON_SCHEDULE environment variable is set correctly.';
 export class _JobScheduleMessage extends Component {
   state = {
     nextJobRunTime: '',
