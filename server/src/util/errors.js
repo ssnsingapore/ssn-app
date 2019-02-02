@@ -31,7 +31,7 @@ class UnauthorizedErrorView {
   }
 }
 
-class ForbiddenErrorView {
+export class ForbiddenErrorView {
   constructor() {
     this.status = 403;
     this.title = 'Forbidden';

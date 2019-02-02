@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { AppContext } from 'components/main/AppContext';
 import { withContext } from 'util/context';
 import { Grid, Button } from '@material-ui/core';
@@ -18,12 +18,16 @@ class _ProjectOwnerProjectDetails extends Component {
   state = {
     isLoading: true,
     project: {},
+    isWrongProjectOwner: false,
   };
 
   async componentDidMount() {
     const { id } = this.props.match.params;
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert.get(`/api/v1/projects/${id}`);
+    const response = await requestWithAlert.get(
+      `/api/v1/project_owner/projects/${id}`,
+      { authenticated: true }
+    );
 
     if (response.isSuccessful) {
       const { project } = await response.json();
@@ -34,6 +38,9 @@ class _ProjectOwnerProjectDetails extends Component {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
       showAlert('getProjectFailure', AlertType.ERROR, formatErrors(errors));
+      if (response.status === 403) {
+        this.setState({ isWrongProjectOwner: true });
+      }
     }
 
     this.setState({ isLoading: false });
@@ -94,10 +101,15 @@ class _ProjectOwnerProjectDetails extends Component {
 
   render() {
     const { classes } = this.props;
+    const { isLoading, isWrongProjectOwner } = this.state;
 
-    if (this.state.isLoading) {
+    if (isLoading) {
       return <Spinner />;
     }
+    if (isWrongProjectOwner) {
+      return <Redirect to='/unauthorized' />;
+    }
+
     return (
       <React.Fragment>
         <Grid container className={classes.root}>
