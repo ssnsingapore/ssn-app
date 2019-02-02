@@ -27,6 +27,12 @@ import { ProjectType } from 'components/shared/enums/ProjectType';
 import { capitalizeWords } from 'util/capitalizeWords';
 import { convertToAbsoluteUrl } from 'util/url';
 
+const renderLabel = (label) => (
+  <Typography variant="body1" gutterBottom>
+    <strong>{label}: </strong>
+  </Typography>
+);
+
 const renderRow = (label, value) => (
   <Typography variant="body1" gutterBottom>
     <strong>{label}: </strong>
@@ -99,7 +105,7 @@ const renderIssuesAddressed = (classes, project) => {
 
   if (issuesAddressed && issuesAddressed.length !== 0) {
     return (
-      <React.Fragment>
+      <div style={{ marginTop: '-25px' }}>
         <br />
         {issuesAddressed.map(issueAddressed => {
           return (
@@ -110,7 +116,7 @@ const renderIssuesAddressed = (classes, project) => {
             />
           );
         })}
-      </React.Fragment>
+      </div>
     );
   }
   return '-';
@@ -258,7 +264,8 @@ const renderProjectDetails = (classes, project) => {
       )}
       {renderRow('Region', ProjectRegionDisplayMapping[region])}
       {renderRow('Address', address)}
-      {renderRow('Issues Addressed', renderIssuesAddressed(classes, project))}
+      {renderLabel('Issues Addressed')}
+      {renderIssuesAddressed(classes, project)}
     </Paper>
   );
 };
