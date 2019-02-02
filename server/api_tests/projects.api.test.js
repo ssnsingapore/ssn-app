@@ -782,7 +782,7 @@ describe('Public routes', () => {
     let project;
     beforeAll(async (done) => {
       const projectOwner = await saveProjectOwner();
-      project = await saveProject(projectOwner, { state: ProjectState.PENDING_APPROVAL });
+      project = await saveProject(projectOwner, { state: ProjectState.APPROVED_ACTIVE });
       done();
     });
 

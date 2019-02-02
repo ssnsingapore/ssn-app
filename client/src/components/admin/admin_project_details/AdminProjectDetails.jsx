@@ -32,7 +32,10 @@ class _AdminProjectDetails extends Component {
   async componentDidMount() {
     const { id } = this.props.match.params;
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert.get(`/api/v1/projects/${id}`);
+    const response = await requestWithAlert.get(
+      `/api/v1/admins/projects/${id}`,
+      { authenticated: true }
+    );
 
     if (response.isSuccessful) {
       const { project } = await response.json();
@@ -120,7 +123,6 @@ class _AdminProjectDetails extends Component {
         >
           Approve
         </Button>
-
         <Button
           type="submit"
           variant="contained"

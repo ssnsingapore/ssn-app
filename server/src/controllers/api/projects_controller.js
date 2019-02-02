@@ -167,15 +167,22 @@ async function getProjectCounts(req, res) {
   return res.status(200).json({ counts });
 }
 
-projectRouter.get('/projects/:id', asyncWrap(getProject));
-async function getProject(req, res) {
+projectRouter.get('/projects/:id', asyncWrap(getProjectForPublic));
+async function getProjectForPublic(req, res) {
   const { id } = req.params;
 
   const project = await Project.findById(id)
     .populate('projectOwner')
     .exec();
 
-  return res.status(200).json({ project });
+  const isProjectForPublic = project.state === ProjectState.APPROVED_ACTIVE || project.state === ProjectState.APPROVED_INACTIVE;
+
+  if (isProjectForPublic) {
+    return res.status(200).json({ project });
+  }
+  return res.status(403).json({
+    errors: [new ForbiddenErrorView()],
+  });
 }
 
 // =============================================================================
@@ -345,6 +352,21 @@ async function projectOwnerChangeProjectState(req, res) {
 // =============================================================================
 // Admin Routes
 // =============================================================================
+
+projectRouter.get(
+  '/admins/projects/:id',
+  ...authMiddleware({ authorize: Role.ADMIN }),
+  asyncWrap(getProjectForAdmin)
+);
+async function getProjectForAdmin(req, res) {
+  const { id } = req.params;
+
+  const project = await Project.findById(id)
+    .populate('projectOwner')
+    .exec();
+
+  return res.status(200).json({ project });
+}
 
 projectRouter.put(
   '/admin/projects/:id',

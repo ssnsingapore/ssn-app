@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -15,6 +16,7 @@ class _Project extends Component {
   state = {
     project: {},
     isLoading: true,
+    isProjectUnauthorized: false,
   };
 
   async componentDidMount() {
@@ -32,14 +34,20 @@ class _Project extends Component {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
       showAlert('getProjectsFailure', AlertType.ERROR, formatErrors(errors));
+      if (response.status === 403) {
+        this.setState({ isProjectUnauthorized: true });
+      }
     }
-
     this.setState({ isLoading: false });
   }
 
   render() {
     if (this.state.isLoading) {
       return <Spinner />;
+    }
+
+    if (this.state.isProjectUnauthorized) {
+      return <Redirect to='/unauthorized' />;
     }
 
     const { classes } = this.props;
@@ -61,7 +69,7 @@ class _Project extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     flexGrow: 1,
     width: '80vw',
