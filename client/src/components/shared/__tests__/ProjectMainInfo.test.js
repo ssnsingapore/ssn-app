@@ -30,6 +30,7 @@ import {
   TableRow,
   TableCell,
   Table,
+  Chip,
 } from '@material-ui/core';
 
 
@@ -83,11 +84,11 @@ const buildProject = (projectType, overrideAttributes = {}) => {
 };
 
 const shallowRender = (project) => {
-  return shallow( <
-    ProjectMainInfo classes = {
+  return shallow(<
+    ProjectMainInfo classes={
       {}
     }
-    project = {
+    project={
       project
     }
   />, {
@@ -324,7 +325,7 @@ describe('ProjectMainInfo', () => {
           expect(projectDetailsCard.find(Typography).at(7).html()).toEqual(
             expect.stringContaining('Issues Addressed'),
           );
-          expect(projectDetailsCard.find(Typography).at(7).html()).toEqual(
+          expect(projectDetailsCard.find(Chip).html()).toEqual(
             expect.stringContaining('Other'),
           );
         });
@@ -380,7 +381,7 @@ describe('ProjectMainInfo', () => {
           expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
             expect.stringContaining('Issues Addressed'),
           );
-          expect(projectDetailsCard.find(Typography).at(6).html()).toEqual(
+          expect(projectDetailsCard.find(Chip).html()).toEqual(
             expect.stringContaining('Other'),
           );
         });

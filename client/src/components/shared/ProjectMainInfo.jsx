@@ -105,8 +105,8 @@ const renderIssuesAddressed = (classes, project) => {
 
   if (issuesAddressed && issuesAddressed.length !== 0) {
     return (
-      <div style={{ marginTop: '-25px' }}>
-        <br />
+      <React.Fragment>
+        {renderLabel('Issues Addressed')}
         {issuesAddressed.map(issueAddressed => {
           return (
             <Chip
@@ -116,10 +116,14 @@ const renderIssuesAddressed = (classes, project) => {
             />
           );
         })}
-      </div>
+      </React.Fragment>
     );
   }
-  return '-';
+  return (
+    <React.Fragment>
+      {renderRow('Issues Addressed', '-')}
+    </React.Fragment>
+  );
 };
 
 const renderProjectBaseDetails = (classes, project, role) => {
@@ -264,7 +268,6 @@ const renderProjectDetails = (classes, project) => {
       )}
       {renderRow('Region', ProjectRegionDisplayMapping[region])}
       {renderRow('Address', address)}
-      {renderLabel('Issues Addressed')}
       {renderIssuesAddressed(classes, project)}
     </Paper>
   );
