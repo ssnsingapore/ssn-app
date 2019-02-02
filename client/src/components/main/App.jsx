@@ -33,26 +33,6 @@ const theme = createMuiTheme({
         color: 'white',
       },
     },
-    MuiFab: {
-      secondary: {
-        color: 'white',
-      },
-    },
-    MuiFab: {
-      secondary: {
-        color: 'white',
-      },
-    },
-    MuiFab: {
-      secondary: {
-        color: 'white',
-      },
-    },
-    MuiFab: {
-      secondary: {
-        color: 'white',
-      },
-    },
   },
   formInput: {
     margin: {
