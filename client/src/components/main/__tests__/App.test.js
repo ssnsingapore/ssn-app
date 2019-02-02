@@ -4,6 +4,7 @@ import App from '../App';
 import { AlertType } from 'components/shared/Alert';
 
 jest.mock('util/Authenticator');
+jest.mock('react-ga');
 
 describe('App', () => {
   describe('showAlert', () => {
@@ -11,11 +12,11 @@ describe('App', () => {
       const alertKey = 'loginFailure';
       const alertType = AlertType.ERROR;
       const alertMessage = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
-      
+
       const component = shallow(<App></App>);
 
       component.instance().showAlert(alertKey, alertType, alertMessage);
-  
+
       const expectedAlertsState = {
         [alertKey]: {
           isVisible: true,
@@ -24,7 +25,7 @@ describe('App', () => {
         },
       };
 
-      expect(component.state().alerts).toEqual(expectedAlertsState); 
+      expect(component.state().alerts).toEqual(expectedAlertsState);
     });
   });
 
@@ -33,7 +34,7 @@ describe('App', () => {
       const alertKey = 'loginFailure';
       const alertType = AlertType.ERROR;
       const alertMessage = 'Looks like you\'ve keyed in the wrong credentials. Try again!';
-      
+
       const component = shallow(<App></App>);
 
       component.setState({
@@ -47,7 +48,7 @@ describe('App', () => {
       });
 
       component.instance().hideAlert(alertKey);
-  
+
       const expectedAlertsState = {
         [alertKey]: {
           type: alertType,
@@ -55,8 +56,8 @@ describe('App', () => {
           isVisible: false,
         },
       };
-      
-      expect(component.state().alerts).toEqual(expectedAlertsState); 
+
+      expect(component.state().alerts).toEqual(expectedAlertsState);
     });
   });
 });
