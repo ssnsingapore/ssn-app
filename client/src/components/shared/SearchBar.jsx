@@ -25,7 +25,7 @@ const createMenu = (enumeration, displayMapping) => (
   classes,
   fields,
   handleChange,
-  FieldName,
+  FieldName
 ) => {
   return (
     <FormControl className={classes.formControl}>
@@ -34,6 +34,7 @@ const createMenu = (enumeration, displayMapping) => (
         value={fieldValue(fields, field) || ''}
         name={FieldName[field]}
         onChange={handleChange}
+        style={{ marginTop: 0 }}
       >
         <MenuItem key={firstLabel} value="">
           <Typography variant="body1" className={classes.menuText}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Tab, Typography, Button } from '@material-ui/core';
+import { Tabs, Tab, Typography, Fab } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
 
 import { _testExports } from '../ProjectOwnerDashboard';
@@ -116,9 +116,9 @@ describe('ProjectOwnerDashboard', () => {
       done();
     });
 
-    it('should render a header with a button to add new projects', () => {
+    it('should render a header with a floating action button to add new projects', () => {
       expect(component.find(Typography).html()).toEqual(expect.stringContaining('My Projects'));
-      expect(component.find(Button).props().to).toEqual('/project_owner/projects/new');
+      expect(component.find(Fab).props().to).toEqual('/project_owner/projects/new');
     });
 
     describe('when loading', () => {
