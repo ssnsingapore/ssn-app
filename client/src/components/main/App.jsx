@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -63,6 +64,8 @@ class App extends Component {
         authenticator,
       },
     };
+
+    ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
   }
 
   setAuthState = authState => {

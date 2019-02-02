@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -30,12 +31,19 @@ import { AdminProjectDetails } from 'components/admin/admin_project_details/Admi
 import { Role } from 'components/shared/enums/Role';
 
 class _Routes extends Component {
+  logPageView = () => {
+    ReactGA.set({ page: window.location.pathname });
+    ReactGA.pageview(window.location.pathname);
+    return null;
+  }
+
   render() {
     const { classes } = this.props;
 
     return (
       <BrowserRouter>
         <div className={classes.root}>
+          <Route path="/" component={this.logPageView} />
           <Route path="/:any+" component={NavBar} />
           <div className={classes.content}>
             <Switch>
