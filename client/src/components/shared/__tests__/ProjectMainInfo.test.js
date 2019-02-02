@@ -58,7 +58,7 @@ const buildProject = (projectType, overrideAttributes = {}) => {
     issuesAddressed: [IssueAddressed.OTHER],
     volunteerRequirementsDescription: 'some volunteer requirement description',
     volunteerBenefitsDescription: 'some volunteer benefits description',
-    time: '2019-02-02T19:50:37+08:00',
+    time: '2019-02-02T19:50:37',
     region: ProjectRegion.EAST,
     state: ProjectState.PENDING_APPROVAL,
     rejectionReason: 'some rejection reason',
@@ -306,6 +306,7 @@ describe('ProjectMainInfo', () => {
           expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
             expect.stringContaining('Time'),
           );
+          console.log('testTime', projectDetailsCard.find(Typography).at(4).html());
           expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
             expect.stringContaining('7:50 PM'),
           );
