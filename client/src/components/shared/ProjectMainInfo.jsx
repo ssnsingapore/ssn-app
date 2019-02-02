@@ -162,7 +162,11 @@ const renderProjectBaseDetails = (classes, project, role) => {
             target="_blank"
             color="secondary"
             size="large"
-            style={{ textAlign: 'center', marginBottom: '8px' }}
+            style={{
+              textAlign: 'center',
+              marginBottom: '8px',
+              marginTop: 'auto',
+            }}
           >
             Sign up as a volunteer!
           </Button>
@@ -287,6 +291,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     flexDirection: 'column',
+    display: 'flex',
   },
   headline: {
     paddingTop: theme.spacing.unit,
