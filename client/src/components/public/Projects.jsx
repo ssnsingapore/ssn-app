@@ -217,7 +217,7 @@ class _Projects extends Component {
   };
 
   renderContent = (value, projectState, projects) => {
-    const { tabValue, counts } = this.state;
+    const { tabValue, counts, numPages, page, isLoading } = this.state;
     const { theme } = this.props;
     const state = ProjectStateDisplayMapping[projectState].toLowerCase();
 
@@ -233,14 +233,16 @@ class _Projects extends Component {
             </Typography>
           ) : (
             <React.Fragment>
-              <Pagination
-                numPages={this.state.numPages[projectState]}
-                handlePageClick={this.handlePageClick}
-                page={this.state.page - 1}
-              />
+              {numPages[projectState] > 0 &&
+                  <Pagination
+                    numPages={numPages[projectState]}
+                    handlePageClick={this.handlePageClick}
+                    page={page - 1}
+                  />
+              }
               <PublicProjectListing
                 projects={projects}
-                isLoading={this.state.isLoading}
+                isLoading={isLoading}
                 projectState={projectState}
               />
             </React.Fragment>
