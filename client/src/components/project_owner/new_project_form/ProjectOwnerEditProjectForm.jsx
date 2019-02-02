@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { Redirect } from 'react-router-dom';
 
 import { Spinner } from 'components/shared/Spinner';
 import { AppContext } from 'components/main/AppContext';
@@ -36,12 +37,16 @@ export class _ProjectOwnerEditProjectForm extends Component {
       shouldRedirect: false,
       projectToRender: null,
       isImageResolutionTooLow: false,
+      isWrongProjectOwner: false,
     };
   }
 
   async componentDidMount() {
     const { requestWithAlert } = this.props.context.utils;
-    const response = await requestWithAlert.get(`/api/v1/projects/${this.props.match.params.id}`);
+    const response = await requestWithAlert.get(
+      `/api/v1/project_owner/projects/${this.props.match.params.id}`,
+      { authenticated: true }
+    );
 
     if (response.isSuccessful) {
       const { project } = await response.json();
@@ -64,6 +69,9 @@ export class _ProjectOwnerEditProjectForm extends Component {
       const { showAlert } = this.props.context.updaters;
       const errors = await extractErrors(response);
       showAlert('getProjectFailure', AlertType.ERROR, formatErrors(errors));
+      if (response.status === 403) {
+        this.setState({ isWrongProjectOwner: true });
+      }
     }
   }
 
@@ -230,8 +238,11 @@ export class _ProjectOwnerEditProjectForm extends Component {
 
   render() {
 
-    const { projectToRender } = this.state;
+    const { projectToRender, isWrongProjectOwner } = this.state;
 
+    if (isWrongProjectOwner) {
+      return <Redirect to='unauthorized' />;
+    }
     if (!projectToRender) {
       return <Spinner />;
     };

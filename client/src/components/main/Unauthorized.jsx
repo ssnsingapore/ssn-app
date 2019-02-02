@@ -27,7 +27,7 @@ export const Unauthorized = withStyles(styles)(({ classes }) => (
       className={classes.avatar}
     />
     <Typography variant="h4" align="center">
-      Are you sure you're supposed to be poking around this page? Did you forget to log in?
+      Are you sure you're supposed to be poking around this page?
     </Typography>
   </div>
 ));

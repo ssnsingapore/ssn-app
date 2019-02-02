@@ -46,6 +46,9 @@ const constraints = {
   [FieldName.websiteUrl]: {
     isUrl: { allowEmpty: true },
   },
+  [FieldName.socialMediaLink]: {
+    isUrl: { allowEmpty: true },
+  },
   [FieldName.organisationName]: (value, attributes) => {
     if (attributes.accountType === AccountType.INDIVIDUAL) return null;
 
@@ -62,6 +65,16 @@ const constraints = {
     sameValueAs: {
       other: FieldName.password,
     },
+  },
+};
+
+const validateGroupsMap = {
+  fields: {
+    [FieldName.password]: 'password',
+    [FieldName.passwordConfirmation]: 'password',
+  },
+  validateGroups: {
+    password: [FieldName.password, FieldName.passwordConfirmation],
   },
 };
 
@@ -228,6 +241,7 @@ export const ProjectOwnerEditProfileForm =
       withForm(
         FieldName,
         constraints,
+        validateGroupsMap,
       )(_ProjectOwnerEditProfileForm)
     ),
   );
@@ -235,4 +249,5 @@ export const ProjectOwnerEditProfileForm =
 export const TestProjectOwnerEditProfileForm = withForm(
   FieldName,
   constraints,
+  validateGroupsMap,
 )(_ProjectOwnerEditProfileForm);
