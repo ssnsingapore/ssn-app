@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
-import { config } from 'config/environment';
+import {
+  config,
+} from 'config/environment';
 
 const connectMongoose = () => {
   const options = config.MONGO_USERNAME
@@ -9,6 +11,7 @@ const connectMongoose = () => {
         password: config.MONGO_PASSWORD,
       },
     } : {};
+  options.useNewUrlParser = true;
   mongoose.connect(config.DATABASE_URI, options);
 };
 
