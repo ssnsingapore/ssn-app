@@ -152,7 +152,9 @@ class _ProjectOwnerEditProfileForm extends Component {
     this.setState({ isSubmitting: false });
 
     if (response.isSuccessful) {
-      await authenticator.setSuccessfulAuthState(response);
+      if (projectOwner.password) {
+        await authenticator.setSuccessfulAuthState(response);
+      }
       showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
       // Set timeout so that alert has sufficient time to show before reload takes place
       setTimeout(() => window.location.reload(), 2000);
