@@ -1,5 +1,6 @@
 import createError from 'http-errors';
 import express from 'express';
+import enforce from 'express-sslify';
 import helmet from 'helmet';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -35,6 +36,9 @@ const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 
+if (isProduction) {
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 app.use(helmet());
 app.use(logger('dev'));
 app.use(express.json());
