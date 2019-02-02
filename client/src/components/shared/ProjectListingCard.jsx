@@ -133,7 +133,7 @@ const renderDateBadge = (project, classes) => {
       <Typography variant="caption">
         {moment(project.startDate).format('MMM')}
       </Typography>
-      <Typography variant="subtitle1" color="secondary">
+      <Typography variant="h6" color="secondary" style={{ lineHeight: '1' }}>
         <strong>{moment(project.startDate).format('DD')}</strong>
       </Typography>
     </Paper>
@@ -141,7 +141,7 @@ const renderDateBadge = (project, classes) => {
 };
 
 const renderProjectDescription = project => (
-  <Typography variant="caption" data-testid="description">
+  <Typography variant="body2" data-testid="description">
     {project.description.length <= 320
       ? project.description
       : project.description.slice(0, 320) + '...'}
