@@ -9,7 +9,10 @@ import {
 import { ProjectOwner } from 'models/ProjectOwner';
 // eslint-disable-next-line no-unused-vars
 import { Role } from 'models/Role';
-import { UnprocessableEntityErrorView } from 'util/errors';
+import {
+  UnprocessableEntityErrorView,
+  ForbiddenErrorView,
+} from 'util/errors';
 import {
   ProjectOwnerAllowedTransitions,
   AdminAllowedTransitions,
@@ -17,6 +20,7 @@ import {
 import { s3 } from 'config/aws';
 import { config } from 'config/environment';
 import { authMiddleware } from 'util/auth';
+
 
 const MonthValue = {
   JANUARY: 1,
@@ -223,6 +227,29 @@ async function getProjectCountsForProjectOwner(req, res) {
   }
 
   return res.status(200).json({ counts });
+}
+
+projectRouter.get(
+  '/project_owner/projects/:id',
+  ...authMiddleware({ authorize: Role.PROJECT_OWNER }),
+  asyncWrap(getProjectForProjectOwner)
+);
+async function getProjectForProjectOwner(req, res) {
+  const { id } = req.params;
+
+  const project = await Project.findById(id)
+    .populate('projectOwner')
+    .exec();
+
+  const { _id } = project.projectOwner;
+  const isCorrectProjectOwner = req.user.id.toString() === _id.toString();
+
+  if (isCorrectProjectOwner) {
+    return res.status(200).json({ project });
+  }
+  return res.status(403).json({
+    errors: [new ForbiddenErrorView()],
+  });
 }
 
 projectRouter.post(
