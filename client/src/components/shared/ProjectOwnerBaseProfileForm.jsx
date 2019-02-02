@@ -98,6 +98,59 @@ const renderPassword = (classes, FieldName, fields, handleChange, isEditProfileF
   );
 };
 
+const renderChangePassword = (classes, FieldName, fields, handleChange, handleShowPasswordChange, shouldShowPasswordChange, isEditProfileForm) => {
+  return (
+    <React.Fragment>
+      {
+        isEditProfileForm &&
+        <Button
+          color="primary"
+          size="medium"
+          variant="contained"
+          className={classes.buttons}
+          component="span"
+          onClick={handleShowPasswordChange}
+        >
+          Change my password
+        </Button>
+      }
+      {
+        (isEditProfileForm && shouldShowPasswordChange) &&
+        <React.Fragment>
+          <TextField
+            name={FieldName.password}
+            className={classes.textInput}
+            id={FieldName.password}
+            label="New Password"
+            required={true}
+            onChange={handleChange}
+            value={fieldValue(fields, FieldName.password) || ''}
+            error={fieldHasError(fields, FieldName.password)}
+            helperText={fieldErrorText(fields, FieldName.password)}
+            type="password"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            name={FieldName.passwordConfirmation}
+            className={classes.textInput}
+            id={FieldName.passwordConfirmation}
+            label="New Password Confirmation"
+            required={true}
+            onChange={handleChange}
+            value={fieldValue(fields, FieldName.passwordConfirmation) || ''}
+            error={fieldHasError(fields, FieldName.passwordConfirmation)}
+            helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
+            type="password"
+            fullWidth
+            margin="normal"
+          />
+        </React.Fragment>
+      }
+    </React.Fragment>
+  );
+};
+
 
 const handleAccountTypeChange = (event, handleChange, resetField, FieldName) => {
   if (event.target.value === AccountType.ORGANISATION) {
@@ -153,52 +206,7 @@ const _ProjectOwnerBaseProfileForm = ({
               fullWidth
               margin="normal"
             />
-            {
-              isEditProfileForm &&
-              <Button
-                color="primary"
-                size="medium"
-                variant="contained"
-                className={classes.buttons}
-                component="span"
-                onClick={handleShowPasswordChange}
-              >
-                Change my password
-              </Button>
-            }
-            {
-              (isEditProfileForm && shouldShowPasswordChange) &&
-              <React.Fragment>
-                <TextField
-                  name={FieldName.password}
-                  className={classes.textInput}
-                  id={FieldName.password}
-                  label="New Password"
-                  required={true}
-                  onChange={handleChange}
-                  value={fieldValue(fields, FieldName.password) || ''}
-                  error={fieldHasError(fields, FieldName.password)}
-                  helperText={fieldErrorText(fields, FieldName.password)}
-                  type="password"
-                  fullWidth
-                  margin="normal"
-                />
-                <TextField
-                  name={FieldName.passwordConfirmation}
-                  className={classes.textInput}
-                  id={FieldName.passwordConfirmation}
-                  label="New Password Confirmation"
-                  required={true}
-                  onChange={handleChange}
-                  value={fieldValue(fields, FieldName.passwordConfirmation) || ''}
-                  error={fieldHasError(fields, FieldName.passwordConfirmation)}
-                  helperText={fieldErrorText(fields, FieldName.passwordConfirmation)}
-                  type="password"
-                  fullWidth
-                  margin="normal"
-                />
-              </React.Fragment>
-            }
+            {renderChangePassword(classes, FieldName, fields, handleChange, handleShowPasswordChange, shouldShowPasswordChange, isEditProfileForm)}
             <RadioGroup
               name={FieldName.accountType}
               value={fieldValue(fields, FieldName.accountType) || ''}
