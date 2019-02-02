@@ -51,15 +51,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'test user 1',
-      email: 'test1@test.com',
-      accountType: 'INDIVIDUAL',
-      role: Role.PROJECT_OWNER,
-      hashedPassword: projectOwner.hashedPassword,
-      confirmedAt: new Date(),
-    },
-    {
-      name: 'Test user 1',
-      email: 'test1@test.com',
+      email: 'testsmall1@test.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,

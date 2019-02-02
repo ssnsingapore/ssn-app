@@ -39,7 +39,7 @@ export const getProjectOwner = async () => {
   let owner;
   try {
     console.log('Retrieving all ProjectOwners...');
-    owner = await ProjectOwner.findOne({});
+    owner = await ProjectOwner.findOne({ email: 'test@test.com' });
   } catch (err) {
     console.error('Finding project owner failed with error:', err);
   }
