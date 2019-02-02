@@ -29,7 +29,7 @@ import { FieldName } from './ProjectFormFields';
 const isSelectedBefore = (issuesAddressed = [], data) =>
   !!issuesAddressed.find(issue => issue === data);
 
-const renderFrequency = (handleChange, fields) => {
+const renderFrequency = (classes, handleChange, fields) => {
   return (
     fields[FieldName.projectType].value === ProjectType.RECURRING && (
       <TextField
@@ -42,6 +42,7 @@ const renderFrequency = (handleChange, fields) => {
         onChange={handleChange}
         name={FieldName.frequency}
         InputLabelProps={{ shrink: true }}
+        className={classes.columnInRow}
         fullWidth
       >
         <MenuItem value={ProjectFrequency.EVERY_DAY}>
@@ -77,12 +78,7 @@ const renderStartEndDate = (classes, handleChange, fields) => {
   return (
     fields[FieldName.projectType].value === ProjectType.EVENT && (
       <div className={classes.sharedRow}>
-        <DatePickers
-          fields={fields}
-          handleChange={handleChange}
-          fullWidth
-          className={classes.columnInRow}
-        />
+        <DatePickers fields={fields} handleChange={handleChange} />
       </div>
     )
   );
@@ -140,7 +136,6 @@ export const _ProjectDetails = ({
                 )
               }
               name={FieldName.projectType}
-              className={classes.columnInRow}
               InputLabelProps={{ shrink: true }}
               error={fieldHasError(fields, FieldName.projectType)}
               helperText={fieldErrorText(fields, FieldName.projectType)}
@@ -152,46 +147,47 @@ export const _ProjectDetails = ({
                 {ProjectTypeDisplayMapping[ProjectType.RECURRING]}
               </MenuItem>
             </TextField>
-            {renderFrequency(handleChange, fields)}
+            {renderFrequency(classes, handleChange, fields)}
           </div>
           {renderStartEndDate(classes, handleChange, fields)}
-          <TimePickers
-            name={FieldName.time}
-            className={classes.sharedRowTextField}
-            id={FieldName.time}
-            label="Time"
-            onChange={time => handleTimeChange(time, handleChange)}
-            value={fieldValue(fields, FieldName.time) || ''}
-            style={{ display: 'inline' }}
-          />
-          <TextField
-            select
-            label="Region"
-            className={classes.sharedRowTextField}
-            value={fieldValue(fields, FieldName.region) || ''}
-            onChange={handleChange}
-            name={FieldName.region}
-            InputLabelProps={{ shrink: true }}
-          >
-            <MenuItem value="">
-              <em>Undecided</em>
-            </MenuItem>
-            <MenuItem value={ProjectRegion.CENTRAL}>
-              {ProjectRegionDisplayMapping[ProjectRegion.CENTRAL]}
-            </MenuItem>
-            <MenuItem value={ProjectRegion.NORTH}>
-              {ProjectRegionDisplayMapping[ProjectRegion.NORTH]}
-            </MenuItem>
-            <MenuItem value={ProjectRegion.SOUTH}>
-              {ProjectRegionDisplayMapping[ProjectRegion.SOUTH]}
-            </MenuItem>
-            <MenuItem value={ProjectRegion.EAST}>
-              {ProjectRegionDisplayMapping[ProjectRegion.EAST]}
-            </MenuItem>
-            <MenuItem value={ProjectRegion.WEST}>
-              {ProjectRegionDisplayMapping[ProjectRegion.WEST]}
-            </MenuItem>
-          </TextField>
+          <div className={classes.sharedRow}>
+            <TimePickers
+              name={FieldName.time}
+              id={FieldName.time}
+              label="Time"
+              onChange={time => handleTimeChange(time, handleChange)}
+              value={fieldValue(fields, FieldName.time) || ''}
+            />
+            <TextField
+              select
+              label="Region"
+              value={fieldValue(fields, FieldName.region) || ''}
+              onChange={handleChange}
+              name={FieldName.region}
+              InputLabelProps={{ shrink: true }}
+              className={classes.columnInRow}
+              style={{ flexGrow: 1, width: '50%' }}
+            >
+              <MenuItem value="">
+                <em>Undecided</em>
+              </MenuItem>
+              <MenuItem value={ProjectRegion.CENTRAL}>
+                {ProjectRegionDisplayMapping[ProjectRegion.CENTRAL]}
+              </MenuItem>
+              <MenuItem value={ProjectRegion.NORTH}>
+                {ProjectRegionDisplayMapping[ProjectRegion.NORTH]}
+              </MenuItem>
+              <MenuItem value={ProjectRegion.SOUTH}>
+                {ProjectRegionDisplayMapping[ProjectRegion.SOUTH]}
+              </MenuItem>
+              <MenuItem value={ProjectRegion.EAST}>
+                {ProjectRegionDisplayMapping[ProjectRegion.EAST]}
+              </MenuItem>
+              <MenuItem value={ProjectRegion.WEST}>
+                {ProjectRegionDisplayMapping[ProjectRegion.WEST]}
+              </MenuItem>
+            </TextField>
+          </div>
           <div>
             <TextField
               name={FieldName.address}
@@ -263,21 +259,16 @@ const styles = theme => ({
     height: '100%',
   },
   textField: {
-    marginTop: '20px',
-    marginBottom: '20px',
-  },
-  sharedRowTextField: {
-    margin: '20px',
-    marginLeft: '0px',
-    width: '150px',
+    marginTop: theme.spacing.unit * 1,
+    marginBottom: theme.spacing.unit * 3,
   },
   sharedRow: {
     display: 'flex',
     marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 3,
   },
   columnInRow: {
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing.unit,
   },
   chips: {
     display: 'flex',
