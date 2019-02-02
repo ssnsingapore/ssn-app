@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Typography, Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
+import { amber } from '@material-ui/core/colors';
 import qs from 'qs';
 
 import { AppContext } from '../main/AppContext';
@@ -171,7 +172,6 @@ class _ProjectOwnerProjectListing extends Component {
       );
     }
 
-
     return this.state.projects.map(
       project => {
         const contentGridSize = this._getContentGridSize(project);
@@ -201,6 +201,19 @@ class _ProjectOwnerProjectListing extends Component {
     );
   };
 
+  renderRejectionMessage = () => {
+    const { classes, projectState } = this.props;
+    const preambleText =
+      'Rejected projects need to be edited for admin review again (pending approval).';
+
+    return projectState === ProjectState.REJECTED &&
+      <div className={classes.root}>
+        <Typography>
+          {preambleText}
+        </Typography>
+      </div>;
+  }
+
   render() {
     if (this.state.isLoading) {
       return <Spinner />;
@@ -223,6 +236,7 @@ class _ProjectOwnerProjectListing extends Component {
           dashboardRole={Role.PROJECT_OWNER}
           project={project}
         />
+        {this.renderRejectionMessage()}
         <Grid item xs={12}>
           {this.state.projects.length > 0 &&
             <Pagination
@@ -247,6 +261,12 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 1.5,
     marginRight: theme.spacing.unit * 0.5,
     minWidth: '80px',
+  },
+  root: {
+    backgroundColor: amber[100],
+    padding: '10px',
+    marginTop: '10px',
+    borderRadius: '5px',
   },
 });
 

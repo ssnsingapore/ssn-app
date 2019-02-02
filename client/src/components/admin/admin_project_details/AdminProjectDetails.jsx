@@ -234,7 +234,7 @@ const styles = theme => ({
   projectDetails: {
     width: '80vw',
     margin: '0 auto',
-    padding: '60px 0',
+    padding: '40px 0',
   },
   bottomNavBar: {
     display: 'flex',

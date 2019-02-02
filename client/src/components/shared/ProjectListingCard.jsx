@@ -71,8 +71,10 @@ const renderRejectionMessage = (project, classes, rejectionMessageSize) => {
   }
   return (
     <Grid item xs={rejectionMessageSize} className={classes.rejectionMessage}>
-      <Typography variant="body2">Rejection comments:</Typography>
-      <Typography variant="body1">{project.rejectionReason}</Typography>
+      <Typography variant="body2">
+        <strong>Rejection reason: </strong>
+        {project.rejectionReason}
+      </Typography>
     </Grid>
   );
 };

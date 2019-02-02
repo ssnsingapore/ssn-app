@@ -147,7 +147,7 @@ const styles = theme => ({
     flexGrow: 1,
     width: '80vw',
     margin: '0 auto',
-    padding: '60px 0',
+    padding: '40px 0',
   },
   leftIcon: {
     marginRight: theme.spacing.unit,

@@ -158,7 +158,7 @@ export class _ProjectOwnerProjectForm extends Component {
               className={classes.button}
               onClick={this.togglePreviewOff}
             >
-              Back to form
+                Back to form
             </Button>
           )}
           {this.renderBackToDashboardButton()}
@@ -205,7 +205,7 @@ export class _ProjectOwnerProjectForm extends Component {
             className={classes.form}
             style={formPreviewStyle}
           >
-            <Grid item xs={12} style={{ paddingTop: '56px' }} />
+            <Grid item xs={12} style={{ paddingTop: '40px' }} />
             {this._isProjectRejected() && (
               <RejectionReason
                 rejectionReason={this.props.rejectionReason}
