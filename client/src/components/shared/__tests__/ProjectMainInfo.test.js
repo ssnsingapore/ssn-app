@@ -1,11 +1,25 @@
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { ProjectFrequency } from 'components/shared/enums/ProjectFrequency';
-import { ProjectRegion } from 'components/shared/enums/ProjectRegion';
-import { ProjectState } from 'components/shared/enums/ProjectState';
-import { ProjectType } from 'components/shared/enums/ProjectType';
+import {
+  IssueAddressed,
+} from 'components/shared/enums/IssueAddressed';
+import {
+  ProjectFrequency,
+} from 'components/shared/enums/ProjectFrequency';
+import {
+  ProjectRegion,
+} from 'components/shared/enums/ProjectRegion';
+import {
+  ProjectState,
+} from 'components/shared/enums/ProjectState';
+import {
+  ProjectType,
+} from 'components/shared/enums/ProjectType';
 import React from 'react';
-import { _testExports } from '../ProjectMainInfo';
-import { VolunteerRequirementType } from 'components/shared/enums/VolunteerRequirementType';
+import {
+  _testExports,
+} from '../ProjectMainInfo';
+import {
+  VolunteerRequirementType,
+} from 'components/shared/enums/VolunteerRequirementType';
 import {
   Card,
   Typography,
@@ -27,25 +41,24 @@ const buildProject = (projectType, overrideAttributes = {}) => {
     coverImageUrl: 'some cover image url',
     description: 'some description',
     volunteerSignupUrl: 'some signup url',
-    volunteerRequirements: [
-      {
-        _id: '5bcae113f8180c1c495486f7',
-        type: VolunteerRequirementType.INTERACTION,
-        commitmentLevel: 'Once a Week',
-        number: 5,
-      },
-      {
-        _id: '5bcae113f8180c1c495486f2',
-        type: VolunteerRequirementType.CONTENT_CREATION,
-        commitmentLevel: 'Once a Week',
-        number: 5,
-      },
+    volunteerRequirements: [{
+      _id: '5bcae113f8180c1c495486f7',
+      type: VolunteerRequirementType.INTERACTION,
+      commitmentLevel: 'Once a Week',
+      number: 5,
+    },
+    {
+      _id: '5bcae113f8180c1c495486f2',
+      type: VolunteerRequirementType.CONTENT_CREATION,
+      commitmentLevel: 'Once a Week',
+      number: 5,
+    },
     ],
     projectOwner: { /* not used */ },
     issuesAddressed: [IssueAddressed.OTHER],
     volunteerRequirementsDescription: 'some volunteer requirement description',
     volunteerBenefitsDescription: 'some volunteer benefits description',
-    time: '9 AM',
+    time: '2019-02-02T19:50:37+08:00',
     region: ProjectRegion.EAST,
     state: ProjectState.PENDING_APPROVAL,
     rejectionReason: 'some rejection reason',
@@ -70,11 +83,16 @@ const buildProject = (projectType, overrideAttributes = {}) => {
 };
 
 const shallowRender = (project) => {
-  return shallow(
-    <ProjectMainInfo classes={{}} project={project} />,
-    {
-      disableLifeCycleMethods: true,
+  return shallow( <
+    ProjectMainInfo classes = {
+      {}
     }
+    project = {
+      project
+    }
+  />, {
+    disableLifeCycleMethods: true,
+  }
   );
 };
 describe('ProjectMainInfo', () => {
@@ -111,7 +129,9 @@ describe('ProjectMainInfo', () => {
       });
 
       it('should render the volunteer signup url correctly if there is already http scheme', () => {
-        project = buildProject(ProjectType.EVENT, { volunteerSignupUrl: 'https://someurl.com' });
+        project = buildProject(ProjectType.EVENT, {
+          volunteerSignupUrl: 'https://someurl.com',
+        });
         component = shallowRender(project);
 
         baseDetailsCard = component.find(Card);
@@ -120,7 +140,9 @@ describe('ProjectMainInfo', () => {
       });
 
       it('should not render the volunteer signup url button if not specified', () => {
-        project = buildProject(ProjectType.EVENT, { volunteerSignupUrl: undefined });
+        project = buildProject(ProjectType.EVENT, {
+          volunteerSignupUrl: undefined,
+        });
         component = shallowRender(project);
 
         baseDetailsCard = component.find(Card);
@@ -285,7 +307,7 @@ describe('ProjectMainInfo', () => {
             expect.stringContaining('Time'),
           );
           expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
-            expect.stringContaining('9:00 AM'),
+            expect.stringContaining('7:50 PM'),
           );
           expect(projectDetailsCard.find(Typography).at(5).html()).toEqual(
             expect.stringContaining('Region'),
@@ -341,7 +363,7 @@ describe('ProjectMainInfo', () => {
             expect.stringContaining('Time'),
           );
           expect(projectDetailsCard.find(Typography).at(3).html()).toEqual(
-            expect.stringContaining('9:00 AM'),
+            expect.stringContaining('7:50 PM'),
           );
           expect(projectDetailsCard.find(Typography).at(4).html()).toEqual(
             expect.stringContaining('Region'),
