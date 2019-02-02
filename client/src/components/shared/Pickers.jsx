@@ -20,7 +20,6 @@ export class DatePickers extends PureComponent {
         value: dateMoment !== null ? dateMoment.startOf('day').format() : '',
       },
     };
-    console.log(dateMoment);
     this.props.handleChange(event);
   };
 
@@ -37,53 +36,50 @@ export class DatePickers extends PureComponent {
   render() {
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <div className="picker">
-          <DatePicker
-            keyboard
-            clearable
-            label="Start Date"
-            placeholder={moment(new Date()).format('DD/MM/YYYY')}
-            format="DD/MM/YYYY"
-            mask={value =>
-              value
-                ? [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]
-                : []
-            }
-            value={fieldValue(this.props.fields, FieldName.startDate) || ''}
-            onChange={this.handleStartDateChange}
-            animateYearScrolling
-            minDate={new Date()}
-            disableOpenOnEnter
-            InputLabelProps={{ shrink: true }}
-            error={fieldHasError(this.props.fields, FieldName.startDate)}
-            helperText={fieldErrorText(this.props.fields, FieldName.startDate)}
-            style={{ marginRight: '20px' }}
-          />
-        </div>
+        <DatePicker
+          keyboard
+          clearable
+          label="Start Date"
+          placeholder={moment(new Date()).format('DD/MM/YYYY')}
+          format="DD/MM/YYYY"
+          mask={value =>
+            value
+              ? [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]
+              : []
+          }
+          value={fieldValue(this.props.fields, FieldName.startDate) || ''}
+          onChange={this.handleStartDateChange}
+          animateYearScrolling
+          minDate={new Date()}
+          disableOpenOnEnter
+          InputLabelProps={{ shrink: true }}
+          error={fieldHasError(this.props.fields, FieldName.startDate)}
+          helperText={fieldErrorText(this.props.fields, FieldName.startDate)}
+          style={{ flexGrow: 1, width: '50%', marginRight: '8px' }}
+        />
 
-        <div className="picker">
-          <DatePicker
-            keyboard
-            clearable
-            label="End Date"
-            placeholder={moment(new Date()).format('DD/MM/YYYY')}
-            format="DD/MM/YYYY"
-            mask={value =>
-              value
-                ? [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]
-                : []
-            }
-            value={fieldValue(this.props.fields, FieldName.endDate) || ''}
-            onChange={this.handleEndDateChange}
-            animateYearScrolling
-            minDate={this.props.fields.startDate}
-            disableOpenOnEnter
-            minDateMessage="Please select a date on or after the start date"
-            InputLabelProps={{ shrink: true }}
-            error={fieldHasError(this.props.fields, FieldName.endDate)}
-            helperText={fieldErrorText(this.props.fields, FieldName.endDate)}
-          />
-        </div>
+        <DatePicker
+          keyboard
+          clearable
+          label="End Date"
+          placeholder={moment(new Date()).format('DD/MM/YYYY')}
+          format="DD/MM/YYYY"
+          mask={value =>
+            value
+              ? [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]
+              : []
+          }
+          value={fieldValue(this.props.fields, FieldName.endDate) || ''}
+          onChange={this.handleEndDateChange}
+          animateYearScrolling
+          minDate={this.props.fields.startDate}
+          disableOpenOnEnter
+          minDateMessage="Please select a date on or after the start date"
+          InputLabelProps={{ shrink: true }}
+          error={fieldHasError(this.props.fields, FieldName.endDate)}
+          helperText={fieldErrorText(this.props.fields, FieldName.endDate)}
+          style={{ flexGrow: 1, width: '50%' }}
+        />
       </MuiPickersUtilsProvider>
     );
   }
@@ -97,25 +93,21 @@ export class TimePickers extends PureComponent {
   render() {
     return (
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <div className="picker">
-          <TimePicker
-            keyboard
-            clearable
-            label="Time"
-            placeholder={moment(new Date()).format('hh:mm A')}
-            keyboardIcon={<TimeIcon />}
-            mask={value => {
-              return value
-                ? [/\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M']
-                : [];
-            }}
-            value={this.props.value}
-            onChange={this.handleTimeChange}
-            disableOpenOnEnter
-            InputLabelProps={{ shrink: true }}
-            style={{ display: 'inline' }}
-          />
-        </div>
+        <TimePicker
+          keyboard
+          clearable
+          label="Time"
+          placeholder={moment(new Date()).format('hh:mm A')}
+          keyboardIcon={<TimeIcon />}
+          mask={value => {
+            return value ? [/\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M'] : [];
+          }}
+          value={this.props.value}
+          onChange={this.handleTimeChange}
+          disableOpenOnEnter
+          InputLabelProps={{ shrink: true }}
+          style={{ flexGrow: 1, width: '50%' }}
+        />
       </MuiPickersUtilsProvider>
     );
   }

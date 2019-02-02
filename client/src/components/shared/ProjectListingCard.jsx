@@ -88,26 +88,23 @@ const renderFrequencyOrEventDateInfo = (project) => {
 
   const startDate = moment(project.startDate).format('dddd, Do MMMM YYYY');
   const endDate = moment(project.endDate).format('dddd, Do MMMM YYYY');
-  const eventDatesString = startDate === endDate ?
-    startDate : `${startDate} - ${endDate}`;
+  const eventDatesString =
+    startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 
   return (
     <Typography variant="caption" data-testid="event-dates">
       {eventDatesString}
-    </Typography >
+    </Typography>
   );
 };
-const renderProjectTitle = (project) => (
+
+const renderProjectTitle = project => (
   <Typography variant="headline" gutterBottom data-testid="title">
     {capitalizeWords(project.title)}
   </Typography>
 );
 const renderProjectOwnerWithAvatar = (project, classes) => (
-  <Typography
-    variant="subheading"
-    color="textSecondary"
-    gutterBottom
-  >
+  <Typography variant="subheading" color="textSecondary" gutterBottom>
     <List className={classes.removePadding}>
       <ListItem className={classes.removePadding}>
         <Avatar
@@ -136,16 +133,14 @@ const renderDateBadge = (project, classes) => {
       <Typography variant="caption">
         {moment(project.startDate).format('MMM')}
       </Typography>
-      <Typography variant="title" color="secondary">
-        <strong>
-          {moment(project.startDate).format('DD')}
-        </strong>
+      <Typography variant="subtitle1" color="secondary">
+        <strong>{moment(project.startDate).format('DD')}</strong>
       </Typography>
     </Paper>
   );
 };
 
-const renderProjectDescription = (project) => (
+const renderProjectDescription = project => (
   <Typography variant="caption" data-testid="description">
     {project.description.length <= 320
       ? project.description
