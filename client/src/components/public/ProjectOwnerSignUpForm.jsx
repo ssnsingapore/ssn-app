@@ -46,6 +46,9 @@ const constraints = {
   [FieldName.websiteUrl]: {
     isUrl: { allowEmpty: true },
   },
+  [FieldName.socialMediaLink]: {
+    isUrl: { allowEmpty: true },
+  },
   [FieldName.password]: {
     presence: { allowEmpty: false },
     length: {

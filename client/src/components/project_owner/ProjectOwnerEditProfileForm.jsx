@@ -46,6 +46,9 @@ const constraints = {
   [FieldName.websiteUrl]: {
     isUrl: { allowEmpty: true },
   },
+  [FieldName.socialMediaLink]: {
+    isUrl: { allowEmpty: true },
+  },
   [FieldName.organisationName]: (value, attributes) => {
     if (attributes.accountType === AccountType.INDIVIDUAL) return null;
 
