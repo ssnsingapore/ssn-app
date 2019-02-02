@@ -44,7 +44,7 @@ class _ProjectOwnerDetails extends Component {
             <strong>Name: </strong>
             {projectOwner.name}
           </Typography> :
-          <Typography variant='headline' gutterBottom>
+          <Typography variant='h5' gutterBottom>
             {projectOwner.name}
           </Typography>
         }

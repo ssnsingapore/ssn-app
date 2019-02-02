@@ -99,12 +99,12 @@ const renderFrequencyOrEventDateInfo = (project) => {
 };
 
 const renderProjectTitle = project => (
-  <Typography variant="headline" gutterBottom data-testid="title">
+  <Typography variant="h5" gutterBottom data-testid="title">
     {capitalizeWords(project.title)}
   </Typography>
 );
 const renderProjectOwnerWithAvatar = (project, classes) => (
-  <Typography variant="subheading" color="textSecondary" gutterBottom>
+  <Typography variant="subtitle1" color="textSecondary" gutterBottom>
     <List className={classes.removePadding}>
       <ListItem className={classes.removePadding}>
         <Avatar
