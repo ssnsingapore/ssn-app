@@ -295,7 +295,6 @@ class _Projects extends Component {
       <div>
         <SearchBar
           FieldName={FieldName}
-          classes={this.props.classes}
           fields={this.props.fields}
           handleChange={this.props.handleChange}
           resetAllFieldsAndRefetch={this.resetAllFieldsAndRefetch}
