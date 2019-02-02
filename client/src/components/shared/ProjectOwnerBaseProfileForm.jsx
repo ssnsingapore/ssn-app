@@ -99,19 +99,21 @@ const renderPassword = (classes, FieldName, fields, handleChange, isEditProfileF
 };
 
 const renderChangePassword = (classes, FieldName, fields, handleChange, handleShowPasswordChange, shouldShowPasswordChange, isEditProfileForm) => {
+  const buttonColor = shouldShowPasswordChange ? 'default' : 'primary';
+  const buttonText = shouldShowPasswordChange ? 'Do not change my password' : 'Change my password';
   return (
     <React.Fragment>
       {
         isEditProfileForm &&
         <Button
-          color="primary"
+          color={buttonColor}
           size="medium"
           variant="contained"
           className={classes.buttons}
           component="span"
           onClick={handleShowPasswordChange}
         >
-          Change my password
+          {buttonText}
         </Button>
       }
       {
