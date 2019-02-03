@@ -157,8 +157,6 @@ class _ProjectOwnerEditProfileForm extends Component {
       const { user } = await response.json();
       authenticator.setCurrentUser(user);
       showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
-      // Set timeout so that alert has sufficient time to show before reload takes place
-      setTimeout(() => window.location.reload(), 2000);
     }
 
     if (response.hasError) {
