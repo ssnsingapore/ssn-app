@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 import { config } from 'config/environment';
-import { constructMongooseValidationError, UnprocessableEntityErrorView } from 'util/errors';
+import { constructMongooseValidationError } from 'util/errors';
 import { Role } from './Role';
 
 export const AccountType = {
@@ -192,10 +192,7 @@ ProjectOwnerSchema.methods.clearPasswordResetFields = async function () {
 ProjectOwnerSchema.post('save', (error, _doc, next) => {
   if (error.name === 'ValidationError' && error.errors && error.errors.email
       && error.errors.email.message === 'is already taken.') {
-    next([new UnprocessableEntityErrorView(
-      'Email is taken',
-      'The email address you have entered is already associated with another account',
-    )]);
+    next(constructMongooseValidationError('email', 'is already associated with another account'));
   } else {
     next(error);
   }

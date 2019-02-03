@@ -97,7 +97,7 @@ describe('Sign up service', () => {
             promise: () => Promise.reject(new Error('some error')),
           }));
 
-          await signUpService.execute();
+          await expect(signUpService.execute()).rejects.toThrow();
 
           const projectOwner = await ProjectOwner.findOne({ name: mockProjectOwner.name });
           expect(projectOwner).toBeNull();
@@ -117,8 +117,8 @@ describe('Sign up service', () => {
         const projectOwner = await ProjectOwner.findOne({ name: mockProjectOwner.name });
 
         expect(errorsObj.errors[0]).toMatchObject(new UnprocessableEntityErrorView(
-          'Email is taken',
-          'The email address you have entered is already associated with another account',
+          'email',
+          'email is already associated with another account.',
         ));
         expect(projectOwner).toBeNull();
         expect(mailer.sendMail).not.toHaveBeenCalled();
@@ -131,9 +131,10 @@ describe('Sign up service', () => {
         });
         password = 'password';
         signUpService = new SignUpService(mockProjectOwner, password, Role.PROJECT_OWNER);
-        const errorsObj = await signUpService.execute();
 
-        expect(errorsObj.errors).toEqual(expect.any(Error));
+        await expect(signUpService.execute()).resolves.toEqual({
+          errors: 'ProjectOwner validation failed: name: cannot be blank',
+        });
       });
     });
 
@@ -143,7 +144,7 @@ describe('Sign up service', () => {
       });
 
       it('should not save user', async () => {
-        await signUpService.execute();
+        await expect(signUpService.execute()).rejects.toThrow();
 
         const projectOwner = await ProjectOwner.findOne({ name: mockProjectOwner.name });
         expect(projectOwner).toBeNull();

@@ -13,7 +13,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  mongoose.disconnect();
+  await mongoose.disconnect();
 });
 
 describe('Public routes', () => {
@@ -428,7 +428,7 @@ describe('Sign up and account confirmation', () => {
       await ProjectOwner.deleteMany();
     });
 
-    it('should return a 422 response when project owner data is invalid', async () => {
+    it('should return a 422 response when project owner email is already taken', async () => {
       const response = await request(app).post('/api/v1/project_owners')
         .send({
           name: 'Duplicate Email Project Owner',
@@ -442,7 +442,11 @@ describe('Sign up and account confirmation', () => {
         });
 
       expect(response.status).toEqual(422);
-      expect(response.body.errors[0].title).toEqual('Email is taken');
+      expect(response.body.errors).toEqual([{
+        detail: 'email is already associated with another account.',
+        status: 422,
+        title: 'email',
+      }]);
     });
 
     it('should return a 201 response and the created project owner when the project owner data is valid', async () => {
@@ -466,27 +470,18 @@ describe('Sign up and account confirmation', () => {
   describe('GET /project_owners/:id/confirmationToken/:confirmationToken', () => {
     let projectOwner;
 
-    beforeEach(async () => {
-      await request(app).post('/api/v1/project_owners')
-        .send({
-          name: 'Valid Project Owner',
-          email: 'valid@email.com',
-          accountType: 'ORGANISATION',
-          websiteUrl: 'https://thecatsite.com/',
-          socialMediaLink: 'https://twitter.com/awyeahcatgifs',
-          organisationName: 'Cat Society',
-          description: 'Everything cats.',
-          password: 'some password',
-        });
-      projectOwner = await ProjectOwner.findOne({ name: 'Valid Project Owner' });
-    });
-
     afterEach(async () => {
       await ProjectOwner.deleteMany();
     });
 
     describe('when the confirmation token is invalid', () => {
-      it('should reidrect to the login page with an error message', async () => {
+      beforeEach(async () => {
+        const validProjectOwner = await saveProjectOwner({ confirmedAt: null });
+        await validProjectOwner.generateConfirmationToken();
+        projectOwner = await ProjectOwner.findById(validProjectOwner.id);
+      });
+
+      it('should redirect to the login page with an error message', async () => {
         const response = await request(app).get(`/api/v1/project_owners/${projectOwner._id}/confirmation/invalidToken`);
 
         expect(response.status).toEqual(302);
@@ -502,8 +497,9 @@ describe('Sign up and account confirmation', () => {
 
     describe('when the project owner is already confirmed', () => {
       beforeEach(async () => {
-        projectOwner.set({ confirmedAt: new Date() });
-        await projectOwner.save();
+        const validProjectOwner = await saveProjectOwner({ confirmedAt: new Date() });
+        await validProjectOwner.generateConfirmationToken();
+        projectOwner = await ProjectOwner.findById(validProjectOwner.id);
       });
 
       it('should redirect to the login page with an info message in hash params', async () => {
@@ -521,6 +517,12 @@ describe('Sign up and account confirmation', () => {
     });
 
     describe('when the project owner is not yet confirmed', () => {
+      beforeEach(async () => {
+        const validProjectOwner = await saveProjectOwner({ confirmedAt: null });
+        await validProjectOwner.generateConfirmationToken();
+        projectOwner = await ProjectOwner.findById(validProjectOwner.id);
+      });
+
       it('should redirect to the login page with a success message in hash params', async () => {
         const response = await request(app).get(`/api/v1/project_owners/${projectOwner.id}/confirmation/${projectOwner.confirmationToken}`);
 

@@ -18,9 +18,12 @@ export class SignUpService {
       return null;
     } catch (err) {
       await this.user.remove();
-      return {
-        errors: err,
-      };
+      if (err.name === 'ValidationError') {
+        return {
+          errors: err.message,
+        };
+      }
+      throw err;
     }
   }
 

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { UnprocessableEntityErrorView } from 'util/errors';
 
+import { UnprocessableEntityErrorView } from 'util/errors';
 import { ProjectOwner } from '../ProjectOwner';
 
 describe('Project Owner', () => {
@@ -13,7 +13,7 @@ describe('Project Owner', () => {
   });
 
   describe('email', () => {
-    it('has to be unique', async () => {
+    it('throws custom Validation Error when email is not unique', async () => {
       const email = 'test@test.com';
 
       const existingUser = new ProjectOwner({
@@ -28,10 +28,15 @@ describe('Project Owner', () => {
         email,
       });
 
-      await expect(newUser.save()).rejects.toContainEqual(new UnprocessableEntityErrorView(
-        'Email is taken',
-        'The email address you have entered is already associated with another account',
-      ));
+      try {
+        await newUser.save();
+      } catch (error) {
+        expect(error.name).toEqual('ValidationError');
+        expect(error.message).toContainEqual(new UnprocessableEntityErrorView(
+          'email',
+          'email is already associated with another account.',
+        ));
+      }
     });
   });
 });
