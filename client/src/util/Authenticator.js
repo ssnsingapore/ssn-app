@@ -28,13 +28,16 @@ export class Authenticator {
   }
 
   setSuccessfulAuthState = async (response) => {
-    const { user } = await response.json();
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-
-    const csrfToken = response.headers.get('csrf-token');
-    localStorage.setItem(CSRF_TOKEN_KEY, csrfToken);
+    const { user } = await response.json();  
+    this.setCurrentUser(user);
+    this.setCsrfToken(response);
 
     this.setAuthState(true);
+  }
+
+  setCsrfToken = (response) => {
+    const csrfToken = response.headers.get('csrf-token');
+    localStorage.setItem(CSRF_TOKEN_KEY, csrfToken);
   }
 
   clearAuthState = () => {

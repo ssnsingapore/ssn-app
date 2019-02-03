@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { withContext } from 'util/context';
 import { extractErrors, formatErrors } from 'util/errors';
 import { getFieldNameObject, withForm } from 'util/form';
-import { CURRENT_USER_KEY } from 'util/storage_keys';
 
 import { AccountType } from 'components/shared/enums/AccountType';
 import { AlertType } from 'components/shared/Alert';
@@ -153,11 +152,10 @@ class _ProjectOwnerEditProfileForm extends Component {
 
     if (response.isSuccessful) {
       if (projectOwner.password) {
-        await authenticator.setSuccessfulAuthState(response);
-      } else {
-        const { user } = await response.json();
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+        authenticator.setCsrfToken(response);
       }
+      const { user } = await response.json();
+      authenticator.setCurrentUser(user);
       showAlert('editProfileSuccess', AlertType.SUCCESS, EDIT_PROFILE_SUCCESS);
       // Set timeout so that alert has sufficient time to show before reload takes place
       setTimeout(() => window.location.reload(), 2000);
