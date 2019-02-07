@@ -18,26 +18,26 @@ afterAll(async () => {
 
 describe('Public routes', () => {
   const emails = [
-    'test1@test.com',
-    'test2@test.com',
-    'test3@test.com',
-    'test4@test.com',
-    'test5@test.com',
-    'test6@test.com',
-    'test7@test.com',
-    'test8@test.com',
-    'test9@test.com',
-    'test10@test.com',
-    'test11@test.com',
-    'test12@test.com',
-    'test13@test.com',
-    'test14@test.com',
-    'test15@test.com',
-    'test16@test.com',
-    'test17@test.com',
-    'test18@test.com',
-    'test19@test.com',
-    'test20@test.com',
+    'test1@example.com',
+    'test2@example.com',
+    'test3@example.com',
+    'test4@example.com',
+    'test5@example.com',
+    'test6@example.com',
+    'test7@example.com',
+    'test8@example.com',
+    'test9@example.com',
+    'test10@example.com',
+    'test11@example.com',
+    'test12@example.com',
+    'test13@example.com',
+    'test14@example.com',
+    'test15@example.com',
+    'test16@example.com',
+    'test17@example.com',
+    'test18@example.com',
+    'test19@example.com',
+    'test20@example.com',
   ];
 
   describe('GET /project_owners', () => {
@@ -54,8 +54,8 @@ describe('Public routes', () => {
 
       expect(response.status).toEqual(200);
       expect(response.body.projectOwners.length).toEqual(20);
-      expect(response.body.projectOwners[0].email).toEqual('test1@test.com');
-      expect(response.body.projectOwners[19].email).toEqual('test9@test.com');
+      expect(response.body.projectOwners[0].email).toEqual('test1@example.com');
+      expect(response.body.projectOwners[19].email).toEqual('test9@example.com');
     });
 
     it('should fetch the number of project owners specified by pageSize by the given page', async () => {
@@ -63,8 +63,8 @@ describe('Public routes', () => {
 
       expect(response.status).toEqual(200);
       expect(response.body.projectOwners.length).toEqual(5);
-      expect(response.body.projectOwners[0].email).toEqual('test14@test.com');
-      expect(response.body.projectOwners[4].email).toEqual('test18@test.com');
+      expect(response.body.projectOwners[0].email).toEqual('test14@example.com');
+      expect(response.body.projectOwners[4].email).toEqual('test18@example.com');
     });
   });
 
@@ -251,7 +251,7 @@ describe('Project Owner routes', () => {
 
 describe('Password reset', () => {
   describe('POST /project_owners/password/reset', () => {
-    const email = 'test@test.com';
+    const email = 'test@example.com';
 
     beforeAll(async (done) => {
       await saveProjectOwner({
@@ -286,7 +286,7 @@ describe('Password reset', () => {
   });
 
   describe('GET /project_owners/:id/password/reset/:passwordResetToken', () => {
-    const email = 'test@test.com';
+    const email = 'test@example.com';
     let projectOwner;
 
     beforeAll(async (done) => {
@@ -345,7 +345,7 @@ describe('Password reset', () => {
   });
 
   describe('PUT /project_owners/password/reset', () => {
-    const email = 'test@test.com';
+    const email = 'test@example.com';
     let projectOwner;
 
     beforeAll(async (done) => {

@@ -21,7 +21,7 @@ describe('Login service', () => {
     beforeEach(() => {
       mockProjectOwner = new ProjectOwner({
         name: 'test',
-        email: 'test@test.com',
+        email: 'test@example.com',
       });
       mockProjectOwner.generateJwt = jest.fn(() => mockJwt);
       uid.mockResolvedValue(mockCsrfToken);
@@ -54,7 +54,7 @@ describe('Login service', () => {
     beforeEach(() => {
       mockAdmin = new Admin({
         name: 'test',
-        email: 'test@test.com',
+        email: 'test@example.com',
       });
       mockAdmin.generateJwt = jest.fn(() => mockJwt);
       uid.mockResolvedValue(mockCsrfToken);

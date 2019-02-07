@@ -14,7 +14,7 @@ describe('Project Owner', () => {
 
   describe('email', () => {
     it('throws custom Validation Error when email is not unique', async () => {
-      const email = 'test@test.com';
+      const email = 'test@example.com';
 
       const existingUser = new ProjectOwner({
         name: 'existing',

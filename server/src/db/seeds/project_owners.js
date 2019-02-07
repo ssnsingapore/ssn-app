@@ -9,7 +9,7 @@ projectOwner.setPassword('test123').then(async () => {
   const projectOwnerAttributes = [
     {
       name: 'Cat Society',
-      email: 'test@test.com',
+      email: 'test@example.com',
       accountType: 'ORGANISATION',
       websiteUrl: 'https://thecatsite.com/',
       socialMediaLink: 'https://twitter.com/awyeahcatgifs',
@@ -23,7 +23,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Earth Society',
-      email: 'earthsoc@test.com',
+      email: 'earthsoc@example.com',
       accountType: 'ORGANISATION',
       websiteUrl: 'https://www.earthsocietysg.com/',
       socialMediaLink: '',
@@ -51,7 +51,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'test user 1',
-      email: 'testsmall1@test.com',
+      email: 'testsmall1@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -59,7 +59,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 1',
-      email: 'test1@test.com',
+      email: 'test1@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -67,7 +67,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 2',
-      email: 'test2@test.com',
+      email: 'test2@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -75,7 +75,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 3',
-      email: 'test3@test.com',
+      email: 'test3@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -83,7 +83,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 4',
-      email: 'test4@test.com',
+      email: 'test4@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -91,7 +91,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 5',
-      email: 'test5@test.com',
+      email: 'test5@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -99,7 +99,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 6',
-      email: 'test6@test.com',
+      email: 'test6@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -107,7 +107,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 7',
-      email: 'test7@test.com',
+      email: 'test7@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -115,7 +115,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 8',
-      email: 'test8@test.com',
+      email: 'test8@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -123,7 +123,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 9',
-      email: 'test9@test.com',
+      email: 'test9@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -131,7 +131,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 10',
-      email: 'test10@test.com',
+      email: 'test10@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -139,7 +139,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 11',
-      email: 'test11@test.com',
+      email: 'test11@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -147,7 +147,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 12',
-      email: 'test12@test.com',
+      email: 'test12@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -155,7 +155,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Test user 13',
-      email: 'test13@test.com',
+      email: 'test13@example.com',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,

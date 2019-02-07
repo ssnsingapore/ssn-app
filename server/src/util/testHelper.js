@@ -34,7 +34,7 @@ export const saveAdmin = async (overrideAttributes = {}, password = 'test123') =
 export const createProjectOwner = async (overrideAttributes = {}, password = 'test123') => {
   const projectOwner = new ProjectOwner({
     name: 'Cat Society',
-    email: 'test@test.com',
+    email: 'test@example.com',
     accountType: 'ORGANISATION',
     websiteUrl: 'https://thecatsite.com/',
     socialMediaLink: 'https://twitter.com/awyeahcatgifs',

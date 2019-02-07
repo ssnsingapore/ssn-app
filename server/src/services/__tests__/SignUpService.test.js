@@ -30,7 +30,7 @@ describe('Sign up service', () => {
       s3.upload = jest.fn(() => ({ promise: () => Promise.resolve({ Location: 'some image url' }) }));
       mockProjectOwner = new ProjectOwner({
         name: 'test',
-        email: 'test@test.com',
+        email: 'test@example.com',
       });
       password = 'password';
       signUpService = new SignUpService(mockProjectOwner, password, Role.PROJECT_OWNER);
@@ -127,7 +127,7 @@ describe('Sign up service', () => {
       it('should throw if there is some other validation error on the projectOwner to be created', async () => {
         mockProjectOwner = new ProjectOwner({
           name: '',
-          email: 'test@test.com',
+          email: 'test@example.com',
         });
         password = 'password';
         signUpService = new SignUpService(mockProjectOwner, password, Role.PROJECT_OWNER);

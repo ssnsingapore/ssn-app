@@ -15,7 +15,7 @@ const mockTheme = {
 const projectOwner = {
   'id': '5c1f06978ae06880ca733dee',
   'name': 'Cat Society',
-  'email': 'test@test.com',
+  'email': 'test@example.com',
   'accountType': 'ORGANISATION',
   'websiteUrl': 'https://thecatsite.com/',
   'socialMediaLink': 'https://twitter.com/awyeahcatgifs',

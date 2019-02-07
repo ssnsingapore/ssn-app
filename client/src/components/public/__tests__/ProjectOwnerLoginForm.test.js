@@ -130,7 +130,7 @@ describe('ProjectOwnerLoginForm', () => {
         let props;
         let component;
         const valuesForAllFields = {
-          email: 'test@test.com',
+          email: 'test@example.com',
           password: 'test123',
         };
 
@@ -206,7 +206,7 @@ describe('ProjectOwnerLoginForm', () => {
         let props;
         let component;
         const valuesForAllFields = {
-          email: 'test@test.com',
+          email: 'test@example.com',
           password: 'test123',
         };
         const response = {

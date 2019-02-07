@@ -28,7 +28,7 @@ describe('Password reset service', () => {
   });
 
   describe('triggering password reset', () => {
-    const email = 'test@test.com';
+    const email = 'test@example.com';
     const oldHashedPassword = 'oldhashedpassword';
     let mockUser;
 
@@ -100,7 +100,7 @@ describe('Password reset service', () => {
     beforeEach(async (done) => {
       const user = new ProjectOwner({
         name: 'test',
-        email: 'test@test.com',
+        email: 'test@example.com',
         passwordResetToken,
         passwordExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
@@ -263,7 +263,7 @@ describe('Password reset service', () => {
 
   describe('attempting password reset', () => {
     let userId;
-    const email = 'test@test.com';
+    const email = 'test@example.com';
     const passwordResetToken = 'passwordResetToken';
     const newPassword = 'new password';
 

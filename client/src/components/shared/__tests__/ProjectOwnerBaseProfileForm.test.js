@@ -36,7 +36,7 @@ describe('ProjectOwnerBaseProfileForm', () => {
         errors: [],
       },
       [FieldName.email]: {
-        value: 'test@test.com',
+        value: 'test@example.com',
         errors: [],
       },
       [FieldName.description]: {
