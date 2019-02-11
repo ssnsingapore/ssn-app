@@ -163,7 +163,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 1',
-      email: 'testing1@testing.com',
+      email: 'testing1@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -171,7 +171,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 2',
-      email: 'testing2@testing.com',
+      email: 'testing2@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -179,7 +179,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 3',
-      email: 'testing3@testing.com',
+      email: 'testing3@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -187,7 +187,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 4',
-      email: 'testing4@testing.com',
+      email: 'testing4@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -195,7 +195,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 5',
-      email: 'testing5@testing.com',
+      email: 'testing5@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -203,7 +203,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 6',
-      email: 'testing6@testing.com',
+      email: 'testing6@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -211,7 +211,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 7',
-      email: 'testing7@testing.com',
+      email: 'testing7@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
@@ -219,7 +219,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Other user 8',
-      email: 'testing8@testing.com',
+      email: 'testing8@example.org',
       accountType: 'INDIVIDUAL',
       role: Role.PROJECT_OWNER,
       hashedPassword: projectOwner.hashedPassword,
