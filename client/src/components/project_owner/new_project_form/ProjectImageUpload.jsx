@@ -23,9 +23,8 @@ class _ProjectImageUpload extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageSrc: '',
+      imageSrc: props.coverImageUrl ? props.coverImageUrl : '',
       isImageResolutionTooLow: false,
-      shouldUseCoverImage: true,
     };
   }
 
@@ -52,7 +51,6 @@ class _ProjectImageUpload extends Component {
     this.setState({
       imageSrc: '',
       isImageResolutionTooLow: false,
-      shouldUseCoverImage: false,
     });
   };
 
@@ -89,13 +87,9 @@ class _ProjectImageUpload extends Component {
     const {
       imageSrc,
       isImageResolutionTooLow,
-      shouldUseCoverImage,
     } = this.state;
-    const coverImageRender = shouldUseCoverImage
-      ? this.props.coverImageUrl
-      : '';
 
-    return !(imageSrc || coverImageRender) ? (
+    return !imageSrc ? (
       <Grid className={classes.defaultImage}>
         <label htmlFor="project_image_upload">
           <Button
@@ -113,7 +107,7 @@ class _ProjectImageUpload extends Component {
       <Grid
         className={classes.projectImage}
         style={{
-          backgroundImage: `url(${imageSrc ? imageSrc : coverImageRender})`,
+          backgroundImage: `url(${imageSrc})`,
         }}
       >
         <Fab
