@@ -17,6 +17,7 @@ const _Pagination = ({ page, numPages, handlePageClick, classes }) => {
         breakLabel={'...'}
         nextLabel="&raquo;"
         initialPage={page}
+        forcePage={page}
         pageCount={numPages}
         onPageChange={handlePageClick}
         marginPagesDisplayed={1}

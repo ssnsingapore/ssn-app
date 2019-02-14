@@ -36,15 +36,20 @@ class _ProjectOwnerProjectListing extends Component {
 
   async componentDidMount() {
     if (this.props.location) {
-      const queryString = this.props.location.search.substring(1);
-      const queryParams = qs.parse(queryString);
-
-      const page = Number(queryParams.page) || 1;
-      const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
-      this.setState({ page, projectState }, this._fetchProjects);
+      window.onpopstate = this.updateStateFromQueryParams;
+      this.updateStateFromQueryParams();
     } else {
       this._fetchProjects();
     }
+  }
+
+  updateStateFromQueryParams = () => {
+    const queryString = this.props.location.search.substring(1);
+    const queryParams = qs.parse(queryString);
+
+    const page = Number(queryParams.page) || 1;
+    const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
+    this.setState({ page, projectState }, this._fetchProjects);
   }
 
   async _fetchProjects() {
