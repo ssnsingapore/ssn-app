@@ -38,7 +38,7 @@ projectOwner.setPassword('test123').then(async () => {
     },
     {
       name: 'Winnie the Pooh',
-      email: 'big.pooh@hundredacrewoods.net',
+      email: 'big.pooh@example.com',
       accountType: 'INDIVIDUAL',
       websiteUrl: 'moarhoney.com',
       socialMediaLink: 'twiiter.com/moarhoney',
