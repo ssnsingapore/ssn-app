@@ -38,11 +38,12 @@ export class _AdminDashboard extends Component {
   }
 
   async componentDidMount() {
-
-    const queryString = this.props.location.search.substring(1);
-    const queryParams = qs.parse(queryString);
-    const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
-    this.setState({ tabValue: ProjectTabValueMapping[projectState] });
+    // Update state from query params when user presses back
+    // to ensure that when the user goes back
+    // and the projectState query param changes to the previous one
+    // the tabValue will be updated accordingly
+    window.onpopstate = this.updateStateFromQueryParams;
+    this.updateStateFromQueryParams();
 
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get('/api/v1/project_counts');
@@ -59,6 +60,13 @@ export class _AdminDashboard extends Component {
     }
 
     this.setState({ isLoading: false });
+  }
+
+  updateStateFromQueryParams = () => {
+    const queryString = this.props.location.search.substring(1);
+    const queryParams = qs.parse(queryString);
+    const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
+    this.setState({ tabValue: ProjectTabValueMapping[projectState] });
   }
 
   handleChange = (_event, value) => {

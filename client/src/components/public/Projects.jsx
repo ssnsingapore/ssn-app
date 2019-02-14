@@ -83,20 +83,29 @@ class _Projects extends Component {
 
   async componentDidMount() {
     const cachedFields = this.getFieldValues();
+    if (cachedFields && this.props.history.action === 'POP') {
+      const promiseArray = Object.keys(cachedFields).map(key => this.props.setField(key, cachedFields[key]));
+      await Promise.all(promiseArray);
+    }
+    await this.fetchProjectCounts();
+
+    // Update state from query params when user presses back
+    // to ensure that when the user goes back
+    // and the projectState query param changes to the previous one
+    // the tabValue will be updated accordingly
+    window.onpopstate = this.updateStateFromQueryParams;
+    this.updateStateFromQueryParams();
+
+    this.setState({ isLoading: false });
+  }
+
+  updateStateFromQueryParams = () => {
     const queryString = this.props.location.search.substring(1);
     const queryParams = qs.parse(queryString);
     const projectState = queryParams.projectState || ProjectState.APPROVED_ACTIVE;
     const page = Number(queryParams.page) || 1;
 
-    if (cachedFields && this.props.history.action === 'POP') {
-      const promiseArray = Object.keys(cachedFields).map(key => this.props.setField(key, cachedFields[key]));
-      await Promise.all(promiseArray);
-    }
-
-    await this.fetchProjectCounts();
     this.setState(({ page, tabValue: projectStateTabValueMapping[projectState] }), async () => { await this.fetchProjects(projectState, page); });
-
-    this.setState({ isLoading: false });
   }
 
   handlePageClick = (pageDisplayed) => {
