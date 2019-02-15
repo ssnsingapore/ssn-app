@@ -21,6 +21,7 @@ import { ProjectState } from 'components/shared/enums/ProjectState';
 import { ProjectType } from 'components/shared/enums/ProjectType';
 import { ProjectFrequencyDisplayMapping } from 'components/shared/display_mappings/ProjectFrequencyDisplayMapping';
 import { capitalizeWords } from 'util/capitalizeWords';
+import { getDefaultImageUrlIfBlank } from 'util/url';
 
 const renderVolunteerRequirements = (project, classes) => {
   return (
@@ -164,7 +165,7 @@ const _ProjectListingCard = ({ project, classes }) => {
               <Grid item xs={3}>
                 <CardMedia
                   className={classes.cardMedia}
-                  image={project.coverImageUrl}
+                  image={getDefaultImageUrlIfBlank(project.coverImageUrl, project.issuesAddressed)}
                 />
               </Grid>
               <Grid item xs={9}>

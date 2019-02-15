@@ -25,7 +25,7 @@ import { VolunteerRequirementTypeDisplayMapping } from 'components/shared/displa
 import { ProjectType } from 'components/shared/enums/ProjectType';
 
 import { capitalizeWords } from 'util/capitalizeWords';
-import { convertToAbsoluteUrl } from 'util/url';
+import { convertToAbsoluteUrl, getDefaultImageUrlIfBlank } from 'util/url';
 
 const renderLabel = label => (
   <Typography variant="body1" gutterBottom>
@@ -123,7 +123,7 @@ const renderIssuesAddressed = (classes, project) => {
 };
 
 const renderProjectBaseDetails = (classes, project, role) => {
-  const { title, description, volunteerSignupUrl, coverImageUrl } = project;
+  const { title, description, volunteerSignupUrl, coverImageUrl, issuesAddressed } = project;
   const inputUrl = convertToAbsoluteUrl(volunteerSignupUrl);
 
   return (
@@ -183,7 +183,10 @@ const renderProjectBaseDetails = (classes, project, role) => {
           ''
         )}
       </CardContent>
-      <CardMedia className={classes.cover} image={coverImageUrl} />
+      <CardMedia
+        className={classes.cover} 
+        image={getDefaultImageUrlIfBlank(coverImageUrl, issuesAddressed)} 
+      />
     </Card>
   );
 };

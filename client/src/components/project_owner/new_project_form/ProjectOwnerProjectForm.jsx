@@ -15,8 +15,6 @@ import { ProjectDetails } from './ProjectDetails';
 import { ProjectVolunteerDetails } from './ProjectVolunteerDetails';
 import { ProjectBaseDetails } from './ProjectBaseDetails';
 import { FieldName } from './ProjectFormFields';
-import { DefaultCoverImageUrl } from 'components/shared/enums/DefaultCoverImageUrl';
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
 import { Role } from 'components/shared/enums/Role';
 
 export class _ProjectOwnerProjectForm extends Component {
@@ -26,7 +24,6 @@ export class _ProjectOwnerProjectForm extends Component {
     this.state = {
       preview: false,
       project: null,
-      isDefaultCoverImage: false,
     };
   }
 
@@ -40,16 +37,11 @@ export class _ProjectOwnerProjectForm extends Component {
     return project;
   };
 
+  _userHaveUploadNewImage = (fileUpload) => fileUpload && fileUpload.files.length > 0;
+
   togglePreviewOn = () => {
     const project = this.getProject();
-    const projectImageInput = this.props.projectImageInput.current;
-    let coverImageSrc = this.getNewCoverImageSrc(projectImageInput);
-    if (!coverImageSrc) {
-      coverImageSrc = this.getPreviewDefaultImageUrl();
-      this.setState({ isDefaultCoverImage: true });
-    }
-
-    project.coverImageUrl = coverImageSrc;
+    project.coverImageUrl = this.getImageSrc();
     project.volunteerRequirements = Object.values(this.props.volunteerRequirementRefs).map(
       ref => ref.current.valuesForAllFields()
     );
@@ -57,31 +49,16 @@ export class _ProjectOwnerProjectForm extends Component {
     this.setState({ preview: true, project });
   };
 
-  getDefaultUrl = project => {
-    return project && project.issuesAddressed
-      ? DefaultCoverImageUrl[project.issuesAddressed[0]]
-      : null;
-  };
-
-  getPreviewDefaultImageUrl = () => {
-    const project = this.getProject();
-    const defaultUrl = this.getDefaultUrl(project);
-    return defaultUrl || DefaultCoverImageUrl[IssueAddressed.OTHER];
-  };
-
-  getNewCoverImageSrc = current => {
-    if (current && current.files.length > 0) {
-      return window.URL.createObjectURL(current.files[0]);
+  getImageSrc = () => {
+    const newImageInput = this.props.projectImageInput.current;
+    if (this._userHaveUploadNewImage(newImageInput)) {
+      return window.URL.createObjectURL(newImageInput.files[0]);
     }
-    return undefined;
+    return this.props.coverImageUrl;
   };
 
   togglePreviewOff = () => {
-    const currentProject = this.state.project;
-    if (this.state.isDefaultCoverImage) {
-      currentProject.coverImageUrl = '';
-    }
-    this.setState({ preview: false, project: currentProject });
+    this.setState({ preview: false });
   };
 
   renderPreviewNotice = () => {

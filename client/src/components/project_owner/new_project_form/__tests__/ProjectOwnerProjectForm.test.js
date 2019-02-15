@@ -3,8 +3,6 @@ import { Button } from '@material-ui/core';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { _ProjectOwnerProjectForm } from '../ProjectOwnerProjectForm';
-import { IssueAddressed } from 'components/shared/enums/IssueAddressed';
-import { DefaultCoverImageUrl } from 'components/shared/enums/DefaultCoverImageUrl';
 
 describe('ProjectOwnerProjectForm', () => {
   let component;
@@ -60,30 +58,6 @@ describe('ProjectOwnerProjectForm', () => {
 
     it('displays only total of 3 buttons', () => {
       expect(component.find(Button)).toHaveLength(3);
-    });
-
-    it('should display default image if no cover image is uploaded', () => {
-      const mockProject = {
-        coverImageUrl: {
-          value: '',
-        },
-        issuesAddressed: {
-          value: [IssueAddressed.AIR_QUALITY],
-        },
-      };
-
-      component.setProps({
-        projectImageInput: {
-          current: undefined,
-        },
-        fields: mockProject,
-      });
-
-      component.instance().togglePreviewOn();
-
-      expect(component.state().project.coverImageUrl).toEqual(
-        DefaultCoverImageUrl[IssueAddressed.AIR_QUALITY]
-      );
     });
   });
 
