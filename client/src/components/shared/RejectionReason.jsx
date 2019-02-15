@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,7 +19,7 @@ const _RejectionReason = ({ role, rejectionReason, classes }) => {
       </Typography>
       <div className={classes.root}>
         <Typography variant="body2">
-          <Warning style={{ padding: '0px', margin: '2px', marginRight: '10px' }} />
+          <Warning style={{ padding: '0px', marginTop: '2px', marginBottom: '-5px', marginRight: '10px' }} />
           <strong>Rejection reason:</strong> {rejectionReason}
         </Typography>
       </div>
