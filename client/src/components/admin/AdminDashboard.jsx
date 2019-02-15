@@ -42,8 +42,7 @@ export class _AdminDashboard extends Component {
     // to ensure that when the user goes back
     // and the projectState query param changes to the previous one
     // the tabValue will be updated accordingly
-    window.onpopstate = this.updateStateFromQueryParams;
-    this.updateStateFromQueryParams();
+    this.updateProjectStateFromQueryParams();
 
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get('/api/v1/project_counts');
@@ -62,7 +61,7 @@ export class _AdminDashboard extends Component {
     this.setState({ isLoading: false });
   }
 
-  updateStateFromQueryParams = () => {
+  updateProjectStateFromQueryParams = () => {
     const queryString = this.props.location.search.substring(1);
     const queryParams = qs.parse(queryString);
     const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
@@ -87,6 +86,7 @@ export class _AdminDashboard extends Component {
     return (
       tabValue === value &&
       <AdminProjectListing
+        updateProjectStateFromQueryParams={this.updateProjectStateFromQueryParams}
         projectState={projectState}
         totalProjects={counts[projectState]}
         location={this.props.location}

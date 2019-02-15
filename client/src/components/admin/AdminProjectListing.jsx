@@ -35,14 +35,21 @@ class _AdminProjectListing extends Component {
 
   componentDidMount() {
     if (this.props.location) {
-      window.onpopstate = this.updateStateFromQueryParams;
-      this.updateStateFromQueryParams();
+      window.onpopstate = () => {
+        this.props.updateProjectStateFromQueryParams();
+        this.updatePageFromQueryParams();
+      };
+      this.updatePageFromQueryParams();
     } else {
       this._fetchProjects();
     }
   }
 
-  updateStateFromQueryParams = () => {
+  componentWillUnmount() {
+    window.onpopstate = null;
+  }
+
+  updatePageFromQueryParams = () => {
     const queryString = this.props.location.search.substring(1);
     const queryParams = qs.parse(queryString);
 

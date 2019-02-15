@@ -99,6 +99,10 @@ class _Projects extends Component {
     this.setState({ isLoading: false });
   }
 
+  componentWillUnmount() {
+    window.onpopstate = false;
+  }
+
   updateStateFromQueryParams = () => {
     const queryString = this.props.location.search.substring(1);
     const queryParams = qs.parse(queryString);

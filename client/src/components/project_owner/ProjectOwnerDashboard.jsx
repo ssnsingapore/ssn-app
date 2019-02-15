@@ -33,8 +33,7 @@ class _ProjectOwnerDashboard extends Component {
     // to ensure that when the user goes back
     // and the projectState query param changes to the previous one
     // the tabValue will be updated accordingly
-    window.onpopstate = this.updateStateFromQueryParams;
-    this.updateStateFromQueryParams();
+    this.updateProjectStateFromQueryParams();
 
     const { requestWithAlert } = this.props.context.utils;
     const response = await requestWithAlert.get('/api/v1/project_owner/project_counts', { authenticated: true });
@@ -53,7 +52,7 @@ class _ProjectOwnerDashboard extends Component {
     this.setState({ isLoading: false });
   }
 
-  updateStateFromQueryParams = () => {
+  updateProjectStateFromQueryParams = () => {
     const queryString = this.props.location.search.substring(1);
     const queryParams = qs.parse(queryString);
     const projectState = queryParams.projectState || ProjectState.PENDING_APPROVAL;
@@ -95,6 +94,7 @@ class _ProjectOwnerDashboard extends Component {
     const { tabValue, counts } = this.state;
     return tabValue === value &&
       <ProjectOwnerProjectListing
+        updateProjectStateFromQueryParams={this.updateProjectStateFromQueryParams}
         projectState={projectState}
         totalProjects={counts[projectState]}
         location={this.props.location}
