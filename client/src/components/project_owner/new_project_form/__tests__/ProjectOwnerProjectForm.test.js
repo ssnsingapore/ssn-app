@@ -77,4 +77,54 @@ describe('ProjectOwnerProjectForm', () => {
       expect(allButtons).toHaveLength(3);
     });
   });
+
+  describe('togglePreviewOn', () => {
+    let project;
+
+    beforeEach(() => {
+      project = {
+        title : 'Some Project',
+        description : 'Some Description',
+        coverImageUrl : 'Some Url',
+      };
+      const mockProjectFields = {
+        title: {
+          value: project.title,
+          errors: [],
+        },
+        description: {
+          value: project.description,
+          errors: [],
+        },
+      };
+      const mockImageInputRef = {
+        current: {
+          state: {
+            imageSrc: project.coverImageUrl,
+          },
+        },
+      };
+
+      component.setProps({
+        fields: mockProjectFields,
+        projectImageInput: mockImageInputRef,
+        volunteerRequirementRefs: {},
+      });
+    });
+
+    it('sets correct project values to state', () => {
+      component.instance().togglePreviewOn();
+
+      expect(component.state().project).toEqual({
+        ...project,
+        volunteerRequirements: [],
+      });
+    });
+
+    it('sets preview to true', () => {
+      component.instance().togglePreviewOn();
+      
+      expect(component.state().preview).toBe(true);
+    });
+  });
 });

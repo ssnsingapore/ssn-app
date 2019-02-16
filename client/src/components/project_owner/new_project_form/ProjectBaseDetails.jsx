@@ -74,7 +74,7 @@ const _ProjectBaseDetails = ({
       </Grid>
       <Grid item xs={9}>
         <ProjectImageUpload
-          projectImageInput={projectImageInput}
+          innerRef={projectImageInput}
           coverImageUrl={coverImageUrl}
         />
       </Grid>

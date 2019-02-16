@@ -28,8 +28,8 @@ class _ProjectImageUpload extends Component {
     };
   }
 
-  handleChange = () => {
-    const file = this.props.projectImageInput.current.files[0];
+  handleChange = event => {
+    const file = event.target.files[0];
     const imageSrc = window.URL.createObjectURL(file);
 
     const image = new Image();
@@ -47,7 +47,6 @@ class _ProjectImageUpload extends Component {
   };
 
   handleCancel = () => {
-    this.props.projectImageInput.current.value = '';
     this.setState({
       imageSrc: '',
       isImageResolutionTooLow: false,
@@ -128,9 +127,9 @@ class _ProjectImageUpload extends Component {
     return (
       <React.Fragment>
         <input
+          key={this.state.imageSrc}
           type="file"
           accept="image/*"
-          ref={this.props.projectImageInput}
           onChange={this.handleChange}
           id="project_image_upload"
           className={classes.uploadInput}

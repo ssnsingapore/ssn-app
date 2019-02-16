@@ -11,68 +11,88 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from '@material-ui/core/Fab';
 
 describe('ProjectImageUpload', () => {
-  let component, props, wrapper;
+  describe('when there is no image uploaded before', () => {
+    let wrapper;
 
-  beforeAll(() => {
-    props = {
-      projectImageInput: {
-        current: {
-          value: 'notEmpty',
-          files: ['someFileName.png'],
-        },
-      },
-    };
-    component = shallow(<ProjectImageUpload {...props} />);
+    beforeEach(() => {
+      const component = shallow(<ProjectImageUpload/>);
+  
+      wrapper = component.dive();
+    });
 
-    wrapper = component.dive();
+    it('should render input for file upload', () => {
+      const inputFileUpload = wrapper.find('input');
+      expect(inputFileUpload.exists()).toBeTruthy();
+      expect(inputFileUpload.props().type).toEqual('file');
+    });
+
+    it('should render upload button', () => {
+      const uploadButton = wrapper.find(Button);
+      expect(uploadButton.props().children[0]).toEqual('Upload Project Image');
+    });
+
+    describe('when an image is uploaded', () => {
+      beforeEach(() => {
+        const uploadedFile = 'file';
+        const mockEvent = {
+          target: {
+            files: [uploadedFile],
+          },
+        };
+        window.URL.createObjectURL = jest.fn((file => {
+          if(file === uploadedFile) {
+            return 'someFileSrc';
+          }
+          return '';
+        }));
+    
+        const inputFileUpload = wrapper.find('input');
+        inputFileUpload.simulate('change', mockEvent);
+      });
+
+      it('should change imageSrc in state to src of uploaded image', () => {
+        expect(wrapper.state().imageSrc).toEqual('someFileSrc');
+      });
+
+      it('should render Cancel icon', () => {  
+        expect(wrapper.find(DeleteIcon).exists()).toBeTruthy();
+      });
+    });
   });
 
-  it('should render input for file upload', () => {
-    const inputFileUpload = wrapper.find('input');
-    expect(inputFileUpload.exists()).toBeTruthy();
-    expect(inputFileUpload.props().type).toEqual('file');
-  });
+  describe('when there is a previously uploaded image', () => {
+    let wrapper;
 
-  it('should render upload button if image is not selected', () => {
-    const uploadButton = wrapper.find(Button);
-    expect(uploadButton.props().children[0]).toEqual('Upload Project Image');
-  });
+    beforeEach(() => {
+      const component = shallow(<ProjectImageUpload coverImageUrl='some url' />);
+  
+      wrapper = component.dive();
+    });
 
-  it('should change state to non-null imageSrc upon selecting image', () => {
+    it('should render Cancel icon on the selected image', () => {  
+      expect(wrapper.find(DeleteIcon).exists()).toBeTruthy();
+    });
 
-    expect(wrapper.state().imageSrc).toEqual('');
+    it('change input key when image is cancelled so input component will reload and remove file values', () => {
+      const cancelButton = wrapper.find(Fab);
+      const inputKeyBeforeCancel = wrapper.find('input').key();
+  
+      cancelButton.simulate('click');
 
-    window.URL.createObjectURL = jest.fn((() => 'someFileSrc'));
-
-    const inputFileUpload = wrapper.find('input');
-    inputFileUpload.simulate('change');
-
-    expect(wrapper.state().imageSrc).toEqual('someFileSrc');
-
-  });
-
-  it('should render Cancel icon on the selected image', () => {
-    window.URL.createObjectURL = jest.fn((() => 'someFileSrc'));
-
-    const inputFileUpload = wrapper.find('input');
-    inputFileUpload.simulate('change');
-
-    expect(wrapper.find(DeleteIcon).exists()).toBeTruthy();
-  });
-
-  it('should remove current value when click cancel', () => {
-    const cancelButton = wrapper.find(Fab);
-    expect(component.prop('projectImageInput').current.value).not.toEqual('');
-    expect(wrapper.state().imageSrc).not.toEqual('');
-
-    cancelButton.simulate('click');
-
-    expect(component.prop('projectImageInput').current.value).toEqual('');
-    expect(wrapper.state().imageSrc).toEqual('');
+      const inputKeyAfterCancel = wrapper.find('input').key();
+  
+      expect(inputKeyBeforeCancel).not.toEqual(inputKeyAfterCancel);
+    });
   });
 
   describe('image resolution too low', () => {
-    beforeAll(() => {
+    let wrapper;
+    
+    beforeEach(() => {
+      const component = shallow(<ProjectImageUpload coverImageUrl='some url' />);
+  
+      wrapper = component.dive();
+      
       wrapper.setState({
         imageSrc: 'someFileSrc',
         isImageResolutionTooLow: true,

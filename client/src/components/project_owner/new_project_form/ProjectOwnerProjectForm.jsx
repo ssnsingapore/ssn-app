@@ -37,24 +37,17 @@ export class _ProjectOwnerProjectForm extends Component {
     return project;
   };
 
-  _userHaveUploadNewImage = (fileUpload) => fileUpload && fileUpload.files.length > 0;
-
   togglePreviewOn = () => {
     const project = this.getProject();
-    project.coverImageUrl = this.getImageSrc();
+    const imageUploadRef = this.props.projectImageInput.current;
+    if(imageUploadRef) {
+      project.coverImageUrl = imageUploadRef.state.imageSrc;
+    }
     project.volunteerRequirements = Object.values(this.props.volunteerRequirementRefs).map(
       ref => ref.current.valuesForAllFields()
     );
 
     this.setState({ preview: true, project });
-  };
-
-  getImageSrc = () => {
-    const newImageInput = this.props.projectImageInput.current;
-    if (this._userHaveUploadNewImage(newImageInput)) {
-      return window.URL.createObjectURL(newImageInput.files[0]);
-    }
-    return this.props.coverImageUrl;
   };
 
   togglePreviewOff = () => {
