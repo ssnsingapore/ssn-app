@@ -8,7 +8,6 @@ import { extractErrors, formatErrors } from 'util/errors';
 
 import { ProjectOwnerProjectForm } from './ProjectOwnerProjectForm';
 import { FieldName, constraints, validateGroupsMap } from './ProjectFormFields';
-import { PROJECT_IMAGE_DISPLAY_WIDTH, PROJECT_IMAGE_DISPLAY_HEIGHT } from './Constants';
 import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
@@ -19,9 +18,6 @@ import {
 
 const PROJECT_ADDED_SUCCESS_MESSAGE =
   'You have submitted this project successfully! It will now be pending admin approval.';
-
-const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
-const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
 
 export class _ProjectOwnerNewProjectForm extends Component {
   constructor(props) {
@@ -62,67 +58,18 @@ export class _ProjectOwnerNewProjectForm extends Component {
     return valuesForAllFields(this.state.volunteerRequirementRefs);
   };
 
-  getImageDimensions = image => {
-    return new Promise(resolve => {
-      image.addEventListener('load', () => {
-        resolve({ width: image.width, height: image.height });
-      });
-    });
-  };
-
-  resizeImage = async () => {
-    const image = new Image();
-
-    const projectImage = this.projectImageInput.current.files[0];
-    const projectImageSrc = window.URL.createObjectURL(projectImage);
-
-    image.src = projectImageSrc;
-
-    const { width, height } = await this.getImageDimensions(image);
-
-    if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
-      this.setState({ isImageResolutionTooLow: true });
-    } else {
-      this.setState({ isImageResolutionTooLow: false });
-    }
-
-    let finalWidth = width;
-    let finalHeight = height;
-
-    if (width < height && width > DISPLAY_WIDTH) {
-      finalWidth = DISPLAY_WIDTH;
-      finalHeight = (height / width) * DISPLAY_WIDTH;
-    }
-
-    if (height < width && height > DISPLAY_HEIGHT) {
-      finalHeight = DISPLAY_HEIGHT;
-      finalWidth = (width / height) * DISPLAY_HEIGHT;
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = finalWidth;
-    canvas.height = finalHeight;
-
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0, finalWidth, finalHeight);
-    return new Promise(resolve => {
-      canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.6);
-    });
-  };
-
   handleSubmit = async event => {
     event.preventDefault();
 
     const formData = new FormData();
-    if (this.projectImageInput.current.files[0]) {
-      const resizedProjectImage = await this.resizeImage();
-      formData.append('projectImage', resizedProjectImage);
+    const image = this.projectImageInput.current.state.image;
+    if (image) {
+      formData.append('projectImage', image);
     }
 
     if (
       !this.props.validateAllFields() ||
-      !this.validateAllSubFormFields() ||
-      this.state.isImageResolutionTooLow
+      !this.validateAllSubFormFields()
     ) {
       return;
     }

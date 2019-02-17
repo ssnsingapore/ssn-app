@@ -25,31 +25,63 @@ class _ProjectImageUpload extends Component {
     this.state = {
       imageSrc: props.coverImageUrl ? props.coverImageUrl : '',
       isImageResolutionTooLow: false,
+      image: null,
     };
   }
+
+  _createImage = (image, imageSrc) => {
+    image.src = imageSrc;
+    image.addEventListener('load', async () => {
+      const isImageResolutionTooLow = image.height < PROJECT_IMAGE_DISPLAY_HEIGHT || image.width < PROJECT_IMAGE_DISPLAY_WIDTH;
+      if(!isImageResolutionTooLow) {
+        image = await this.resizeImage(image);
+      }
+      this.setState({
+        imageSrc,
+        image,
+        isImageResolutionTooLow,
+      });
+    });
+  };
 
   handleChange = event => {
     const file = event.target.files[0];
     const imageSrc = window.URL.createObjectURL(file);
-
-    const image = new Image();
-    image.src = imageSrc;
-    image.addEventListener('load', () => {
-      if (
-        image.height < PROJECT_IMAGE_DISPLAY_HEIGHT ||
-        image.width < PROJECT_IMAGE_DISPLAY_WIDTH
-      ) {
-        this.setState({ isImageResolutionTooLow: true });
-      }
-    });
-
-    this.setState({ imageSrc });
+    this._createImage(new Image(), imageSrc);
   };
 
   handleCancel = () => {
     this.setState({
       imageSrc: '',
       isImageResolutionTooLow: false,
+      image: null,
+    });
+  };
+
+  resizeImage = (image) => {
+    const { width, height } = image;
+
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width < height && width > PROJECT_IMAGE_DISPLAY_WIDTH) {
+      finalWidth = PROJECT_IMAGE_DISPLAY_WIDTH;
+      finalHeight = (height / width) * PROJECT_IMAGE_DISPLAY_WIDTH;
+    }
+
+    if (height < width && height > PROJECT_IMAGE_DISPLAY_HEIGHT) {
+      finalHeight = PROJECT_IMAGE_DISPLAY_HEIGHT;
+      finalWidth = (width / height) * PROJECT_IMAGE_DISPLAY_HEIGHT;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, finalWidth, finalHeight);
+    return new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.6);
     });
   };
 

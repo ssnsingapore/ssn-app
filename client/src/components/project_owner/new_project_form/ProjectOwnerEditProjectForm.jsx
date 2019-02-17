@@ -12,7 +12,6 @@ import { extractErrors, formatErrors } from 'util/errors';
 
 import { ProjectOwnerProjectForm } from './ProjectOwnerProjectForm';
 import { FieldName, constraints, validateGroupsMap } from './ProjectFormFields';
-import { PROJECT_IMAGE_DISPLAY_WIDTH, PROJECT_IMAGE_DISPLAY_HEIGHT } from './Constants';
 import {
   addVolunteerRequirementRef,
   deleteVolunteerRequirementRef,
@@ -21,9 +20,6 @@ import {
   valuesForAllFields,
   setFields,
 } from './VolunteerRequirementForm';
-
-const DISPLAY_WIDTH = PROJECT_IMAGE_DISPLAY_WIDTH;
-const DISPLAY_HEIGHT = PROJECT_IMAGE_DISPLAY_HEIGHT;
 
 export class _ProjectOwnerEditProjectForm extends Component {
   constructor(props) {
@@ -108,54 +104,6 @@ export class _ProjectOwnerEditProjectForm extends Component {
     return valuesForAllFields(this.state.volunteerRequirementRefs);
   };
 
-  resizeImage = async () => {
-    const image = new Image();
-
-    const projectImage = this.projectImageInput.current.files[0];
-    const projectImageSrc = window.URL.createObjectURL(projectImage);
-
-    image.src = projectImageSrc;
-
-    const { width, height } = await this.getImageDimensions(image);
-
-    if (width < DISPLAY_WIDTH || height < DISPLAY_HEIGHT) {
-      this.setState({ isImageResolutionTooLow: true });
-    } else {
-      this.setState({ isImageResolutionTooLow: false });
-    }
-
-    let finalWidth = width;
-    let finalHeight = height;
-
-    if (width < height && width > DISPLAY_WIDTH) {
-      finalWidth = DISPLAY_WIDTH;
-      finalHeight = (height / width) * DISPLAY_WIDTH;
-    }
-
-    if (height < width && height > DISPLAY_HEIGHT) {
-      finalHeight = DISPLAY_HEIGHT;
-      finalWidth = (width / height) * DISPLAY_HEIGHT;
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = finalWidth;
-    canvas.height = finalHeight;
-
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0, finalWidth, finalHeight);
-    return new Promise(resolve => {
-      canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.6);
-    });
-  };
-
-  getImageDimensions = image => {
-    return new Promise(resolve => {
-      image.addEventListener('load', () => {
-        resolve({ width: image.width, height: image.height });
-      });
-    });
-  };
-
   _isProjectInactiveAndEndDateNotPassed = (newProject, oldProject) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -173,45 +121,39 @@ export class _ProjectOwnerEditProjectForm extends Component {
     }
   }
 
+  _thereIsUpdateToUploadedImage = () => 
+    this.projectImageInput.current.state.imageSrc !== this.state.projectToRender.coverImageUrl;
+
   handleSubmit = async event => {
     event.preventDefault();
 
     if (
       !this.props.validateAllFields() ||
-      !this.validateAllSubFormFields() ||
-      this.state.isImageResolutionTooLow
+      !this.validateAllSubFormFields()
     ) {
       return;
     }
-
     const formData = new FormData();
-    let image = this.projectImageInput.current.files[0];
+    const projectImageInputRef = this.projectImageInput.current;
 
-    if (image) {
-      const resizedProjectImage = await this.resizeImage();
-      image = resizedProjectImage;
+    if (this._thereIsUpdateToUploadedImage()) {
+      const resizedProjectImage = projectImageInputRef.state.image;
+      formData.append('projectImage', resizedProjectImage);
     }
-    formData.append('projectImage', image);
 
     const { showAlert } = this.props.context.updaters;
     const { requestWithAlert } = this.props.context.utils;
-
     const { projectToRender } = this.state;
-    let updatedProject = {
+    const updatedProject = {
       ...this.props.valuesForAllFields(),
       volunteerRequirements: this.valuesForAllSubFormFields(),
+      coverImageUrl: projectImageInputRef.state.imageSrc,
     };
 
     if (this._isProjectRejected(projectToRender)) {
-      updatedProject = {
-        ...updatedProject,
-        state: ProjectState.PENDING_APPROVAL,
-      };
+      updatedProject.state = ProjectState.PENDING_APPROVAL;
     } else if (this._isProjectInactiveAndEndDateNotPassed(updatedProject, projectToRender)) {
-      updatedProject = {
-        ...updatedProject,
-        state: ProjectState.APPROVED_ACTIVE,
-      };
+      updatedProject.state= ProjectState.APPROVED_ACTIVE;
     }
 
     const PROJECT_EDITED_SUCCESS_MESSAGE = this._projectEditedSuccessMessageText(updatedProject, projectToRender);

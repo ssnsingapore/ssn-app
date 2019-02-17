@@ -32,30 +32,32 @@ describe('ProjectImageUpload', () => {
     });
 
     describe('when an image is uploaded', () => {
+      let inputFileUpload;
+      let mockEvent;
+      let imageSrc;
+
       beforeEach(() => {
         const uploadedFile = 'file';
-        const mockEvent = {
+        imageSrc = 'someFileSrc';
+        mockEvent = {
           target: {
             files: [uploadedFile],
           },
         };
-        window.URL.createObjectURL = jest.fn((file => {
+        window.URL.createObjectURL = jest.fn(file => {
           if(file === uploadedFile) {
-            return 'someFileSrc';
+            return imageSrc;
           }
           return '';
-        }));
-    
-        const inputFileUpload = wrapper.find('input');
+        });
+
+        inputFileUpload = wrapper.find('input');
+      });
+
+      it('creates image', () => {
+        wrapper.instance()._createImage = jest.fn();
         inputFileUpload.simulate('change', mockEvent);
-      });
-
-      it('should change imageSrc in state to src of uploaded image', () => {
-        expect(wrapper.state().imageSrc).toEqual('someFileSrc');
-      });
-
-      it('should render Cancel icon', () => {  
-        expect(wrapper.find(DeleteIcon).exists()).toBeTruthy();
+        expect(wrapper.instance()._createImage).toHaveBeenCalledWith(new Image(), imageSrc);
       });
     });
   });
@@ -87,7 +89,7 @@ describe('ProjectImageUpload', () => {
 
   describe('image resolution too low', () => {
     let wrapper;
-    
+
     beforeEach(() => {
       const component = shallow(<ProjectImageUpload coverImageUrl='some url' />);
   

@@ -1222,6 +1222,46 @@ describe('Project owner routes', () => {
       expect(projectFromDB.title).toEqual(newTitle);
     });
 
+    test('sets new coverImageUrl if there is a a new image', async () => {
+      const awsUrlLocation = 'some image url';
+      s3.upload = jest.fn(() => ({
+        promise: () => Promise.resolve({ Location: awsUrlLocation }),
+      }));
+
+      const response = await request(app)
+        .put(`/api/v1/project_owner/projects/${project.id}`)
+        .set('Cookie', [`${config.TOKEN_COOKIE_NAME}=${jwt}`])
+        .set('csrf-token', csrfToken)
+        .attach('projectImage', './api_tests/test-file.jpg')
+        .field('project', JSON.stringify({
+          coverImageUrl: '',
+        }));
+
+      expect(response.body.project.coverImageUrl).toEqual(awsUrlLocation);
+    });
+
+    test('does not upload to s3 if image is the same', async () => {
+      s3.upload = jest.fn();
+      const response = await sendRequestWithBody({
+        project: JSON.stringify({
+          coverImageUrl: project.coverImageUrl,
+        }),
+      });
+
+      expect(s3.upload).not.toHaveBeenCalled();
+      expect(response.body.project.coverImageUrl).toEqual(project.coverImageUrl);
+    });
+
+    test('removes coverImageUrl if it has been deleted', async () => {
+      const response = await sendRequestWithBody({
+        project: JSON.stringify({
+          coverImageUrl: '',
+        }),
+      });
+
+      expect(response.body.project.coverImageUrl).toEqual('');
+    });
+
     describe('state change for pending approval project', () => {
       beforeEach(async () => {
         await setProjectState(ProjectState.PENDING_APPROVAL);

@@ -306,7 +306,7 @@ projectRouter.put(
 );
 async function projectOwnerChangeProjectState(req, res) {
   const { id } = req.params;
-  let coverImageUrl = req.file;
+  const coverImage = req.file;
   const updatedProject = JSON.parse(req.body.project);
   const { user } = req;
 
@@ -320,10 +320,10 @@ async function projectOwnerChangeProjectState(req, res) {
     existingProject.set(updatedProject);
     await existingProject.save();
 
-    if (coverImageUrl) {
+    if (coverImage) {
       const response = await s3
         .upload({
-          Body: coverImageUrl.buffer,
+          Body: coverImage.buffer,
           Key: `${new Date().getTime()}-${existingProject.id}-${
             existingProject.title
           }`,
@@ -332,9 +332,8 @@ async function projectOwnerChangeProjectState(req, res) {
         })
         .promise();
 
-      coverImageUrl = response.Location;
+      existingProject.set({ coverImageUrl: response.Location });
     }
-    existingProject.set({ coverImageUrl });
     await existingProject.save();
 
     return res.status(200).json({ project: existingProject });
