@@ -154,7 +154,7 @@ We use https://travis-ci.com/ to build and test our code continuously.
 
 As part of the build script, we run `npm run lint` and `npm test`.
 
-TravisCI also manages auto-deployments to our staging environment https://ssn-app-staging.herokuapp.com/ after successful builds.
+TravisCI also manages auto-deployments to our staging environment https://ssn-app-staging.herokuapp.com/ after successful builds. View the SSN App Travis pipeline here: [https://travis-ci.com/TechLadies/ssn-app/builds](https://travis-ci.com/TechLadies/ssn-app/builds/101221156)
 
 ### ESLint
 We use [ESLint](https://eslint.org/) to lint our code and highlight any syntax or stylistic errors. This helps us to easily stick to a set of conventions in our code across the team and minimize errors caused by small and annoying things like typos etc. that are sometimes hard to spot by eye. ESLint is also capable of autofixing simple errors (eg. extra whitespaces, newlines, missing semicolons etc.) Our ESLint rules can be configured in a `.eslintrc.json` file (we have one for the client code and one for the server code).
@@ -256,6 +256,9 @@ The sender email address will always be the same as the email of the user under 
 
 ### Google Analytics
 The tracking ID needs to be set in the client `.env` file in the `REACT_APP_TRACKING_ID` variable. See [this article](https://medium.com/google-cloud/tracking-site-visits-on-react-app-hosted-in-google-cloud-using-google-analytics-f49c2411d398) for details on how to create a new app to track on Google Analytics.
+
+### AWS S3
+View the S3 pricing reference [here](https://aws.amazon.com/s3/pricing/).
 
 ### Testing redirects from the backend
 Ensure that your browser is not caching redirects by clearing browsing data, otherwise the redirect may not work. (eg. for testing account confirmation and password reset flows)
