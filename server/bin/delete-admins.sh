@@ -1,4 +1,4 @@
-##!/usr/bin/env bash
+#!/usr/bin/env bash
 
 if [[ ! -f "./src/db/seeds/delete-admins.js" ]]; then
   echo "delete-admins.js script was not found!"

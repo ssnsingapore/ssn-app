@@ -257,8 +257,12 @@ The sender email address will always be the same as the email of the user under 
 ### Google Analytics
 The tracking ID needs to be set in the client `.env` file in the `REACT_APP_TRACKING_ID` variable. See [this article](https://medium.com/google-cloud/tracking-site-visits-on-react-app-hosted-in-google-cloud-using-google-analytics-f49c2411d398) for details on how to create a new app to track on Google Analytics.
 
-### AWS S3
-View the S3 pricing reference [here](https://aws.amazon.com/s3/pricing/).
-
 ### Testing redirects from the backend
 Ensure that your browser is not caching redirects by clearing browsing data, otherwise the redirect may not work. (eg. for testing account confirmation and password reset flows)
+
+## Ops
+### Seeding Admins
+Scripts for seeding admins can be found in `server/src/db/seeds/create-admins.js.sample` and `server/src/db/seeds/delete-admins.js.sample`. Copy out those files into new files minus the `.sample` and follow the instructions in the comments. Note that other than the MongoDB related environment variables, all other environment variables should be filled in with some value (can be any dummy value, as long as they are not empty) for the script to run properly
+
+### AWS S3
+View the S3 pricing reference [here](https://aws.amazon.com/s3/pricing/).
