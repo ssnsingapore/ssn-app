@@ -65,6 +65,8 @@ const config = {
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
 
   CRON_SCHEDULE: process.env.CRON_SCHEDULE,
+
+  GOOGLE_ANALYTICS_TRACKING_ID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
 };
 
 export {

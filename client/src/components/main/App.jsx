@@ -70,7 +70,17 @@ class App extends Component {
       },
     };
 
-    ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
+  }
+
+  async componentDidMount() {
+    const { requestWithAlert } = this.state.utils;
+    const response = await requestWithAlert.get('/api/v1/tracking_id');
+    if (response.isSuccessful) {
+      const { trackingId } = await response.json();
+      ReactGA.initialize(trackingId);
+    } else {
+      console.warn('Unable to get tracking ID');
+    }
   }
 
   setAuthState = authState => {

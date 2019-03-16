@@ -255,7 +255,7 @@ We are using nodemailer connected to a Gmail SMTP server through OAuth2 to send 
 The sender email address will always be the same as the email of the user under which the project with the API credentials was created.
 
 ### Google Analytics
-The tracking ID needs to be set in the client `.env` file in the `REACT_APP_TRACKING_ID` variable. See [this article](https://medium.com/google-cloud/tracking-site-visits-on-react-app-hosted-in-google-cloud-using-google-analytics-f49c2411d398) for details on how to create a new app to track on Google Analytics.
+The tracking ID needs to be set in the server `.env` file in the `GOOGLE_ANALYTICS_TRACKING_ID` variable. See [this article](https://medium.com/google-cloud/tracking-site-visits-on-react-app-hosted-in-google-cloud-using-google-analytics-f49c2411d398) for details on how to create a new app to track on Google Analytics.
 
 ### Testing redirects from the backend
 Ensure that your browser is not caching redirects by clearing browsing data, otherwise the redirect may not work. (eg. for testing account confirmation and password reset flows)
